@@ -6,12 +6,12 @@
 ; ==================================================================================================
 
 
-;Editor Instance Flags
-EIF_NEW_FILE                equ   BIT00
-EIF_DIRTY                   equ   BIT01
-EIF_OVERWRITE_MODE          equ   BIT02
-EIF_BLOCK_MODE              equ   BIT03
-EIF_CARET_LOCKED            equ   BIT04
+;Editor Flags
+EDF_NEW_FILE                equ   BIT00
+EDF_DIRTY                   equ   BIT01
+EDF_OVERWRITE_MODE          equ   BIT02
+EDF_BLOCK_MODE              equ   BIT03
+EDF_CARET_LOCKED            equ   BIT04
 
 
 ; ==================================================================================================
@@ -128,13 +128,7 @@ Method Editor.Done, uses xbx xdi xsi
 
 ;  DbgText "Editor.Done"
   ;Destroy all lines
-  mov xcx, [xsi].LinesHead.pFirstMember
-  .while xcx != NULL
-    sub xcx, offset $Obj(EditorLine).LineLink
-    mov xdi, [xcx].$Obj(EditorLine).LineLink.pLinkFwrd
-    Kill xcx::EditorLine.Done
-    mov xcx, xdi
-  .endw
+  OCall [xsi].Lines::Collection.Done
 
   ;Free resources
   mov xdi, [xsi].pOwner
@@ -165,7 +159,7 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, pSrchEnd:PLOCATION, pChoices:PFINDDLGCHOICES
-  local sdVisLineScrollCount:SDWORD, dCurLineNumber:DWORD, dCurCharIndex:DWORD
+  local sdVisLineScrollCount:SDWORD, dCurLineIndex:DWORD, dCurCharIndex:DWORD
   local dRetVal:DWORD, dSrchLength:DWORD
 
   SetObject xsi
@@ -178,114 +172,113 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
   .if TRUE
     mov xdx, pSrchBeg
     mov ecx, [xdx].LOCATION.dCharIndex
-    mov xax, [xdx].LOCATION.pEditorLine
+;    mov xax, [xdx].LOCATION.pEditorLine
     .if ecx > [xax].$Obj(EditorLine).dLength
       mov ecx, [xax].$Obj(EditorLine).dLength
     .endif
     mov dCurCharIndex, ecx
-    mov ecx, [xdx].LOCATION.dLineNumber
-    mov dCurLineNumber, ecx
+    mov ecx, [xdx].LOCATION.dLineIndex
+    mov dCurLineIndex, ecx
 
     ;Start searching
-    .while TRUE
-      mov xbx, xax
-
-      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
-        mov xcx, pSrchEnd
-        .if xbx != [xcx].LOCATION.pEditorLine
-          ;  ¦----¦ABCDEFGHIJK¦
-          ;  0    A           dLength
-          mov edx, [xbx].$Obj(EditorLine).dLength
-        .else
-          ;  ¦----¦ABCDEF¦----¦
-          ;  0    A     End   dLength
-          mov edx, [xcx].LOCATION.dCharIndex            ;End
-        .endif
-        sub edx, dCurCharIndex
-        mov xcx, [xbx].$Obj(EditorLine).pBuffer
-        mov eax, dCurCharIndex
-        lea xcx, [xcx + sizeof(CHR)*xax]
-      .else
-        mov xcx, pSrchEnd
-        .if xbx != [xcx].LOCATION.pEditorLine
-          ;  ¦ABCDEFGHIJK¦----¦
-          ;  0           A    dLength
-          mov edx, dCurCharIndex
-          mov xcx, [xbx].$Obj(EditorLine).pBuffer
-        .else
-          ;  ¦----¦ABCDEF¦----¦
-          ;  0   End     A    dLength
-          mov edx, dCurCharIndex
-          mov eax, [xcx].LOCATION.dCharIndex            ;End
-          sub edx, eax
-          mov xcx, [xbx].$Obj(EditorLine).pBuffer
-          lea xcx, [xcx + sizeof(CHR)*xax]
-        .endif
-      .endif
-
-      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
-        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
-          invoke StrCCPos, xcx, edx, pSrchStr, dSrchLength
-        .else
-          invoke StrCCIPos, xcx, edx, pSrchStr, dSrchLength
-        .endif
-      .else
-        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
-          invoke StrRCCPos, xcx, edx, pSrchStr, dSrchLength
-        .else
-          invoke StrRCCIPos, xcx, edx, pSrchStr, dSrchLength
-        .endif
-      .endif
-      .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_WHOLE_WORD
-        .if xax != NULL
-          ;Check the end
-          mov ecx, dSrchLength
-          movzx edx, CHR ptr [xax + xcx*sizeof(CHR)]
-          GetCharType edx, ecx
-          .if !(ecx & CHR_WORD)
-            ;Check the begin
-            .break .if xax == [xbx].$Obj(EditorLine).pBuffer  ;First char is at buffer begin
-            movzx edx, CHR ptr [xax - sizeof(CHR)]
-            GetCharType edx, ecx
-            .break .if !(ecx & CHR_WORD)
-          .endif
-        .endif
-      .else
-        .break .if xax != NULL
-      .endif
-      mov xcx, pSrchEnd
-      .break .if xbx == [xcx].LOCATION.pEditorLine
-
-      ;Move to next EditorLine
-      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
-        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd
-        .break .if xax == NULL
-      .else
-        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkBack
-        .break .if xax == NULL
-      .endif
-      sub xax, offset $Obj(EditorLine).LineLink
-
-      .ifBitClr [xbx].$Obj(EditorLine).dFlags, TLF_HIDDEN
-        inc sdVisLineScrollCount
-      .endif
-      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
-        inc dCurLineNumber
-        mov dCurCharIndex, 0
-      .else
-        dec dCurLineNumber
-        mov edx, [xax].$Obj(EditorLine).dLength
-        mov dCurCharIndex, edx
-      .endif
-    .endw
+;    .while TRUE
+;      mov xbx, xax
+;
+;      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
+;        mov xcx, pSrchEnd
+;        .if xbx != [xcx].LOCATION.pEditorLine
+;          ;  ¦----¦ABCDEFGHIJK¦
+;          ;  0    A           dLength
+;          mov edx, [xbx].$Obj(EditorLine).dLength
+;        .else
+;          ;  ¦----¦ABCDEF¦----¦
+;          ;  0    A     End   dLength
+;          mov edx, [xcx].LOCATION.dCharIndex            ;End
+;        .endif
+;        sub edx, dCurCharIndex
+;        mov xcx, [xbx].$Obj(EditorLine).pBuffer
+;        mov eax, dCurCharIndex
+;        lea xcx, [xcx + sizeof(CHR)*xax]
+;      .else
+;        mov xcx, pSrchEnd
+;        .if xbx != [xcx].LOCATION.pEditorLine
+;          ;  ¦ABCDEFGHIJK¦----¦
+;          ;  0           A    dLength
+;          mov edx, dCurCharIndex
+;          mov xcx, [xbx].$Obj(EditorLine).pBuffer
+;        .else
+;          ;  ¦----¦ABCDEF¦----¦
+;          ;  0   End     A    dLength
+;          mov edx, dCurCharIndex
+;          mov eax, [xcx].LOCATION.dCharIndex            ;End
+;          sub edx, eax
+;          mov xcx, [xbx].$Obj(EditorLine).pBuffer
+;          lea xcx, [xcx + sizeof(CHR)*xax]
+;        .endif
+;      .endif
+;
+;      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
+;        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
+;          invoke StrCCPos, xcx, edx, pSrchStr, dSrchLength
+;        .else
+;          invoke StrCCIPos, xcx, edx, pSrchStr, dSrchLength
+;        .endif
+;      .else
+;        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
+;          invoke StrRCCPos, xcx, edx, pSrchStr, dSrchLength
+;        .else
+;          invoke StrRCCIPos, xcx, edx, pSrchStr, dSrchLength
+;        .endif
+;      .endif
+;      .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_WHOLE_WORD
+;        .if xax != NULL
+;          ;Check the end
+;          mov ecx, dSrchLength
+;          movzx edx, CHR ptr [xax + xcx*sizeof(CHR)]
+;          GetCharType edx, ecx
+;          .if !(ecx & CHR_WORD)
+;            ;Check the begin
+;            .break .if xax == [xbx].$Obj(EditorLine).pBuffer  ;First char is at buffer begin
+;            movzx edx, CHR ptr [xax - sizeof(CHR)]
+;            GetCharType edx, ecx
+;            .break .if !(ecx & CHR_WORD)
+;          .endif
+;        .endif
+;      .else
+;        .break .if xax != NULL
+;      .endif
+;      mov xcx, pSrchEnd
+;      .break .if xbx == [xcx].LOCATION.pEditorLine
+;
+;      ;Move to next EditorLine
+;      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
+;        
+;        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd
+;        .break .if xax == NULL
+;      .else
+;        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkBack
+;        .break .if xax == NULL
+;      .endif
+;      sub xax, offset $Obj(EditorLine).LineLink
+;
+;      .ifBitClr [xbx].$Obj(EditorLine).dFlags, ELF_HIDDEN
+;        inc sdVisLineScrollCount
+;      .endif
+;      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
+;        inc dCurLineIndex
+;        mov dCurCharIndex, 0
+;      .else
+;        dec dCurLineIndex
+;        mov edx, [xax].$Obj(EditorLine).dLength
+;        mov dCurCharIndex, edx
+;      .endif
+;    .endw
 
     .if xax != NULL
       ;Select the match
-      mov [xsi].SelectionFst.LOCATION.pEditorLine, xbx
-      mov [xsi].SelectionLst.LOCATION.pEditorLine, xbx
-      mov edx, dCurLineNumber
-      mov [xsi].SelectionFst.LOCATION.dLineNumber, edx
-      mov [xsi].SelectionLst.LOCATION.dLineNumber, edx
+      mov edx, dCurLineIndex
+      mov [xsi].SelectionFst.LOCATION.dLineIndex, edx
+      mov [xsi].SelectionLst.LOCATION.dLineIndex, edx
       sub xax, [xbx].$Obj(EditorLine).pBuffer
       shr eax, 1
       mov [xsi].SelectionFst.LOCATION.dCharIndex, eax
@@ -341,15 +334,13 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
 
       ;Set the caret at the end of the selection
       mov xcx, [xsi].pFocusedView
-      m2m [xcx].$Obj(EditorView).CaretLocation.pEditorLine, [xsi].SelectionLst.pEditorLine, xdx
-      m2m [xcx].$Obj(EditorView).CaretLocation.dLineNumber, [xsi].SelectionLst.dLineNumber, edx
+      m2m [xcx].$Obj(EditorView).CaretLocation.dLineIndex, [xsi].SelectionLst.dLineIndex, edx
       m2m [xcx].$Obj(EditorView).CaretLocation.dCharIndex, [xsi].SelectionLst.dCharIndex, edx
       OCall xcx::EditorView.CaretSet
 
       ;Update start information for next search
       mov xax, pSrchBeg
-      m2m [xax].LOCATION.pEditorLine, [xsi].SelectionFst.pEditorLine, xdx
-      m2m [xax].LOCATION.dLineNumber, dCurLineNumber, edx
+      m2m [xax].LOCATION.dLineIndex, dCurLineIndex, edx
       .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         mov ecx, [xsi].SelectionLst.dCharIndex
       .else
@@ -366,27 +357,27 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.InformDeletionOf
-; Purpose:    Inform all Views that a specific lines was deleted.
-; Arguments:  Arg1: Line number of Arg1.
+; Purpose:    Inform all Views that a specific line was deleted.
+; Arguments:  Arg1: Line index.
 ; Return:     Nothing.
 
-Method Editor.InformDeletionOf, uses xbx xsi, dLineNumber:DWORD
+Method Editor.InformDeletionOf, uses xbx xsi, dLineIndex:DWORD
   SetObject xsi
   .ColForEach [xsi].EditorDisplays, ebx
-    OCall xax::EditorDisplay.InformDeletionOf, dLineNumber
+    OCall xax::EditorDisplay.InformDeletionOf, dLineIndex
   .ColNext
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.InformInsertionOf
-; Purpose:    Inform all Views that a specific lines was inserted.
-; Arguments:  Arg1: Line number of Arg1.
+; Purpose:    Inform all Views that a specific line was inserted.
+; Arguments:  Arg1: Line index.
 ; Return:     Nothing.
 
-Method Editor.InformInsertionOf, uses xbx xsi, dLineNumber:DWORD
+Method Editor.InformInsertionOf, uses xbx xsi, dLineIndex:DWORD
   SetObject xsi
   .ColForEach [xsi].EditorDisplays, ebx
-    OCall xax::EditorDisplay.InformInsertionOf, dLineNumber
+    OCall xax::EditorDisplay.InformInsertionOf, dLineIndex
   .ColNext
 MethodEnd
 
@@ -404,16 +395,13 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
   SetObject xsi
   ACall xsi.Init, pOwner                                ;hWnd is set in WndProc
   m2m [xsi].pResources, pResources, xax
+  OCall [xsi].Lines::Collection.Init, xsi, 100, 100, COL_MAX_CAPACITY
 
   mov xdi, pOwner                                       ;xdi -> ClientWnd
   .if pFileName == NULL
-    BitSet [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
+    BitSet [xsi].dFlags, EDF_NEW_FILE or EDF_DIRTY
     ;Insert an empty line
-    mov xbx, $New(EditorLine)
-    lea xcx, [xsi].LinesHead
-    lea xdx, [xbx].$Obj(EditorLine).LineLink
-    LDLL_InsertLast xcx, xdx, xax
-    OCall xbx::EditorLine.Init, xsi
+    OCall xsi.LineNew, 0, 0
     mov [xsi].dMaxLineCharCount, 0
     inc [xsi].dVisLineCount
 
@@ -468,9 +456,6 @@ Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dActionGroup:DWORD
   New EditorLine
   .if xax != NULL
     mov xdi, xax
-    lea xcx, [xsi].LinesHead
-    lea xdx, [xdi].$Obj(EditorLine).LineLink
-    LDLL_InsertLast xcx, xdx, xax
     OCall xdi::EditorLine.Init, xsi
     OCall xdi::EditorLine.BufferResize, dCharCapacity
     .if xax == NULL
@@ -481,15 +466,14 @@ Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dActionGroup:DWORD
       .if dActionGroup != 0
         MemAlloc sizeof(ACTION)
         .if xax != NULL
-          mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xdi
-          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-          mov [xbx].ACTION.dAction, AAT_INSERTLINE
-          mov [xbx].ACTION.dLineNumber, 0
+          mov [xax].ACTION.pEditorLine, xdi
+          m2m [xax].ACTION.dGroup, dActionGroup, ecx
+          mov [xax].ACTION.dAction, AAT_INSERTLINE
+          m2m [xax].ACTION.dLineIndex, [xsi].Lines.dCount, ecx
+          OCall [xsi].Actions::ActionCollection.Insert, xax
         .endif
-        OCall [xsi].Actions::ActionCollection.Insert, xbx
       .endif
-      mov xax, xdi
+      OCall [xsi].Lines::Collection.Insert, xdi
     .endif
   .endif
 MethodEnd
@@ -577,9 +561,13 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
   .endif
 
   ;Paste command
-  mov dActivate, TRUE
-  .if !$invoke(IsClipboardFormatAvailable, CF_TEXT)
-    dec dActivate
+  mov dActivate, FALSE
+  .if $invoke(IsClipboardFormatAvailable, CF_TEXT)
+    mov dActivate, TRUE
+  .else
+    .if $invoke(IsClipboardFormatAvailable, CF_UNICODETEXT)
+      mov dActivate, TRUE
+    .endif
   .endif
 
   lea xbx, [xdi].$Obj(Application).TbEdit
@@ -607,6 +595,19 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_REDO, MF_BYCOMMAND or MF_ENABLED
   .endif
+
+  lea xbx, [xdi].$Obj(Application).TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
+  mov xbx, hMenu
+  invoke EnableMenuItem, xbx, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
+
+  mov xbx, [xdi].$Obj(Application).hMenuContextEditor
+  invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
+
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -788,14 +789,14 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
 
         ;Check the BOM if present
         mov pDataBegin, xdi
-        ;Check if a BOM for UTF-8 is present
+        ;Check if an UTF-8 BOM is present
         .if dBytesRead >= 3 && WORD ptr [xdi] == 0BBEFh && BYTE ptr [xdi + sizeof(WORD)] == 0BFh
           mov dFileFormat, EFF_UTF8BOM
           add xdi, 3*sizeof(BYTE)
           mov pDataBegin, xdi
           sub dBytesRead, 3*sizeof(BYTE)
 
-        ;Check if a BOM for UTF-16 is present
+        ;Check if an UTF-16 BOM is present
         .elseif dBytesRead >= 2 && WORD ptr [xdi] == 0FEFFh
           mov dFileFormat, EFF_UTF16BOM
           add xdi, sizeof(WORD)
@@ -820,6 +821,15 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
             jmp @@Exit
           .endif
         .endif
+        
+        ;Average line length ~36 chars. Div by 32 gives us 10% reserve
+        mov edx, dFileSize
+        .if dFileFormat == EFF_UTF16BOM
+          shr edx, 6                                    ;/64
+        .else
+          shr edx, 5                                    ;/32
+        .endif
+        OCall [xsi].Lines::Collection.SetLimit, edx     ;edx = Expected number of EditorLines
 
         .while TRUE
           ;Start searching for line ends
@@ -901,7 +911,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .endif
           mov dFileLineLength, eax                      ;Pessimistic value since UTF-8 chars are larger
 
-          OCall xsi.LineNew, dFileLineLength, FALSE     ;Not including the ZTC.
+          OCall xsi.LineNew, dFileLineLength, 0         ;Not including the ZTC.
           .if xax == NULL
             DbgText "Failed to allocate a new EditorLine"
             .break
@@ -1172,12 +1182,12 @@ Method Editor.Save, uses xdi xsi
   local cText[1024]:CHR
 
   SetObject xsi
-  .ifBitSet [xsi].dFlags, EIF_DIRTY
+  .ifBitSet [xsi].dFlags, EDF_DIRTY
     ;MessageBox customization
     invoke SetWindowsHookEx, WH_CBT, offset CBTProc, hInstance, $32($invoke(GetCurrentThreadId))
     mov hCBTProc, xax
     lea xdi, cText
-    .ifBitSet [xsi].dFlags, EIF_NEW_FILE
+    .ifBitSet [xsi].dFlags, EDF_NEW_FILE
       WriteF xdi, "Save \´¦SU\´ changes to a file?", [xsi].pFullFileName
     .else
       WriteF xdi, "Save changes to\n\´¦SU\´?", [xsi].pFullFileName
@@ -1185,7 +1195,7 @@ Method Editor.Save, uses xdi xsi
   @@:
     invoke MessageBox, [xsi].hWnd, addr cText, $OfsCStr("Editor"), MB_YESNOCANCEL or MB_ICONQUESTION
     .if eax == IDYES
-      .ifBitSet [xsi].dFlags, EIF_NEW_FILE
+      .ifBitSet [xsi].dFlags, EDF_NEW_FILE
         OCall xsi.SaveAs
         cmp eax, FALSE
         jz @B
@@ -1241,7 +1251,7 @@ Method Editor.SaveAs, uses xbx xsi
         invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
       .else
         mov [xsi].dFileFormat, eax
-        BitSet [xsi].dFlags, EIF_DIRTY                  ;Force save operation
+        BitSet [xsi].dFlags, EDF_DIRTY                  ;Force save operation
         OCall xsi.SaveTo, pDisplayName
         .if eax != FALSE
           mov dResult, TRUE
@@ -1268,7 +1278,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
   local bBOM[4]:BYTE
 
   SetObject xsi
-  .ifBitSet [xsi].dFlags, EIF_DIRTY
+  .ifBitSet [xsi].dFlags, EDF_DIRTY
     mov dResult, FALSE
     lea xdi, dBytesWritten
     .if pFullFileName != NULL
@@ -1293,19 +1303,18 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
         MemAlloc eax
         .if xax != NULL
           mov pMemBuffer, xax
-          mov xbx, [xsi].LinesHead.pFirstMember
 
           ;Start looping
-          .while xbx != NULL
-            lea xbx, [xbx - offset $Obj(EditorLine).LineLink]
-            .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_PREV
-              BitSet [xbx].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_PREV
+          .ColForEach [xsi].Lines
+            mov xbx, xax
+            .ifBitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
+              BitSet [xbx].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
             .endif
-            .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_CURR
-              BitSet [xbx].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_CURR
+            .ifBitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
+              BitSet [xbx].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_CURR
             .endif
-            .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_NEXT
-              BitSet [xbx].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_NEXT
+            .ifBitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
+              BitSet [xbx].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
             .endif
 
             ;Write the line content
@@ -1379,9 +1388,8 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
               .endif
             .endif
 
-            mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Move to next EditorLine.LineLink
-          .endw
-          BitClr [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
+          .ColNext
+          BitClr [xsi].dFlags, EDF_NEW_FILE or EDF_DIRTY
           mov dResult, TRUE
           MemFree pMemBuffer
         .endif
@@ -1410,25 +1418,20 @@ Method Editor.SelectAll, uses xsi
 ;  DbgText "Editor.SelectAll"
   SetObject xsi
   xor eax, eax
-  .ifBitClr [xsi].dFlags, EIF_BLOCK_MODE
-    mov xcx, [xsi].LinesHead.pFirstMember
-    .if xcx != NULL
-      lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
-      mov [xsi].SelectionFst.pEditorLine, xdx
-      mov [xsi].SelectionFst.dCharIndex, 0
-      mov [xsi].SelectionFst.dLineNumber, 1
+  .ifBitClr [xsi].dFlags, EDF_BLOCK_MODE
+    mov [xsi].SelectionFst.dCharIndex, 0
+    mov [xsi].SelectionFst.dLineIndex, 0
 
-      mov xcx, [xsi].LinesHead.pLastMember
-      lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
-      mov [xsi].SelectionLst.pEditorLine, xdx
-      mov eax, [xdx].$Obj(EditorLine).dLength
-      mov [xsi].SelectionLst.dCharIndex, eax
-      mov [xsi].SelectionLst.dLineNumber, 2
+    mov edx, [xsi].Lines.dCount
+    dec edx
+    mov [xsi].SelectionLst.dLineIndex, edx
+    OCall [xsi].Lines::Collection.ItemAt, edx
+    mov edx, [xax].$Obj(EditorLine).dLength
+    mov [xsi].SelectionLst.dCharIndex, edx
 
-      OCall xsi.SelectionSet
-      invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
-      mov eax, TRUE
-    .endif
+    OCall xsi.SelectionSet
+    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+    mov eax, TRUE
   .endif
 MethodEnd
 
@@ -1446,17 +1449,17 @@ Method Editor.SelectionComment, uses xbx xdi xsi
   mov xax, [xsi].SelectionRange.pBegSelInfo
   mov xcx, [xsi].SelectionRange.pEndSelInfo
   .if xax != NULL && xcx != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xdi, [xcx].LOCATION.pEditorLine
+;    mov xbx, [xax].LOCATION.pEditorLine
+;    mov xdi, [xcx].LOCATION.pEditorLine
 
     ;Do the job
     mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
-    .while TRUE
-      OCall xbx::EditorLine.CharInsert, 0, 1, $OfsCStr(";"), dActionGroup
-      .break .if xbx == xdi
-      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
-      sub xbx, offset $Obj(EditorLine).LineLink
-    .endw
+;    .while TRUE
+;      OCall xbx::EditorLine.CharInsert, 0, 1, $OfsCStr(";"), dActionGroup
+;      .break .if xbx == xdi
+;      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+;      sub xbx, offset $Obj(EditorLine).LineLink
+;    .endw
     invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
     mov eax, TRUE
   .else
@@ -1471,58 +1474,56 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Editor.SelectionDelete, uses xbx xdi xsi, dActionGroup:DWORD
-  local dDoMerge:DWORD, pNextMember:POINTER, dLineNumber:DWORD
+  local dDoMerge:DWORD, dCurrLineIndex:DWORD, dLastLineIndex:DWORD
 
   SetObject xsi
   mov xax, [xsi].SelectionRange.pBegSelInfo
   mov xcx, [xsi].SelectionRange.pEndSelInfo
   .if xax != NULL && xcx != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xdi, [xcx].LOCATION.pEditorLine
-    mov edx, [xax].LOCATION.dLineNumber
-    mov dLineNumber, edx
+    mov ebx, [xax].LOCATION.dLineIndex
+    mov edi, [xcx].LOCATION.dLineIndex
 
     ;Check if the first and last lines need to be merged after deletion
     mov dDoMerge, FALSE
-    .ifBitClr [xcx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
-      .if xbx != xdi
-        .if [xax].LOCATION.dCharIndex > 0
-          .ifBitClr [xdi].$Obj(EditorLine).dFlags, TLF_EOL_MARKED
+    .ifBitClr [xcx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
+      .if ebx != edi
+        .if [xax].LOCATION.dCharIndex > 0               ;Not the first char
+          OCall [xsi].Lines::Collection.ItemAt, edi     ;Get last EditorLine
+          .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED ;Not all selected
             mov dDoMerge, TRUE
+            
           .endif
         .endif
       .endif
     .endif
 
-    ;Do deleting
-    .while xbx != NULL
+    ;Do the delete job
+    mov dCurrLineIndex, ebx
+    .while dCurrLineIndex <= edi
+      OCall [xsi].Lines::Collection.ItemAt, dCurrLineIndex
+      mov xbx, xax
       mov edx, [xbx].$Obj(EditorLine).Selection.dBegIndex
       mov eax, [xbx].$Obj(EditorLine).Selection.dEndIndex
       sub eax, edx                                      ;Calc how many chars to delete
-      .ifBitClr [xsi].dFlags, EIF_BLOCK_MODE
-        .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_EOL_MARKED
+      .ifBitClr [xsi].dFlags, EDF_BLOCK_MODE
+        .ifBitSet [xbx].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
           .if eax == [xbx].$Obj(EditorLine).dLength
             ;Delete the line completely
-            m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
-            OCall xbx::EditorLine.LineDelete, dLineNumber, dActionGroup
-            jmp @F                                      ;Don't inc LineNumber
+            OCall xbx::EditorLine.LineDelete, dCurrLineIndex, dActionGroup
+            .Continue                                    ;Don't inc dCurrLineIndex
           .endif
         .endif
       .endif
       OCall xbx::EditorLine.CharDelete, edx, eax, dActionGroup
       OCall xbx::EditorLine.SelectionReset
-      m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
-      inc dLineNumber
-  @@:
-      .break .if xbx == xdi
-      mov xbx, pNextMember
-      sub xbx, offset $Obj(EditorLine).LineLink
+      inc dCurrLineIndex
     .endw
 
     ;Merge first and last lines if necessary
     .if dDoMerge != FALSE
       mov xbx, [xsi].SelectionRange.pBegSelInfo
-      OCall [xbx].LOCATION.pEditorLine::EditorLine.LineJoinNext, [xbx].LOCATION.dLineNumber, dActionGroup
+      OCall [xsi].Lines::Collection.ItemAt, [xbx].LOCATION.dLineIndex
+      OCall xax::EditorLine.LineJoinNext, [xbx].LOCATION.dLineIndex, dActionGroup
     .endif
 
     ;Cleanup
@@ -1547,8 +1548,8 @@ Method Editor.SelectionIndent, uses xbx xdi xsi
   mov xax, [xsi].SelectionRange.pBegSelInfo
   mov xcx, [xsi].SelectionRange.pEndSelInfo
   .if xax != NULL && xcx != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xdi, [xcx].LOCATION.pEditorLine
+;    mov xbx, [xax].LOCATION.pEditorLine
+;    mov xdi, [xcx].LOCATION.pEditorLine
 
     ;Do the job
     mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
@@ -1557,12 +1558,12 @@ Method Editor.SelectionIndent, uses xbx xdi xsi
     invoke StrRepChr, ' ', dTabWidth
     .if xax != NULL
       mov pTabBuffer, xax
-      .while TRUE
-        OCall xbx::EditorLine.CharInsert, 0, dTabWidth, pTabBuffer, dActionGroup
-        .break .if xbx == xdi
-        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
-        sub xbx, offset $Obj(EditorLine).LineLink
-      .endw
+;      .while TRUE
+;        OCall xbx::EditorLine.CharInsert, 0, dTabWidth, pTabBuffer, dActionGroup
+;        .break .if xbx == xdi
+;        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+;        sub xbx, offset $Obj(EditorLine).LineLink
+;      .endw
       invoke StrDispose, pTabBuffer
       invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
       mov eax, TRUE
@@ -1586,8 +1587,8 @@ Method Editor.SelectionOutdent, uses xbx xdi xsi
   mov xax, [xsi].SelectionRange.pBegSelInfo
   mov xcx, [xsi].SelectionRange.pEndSelInfo
   .if xax != NULL && xcx != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xdi, [xcx].LOCATION.pEditorLine
+;    mov xbx, [xax].LOCATION.pEditorLine
+;    mov xdi, [xcx].LOCATION.pEditorLine
 
     ;Do the job
     mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
@@ -1596,15 +1597,15 @@ Method Editor.SelectionOutdent, uses xbx xdi xsi
     invoke StrRepChr, ' ', dTabWidth
     .if xax != NULL
       mov pTabBuffer, xax
-      .while TRUE
-        invoke StrCComp, [xbx].$Obj(EditorLine).pBuffer, pTabBuffer, dTabWidth
-        .if eax == 0 
-          OCall xbx::EditorLine.CharDelete, 0, dTabWidth, dActionGroup
-        .endif
-        .break .if xbx == xdi
-        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
-        sub xbx, offset $Obj(EditorLine).LineLink
-      .endw
+;      .while TRUE
+;        invoke StrCComp, [xbx].$Obj(EditorLine).pBuffer, pTabBuffer, dTabWidth
+;        .if eax == 0 
+;          OCall xbx::EditorLine.CharDelete, 0, dTabWidth, dActionGroup
+;        .endif
+;        .break .if xbx == xdi
+;        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+;        sub xbx, offset $Obj(EditorLine).LineLink
+;      .endw
       invoke StrDispose, pTabBuffer
       invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
       mov eax, TRUE
@@ -1628,10 +1629,9 @@ Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING, dActionGr
   mov xax, [xsi].SelectionRange.pBegSelInfo
   .if xax != NULL
     mov edi, [xax].LOCATION.dCharIndex
-    mov xbx, [xax].LOCATION.pEditorLine
+    mov xbx, $OCall([xsi].Lines::Collection.ItemAt, [xax].LOCATION.dLineIndex) 
     
     OCall xsi.SelectionDelete, dActionGroup
-
     invoke StrLength, pReplString
     OCall xbx::EditorLine.CharInsert, edi, eax, pReplString, dActionGroup
 
@@ -1652,15 +1652,13 @@ Method Editor.SelectionResetAll, uses xbx xsi
 ;  DbgText "Editor.SelectionReset"
   SetObject xsi
   OCall xsi.SelectionResetLines
-  mov ebx, eax
+  mov ebx, eax                                          ;Save return value
   mov [xsi].SelectionRange.pBegSelInfo, NULL
   mov [xsi].SelectionRange.pEndSelInfo, NULL
-  mov [xsi].SelectionFst.pEditorLine, NULL
   mov [xsi].SelectionFst.dCharIndex, 0
-  mov [xsi].SelectionFst.dLineNumber, 0
-  mov [xsi].SelectionLst.pEditorLine, NULL
+  mov [xsi].SelectionFst.dLineIndex, 0
   mov [xsi].SelectionLst.dCharIndex, 0
-  mov [xsi].SelectionLst.dLineNumber, 0
+  mov [xsi].SelectionLst.dLineIndex, 0
   mov [xsi].dSelectionVisLineCnt, 0
 
   mov [xsi].pHilitedWord, NULL
@@ -1682,18 +1680,15 @@ Method Editor.SelectionResetLines, uses xbx xdi xsi
   SetObject xsi
   mov dNeedRedrawing, 0
   mov xax, [xsi].SelectionRange.pBegSelInfo
-  .if xax != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xax, [xsi].SelectionRange.pEndSelInfo
-    mov xdi, [xax].LOCATION.pEditorLine
-
-    .while TRUE
-      OCall xbx::EditorLine.SelectionReset
+  mov xcx, [xsi].SelectionRange.pEndSelInfo
+  .if xax != NULL && xcx != NULL
+    mov ebx, [xax].LOCATION.dLineIndex
+    mov edi, [xcx].LOCATION.dLineIndex
+    .while ebx <= edi
+      OCall [xsi].Lines::Collection.ItemAt, ebx
+      OCall xax::EditorLine.SelectionReset
       add dNeedRedrawing, eax
-      .break .if xbx == xdi
-      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd    ;Goto next line
-      .break .if xbx == NULL                            ;Just in case
-      sub xbx, offset $Obj(EditorLine).LineLink
+      inc ebx
     .endw
   .endif
 
@@ -1710,161 +1705,184 @@ MethodEnd
 ; Note:       On exit, dSelectionVisLineCnt contains the number of selected visible lines.
 
 Method Editor.SelectionSet, uses xdi xbx xsi
+  local dLastLineIndex:DWORD, dBegCharIndex:DWORD, dEndCharIndex:DWORD
+
   SetObject xsi
 ;  DbgText "Editor.SelectionSet"
 
   mov [xsi].dSelectionVisLineCnt, 0
-  .if [xsi].SelectionFst.pEditorLine != NULL && [xsi].SelectionLst.pEditorLine != NULL
-    lea xcx, [xsi].SelectionFst
-    lea xdx, [xsi].SelectionLst
+  lea xcx, [xsi].SelectionFst
+  lea xdx, [xsi].SelectionLst
 
-    ;Sanity check
-    .if SDWORD ptr [xcx].LOCATION.dCharIndex < 0
-      mov [xcx].LOCATION.dCharIndex, 0
+  ;Sanity check
+  .if SDWORD ptr [xcx].LOCATION.dCharIndex < 0
+    mov [xcx].LOCATION.dCharIndex, 0
+  .endif
+  .if SDWORD ptr [xdx].LOCATION.dCharIndex < 0
+    mov [xdx].LOCATION.dCharIndex, 0
+  .endif
+
+  ;Arrange the selection by topology (Begin/End)
+  mov eax, [xcx].LOCATION.dLineIndex
+  .if eax == [xdx].LOCATION.dLineIndex                
+    ;Same EditorLine
+    mov eax, [xcx].LOCATION.dCharIndex
+    .if eax == [xdx].LOCATION.dCharIndex              
+      mov [xsi].SelectionRange.pBegSelInfo, NULL      ;Reset selection begin
+      mov [xsi].SelectionRange.pEndSelInfo, NULL      ;Reset selection end
+      jmp @@Exit                                      ;Nothing selected => Exit
     .endif
-    .if SDWORD ptr [xdx].LOCATION.dCharIndex < 0
-      mov [xdx].LOCATION.dCharIndex, 0
+    .if eax > [xdx].LOCATION.dCharIndex
+      xchg xcx, xdx                                   ;Switch POINTERs
     .endif
+  .elseif eax > [xdx].LOCATION.dLineIndex
+    xchg xcx, xdx                                     ;Switch POINTERs
+  .endif
+  mov [xsi].SelectionRange.pBegSelInfo, xcx           ;Set selection begin
+  mov [xsi].SelectionRange.pEndSelInfo, xdx           ;Set selection end
 
-    ;Arrange the selection by topology (Begin/End)
-    mov eax, [xcx].LOCATION.dLineNumber
-    .if eax == [xdx].LOCATION.dLineNumber
-      mov eax, [xcx].LOCATION.dCharIndex
-      .if eax == [xdx].LOCATION.dCharIndex
-        mov [xsi].SelectionRange.pBegSelInfo, NULL      ;Reset selection begin
-        mov [xsi].SelectionRange.pEndSelInfo, NULL      ;Reset selection end
-        jmp @@Exit                                      ;Nothing selected => Exit
-      .endif
-      .if eax > [xdx].LOCATION.dCharIndex
-        xchg xcx, xdx                                   ;Switch POINTERs
-      .endif
-    .elseif eax > [xdx].LOCATION.dLineNumber
-      xchg xcx, xdx                                     ;Switch POINTERs
+  ;Set selection indices on all target EditorLines
+  .ifBitSet [xsi].dFlags, EDF_BLOCK_MODE
+    ;Block mode selection
+    mov xax, [xsi].SelectionRange.pEndSelInfo
+    mrm dLastLineIndex, [xax].LOCATION.dLineIndex, edx
+
+    mov xax, [xsi].SelectionRange.pBegSelInfo
+    mov ebx, [xax].LOCATION.dLineIndex
+
+    mov xdx, [xsi].SelectionRange.pBegSelInfo
+    mov ecx, [xdx].LOCATION.dCharIndex
+    mov xdx, [xsi].SelectionRange.pEndSelInfo
+    mov edx, [xdx].LOCATION.dCharIndex
+    ;Make sure that ecx < edx
+    .if ecx > edx
+      xchg ecx, edx
     .endif
-    mov [xsi].SelectionRange.pBegSelInfo, xcx           ;Set selection begin
-    mov [xsi].SelectionRange.pEndSelInfo, xdx           ;Set selection end
+    mov dBegCharIndex, ecx
+    mov dEndCharIndex, ecx
 
-    ;Set selection indices on all affected EditorLines
-    .ifBitSet [xsi].dFlags, EIF_BLOCK_MODE
-      ;Block mode selection
-      mov xax, [xcx].LOCATION.pEditorLine
-      mov xdi, [xdx].LOCATION.pEditorLine
-      mov ecx, [xcx].LOCATION.dCharIndex
-      mov edx, [xdx].LOCATION.dCharIndex
+    ;Loop through target lines
+    .while TRUE
+      OCall [xsi].Lines::Collection.ItemAt, ebx
+      .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
+        inc [xsi].dSelectionVisLineCnt
+      .endif
+      
+      ;Set Selection
+      m2m [xax].$Obj(EditorLine).Selection.dBegIndex, dBegCharIndex, ecx
+      m2m [xax].$Obj(EditorLine).Selection.dEndIndex, dEndCharIndex, ecx
+      
+      .break .if ebx == dLastLineIndex                ;Last selected line reached
+      inc ebx
+    .endw
 
-      ;Make sure that ecx < edx
-      .if ecx > edx
-        xchg ecx, edx
+  .else
+    ;Insert/Overwrite mode selection
+    mov xcx, [xsi].SelectionRange.pBegSelInfo
+    mov xdx, [xsi].SelectionRange.pEndSelInfo
+    mov eax, [xcx].LOCATION.dLineIndex
+    
+    .if eax == [xdx].LOCATION.dLineIndex
+      ;Same EditorLine
+      OCall [xsi].Lines::Collection.ItemAt, eax
+
+      .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
+        inc [xsi].dSelectionVisLineCnt
       .endif
 
-      .while TRUE
-        .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
-          inc [xsi].dSelectionVisLineCnt
-        .endif
-        mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx
-        mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
-        .break .if xax == xdi                           ;Last selected line reached
-        mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
-        .break .if xax == NULL
-        sub xax, offset $Obj(EditorLine).LineLink
-      .endw
-    .else
-      ;Insert/Overwrite mode selection
-      mov xax, [xcx].LOCATION.pEditorLine
-      .if xax == [xdx].LOCATION.pEditorLine             ;One single line
-        .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
-          inc [xsi].dSelectionVisLineCnt
-        .endif
-        ;Make sure that ecx < edx, but only on the same EditorLine!
-        mov ecx, [xcx].LOCATION.dCharIndex
-        mov edx, [xdx].LOCATION.dCharIndex
-        mov edi, [xax].$Obj(EditorLine).dLength
-        cmp edx, edi
-        cmova edx, edi
-        .if ecx > edx
-          xchg ecx, edx
-        .endif
-        mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx
-        mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
+      mov xdx, [xsi].SelectionRange.pBegSelInfo       ;Set selection begin
+      mov ecx, [xdx].LOCATION.dCharIndex
+      mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx
+      mov xdx, [xsi].SelectionRange.pEndSelInfo       ;Set selection end
+      mov ecx, [xdx].LOCATION.dCharIndex
+      mov [xax].$Obj(EditorLine).Selection.dEndIndex, ecx
 
-        ;Reset pHilitedWord & dHilitedLen
-        mov [xsi].pHilitedWord, NULL
-        mov [xsi].dHilitedLen, 0
-        mov xbx, [xax].$Obj(EditorLine).pBuffer
-        ;Check before the selection beginning for !CHR_WORD
-        mov edx, [xax].$Obj(EditorLine).Selection.dBegIndex
-        cmp edx, 0
-        lea xdi, [xbx + sizeof(CHR)*xdx]
+      ;Reset pHilitedWord & dHilitedLen
+      mov [xsi].pHilitedWord, NULL
+      mov [xsi].dHilitedLen, 0
+      mov xbx, [xax].$Obj(EditorLine).pBuffer
+      ;Check before the selection beginning for !CHR_WORD
+      mov edx, [xax].$Obj(EditorLine).Selection.dBegIndex
+      cmp edx, 0
+      lea xdi, [xbx + sizeof(CHR)*xdx]
+      jz @F
+      movzx ecx, CHR ptr [xdi - sizeof(CHR)]
+      GetCharType ecx, edx
+      .if !(edx & CHR_WORD)
+    @@:
+        ;Check after the selection ending for !CHR_WORD
+        mov edx, [xax].$Obj(EditorLine).Selection.dEndIndex
+        cmp edx, [xax].$Obj(EditorLine).dLength
+        lea xbx, [xbx + sizeof(CHR)*xdx]
         jz @F
-        movzx ecx, CHR ptr [xdi - sizeof(CHR)]
+        movzx ecx, CHR ptr [xbx]
         GetCharType ecx, edx
         .if !(edx & CHR_WORD)
-      @@:
-          ;Check after the selection ending for !CHR_WORD
-          mov edx, [xax].$Obj(EditorLine).Selection.dEndIndex
-          cmp edx, [xax].$Obj(EditorLine).dLength
-          lea xbx, [xbx + sizeof(CHR)*xdx]
-          jz @F
-          movzx ecx, CHR ptr [xbx]
-          GetCharType ecx, edx
-          .if !(edx & CHR_WORD)
-      @@:
-            ;Set pHilitedWord & dHilitedLen
-            mov [xsi].pHilitedWord, xdi
-            sub xbx, xdi
-          if TARGET_STR_TYPE eq STR_TYPE_WIDE
-            shr ebx, 1
-          endif
-            mov [xsi].dHilitedLen, ebx
+    @@:
+          ;Set pHilitedWord & dHilitedLen
+          mov [xsi].pHilitedWord, xdi
+          sub xbx, xdi
+        if TARGET_STR_TYPE eq STR_TYPE_WIDE
+          shr ebx, 1
+        endif
+          mov [xsi].dHilitedLen, ebx
 
-            ;Check the selection inside for all CHR_WORDs
-            test ebx, ebx
-            .while !ZERO?
-              movzx ecx, CHR ptr [xdi]
-              GetCharType ecx, edx
-              .break .if !(edx & CHR_WORD)
-              add xdi, sizeof CHR
-              dec ebx
-            .endw
+          ;Check the selection inside for all CHR_WORDs
+          test ebx, ebx
+          .while !ZERO?
+            movzx ecx, CHR ptr [xdi]
+            GetCharType ecx, edx
+            .break .if !(edx & CHR_WORD)
+            add xdi, sizeof CHR
+            dec ebx
+          .endw
 
-            ;Reset pHilitedWord & dHilitedLen
-            .if ebx != 0
-              mov [xsi].pHilitedWord, NULL
-              mov [xsi].dHilitedLen, 0
-            .endif
+          ;Reset pHilitedWord & dHilitedLen
+          .if ebx != 0
+            mov [xsi].pHilitedWord, NULL
+            mov [xsi].dHilitedLen, 0
           .endif
         .endif
-      .else
-        ;Multiple lines. Set the first line
-        mov xax, [xcx].LOCATION.pEditorLine
-        mov xdi, [xdx].LOCATION.pEditorLine
-        mov ecx, [xcx].LOCATION.dCharIndex
-        mov edx, [xdx].LOCATION.dCharIndex
-        .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
+      .endif
+    .else
+      ;Multiple lines. 
+      mov ebx, eax                           ;Set start index
+      mov edx, [xdx].LOCATION.dLineIndex
+      mov dLastLineIndex, edx
+
+      ;Set the first target Line
+      OCall [xsi].Lines::Collection.ItemAt, eax
+      .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
+        inc [xsi].dSelectionVisLineCnt
+      .endif
+
+      mov xcx, [xsi].SelectionRange.pBegSelInfo
+      mov edx, [xcx].LOCATION.dCharIndex
+      mov [xax].$Obj(EditorLine).Selection.dBegIndex, edx   ;Set begin index of 1st target line
+      mov edx, [xax].$Obj(EditorLine).dLength
+      mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx   ;Set end index of 1st target line
+      BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
+
+      ;Loop through the following target lines
+      inc ebx
+      .while ebx < dLastLineIndex
+        OCall [xsi].Lines::Collection.ItemAt, ebx
+        .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
           inc [xsi].dSelectionVisLineCnt
         .endif
-
-        ;Loop through lines
-        mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx   ;Set begin index of 1st line
-        .while xax != xdi
-          mov xcx, xax
-          ;Move to the next line
-          mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
-          .break .if xax == NULL                        ;Just in case
-          sub xax, offset $Obj(EditorLine).LineLink
-          .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
-            inc [xsi].dSelectionVisLineCnt
-          .endif
-          BitSet [xcx].$Obj(EditorLine).dFlags, TLF_EOL_MARKED
-          mov [xax].$Obj(EditorLine).Selection.dBegIndex, 0   ;Set begin index to zero
-          m2m [xcx].$Obj(EditorLine).Selection.dEndIndex, [xcx].$Obj(EditorLine).dLength, ebx
-        .endw
-        ;Last Line
-        mov edi, [xax].$Obj(EditorLine).dLength         ;Set end index of last line
-        cmp edx, edi
-        cmova edx, edi
-        mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
-      .endif
+        BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
+        mov [xax].$Obj(EditorLine).Selection.dBegIndex, 0   ;Set begin index to zero
+        m2m [xax].$Obj(EditorLine).Selection.dEndIndex, [xax].$Obj(EditorLine).dLength, edx
+        inc ebx
+      .endw
+      ;Set the last target Line
+      OCall [xsi].Lines::Collection.ItemAt, dLastLineIndex
+      mov edi, [xax].$Obj(EditorLine).dLength         ;Set end index of last line
+      mov xcx, [xsi].SelectionRange.pEndSelInfo
+      mov edx, [xcx].LOCATION.dCharIndex
+      cmp edx, edi
+      cmova edx, edi
+      mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
     .endif
   .endif
 
@@ -1886,20 +1904,20 @@ Method Editor.SelectionUncomment, uses xbx xdi xsi
   mov xax, [xsi].SelectionRange.pBegSelInfo
   mov xcx, [xsi].SelectionRange.pEndSelInfo
   .if xax != NULL && xcx != NULL
-    mov xbx, [xax].LOCATION.pEditorLine
-    mov xdi, [xcx].LOCATION.pEditorLine
+;    mov xbx, [xax].LOCATION.pEditorLine
+;    mov xdi, [xcx].LOCATION.pEditorLine
 
     ;Do the job
     mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
-    .while TRUE
-      mov xax, [xbx].$Obj(EditorLine).pBuffer
-      .if [xbx].$Obj(EditorLine).dLength != 0 && CHR ptr [xax] == ";"  
-        OCall xbx::EditorLine.CharDelete, 0, 1, dActionGroup
-      .endif
-      .break .if xbx == xdi
-      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
-      sub xbx, offset $Obj(EditorLine).LineLink
-    .endw
+;    .while TRUE
+;      mov xax, [xbx].$Obj(EditorLine).pBuffer
+;      .if [xbx].$Obj(EditorLine).dLength != 0 && CHR ptr [xax] == ";"  
+;        OCall xbx::EditorLine.CharDelete, 0, 1, dActionGroup
+;      .endif
+;      .break .if xbx == xdi
+;      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+;      sub xbx, offset $Obj(EditorLine).LineLink
+;    .endw
     invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
     mov eax, TRUE
   .else
@@ -1917,9 +1935,9 @@ MethodEnd
 Method Editor.SetDirty, uses xsi, dAction:DWORD
   SetObject xsi
   .if dAction == FALSE
-    BitClr [xsi].dFlags, EIF_DIRTY
+    BitClr [xsi].dFlags, EDF_DIRTY
   .else
-    BitSet [xsi].dFlags, EIF_DIRTY
+    BitSet [xsi].dFlags, EDF_DIRTY
   .endif
   mov xcx, [xsi].pOwner
   OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
@@ -1975,7 +1993,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Editor.Undo, uses xbx xsi
+Method Editor.Undo, uses xbx xdi xsi
   SetObject xsi
   OCall [xsi].Actions::ActionCollection.GetUndoAction, 0
   .if xax != NULL
@@ -1986,7 +2004,12 @@ Method Editor.Undo, uses xbx xsi
       .break .if xax == NULL
     .endw
     OCall xsi.ManageEditCmds
-    invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+
+    .ColForEach [xsi].EditorDisplays, edi
+      mov xbx, xax
+      OCall [xbx].$Obj(EditorDisplay).View::EditorView.SetGuiLayout
+      invoke RedrawWindow, [xbx].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+    .ColNext
   .endif
 MethodEnd
 

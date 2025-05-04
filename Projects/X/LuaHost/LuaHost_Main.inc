@@ -111,7 +111,7 @@ LHD_RED_OUTPUT  equ   BIT05
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableControls
-; Purpose:    Load a file into the memory block.
+; Purpose:    Enable the UI Buttons specified in the mask and disable the rest
 ; Arguments:  Arg1: Enable flag [LHD_xxx...].
 ; Return:     xax -> MemBlock or NULL if failed.
 
@@ -171,7 +171,7 @@ Method Application.FileLoad, uses xbx xsi, pFileName:PSTRING
 
           invoke SendDlgItemMessageA, [xsi].hWnd, IDC_RED_SCRIPT, WM_SETTEXT, 0, pMemBlock
           MemFree pMemBlock
-          OCall xsi.EnableControls, LHD_BTN_LOAD or LHD_BTN_SAVE or LHD_BTN_RUN or\
+          OCall xsi.EnableControls, LHD_BTN_LOAD or LHD_BTN_SAVE or LHD_BTN_RUN or \
                                     LHD_RED_SCRIPT or LHD_RED_OUTPUT
           invoke StrCCopy, addr cBuffer, offset szCaption, lengthof cBuffer
           invoke StrCECat, addr cBuffer, pFileName, lengthof cBuffer
@@ -478,9 +478,7 @@ Method Application.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].SplitterHor::Splitter.Init, xsi, [xsi].hWnd, SPT_FLAG_HORIZONTAL, 250, 50, 50
 
   OCall [xsi].Host::LuaHost.Init, xsi
-  .if eax != FALSE
-    OCall xsi.EnableControls, LHD_BTN_LOAD
-  .endif
+  OCall xsi.EnableControls, LHD_BTN_LOAD
 
   .if ([xsi].StartPos.x != -1) || ([xsi].StartPos.y != -1)
     ;Check if the dialog will be fully visible
@@ -511,7 +509,6 @@ Method Application.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   invoke SendDlgItemMessageA, [xsi].hWnd, IDC_RED_SCRIPT, EM_REPLACESEL, TRUE,
           $OfsCStrA(CRLF, CRLF, CRLF, TAB, "Drop a lua file here or press the 'Load' button on the right")
-
 
   invoke SendMessage, [xsi].hWnd, WM_SETTEXT, 0, offset szCaption
   invoke SetFocus, $invoke(GetDlgItem, [xsi].hWnd, IDC_BTN_LOAD)

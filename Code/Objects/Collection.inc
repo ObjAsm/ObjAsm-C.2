@@ -9,6 +9,7 @@
 ;               - Mem-Leak in Load method corrected.
 ;             Version C.1.2, October 2023
 ;               - .ColForEach, .ColForEachRev and .ColNext macros added.
+;               - Removed "private" from SetLimit.
 ; ==================================================================================================
 
 
@@ -58,9 +59,8 @@ Object Collection, CollectionID, Streamable
   DynamicMethod     PutItem,        $ObjPtr(Stream), POINTER ;-> Stream, -> Item
   RedefineMethod    Serialize
   DynamicMethod     SerializeItem,  POINTER
+  VirtualMethod     SetLimit,       DWORD               ;Set new limit
   RedefineMethod    Store,          $ObjPtr(Stream)     ;-> Stream
-  Private
-  VirtualMethod     SetLimit,       DWORD               ;Set new limit (private method)
 
   DefineVariable    pItems,         POINTER,      NULL
   DefineVariable    dCount,         DWORD,        0     ;Current used capacity

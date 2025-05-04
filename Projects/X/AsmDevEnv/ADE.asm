@@ -35,6 +35,7 @@
 ;   - Editor templates: MASM, Resource & Plain Text. Each template has its own settings in the ini file 
 ;   - Information in the status bar what the application thinks it is editing 
 ;   - Tooltips for the toolbars 
+;   - GetThemeBitmap, BeginBufferedAnimation
 ; 
 ; ==================================================================================================
 

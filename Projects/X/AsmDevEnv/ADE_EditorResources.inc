@@ -21,9 +21,9 @@ ECT_RES                       equ   2
 ;Editor File Format
 EFF_UNKNOWN                   equ   0
 EFF_ANSI                      equ   1
-EFF_UTF8                      equ   3         ;Without BOM
-EFF_UTF8BOM                   equ   4         ;With BOM
-EFF_UTF16BOM                  equ   5         ;With BOM
+EFF_UTF8                      equ   2         ;Without BOM
+EFF_UTF8BOM                   equ   3         ;With BOM
+EFF_UTF16BOM                  equ   4         ;With BOM
 
 ;Editor Line Termination
 ELT_CRLF                      equ   0         ;Windows

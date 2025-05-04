@@ -33,7 +33,7 @@ Method EditorDisplay.DrawStatusPanel, uses xbx xdi xsi
   mov DrawRect.bottom, ecx
 
   invoke FillRect, [xsi].hPanelDC, addr DrawRect, [xdi].$Obj(EditorResources).StatusPanelText.Background.hBrush
-  .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_DIRTY
+  .ifBitSet [xbx].$Obj(Editor).dFlags, EDF_DIRTY
     mov xdx, [xdi].$Obj(EditorResources).hBmpStatusIndYellow
   .else
     mov xdx, [xdi].$Obj(EditorResources).hBmpStatusIndGreen
@@ -43,9 +43,9 @@ Method EditorDisplay.DrawStatusPanel, uses xbx xdi xsi
   invoke SetTextColor, [xsi].hPanelDC, [xdi].$Obj(EditorResources).StatusPanelText.ForeColor
   mov hPrevFont, $invoke(SelectObject, [xsi].hPanelDC, [xdi].$Obj(EditorResources).StatusPanelText.hFont)
   mov xax, [xsi].pOwner
-  .ifBitSet [xax].$Obj(Editor).dFlags, EIF_BLOCK_MODE
+  .ifBitSet [xax].$Obj(Editor).dFlags, EDF_BLOCK_MODE
     lea xdx, cBlockModeLabel
-  .elseIfBitSet [xax].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
+  .elseIfBitSet [xax].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
     lea xdx, cOverwriteModeLabel
   .else
     lea xdx, cInsertModeLabel
@@ -77,28 +77,28 @@ MethodEnd
 ; Return:     Nothing.
 
 Method EditorDisplay.InformDeletionOf, uses xsi, dLineNumber:DWORD
-  SetObject xsi
-  mov ecx, dLineNumber
-  .if ecx < [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be deleted
-    dec [xsi].View.dFirstVisLineCount
-    dec [xsi].View.FirstVisChar.dLineNumber
-  .elseif ecx == [xsi].View.FirstVisChar.dLineNumber              ;The 1st vis line is to be deleted
-    mov xax, [xsi].View.FirstVisChar.pEditorLine
-    GotoNextVisEditorLine xax,,, edx
-    .if xax != NULL
-      sub [xsi].View.dFirstVisLineCount, edx
-    .else
-      mov xax, [xsi].View.FirstVisChar.pEditorLine
-      GotoPrevVisEditorLine xax,,, edx
-      .if xax != NULL
-        sub [xsi].View.dFirstVisLineCount, edx
-      .else
-        mov [xsi].View.FirstVisChar.dLineNumber, 0
-        mov [xsi].View.dFirstVisLineCount, 0
-      .endif
-    .endif
-    mov [xsi].View.FirstVisChar.pEditorLine, xax
-  .endif
+;  SetObject xsi
+;  mov ecx, dLineNumber
+;  .if ecx < [xsi].View.FirstVisChar.dLineIndex                   ;A line before the 1st vis line is to be deleted
+;    dec [xsi].View.dFirstVisLineCount
+;    dec [xsi].View.FirstVisChar.dLineIndex
+;  .elseif ecx == [xsi].View.FirstVisChar.dLineIndex              ;The 1st vis line is to be deleted
+;    mov xax, [xsi].View.FirstVisChar.pEditorLine
+;    GotoNextVisEditorLine xax,,, edx
+;    .if xax != NULL
+;      sub [xsi].View.dFirstVisLineCount, edx
+;    .else
+;      mov xax, [xsi].View.FirstVisChar.pEditorLine
+;      GotoPrevVisEditorLine xax,,, edx
+;      .if xax != NULL
+;        sub [xsi].View.dFirstVisLineCount, edx
+;      .else
+;        mov [xsi].View.FirstVisChar.dLineIndex, 0
+;        mov [xsi].View.dFirstVisLineCount, 0
+;      .endif
+;    .endif
+;    mov [xsi].View.FirstVisChar.pEditorLine, xax
+;  .endif
 ;  DbgEditorDisplay xsi,, "EditorDisplay"
 MethodEnd
 
@@ -111,9 +111,9 @@ MethodEnd
 Method EditorDisplay.InformInsertionOf, uses xsi, dLineNumber:DWORD
   SetObject xsi
   mov ecx, dLineNumber
-  .if ecx <= [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be inserted
+  .if ecx <= [xsi].View.FirstVisChar.dLineIndex                   ;A line before the 1st vis line is to be inserted
     inc [xsi].View.dFirstVisLineCount
-    inc [xsi].View.FirstVisChar.dLineNumber
+    inc [xsi].View.FirstVisChar.dLineIndex
   .endif
 ;  DbgEditorDisplay xsi,, "EditorDisplay"
 MethodEnd
@@ -333,26 +333,25 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
     mov ScrollInfo.cbSize, sizeof ScrollInfo
     mov ScrollInfo.fMask, SIF_TRACKPOS
     invoke GetScrollInfo, [xsi].ScrollBarVert.hWnd, SB_CTL, addr ScrollInfo
-    mov edx, [xsi].View.FirstVisChar.dLineNumber
+    mov edx, [xsi].View.FirstVisChar.dLineIndex
     mov eax, ScrollInfo.nTrackPos
     .if edx < eax
       sub eax, edx
-      OCall [xsi].View::EditorView.ScrollVisPageDown, eax   ;Goto down eax lines with saturation
+      OCall [xsi].View::EditorView.ScrollVisPageDown, eax ;Goto down eax lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        sub [xsi].View.sdCaretVisLineOffset, ecx            ;ecx = scrolled lines
+        sub [xsi].View.sdCaretVisLineOffset, eax        ;ecx = scrolled lines
         OCall [xsi].View::EditorView.CaretSet
       .endif
     .elseif edx > eax
       sub edx, eax
-      OCall [xsi].View::EditorView.ScrollVisPageUp, edx     ;Goto up edx lines with saturation
+      OCall [xsi].View::EditorView.ScrollVisPageUp, edx ;Goto up edx lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        add [xsi].View.sdCaretVisLineOffset, ecx            ;ecx = scrolled lines
+        add [xsi].View.sdCaretVisLineOffset, eax        ;ecx = scrolled lines
         OCall [xsi].View::EditorView.CaretSet
       .endif
     .endif
-    add dNeedRedrawing, eax
 
   .elseif ax == SB_PAGEUP
     OCall [xsi].View::EditorView.ScrollVisPageUp, [xsi].ScrollPage.y    ;Goto previous page with saturation
@@ -434,8 +433,8 @@ Method EditorDisplay.OnSetFocus,, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     EditorView.SetGuiLayout
-; Purpose:    Define the position an size of all GUI elements in the EditorView.
+; Method:     EditorDisplay.SetGuiLayout
+; Purpose:    Define the position an size of all GUI elements in the EditorDisplay.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -506,26 +505,25 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method EditorDisplay.SetupScrollBarHorz, uses xsi
+Method EditorDisplay.SetupScrollBarHorz, uses xbx xsi
   local ScrollInfo:SCROLLINFO, ClientRect:RECT
 
 ;  DbgText "EditorDisplay.SetupScrollBarHorz"
   SetObject xsi
   invoke GetClientRect, [xsi].hWnd, addr ClientRect
-  mov xdx, [xsi].pOwner                                 ;xdx -> Editor
-  mov xcx, [xdx].$Obj(Editor).pResources
+  mov xbx, [xsi].pOwner                                 ;xbx -> Editor
+  mov xcx, [xbx].$Obj(Editor).pResources
 
   mov eax, [xsi].View.dSelBarWidth
   sub ClientRect.right, eax                             ;Page width
-  mov eax, [xdx].$Obj(Editor).dMaxLineCharCount
+  mov eax, [xbx].$Obj(Editor).dMaxLineCharCount
   mul [xcx].$Obj(EditorResources).EditorTextRegular.FontMetric.y
   .if eax > ClientRect.right
     mov ScrollInfo.cbSize, sizeof ScrollInfo
     mov ScrollInfo.fMask, SIF_ALL
     m2m ScrollInfo.nPage, [xsi].ScrollPage.x, edx
     m2z ScrollInfo.nMin
-    mov xcx, [xsi].pOwner                               ;xcx -> Editor
-    mov eax, [xcx].$Obj(Editor).dMaxLineCharCount
+    mov eax, [xbx].$Obj(Editor).dMaxLineCharCount
     add eax, edx                                        ;edx = [xsi].ScrollPage.x
     sub eax, 2                                          ;Range: 0..dMaxEditorLineChrCnt - 1
     mov ScrollInfo.nMax, eax                            ;       Sub 1 to last char in line
@@ -544,24 +542,23 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method EditorDisplay.SetupScrollBarVert, uses xsi
+Method EditorDisplay.SetupScrollBarVert, uses xbx xsi
   local ScrollInfo:SCROLLINFO, ClientRect:RECT
 
 ;  DbgText "EditorDisplay.SetupScrollBarVert"
   SetObject xsi
   invoke GetClientRect, [xsi].hWnd, addr ClientRect
-  mov xdx, [xsi].pOwner                                 ;xdx -> Editor
-  mov xcx, [xdx].$Obj(Editor).pResources
-  mov eax, [xdx].$Obj(Editor).dVisLineCount
+  mov xbx, [xsi].pOwner                                 ;xbx -> Editor
+  mov xcx, [xbx].$Obj(Editor).pResources
+  mov eax, [xbx].$Obj(Editor).dVisLineCount
   mul [xcx].$Obj(EditorResources).EditorTextRegular.FontMetric.y
   .if eax > ClientRect.bottom
     ;Setup SCROLLINFO structure
     mov ScrollInfo.cbSize, sizeof ScrollInfo
     mov ScrollInfo.fMask, SIF_ALL
     m2m ScrollInfo.nPage, [xsi].ScrollPage.y, edx
-    mov ScrollInfo.nMin, 1
-    mov xdx, [xsi].pOwner                               ;xcx -> Editor
-    mov eax, [xdx].$Obj(Editor).dVisLineCount
+    mov ScrollInfo.nMin, 0
+    mov eax, [xbx].$Obj(Editor).dVisLineCount
     add eax, [xsi].ScrollPage.y
     dec eax
     mov ScrollInfo.nMax, eax

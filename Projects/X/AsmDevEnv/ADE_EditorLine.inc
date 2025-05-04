@@ -7,23 +7,26 @@
 
 
 ;Don't use DT_NOCLIP, since the text must be confined into a given RECT
-TLN_DRAW_TEXT_FLAGS         equ   DT_NOPREFIX or DT_SINGLELINE or DT_EXPANDTABS or DT_VCENTER
-TLN_GRANULARITY             equ   32        ;Must be a power of 2, in characters
+ELN_DRAW_TEXT_FLAGS         equ   DT_NOPREFIX or DT_SINGLELINE or DT_EXPANDTABS or DT_VCENTER
+ELN_GRANULARITY             equ   32        ;Must be a power of 2, in characters
 
 ;EditorLine Error
-TLE_OUTOFMEMORY             equ   10000
+ELE_OUTOFMEMORY             equ   10000
 
 ;EditorLine flags
-TLF_DIRTY_LINE_PREV         equ   BIT00     ;Prevoius line has changed
-TLF_DIRTY_LINE_CURR         equ   BIT01     ;Current line has changed
-TLF_DIRTY_LINE_NEXT         equ   BIT02     ;Next line has changed
-TLF_SAVED_LINE_PREV         equ   BIT03     ;Previous line has been saved
-TLF_SAVED_LINE_CURR         equ   BIT04     ;Current line has been saved
-TLF_SAVED_LINE_NEXT         equ   BIT05     ;Next line has been saved
-TLF_HIDDEN                  equ   BIT06     ;Current line is hidden
-TLF_ERROR_MARKED            equ   BIT07     ;Current line shows an error marker
-TLF_BOOK_MARKED             equ   BIT08     ;Current line shows a book marker
-TLF_EOL_MARKED              equ   BIT09     ;Current line shows an EOL marker
+ELF_DIRTY_LINE_PREV         equ   BIT00     ;Prevoius line has changed
+ELF_DIRTY_LINE_CURR         equ   BIT01     ;Current line has changed
+ELF_DIRTY_LINE_NEXT         equ   BIT02     ;Next line has changed
+ELF_SAVED_LINE_PREV         equ   BIT03     ;Previous line has been saved
+ELF_SAVED_LINE_CURR         equ   BIT04     ;Current line has been saved
+ELF_SAVED_LINE_NEXT         equ   BIT05     ;Next line has been saved
+ELF_HIDDEN                  equ   BIT06     ;Current line is hidden
+ELF_ERROR_MARKED            equ   BIT07     ;Current line shows an error marker
+ELF_BOOK_MARKED             equ   BIT08     ;Current line shows a book marker
+ELF_EOL_MARKED              equ   BIT09     ;Current line shows an EOL marker
+ELF_HAS_EXPAND_SYMBOL       equ   BIT10
+ELF_HAS_COLLAPSE_SYMBOL     equ   BIT11
+
 
 ;EditorLine char table flags
 CHR_ALPHA                   equ   BIT00
@@ -326,8 +329,8 @@ Method EditorLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
   .if ebx != [xsi].dCharCapacity || [xsi].pBuffer == NULL
     ;Calc requested size that matches the given granularity
     inc ebx                                             ;Always add size for the ZTC
-    add ebx, TLN_GRANULARITY - 1
-    and ebx, DWORD ptr not(TLN_GRANULARITY - 1)
+    add ebx, ELN_GRANULARITY - 1
+    and ebx, DWORD ptr not(ELN_GRANULARITY - 1)
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
       add ebx, ebx
     endif
@@ -355,7 +358,7 @@ Method EditorLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
         dec ebx
         mov [xsi].dCharCapacity, ebx                    ;In characters not including the ZTC
       .else
-        OCall xsi.ErrorReport, NULL, TLE_OUTOFMEMORY
+        OCall xsi.ErrorReport, NULL, ELE_OUTOFMEMORY
         .if [xsi].dErrorCode != OBJ_OK
           mov xcx, [xsi].pOwner                         ;xcx -> Editor
           mov xdx, [xcx].$Obj(Editor).pOwner
@@ -412,7 +415,6 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
           m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
           mov [xbx].ACTION.dChrCount, edi
-;          s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx 
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, edi)
           mov xcx, pChars
           mov CHR ptr [xcx], 0
@@ -433,7 +435,6 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
           m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, edx
-;          s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx 
           mov ecx, dDelIndex
           mov xax, [xsi].pBuffer
           lea xcx, [xax + sizeof(CHR)*xcx]
@@ -476,7 +477,7 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
     .endif
 
     ;Housekeeping
-    BitSet [xsi].dFlags, TLF_DIRTY_LINE_CURR
+    BitSet [xsi].dFlags, ELF_DIRTY_LINE_CURR
     OCall xsi.SetDirty
 
     mov eax, dCharCount
@@ -546,7 +547,6 @@ Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWOR
           mov [xbx].ACTION.dAction, AAT_INSERTCHARS
           m2m [xbx].ACTION.dPosIndex, dInsIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, eax
-;          s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx 
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
           mov xdx, [xsi].pOwner 
           OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
@@ -611,7 +611,6 @@ Method EditorLine.CharReplace, uses xbx xsi, dRplIndex:DWORD, dCharCount:DWORD, 
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
           m2m [xbx].ACTION.dPosIndex, dRplIndex, edx
           m2m [xbx].ACTION.dChrCount, dCharCount, ecx
-;          s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx
           mov xax, [xsi].pBuffer
           mov [xbx].ACTION.pChars, $invoke(StrCNew, addr [xax + xdx*sizeof(CHR)], dCharCount)
           mov xdx, [xsi].pOwner 
@@ -644,7 +643,6 @@ Method EditorLine.CharReplace, uses xbx xsi, dRplIndex:DWORD, dCharCount:DWORD, 
           mov [xbx].ACTION.dAction, AAT_INSERTCHARS
           m2m [xbx].ACTION.dPosIndex, dRplIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, eax
-;          s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
           mov xdx, [xsi].pOwner 
           OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
@@ -735,10 +733,10 @@ Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, 
 
   ;Adjust dSelEndIndex to show an EOL selection marker
   mov eax, [xsi].Selection.dEndIndex
-  .ifBitSet [xsi].dFlags, TLF_EOL_MARKED
+  .ifBitSet [xsi].dFlags, ELF_EOL_MARKED
     .if eax == [xsi].dLength
       mov xcx, [xsi].pOwner
-      .ifBitClr [xcx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
+      .ifBitClr [xcx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
         inc eax
       .endif
     .endif
@@ -1025,13 +1023,13 @@ Subroutine DrawString
     m2z CalcRect.bottom
     mov xdi, pDrawAttr
     invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-    invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+    invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
     mov eax, CalcRect.right
     add DrawRect.right, eax
     .if dDontDraw == FALSE
       invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
       invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-      invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+      invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
     .endif
 
   .else
@@ -1044,13 +1042,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
 
       .else
@@ -1063,13 +1061,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1083,13 +1081,13 @@ Subroutine DrawString
         sub ebx, dSelEndIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
 
       .endif
@@ -1103,13 +1101,13 @@ Subroutine DrawString
         sub ebx, dFirstCharIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1124,13 +1122,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
 
       .else
@@ -1142,13 +1140,13 @@ Subroutine DrawString
         sub ebx, dFirstCharIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1163,13 +1161,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1183,13 +1181,13 @@ Subroutine DrawString
         sub ebx, dSelEndIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, TLN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, TLN_DRAW_TEXT_FLAGS
+          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
         .endif
       .endif
     .endif
@@ -1265,13 +1263,13 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineBreak
-; Purpose:    Break the line into 2 lines. The new line is inserted at the next position.
+; Purpose:    Break the line into 2 lines. The new line is inserted after the current line.
 ; Arguments:  Arg1: Position where to break the line.
-;             Arg2: Line number of the line to break
+;             Arg2: Line index of this line.
 ;             Arg3: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     xax -> New inserted line or NULL if failed.
 
-Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DWORD, dActionGroup:DWORD
+Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWORD, dActionGroup:DWORD
   local pNewEditorLine:$ObjPtr(EditorLine)
 
   SetObject xsi
@@ -1280,30 +1278,23 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DW
   New EditorLine
   .if xax != NULL
     mov pNewEditorLine, xax
-    lea xbx, [xax].$Obj(EditorLine).LineLink
+
+    ;Insert the new EditorLine
+    inc dLineIndex
+    OCall [xdi].$Obj(Editor).Lines::Collection.InsertAt, dLineIndex, xax
 
     ;Initialize the new EditorLine
     OCall pNewEditorLine::EditorLine.Init, [xsi].pOwner
-
-    ;Insert the new EditorLine
-    lea xcx, [xdi].$Obj(Editor).LinesHead
-    lea xdx, [xsi].$Obj(EditorLine).LineLink
-    LDLL_InsertAfter xcx, xdx, xbx, xax
 
     ;Keep track of the change
     .if dActionGroup != 0
       MemAlloc sizeof(ACTION)
       .if xax != NULL
-        mov xbx, xax
-        m2m [xbx].ACTION.pEditorLine, pNewEditorLine, xax
-        m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-        mov [xbx].ACTION.dAction, AAT_INSERTLINE
-        mov edx, dLineNumber
-        inc edx
-        mov [xbx].ACTION.dLineNumber, edx
-;        s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx
-        mov xdx, [xsi].pOwner 
-        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+        m2m [xax].ACTION.dGroup, dActionGroup, ecx
+        mov [xax].ACTION.dAction, AAT_INSERTLINE
+        mov edx, dLineIndex                             ;New LineIndex
+        mov [xax].ACTION.dLineIndex, edx
+        OCall [xdi].$Obj(Editor).Actions::ActionCollection.Insert, xax
       .endif
     .endif
 
@@ -1319,94 +1310,86 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DW
     .endif
 
     ;Housekeeping
-    mov edx, dLineNumber
-    inc edx
-    OCall xdi::Editor.InformInsertionOf, edx
-    inc [xdi].$Obj(Editor).dTotalLineCount
-    .ifBitClr [xsi].dFlags, TLF_HIDDEN
+    OCall xdi::Editor.InformInsertionOf, dLineIndex
+    .ifBitClr [xsi].dFlags, ELF_HIDDEN
       inc [xdi].$Obj(Editor).dVisLineCount
     .endif
 
     OCall xsi.SetDirty
     mov xax, pNewEditorLine
-    BitSet [xax].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_CURR
+    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineDelete
 ; Purpose:    Remove this EditorLine instance from the Linked List.
-; Arguments:  Arg1: Line number of the line to delete.
+; Arguments:  Arg1: Line index of this line.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     xax -> Deleted EditorLine or NULL if failed.
 ; Note:       To destroy the EditorLine call Destroy the returned value.
 
-Method EditorLine.LineDelete, uses xbx xsi, dLineNumber:DWORD, dActionGroup:DWORD
+Method EditorLine.LineDelete, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
   mov xbx, [xsi].pOwner                                 ;xbx -> Editor
-  OCall xbx::Editor.InformDeletionOf, dLineNumber
-  dec [xbx].$Obj(Editor).dTotalLineCount
-  .ifBitClr [xsi].dFlags, TLF_HIDDEN
+  OCall xbx::Editor.InformDeletionOf, dLineIndex
+  .ifBitClr [xsi].dFlags, ELF_HIDDEN
     dec [xbx].$Obj(Editor).dVisLineCount
   .endif
   OCall xsi.SetDirty
 
   ;Set Dirty marker on previous line
-  mov xax, [xsi].$Obj(EditorLine).LineLink.pLinkBack
-  .if xax != NULL
-    sub xax, offset $Obj(EditorLine).LineLink
-    BitSet [xax].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_NEXT
-    BitClr [xax].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_NEXT
+  mov edx, dLineIndex
+  dec edx
+  .if !SIGN?
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
+    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
   .endif
 
   ;Set Dirty marker on next line
-  mov xax, [xsi].$Obj(EditorLine).LineLink.pLinkFwrd
-  .if xax != NULL
-    sub xax, offset $Obj(EditorLine).LineLink
-    BitSet [xax].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_PREV
-    BitClr [xax].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_PREV
+  mov edx, dLineIndex
+  inc edx
+  .if edx != [xbx].$Obj(Editor).Lines.dCount 
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
+    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
   .endif
 
   ;Do deletion
-  lea xcx, [xbx].$Obj(Editor).LinesHead
-  lea xdx, [xsi].$Obj(EditorLine).LineLink
-  LDLL_Remove xcx, xdx, xbx, xax
-  mov xax, xsi                                          ;Return pSelf
+  OCall [xbx].$Obj(Editor).Lines::Collection.DeleteAt, dLineIndex
 
   ;Keep track of the change
   .if dActionGroup != 0
     MemAlloc sizeof(ACTION)
     .if xax != NULL
-      mov xbx, xax
-      mov [xbx].ACTION.pEditorLine, xsi
-      m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-      mov [xbx].ACTION.dAction, AAT_DELETELINE
-      m2m [xbx].ACTION.dLineNumber, dLineNumber, eax
-;      s2s [xbx].ACTION.Selection, [xsi].Selection, xmm0, xmm1, xax, xcx
-      mov xdx, [xsi].pOwner 
-      OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+      m2m [xax].ACTION.dGroup, dActionGroup, ecx
+      mov [xax].ACTION.dAction, AAT_DELETELINE
+      m2m [xax].ACTION.dLineIndex, dLineIndex, ecx
+      OCall [xbx].$Obj(Editor).Actions::ActionCollection.Insert, xax
     .endif
   .endif
+
+  mov xax, xsi                                          ;Return pSelf
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineJoinNext
 ; Purpose:    Join the current with the next EditorLine.
-; Arguments:  Arg1: Line Number of this EditorLine.
+; Arguments:  Arg1: LineIndex of this EditorLine.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
-; Return:     xax -> Deleted EditorLine or NULL if failed.
-;             xcx -> Joined EditorLine or NULL if failed.
+; Return:     Nothing.
 
-Method EditorLine.LineJoinNext, uses xbx xsi, dLineNumber:DWORD, dActionGroup:DWORD
+Method EditorLine.LineJoinNext, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
   ;Goto next EditorLine
-  xor ecx, ecx
-  mov xax, [xsi].LineLink.pLinkFwrd                     ;Goto next member
+  inc dLineIndex                                      ;Index from next EditorLine
+  mov xbx, [xsi].pOwner
+  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]  ;xbx -> next EditorLine
+    mov xbx, xax
     OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, [xbx].$Obj(EditorLine).pBuffer, dActionGroup
-    inc dLineNumber                                     ;Line number to be deleted
-    OCall xbx::EditorLine.LineDelete, dLineNumber, dActionGroup
+    OCall xbx::EditorLine.LineDelete, dLineIndex, dActionGroup
     mov xcx, xsi
   .endif
 MethodEnd
@@ -1416,55 +1399,36 @@ MethodEnd
 ; Purpose:    Join the current with the previous EditorLine.
 ; Arguments:  Arg1: Line Number of this EditorLine.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
-; Return:     xax -> Deleted EditorLine or NULL if failed.
-;             xcx -> Joined EditorLine or NULL if failed.
+; Return:     Nothing.
 
-Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineNumber:DWORD, dActionGroup:DWORD
+Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
-  xor ecx, ecx
-  mov xdx, [xsi].pOwner
-  mov xdi, [xdx].$Obj(EditorView).pOwner                ;xdi -> Editor
-
   ;Goto previous EditorLine
-  mov xax, [xsi].LineLink.pLinkBack                     ;Goto prev member
+  dec dLineIndex                                      ;Index from next EditorLine
+  mov xbx, [xsi].pOwner
+  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]  ;xbx -> prev EditorLine
-    BitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_CURR
+    mov xbx, xax
+    BitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
     OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, [xsi].pBuffer, dActionGroup
-    OCall xsi.LineDelete, dLineNumber, dActionGroup
-    mov xax, xsi
-    mov xcx, xbx
+    inc dLineIndex
+    OCall xsi.LineDelete, dLineIndex, dActionGroup
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineReinsert
 ; Purpose:    Reinsert an exiting line
-; Arguments:  Arg1: Line Number of this EditorLine.
+; Arguments:  Arg1: Line index of this EditorLine.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
-Method EditorLine.LineReinsert, uses xbx xsi, dLineNumber:DWORD, dActionGroup:DWORD
+Method EditorLine.LineReinsert, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
-
-  mov xax, [xsi].LineLink.pLinkBack
-  mov xcx, [xsi].pOwner
-  lea xdx, [xcx].$Obj(Editor).LinesHead
-  lea xcx, [xsi].LineLink
-  .if xax != NULL
-    LDLL_InsertAfter xdx, xax, xcx, xbx
-  .else
-    mov xax, [xsi].LineLink.pLinkFwrd
-    .if xax != NULL
-      LDLL_InsertBefore xdx, xax, xcx, xbx
-    .else
-      LDLL_InsertFirst xdx, xax, xcx
-    .endif
-  .endif
-  OCall [xsi].pOwner::Editor.InformInsertionOf, dLineNumber
-  mov xcx, [xsi].pOwner
-  inc [xcx].$Obj(Editor).dTotalLineCount
-  inc [xcx].$Obj(Editor).dVisLineCount
+  mov xbx, [xsi].pOwner
+  OCall [xbx].$Obj(Editor).Lines::Collection.InsertAt, dLineIndex, xsi 
+  OCall xbx::Editor.InformInsertionOf, dLineIndex
+  inc [xbx].$Obj(Editor).dVisLineCount
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1487,10 +1451,10 @@ Method EditorLine.Redo, uses xbx xsi, pAction:POINTER
 ;    mov [xsi].Selection.dEndIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_DELETELINE
-    OCall xsi.LineDelete, [xbx].ACTION.dLineNumber, 0
+    OCall xsi.LineDelete, [xbx].ACTION.dLineIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_INSERTLINE
-    OCall xsi.LineReinsert, [xbx].ACTION.dLineNumber, 0
+    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex, 0
 
   .else
     xor eax, eax
@@ -1511,7 +1475,7 @@ Method EditorLine.SelectionReset
   setne al
   mov [xcx].Selection.dBegIndex, 0
   mov [xcx].Selection.dEndIndex, 0
-  BitClr [xcx].dFlags, TLF_EOL_MARKED
+  BitClr [xcx].dFlags, ELF_EOL_MARKED
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1522,8 +1486,8 @@ MethodEnd
 
 Method EditorLine.SetDirty, uses xsi
   SetObject xsi
-  BitSet [xsi].dFlags, TLF_DIRTY_LINE_CURR
-  BitClr [xsi].dFlags, TLF_SAVED_LINE_CURR
+  BitSet [xsi].dFlags, ELF_DIRTY_LINE_CURR
+  BitClr [xsi].dFlags, ELF_SAVED_LINE_CURR
 
   OCall [xsi].pOwner::Editor.SetDirty, TRUE           ;Propagate the information
 MethodEnd
@@ -1568,10 +1532,10 @@ Method EditorLine.Undo, uses xbx xsi, pAction:POINTER
 ;    mov [xsi].Selection.dEndIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_DELETELINE
-    OCall xsi.LineReinsert, [xbx].ACTION.dLineNumber, 0
+    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_INSERTLINE
-    OCall xsi.LineDelete, [xbx].ACTION.dLineNumber, 0
+    OCall xsi.LineDelete, [xbx].ACTION.dLineIndex, 0
 
   .else
     xor eax, eax

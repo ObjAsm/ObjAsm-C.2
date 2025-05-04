@@ -296,6 +296,7 @@ ObjectEnd
 ; --------------------------------------------------------------------------------------------------
 ; Object:     EditorLine
 ; Purpose:    Implement a text line for the Editor.
+; Owner:      Editor
 
 Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      CharDelete,           DWORD, DWORD, DWORD
@@ -316,21 +317,19 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      SpaceFill,            DWORD, DWORD
   StaticMethod      Undo,                 POINTER               ;PACTION
 
-  DefineVariable    LineLink,             LDLL_MEMBER,{NULL, NULL}
   DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
   DefineVariable    dCharCapacity,        DWORD,      0         ;In characters not including the ZTC
   DefineVariable    dLength,              DWORD,      0         ;In characters not including the ZTC
   ;Selection: [0..dLength] 0 means the first char and if dLength, the it includes the ZTC
   DefineVariable    Selection,            RANGE,      {0,0}     ;In characters
   DefineVariable    dBookmark,            DWORD,      0
-  DefineVariable    dFlags,               DWORD,      0         ;TLF_xxx
+  DefineVariable    dFlags,               DWORD,      0         ;ELF_xxx
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
 LOCATION struct
-  pEditorLine       $ObjPtr(EditorLine)   ?
-  dLineNumber       DWORD     ?
+  dLineIndex        DWORD     ?
   dCharIndex        DWORD     ?
 LOCATION ends
 PLOCATION typedef ptr LOCATION
@@ -342,8 +341,9 @@ SELRANGE ends
 PSELRANGE typedef ptr SELRANGE
 
 ; --------------------------------------------------------------------------------------------------
-; Object:  EditorView
-; Purpose: Implement a view of the Editor.
+; Object:     EditorView
+; Purpose:    Implement a view of the Editor.
+; Owner:      EditorDisplay
 ;
 ; EditorView Layout:
 ; -----------------
@@ -352,13 +352,13 @@ PSELRANGE typedef ptr SELRANGE
 ;      |       |<> | dLineFoldingWidth
 ;      |       | <>| dLineIndicatorWidth
 ;       -------------------------------------------
-;      | 1)xxx | ¦ | Line N |                |
+;      | 1)xxx | ¦ | Line N       |                |
 ;      | xxxxx | ¦ |------------------------       |
-;      | xxxxx |[-]| Line N+1         |      |
+;      | xxxxx |[-]| Line N+1               |      |
 ;      | xxxxx | ¦ |---------------------------    |  xxxxxxx = line numbers
-;      | xxxxx | ¦ | Line N+2            |   |  1) Selection bar
+;      | xxxxx | ¦ | Line N+2                  |   |  1) Selection bar
 ;      | xxxxx | ¦ |---------------------------    |
-;      | xxxxx | ¦-| Line N+3        |       |
+;      | xxxxx | ¦-| Line N+3              |       |
 ;      | xxxxx | ¦ |-----------------------        |
 ;      | xxxxx | ¦ |        ...                    |
 ;       -------------------------------------------
@@ -384,10 +384,10 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      ClpBrdCut
   StaticMethod      ClpBrdPaste
   StaticMethod      ClientPos2Index,      PPOINT, PPOINT
+  StaticMethod      DrawEditorLines
   StaticMethod      DrawSelectionBar
   RedefineMethod    Done
   StaticMethod      GetCodeData,          DWORD
-  StaticMethod      GetLineNumber,        $ObjPtr(EditorLine)
   RedefineMethod    Init,                 POINTER, PRECT, $ObjPtr(EditorResources)
   StaticMethod      MoveCaretDown,        DWORD
   StaticMethod      MoveCaretUp,          DWORD
@@ -408,7 +408,6 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      Startup
   StaticMethod      UpdateStatusPanel
   StaticMethod      VertIndex2EditorLine, DWORD
-  StaticMethod      VertIndex2LineNumber, DWORD
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
   ;Events
@@ -430,13 +429,14 @@ Object EditorView, ADE_EditorViewID, Window
 
   ;Management
   DefineVariable    dFlags,               DWORD,      0
-  DefineVariable    FirstVisChar,         LOCATION,   {NULL, 0, 0}  ;First visisble char in View
+  DefineVariable    FirstVisChar,         LOCATION,   {0, 0}  ;First visisble char in View
   DefineVariable    dFirstVisLineCount,   DWORD,      0       ;Count of visible lines up to FirstVisChar.pEditorLine
-  DefineVariable    CaretLocation,        LOCATION,   {NULL, 0, 0}  ;-> EditorLine, LineNumber, CharIndex
-  DefineVariable    sdCaretVisLineOffset, SDWORD,     0       ;Line Count Offset from FirstVisChar.pEditorLine; (-) = before
-  DefineVariable    sdLineNumberOffset,   SDWORD,     0
+  DefineVariable    CaretLocation,        LOCATION,   {0, 0}  ;-> EditorLine, LineNumber, CharIndex
+  DefineVariable    sdCaretVisLineOffset, SDWORD,     0       ;Vis line Count from FirstVisChar.dLineIndex; (-) = before
+  DefineVariable    sdLineNumberOffset,   SDWORD,     0       ;SelBar left-Click
   DefineVariable    dLockedVertIndex,     DWORD,      -1      ;Persistant char index when moving the Caret vertically
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
+  DefineVariable    pEditor,              POINTER,    NULL
 
   ;Backbuffering => flickerfree display
   DefineVariable    hTextDC,              HDC,        0       ;Memory DC for back buffer drawing
@@ -463,6 +463,7 @@ ObjectEnd
 ; --------------------------------------------------------------------------------------------------
 ; Object:  EditorDisplay
 ; Purpose: Implement a Display of the Editor.
+; Owner:   Editor
 ;
 ; EditorDisplay Layout:
 ; --------------------
@@ -563,10 +564,9 @@ ACTION struct
       dPosIndex   DWORD           ?
       dChrCount   DWORD           ?
       pChars      PSTRING         ?
-;      Selection   RANGE           {}
     ends
     struct                                ;Line delete or line insert
-      dLineNumber DWORD           ?
+      dLineIndex  DWORD           ?
     ends
   ends
 ACTION ends
@@ -659,16 +659,14 @@ Object Editor, ADE_EditorID, ChildWnd
 
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
-  DefineVariable    LinesHead,            LDLL_CONTROL, {NULL, NULL}
-  DefineVariable    dTotalLineCount,      DWORD,      0             ;Total count of Lines
   DefineVariable    dVisLineCount,        DWORD,      0
   DefineVariable    dMaxLineCharCount,    DWORD,      0
   DefineVariable    pHilitedWord,         PSTRING,    NULL
   DefineVariable    dHilitedLen,          DWORD,      0
 
   ;Selection variables
-  DefineVariable    SelectionFst,         LOCATION,   {NULL, 0, 0}  ;First selected location
-  DefineVariable    SelectionLst,         LOCATION,   {NULL, 0, 0}  ;Last selected location
+  DefineVariable    SelectionFst,         LOCATION,   {0, 0}  ;First selected location
+  DefineVariable    SelectionLst,         LOCATION,   {0, 0}  ;Last selected location
   DefineVariable    SelectionRange,       SELRANGE,   {NULL, NULL}  ;-> LOCATION; Set by SelectionSet
   DefineVariable    dSelectionVisLineCnt, DWORD,      0             ;Set by SelectionSet
 
@@ -680,6 +678,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticEvent       OnExitSizeMove,       WM_EXITSIZEMOVE
   StaticEvent       OnSetFocus,           WM_SETFOCUS
 
+  Embed     Lines,              Collection
   Embed     EditorDisplays,     Collection
   Embed     Actions,            ActionCollection
 ObjectEnd
@@ -881,7 +880,6 @@ DbgEditorMembers macro InstanceReg, Dest
   DbgHex InstanceReg, "Editor Instance", Dest
   DbgBin [InstanceReg].$Obj(Editor).dFlags,, Dest
   DbgHex [InstanceReg].$Obj(Editor).pResources,, Dest
-  DbgDec [InstanceReg].$Obj(Editor).dTotalLineCount,, Dest
   DbgDec [InstanceReg].$Obj(Editor).dVisLineCount,, Dest
   DbgDec [InstanceReg].$Obj(Editor).dMaxLineCharCount,, Dest
   DbgLine Dest
@@ -895,7 +893,7 @@ DbgEditorMembers macro InstanceReg, Dest
     DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dCharIndex,, Dest
-  DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dLineNumber,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dLineIndex,, Dest
   lea xdi, [InstanceReg].$Obj(Editor).SelectionLst
   DbgHex xdi, "SelectionLst", Dest
   DbgHex [InstanceReg].$Obj(Editor).SelectionLst.pEditorLine,, Dest
@@ -904,7 +902,7 @@ DbgEditorMembers macro InstanceReg, Dest
     DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest
-  DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dLineNumber,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).dSelectionVisLineCnt,, Dest
 endm
 
@@ -920,7 +918,7 @@ DbgEditorViewMembers macro InstanceReg, Dest
   .if xdi != NULL
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
-  DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dLineNumber,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).sdCaretVisLineOffset,, Dest
   DbgLine Dest
@@ -930,7 +928,7 @@ DbgEditorViewMembers macro InstanceReg, Dest
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).dFirstVisLineCount,, Dest
-  DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dLineNumber,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dLockedVertIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dCharMaxFullVis,, Dest
