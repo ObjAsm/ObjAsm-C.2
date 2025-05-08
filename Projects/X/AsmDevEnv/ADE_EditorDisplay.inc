@@ -340,7 +340,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
       OCall [xsi].View::EditorView.ScrollVisPageDown, eax ;Goto down eax lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        sub [xsi].View.sdCaretVisLineOffset, eax        ;ecx = scrolled lines
+        sub [xsi].View.CaretViewLineIndex, eax        ;ecx = scrolled lines
         OCall [xsi].View::EditorView.CaretSet
       .endif
     .elseif edx > eax
@@ -348,7 +348,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
       OCall [xsi].View::EditorView.ScrollVisPageUp, edx ;Goto up edx lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        add [xsi].View.sdCaretVisLineOffset, eax        ;ecx = scrolled lines
+        add [xsi].View.CaretViewLineIndex, eax        ;ecx = scrolled lines
         OCall [xsi].View::EditorView.CaretSet
       .endif
     .endif
@@ -357,7 +357,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].View::EditorView.ScrollVisPageUp, [xsi].ScrollPage.y    ;Goto previous page with saturation
     .if eax != 0
       inc dNeedRedrawing
-      add [xsi].View.sdCaretVisLineOffset, ecx          ;ecx = scrolled lines
+      add [xsi].View.CaretViewLineIndex, ecx          ;ecx = scrolled lines
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
@@ -365,7 +365,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].View::EditorView.ScrollVisPageDown, [xsi].ScrollPage.y  ;Goto next page with saturation
     .if eax != 0
       inc dNeedRedrawing
-      sub [xsi].View.sdCaretVisLineOffset, ecx          ;ecx = scrolled lines
+      sub [xsi].View.CaretViewLineIndex, ecx          ;ecx = scrolled lines
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
@@ -373,7 +373,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].View::EditorView.ScrollVisLineUp        ;Goto previous visible line with saturation
     .if eax != 0
       inc dNeedRedrawing
-      inc [xsi].View.sdCaretVisLineOffset
+      inc [xsi].View.CaretViewLineIndex
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
@@ -381,7 +381,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].View::EditorView.ScrollVisLineDown      ;Goto next visible line with saturation
     .if eax != 0
       inc dNeedRedrawing
-      dec [xsi].View.sdCaretVisLineOffset
+      dec [xsi].View.CaretViewLineIndex
       OCall [xsi].View::EditorView.CaretSet
     .endif
   .endif

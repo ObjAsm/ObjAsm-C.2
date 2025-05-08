@@ -299,9 +299,9 @@ ObjectEnd
 ; Owner:      Editor
 
 Object EditorLine, ADE_EditorLineID, Primer
-  StaticMethod      CharDelete,           DWORD, DWORD, DWORD
-  StaticMethod      CharInsert,           DWORD, DWORD, POINTER, DWORD
-  StaticMethod      CharReplace,          DWORD, DWORD, POINTER, DWORD
+  StaticMethod      CharDelete,           DWORD, DWORD, DWORD, DWORD
+  StaticMethod      CharInsert,           DWORD, DWORD, POINTER, DWORD, DWORD
+  StaticMethod      CharReplace,          DWORD, DWORD, POINTER, DWORD, DWORD
   StaticMethod      BufferResize,         DWORD
   RedefineMethod    Done
   StaticMethod      Draw,                 POINTER, PRECT, DWORD
@@ -314,13 +314,13 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      Redo,                 POINTER               ;PACTION
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
-  StaticMethod      SpaceFill,            DWORD, DWORD
+  StaticMethod      SpaceFill,            DWORD, DWORD, DWORD
   StaticMethod      Undo,                 POINTER               ;PACTION
 
   DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
   DefineVariable    dCharCapacity,        DWORD,      0         ;In characters not including the ZTC
   DefineVariable    dLength,              DWORD,      0         ;In characters not including the ZTC
-  ;Selection: [0..dLength] 0 means the first char and if dLength, the it includes the ZTC
+  ;Selection: [0..dLength] 0 means before the 1st & dLength includes the ZTC
   DefineVariable    Selection,            RANGE,      {0,0}     ;In characters
   DefineVariable    dBookmark,            DWORD,      0
   DefineVariable    dFlags,               DWORD,      0         ;ELF_xxx
@@ -329,8 +329,8 @@ ObjectEnd
 ; --------------------------------------------------------------------------------------------------
 
 LOCATION struct
-  dLineIndex        DWORD     ?
   dCharIndex        DWORD     ?
+  dLineIndex        DWORD     ?
 LOCATION ends
 PLOCATION typedef ptr LOCATION
 
@@ -369,14 +369,14 @@ PSELRANGE typedef ptr SELRANGE
 
 
 Object EditorView, ADE_EditorViewID, Window
-  StaticMethod      CaretAdjustHorz,      POINTER
+  StaticMethod      CaretAdjustHorz,      DWORD
   StaticMethod      CaretDestroy
   StaticMethod      CaretHide
   StaticMethod      CaretMoveWordBeg
   StaticMethod      CaretMoveWordEnd
   StaticMethod      CaretNew
-  StaticMethod      CaretRefLocSave,      PLOCATION
-  StaticMethod      CaretRefLocLoad,      PLOCATION
+  StaticMethod      CaretLocationSave,    PLOCATION, PLOCATION
+  StaticMethod      CaretLocationLoad,    PLOCATION
   StaticMethod      CaretSet
   StaticMethod      CaretShow
   StaticMethod      ClpBrdDelete
@@ -392,8 +392,10 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      MoveCaretDown,        DWORD
   StaticMethod      MoveCaretUp,          DWORD
   RedefineMethod    OnSize,               WPARAM, LPARAM
+  StaticMethod      ScrollCaretInViewBottom
   StaticMethod      ScrollCaretInViewLeft
   StaticMethod      ScrollCaretInViewRight
+  StaticMethod      ScrollCaretInViewTop
   StaticMethod      ScrollLineLeft
   StaticMethod      ScrollLineRight
   StaticMethod      ScrollPageLeft,       DWORD
@@ -431,10 +433,10 @@ Object EditorView, ADE_EditorViewID, Window
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    FirstVisChar,         LOCATION,   {0, 0}  ;First visisble char in View
   DefineVariable    dFirstVisLineCount,   DWORD,      0       ;Count of visible lines up to FirstVisChar.pEditorLine
-  DefineVariable    CaretLocation,        LOCATION,   {0, 0}  ;-> EditorLine, LineNumber, CharIndex
-  DefineVariable    sdCaretVisLineOffset, SDWORD,     0       ;Vis line Count from FirstVisChar.dLineIndex; (-) = before
+  DefineVariable    CaretLocation,        LOCATION,   {0, 0}  ;LineNumber, CharIndex
+  DefineVariable    CaretViewLineIndex,   SDWORD,     0
   DefineVariable    sdLineNumberOffset,   SDWORD,     0       ;SelBar left-Click
-  DefineVariable    dLockedVertIndex,     DWORD,      -1      ;Persistant char index when moving the Caret vertically
+  DefineVariable    dLockedCharIndex,     DWORD,      -1      ;Persistant char index when moving the Caret vertically
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
   DefineVariable    pEditor,              POINTER,    NULL
 
@@ -559,16 +561,10 @@ ACTION struct
   dAction     DWORD               ?
   dGroup      DWORD               ?
   pEditorLine $ObjPtr(EditorLine) ?
-  union
-    struct                                ;Char delete or char insert
-      dPosIndex   DWORD           ?
-      dChrCount   DWORD           ?
-      pChars      PSTRING         ?
-    ends
-    struct                                ;Line delete or line insert
-      dLineIndex  DWORD           ?
-    ends
-  ends
+  dLineIndex  DWORD               ?
+  dPosIndex   DWORD               ?
+  dChrCount   DWORD               ?
+  pChars      PSTRING             ?
 ACTION ends
 PACTION typedef ptr ACTION
 
@@ -885,24 +881,27 @@ DbgEditorMembers macro InstanceReg, Dest
   DbgLine Dest
   DbgHex [InstanceReg].$Obj(Editor).SelectionRange.pBegSelInfo,, Dest
   DbgHex [InstanceReg].$Obj(Editor).SelectionRange.pEndSelInfo,, Dest
+
   lea xdi, [InstanceReg].$Obj(Editor).SelectionFst
   DbgHex xdi, "SelectionFst", Dest
-  DbgHex [InstanceReg].$Obj(Editor).SelectionFst.pEditorLine,, Dest
-  mov xdi, [InstanceReg].$Obj(Editor).SelectionFst.pEditorLine
-  .if xdi != NULL
-    DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
-  .endif
-  DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dLineIndex,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dCharIndex,, Dest
+  OCall [InstanceReg].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(Editor).SelectionFst.dLineIndex
+  mov xdi, xax
+  .if xdi != NULL
+    DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
+  .endif
+  
   lea xdi, [InstanceReg].$Obj(Editor).SelectionLst
   DbgHex xdi, "SelectionLst", Dest
-  DbgHex [InstanceReg].$Obj(Editor).SelectionLst.pEditorLine,, Dest
-  mov xdi, [InstanceReg].$Obj(Editor).SelectionLst.pEditorLine
-  .if xdi != NULL
-    DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
-  .endif
-  DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dLineIndex,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest
+  OCall [InstanceReg].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(Editor).SelectionLst.dLineIndex
+  mov xdi, xax
+  .if xdi != NULL
+    DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
+  .endif
+
   DbgDec [InstanceReg].$Obj(Editor).dSelectionVisLineCnt,, Dest
 endm
 
@@ -912,25 +911,29 @@ DbgEditorDisplayMembers macro InstanceReg, Dest
 endm
 
 DbgEditorViewMembers macro InstanceReg, Dest
-    DbgHex InstanceReg, "View Instance", Dest
-  DbgHex [InstanceReg].$Obj(EditorView).CaretLocation.pEditorLine,, Dest
-  mov xdi, [InstanceReg].$Obj(EditorView).CaretLocation.pEditorLine
+  DbgHex InstanceReg, "View Instance", Dest
+  DbgHex [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex,, Dest
+  mov xcx, [InstanceReg].$Obj(EditorView).pEditor
+  OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex
+  mov xdi, xax
   .if xdi != NULL
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dCharIndex,, Dest
-  DbgDec [InstanceReg].$Obj(EditorView).sdCaretVisLineOffset,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).CaretViewLineIndex,, Dest
   DbgLine Dest
-  DbgHex [InstanceReg].$Obj(EditorView).FirstVisChar.pEditorLine,, Dest
-  mov xdi, [InstanceReg].$Obj(EditorView).FirstVisChar.pEditorLine
+  DbgHex [InstanceReg].$Obj(EditorView).FirstVisChar.dLineIndex,, Dest
+  mov xcx, [InstanceReg].$Obj(EditorView).pEditor
+  OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex
+  mov xdi, xax
   .if xdi != NULL
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).dFirstVisLineCount,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dCharIndex,, Dest
-  DbgDec [InstanceReg].$Obj(EditorView).dLockedVertIndex,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).dLockedCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dCharMaxFullVis,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dLineMaxFullVis,, Dest
   DbgBin [InstanceReg].$Obj(EditorView).dFlags,, Dest
@@ -981,8 +984,6 @@ DbgEditorLine macro InstanceReg, InfoText, Dest
     DbgSaveContext
     DbgClearTxt Dest
     DbgHex InstanceReg, "Instance", Dest
-    DbgHex [InstanceReg].$Obj(EditorLine).LineLink.pLinkFwrd,, Dest
-    DbgHex [InstanceReg].$Obj(EditorLine).LineLink.pLinkBack,, Dest
     DbgHex [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
     DbgStrW [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
     DbgDec [InstanceReg].$Obj(EditorLine).dCharCapacity,, Dest

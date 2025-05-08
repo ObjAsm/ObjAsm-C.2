@@ -111,13 +111,18 @@ endm
 ; Purpose:    Return the pointer to the prev/next visible EditorLine.
 ; Arguments:  Arg1: (Non volatile register) -> Current Editor (Can not be NULL).
 ;             Arg2: Current Line Index variable.
+;             Arg3: Last Visible Line index variable
 ; Return:     xax -> Prev/Next EditorLine or NULL if the count could not be reached.
 
-MoveToNextVisEditorLine macro pEditorNoVolReg, CurrLineIndex
+MoveToNextVisEditorLine macro pEditorNoVolReg:req, CurrLineIndex:req, LastVisLineIndex
   .While TRUE
-    inc CurrLineIndex
     mov edx, CurrLineIndex
-    .if [pEditorNoVolReg].$Obj(Editor).Lines.dCount == edx
+ifnb <LastVisLineIndex>
+    mov LastVisLineIndex, edx
+endif
+    inc edx
+    mov CurrLineIndex, edx
+    .if [pEditorNoVolReg].$Obj(Editor).Lines.dCount <= edx
       xor eax, eax
       jmp @F
     .endif
@@ -129,8 +134,11 @@ MoveToNextVisEditorLine macro pEditorNoVolReg, CurrLineIndex
 @@:
 endm
 
-MoveToPrevVisEditorLine macro pEditorReg, CurrLineIndex
+MoveToPrevVisEditorLine macro pEditorReg:req, CurrLineIndex:req, LastVisLineIndex
   .While TRUE
+ifnb <LastVisLineIndex>
+    mov LastVisLineIndex, edx
+endif
     dec CurrLineIndex
     .if SIGN?
       xor eax, eax

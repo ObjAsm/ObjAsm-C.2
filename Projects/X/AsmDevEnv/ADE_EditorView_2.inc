@@ -13,7 +13,7 @@
 ; Return:     eax = TRUE if redrawing is needed, otherwise FALSE.
 
 Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
-  local dNeedRedrawing:DWORD
+  local dNeedRedrawing:DWORD, dLastVisLineIndex:DWORD
 
 ;  DbgText "EditorView.MoveCaretDown"
   SetObject xsi
@@ -22,40 +22,23 @@ Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
   mov edi, dLineCount
   test edi, edi
   .while !ZERO?
-    mov eax, [xbx].$Obj(Editor).Lines.dCount
-    .if eax > [xsi].CaretLocation.dLineIndex            ;End of file?
-      inc [xsi].sdCaretVisLineOffset
-    .else
-      cmp [xsi].sdCaretVisLineOffset, 0
-    .endif
-
-    .if SIGN?                                           ;Top off view
-      mov edx, [xsi].sdCaretVisLineOffset
-      neg edx
-      OCall xsi.ScrollVisPageUp, edx
+    mov eax, [xsi].CaretViewLineIndex
+    inc eax
+    .if eax >= [xsi].dLineMaxFullVis                    ;End of View
+      OCall xsi.ScrollVisLineDown
       add dNeedRedrawing, eax
-      mov [xsi].sdCaretVisLineOffset, 0
-      mov ecx, [xsi].FirstVisChar.dLineIndex
+      add [xsi].CaretLocation.dLineIndex, eax
     .else
-      mov edx, [xsi].sdCaretVisLineOffset
-      sub edx, [xsi].dLineMaxFullVis
-      .if SDWORD ptr edx >= 0                           ;Bottom off view
-        inc edx
-        OCall xsi.ScrollVisPageDown, edx
-        add dNeedRedrawing, eax
-        mov edx, [xsi].sdCaretVisLineOffset
-        dec edx
-      .else                                             ;In view
-        mov edx, [xsi].sdCaretVisLineOffset
+      MoveToNextVisEditorLine xbx, [xsi].CaretLocation.dLineIndex, dLastVisLineIndex
+      .if xax != NULL
+        inc [xsi].CaretViewLineIndex
+      .else
+        m2m [xsi].CaretLocation.dLineIndex, dLastVisLineIndex, eax
       .endif
-      MoveToNextVisEditorLine xbx, [xsi].FirstVisChar.dLineIndex
-      mov [xsi].sdCaretVisLineOffset, ebx
-      add ecx, [xsi].FirstVisChar.dLineIndex
     .endif
-    mov [xsi].CaretLocation.dLineIndex, ecx
     dec edi
   .endw
-  OCall xsi.CaretAdjustHorz, xax
+  OCall xsi.CaretAdjustHorz, [xsi].CaretLocation.dLineIndex
   OCall xsi.CaretSet
   mov eax, dNeedRedrawing
 MethodEnd
@@ -65,61 +48,35 @@ MethodEnd
 ; Purpose:    Move the caret one line up.
 ; Arguments:  Arg1: Number of lines
 ; Return:     eax = TRUE if redrawing is needed, otherwise FALSE.
+; Note:       The first line is always visible.
 
 Method EditorView.MoveCaretUp, uses xbx xdi xsi, dLineCount:DWORD
-;  local dNeedRedrawing:DWORD
-;
-;;  DbgText "EditorView.MoveCaretUp"
-;  SetObject xsi
-;  mov dNeedRedrawing, 0
-;  mov edi, dLineCount
-;  test edi, edi
-;  .while !ZERO?
-;    mov xcx, [xsi].pOwner
-;    mov xbx, [xcx].$Obj(EditorDisplay).pOwner           ;xbx -> Editor
-;    mov xax, [xbx].$Obj(Editor).LinesHead.pFirstMember
-;    sub xax, offset $Obj(EditorLine).LineLink
-;    .if xax != [xsi].CaretLocation.pEditorLine            ;Begin of file?
-;      dec [xsi].sdCaretVisLineOffset
-;    .else
-;      cmp [xsi].sdCaretVisLineOffset, 0
-;    .endif
-;
-;    .if SIGN?                                           ;Top off view
-;      mov edx, [xsi].sdCaretVisLineOffset
-;      neg edx
-;      OCall xsi.ScrollVisPageUp, edx
-;      add dNeedRedrawing, eax
-;      mov [xsi].sdCaretVisLineOffset, 0
-;      mov xax, [xsi].FirstVisChar.pEditorLine
-;      mov ecx, [xsi].FirstVisChar.dLineIndex
-;    .else
-;      mov edx, [xsi].sdCaretVisLineOffset
-;      sub edx, [xsi].dLineMaxFullVis
-;      .if SDWORD ptr edx > 0                            ;Bottom off view
-;        inc edx
-;        OCall xsi.ScrollVisPageDown, edx
-;        add dNeedRedrawing, eax
-;        mov xax, [xsi].FirstVisChar.pEditorLine
-;        mov edx, [xsi].dLineMaxFullVis
-;        dec edx
-;      .else                                             ;In view
-;        mov edx, [xsi].sdCaretVisLineOffset
-;        mov xax, [xsi].FirstVisChar.pEditorLine
-;        inc dNeedRedrawing                              ;This is a patch
-;      .endif
-;      GotoNextVisEditorLine xax, edx, ecx, ebx
-;      mov [xsi].sdCaretVisLineOffset, ebx
-;      add ecx, [xsi].FirstVisChar.dLineIndex
-;    .endif
-;    mov [xsi].CaretLocation.dLineIndex, ecx
-;    mov [xsi].CaretLocation.pEditorLine, xax
-;    dec edi
-;  .endw
-;  OCall xsi.CaretAdjustHorz, xax
-;  OCall xsi.CaretSet
-;
-;  mov eax, dNeedRedrawing
+  local dNeedRedrawing:DWORD, dLastVisLineIndex:DWORD
+
+;  DbgText "EditorView.MoveCaretUp"
+  SetObject xsi
+  mov xbx, [xsi].pEditor                                ;xbx -> Editor
+  mov dNeedRedrawing, 0
+  mov edi, dLineCount
+  test edi, edi
+  .while !ZERO?
+    .if [xsi].CaretViewLineIndex == 0                 ;Top off view
+      OCall xsi.ScrollVisLineUp
+      add dNeedRedrawing, eax
+      sub [xsi].CaretLocation.dLineIndex, eax
+    .else
+      MoveToPrevVisEditorLine xbx, [xsi].CaretLocation.dLineIndex, dLastVisLineIndex
+      .if xax != NULL
+        dec [xsi].CaretViewLineIndex
+      .else
+        m2m [xsi].CaretLocation.dLineIndex, dLastVisLineIndex, eax
+      .endif
+    .endif
+    dec edi
+  .endw
+  OCall xsi.CaretAdjustHorz, [xsi].CaretLocation.dLineIndex
+  OCall xsi.CaretSet
+  mov eax, dNeedRedrawing
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -130,33 +87,36 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local dNeedRedrawing:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
+  local dNeedRedrawing:DWORD, RefLoc:LOCATION, dActionGroup:DWORD, dPrevLineIndex:dword
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnChar"
   SetObject xsi
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
-;  DbgHex wParam
 
   mov dNeedRedrawing, 0
   .if wParam >= ' '                                     ;Ignore control characters
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
 
-    OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
-    OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
-    OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
+    .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
+        [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+      OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
+      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretShow                               ;Show again after a selection
+    .endif
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
     .if xax != NULL
       mov xdi, xax
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
-        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, dActionGroup
+        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, [xsi].CaretLocation.dLineIndex, dActionGroup
       .else
         .if [xdi].$Obj(EditorLine).dLength == edx
-          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, dActionGroup
+          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, [xsi].CaretLocation.dLineIndex, dActionGroup
         .else
-          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam, dActionGroup
+          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam, [xsi].CaretLocation.dLineIndex, dActionGroup
         .endif
       .endif
       .if eax != 0
@@ -187,7 +147,7 @@ CreateExceptionHandler EditorView_OnKeyDown
 Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dMenuKeyPressed:DWORD, dShiftKeyPressed:DWORD, dControlKeyPressed:DWORD
   local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
-  local dNeedRedrawing:DWORD, dReturnValue:DWORD
+  local dNeedRedrawing:DWORD, dReturnValue:DWORD, dPrevLineIndex:DWORD
 
   ANNOTATION use:wParam lParam
 
@@ -219,30 +179,24 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
   .if wParam == VK_SCROLL ;<SCROLL LOCK>
     ;Do something special
-    OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
-    mov xcx, [xsi].pOwner
-    OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete, eax
-    .if eax != 0
-      OCall xsi.CaretSet
-    .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'C'
     OCall xsi.ClpBrdCopy
 
   .elseif dControlKeyPressed != FALSE && wParam == 'X'
-    OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
+    OCall xsi.CaretLocationSave, addr RefLoc, NULL       ;Calculate a caret reference position before deletion
     OCall xsi.ClpBrdCut
     .if eax != FALSE
-      OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
       OCall xsi.CaretSet
     .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'V'
-;    OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
+    OCall xsi.CaretLocationSave, addr RefLoc, NULL       ;Calculate a caret reference position before deletion
     OCall xsi.ClpBrdPaste
     .if eax != FALSE
-;      OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
+;      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
       OCall xsi.CaretSet
     .endif
@@ -292,135 +246,134 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_LEFT
-;    .if dControlKeyPressed == FALSE
-;      ;<LEFT>
-;      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
-;        .if [xsi].CaretLocation.dCharIndex != 0
-;          mov [xsi].dLockedVertIndex, -1
-;          dec [xsi].CaretLocation.dCharIndex
-;          OCall xsi.ScrollCaretInViewLeft
-;          add dNeedRedrawing, eax
-;          OCall xsi.CaretSet
-;        .else
-;          mov xax, [xbx].$Obj(Editor).LinesHead.pFirstMember
-;          sub xax, offset $Obj(EditorLine).LineLink
-;          .if xax != [xsi].CaretLocation.pEditorLine
-;            OCall xsi.MoveCaretUp, 1
-;            add dNeedRedrawing, eax
-;            mov [xsi].dLockedVertIndex, -1
-;            mov xax, [xsi].CaretLocation.pEditorLine
-;            m2m [xsi].CaretLocation.dCharIndex, [xax].$Obj(EditorLine).dLength, edx
-;            OCall xsi.ScrollCaretInViewRight
-;            add dNeedRedrawing, eax
-;            OCall xsi.CaretSet
-;          .endif
-;        .endif
-;      .else
-;        .if [xsi].CaretLocation.dCharIndex != 0
-;          mov [xsi].dLockedVertIndex, -1
-;          dec [xsi].CaretLocation.dCharIndex
-;          OCall xsi.ScrollCaretInViewLeft
-;          add dNeedRedrawing, eax
-;          OCall xsi.CaretSet
-;        .endif
-;      .endif
-;
-;      .if dShiftKeyPressed != FALSE
-;        OCall xsi.SelectUpToCaretLocation
-;        inc dNeedRedrawing
-;        OCall xsi.CaretSet
-;      .else
-;        OCall xsi.SelectBeginAtCaretLocation
-;        inc dNeedRedrawing
-;      .endif
-;    .else
-;      ;<CONTROL><LEFT>
-;      ;Jump to the end of the current word
-;      OCall xsi.CaretMoveWordBeg
-;
-;      .if dShiftKeyPressed != FALSE
-;        OCall xsi.SelectUpToCaretLocation
-;        inc dNeedRedrawing
-;        OCall xsi.CaretSet
-;      .else
-;        OCall xsi.SelectBeginAtCaretLocation
-;        inc dNeedRedrawing
-;      .endif
-;    .endif
-;
-;    .if dShiftKeyPressed != FALSE
-;      OCall xsi.SelectUpToCaretLocation
-;      inc dNeedRedrawing
-;    .else
-;      OCall xbx::Editor.SelectionResetAll
-;      add dNeedRedrawing, eax
-;      OCall xsi.SelectBeginAtCaretLocation
-;    .endif
+    .if dControlKeyPressed == FALSE
+      ;<LEFT>
+      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
+        .if [xsi].CaretLocation.dCharIndex != 0
+          mov [xsi].dLockedCharIndex, -1
+          dec [xsi].CaretLocation.dCharIndex
+          OCall xsi.ScrollCaretInViewLeft
+          add dNeedRedrawing, eax
+          OCall xsi.CaretSet
+        .else
+          MoveToPrevVisEditorLine xbx, [xsi].CaretLocation.dLineIndex
+          .if xax != NULL
+            mov xdi, xax
+            OCall xsi.MoveCaretUp, 1
+            add dNeedRedrawing, eax
+            mov [xsi].dLockedCharIndex, -1
+            m2m [xsi].CaretLocation.dCharIndex, [xdi].$Obj(EditorLine).dLength, edx
+            OCall xsi.ScrollCaretInViewRight
+            add dNeedRedrawing, eax
+            OCall xsi.CaretSet
+          .endif
+        .endif
+      .else
+        .if [xsi].CaretLocation.dCharIndex != 0
+          mov [xsi].dLockedCharIndex, -1
+          dec [xsi].CaretLocation.dCharIndex
+          OCall xsi.ScrollCaretInViewLeft
+          add dNeedRedrawing, eax
+          OCall xsi.CaretSet
+        .endif
+      .endif
+
+      .if dShiftKeyPressed != FALSE
+        OCall xsi.SelectUpToCaretLocation
+        inc dNeedRedrawing
+        OCall xsi.CaretSet
+      .else
+        OCall xsi.SelectBeginAtCaretLocation
+        inc dNeedRedrawing
+      .endif
+    .else
+      ;<CONTROL><LEFT>
+      ;Jump to the end of the current word
+      OCall xsi.CaretMoveWordBeg
+
+      .if dShiftKeyPressed != FALSE
+        OCall xsi.SelectUpToCaretLocation
+        inc dNeedRedrawing
+        OCall xsi.CaretSet
+      .else
+        OCall xsi.SelectBeginAtCaretLocation
+        inc dNeedRedrawing
+      .endif
+    .endif
+
+    .if dShiftKeyPressed != FALSE
+      OCall xsi.SelectUpToCaretLocation
+      inc dNeedRedrawing
+    .else
+      OCall xbx::Editor.SelectionResetAll
+      add dNeedRedrawing, eax
+      OCall xsi.SelectBeginAtCaretLocation
+    .endif
 
   .elseif wParam == VK_RIGHT
-;    .if dControlKeyPressed == FALSE
-;      ;<RIGHT>
-;      mov xax, [xsi].CaretLocation.pEditorLine
-;      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
-;        mov ecx, [xax].$Obj(EditorLine).dLength
-;        .if [xsi].CaretLocation.LOCATION.dCharIndex < ecx
-;          mov [xsi].dLockedVertIndex, -1
-;          inc [xsi].CaretLocation.LOCATION.dCharIndex
-;          OCall xsi.ScrollCaretInViewRight
-;          add dNeedRedrawing, eax
-;          OCall xsi.CaretSet
-;        .else
-;          BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED   ;Mark previous line
-;          mov xax, [xbx].$Obj(Editor).LinesHead.pLastMember
-;          sub xax, offset $Obj(EditorLine).LineLink
-;          .if xax != [xsi].CaretLocation.pEditorLine
-;            OCall xsi.MoveCaretDown, 1
-;            add dNeedRedrawing, eax
-;            mov [xsi].dLockedVertIndex, -1
-;            mov [xsi].CaretLocation.dCharIndex, 0
-;            OCall xsi.ScrollCaretInViewLeft
-;            add dNeedRedrawing, eax
-;            OCall xsi.CaretSet
-;          .endif
-;        .endif
-;      .else
-;        mov [xsi].dLockedVertIndex, -1
-;        inc [xsi].CaretLocation.dCharIndex
-;        OCall xsi.ScrollCaretInViewRight
-;        add dNeedRedrawing, eax
-;        OCall xsi.CaretSet
-;      .endif
-;
-;      .if dShiftKeyPressed != FALSE
-;        OCall xsi.SelectUpToCaretLocation
-;        inc dNeedRedrawing
-;        OCall xsi.CaretSet
-;      .else
-;        OCall xsi.SelectBeginAtCaretLocation
-;        inc dNeedRedrawing
-;      .endif
-;    .else
-;      ;<CONTROL><RIGHT>
-;      OCall xsi.CaretMoveWordEnd
-;
-;      .if dShiftKeyPressed != FALSE
-;        OCall xsi.SelectUpToCaretLocation
-;        inc dNeedRedrawing
-;        OCall xsi.CaretSet
-;      .else
-;        OCall xsi.SelectBeginAtCaretLocation
-;        inc dNeedRedrawing
-;      .endif
-;    .endif
-;
-;    .if dShiftKeyPressed != FALSE
-;      OCall xsi.SelectUpToCaretLocation
-;      inc dNeedRedrawing
-;    .else
-;      OCall xbx::Editor.SelectionResetAll
-;      add dNeedRedrawing, eax
-;      OCall xsi.SelectBeginAtCaretLocation
-;    .endif
+    .if dControlKeyPressed == FALSE
+      ;<RIGHT>
+      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
+        OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+        mov ecx, [xax].$Obj(EditorLine).dLength
+        .if [xsi].CaretLocation.LOCATION.dCharIndex < ecx
+          mov [xsi].dLockedCharIndex, -1
+          inc [xsi].CaretLocation.LOCATION.dCharIndex
+          OCall xsi.ScrollCaretInViewRight
+          add dNeedRedrawing, eax
+          OCall xsi.CaretSet
+        .else
+          BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED   ;Mark previous line
+          mov edx, [xbx].$Obj(Editor).Lines.dCount
+          dec edx
+          .if edx != [xsi].CaretLocation.dLineIndex
+            OCall xsi.MoveCaretDown, 1
+            add dNeedRedrawing, eax
+            mov [xsi].dLockedCharIndex, -1
+            mov [xsi].CaretLocation.dCharIndex, 0
+            OCall xsi.ScrollCaretInViewLeft
+            add dNeedRedrawing, eax
+            OCall xsi.CaretSet
+          .endif
+        .endif
+      .else
+        mov [xsi].dLockedCharIndex, -1
+        inc [xsi].CaretLocation.dCharIndex
+        OCall xsi.ScrollCaretInViewRight
+        add dNeedRedrawing, eax
+        OCall xsi.CaretSet
+      .endif
+
+      .if dShiftKeyPressed != FALSE
+        OCall xsi.SelectUpToCaretLocation
+        inc dNeedRedrawing
+        OCall xsi.CaretSet
+      .else
+        OCall xsi.SelectBeginAtCaretLocation
+        inc dNeedRedrawing
+      .endif
+    .else
+      ;<CONTROL><RIGHT>
+      OCall xsi.CaretMoveWordEnd
+
+      .if dShiftKeyPressed != FALSE
+        OCall xsi.SelectUpToCaretLocation
+        inc dNeedRedrawing
+        OCall xsi.CaretSet
+      .else
+        OCall xsi.SelectBeginAtCaretLocation
+        inc dNeedRedrawing
+      .endif
+    .endif
+
+    .if dShiftKeyPressed != FALSE
+      OCall xsi.SelectUpToCaretLocation
+      inc dNeedRedrawing
+    .else
+      OCall xbx::Editor.SelectionResetAll
+      add dNeedRedrawing, eax
+      OCall xsi.SelectBeginAtCaretLocation
+    .endif
 
   .elseif wParam == VK_NEXT
     mov xax, [xsi].pOwner
@@ -451,223 +404,217 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_HOME
-;    .if dControlKeyPressed != FALSE
-;      OCall xsi.ScrollVisPageUp, -1                     ;Use saturation
-;      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
-;      mov xax, [xsi].FirstVisChar.pEditorLine
-;      mov [xsi].CaretLocation.pEditorLine, xax
-;      mov [xsi].CaretLocation.dCharIndex, 0
-;      mov [xsi].CaretLocation.dLineIndex, 1
-;      mov [xsi].sdCaretVisLineOffset, 0
-;      inc dNeedRedrawing
-;    .else
-;      mov xax, [xsi].CaretLocation.pEditorLine
-;      .if xax == NULL
-;        ret
-;      .endif
-;      ;Search the first non blank char from index 0 up to the current caret index
-;      ;Set loop limits
-;      mov xcx, [xax].$Obj(EditorLine).pBuffer
-;      m2m dLength, [xax].$Obj(EditorLine).dLength, edx
-;      mov edi, [xsi].CaretLocation.dCharIndex
-;      .if edi != 0
-;        mov dMaxIndex, edi
-;        ;Start looping
-;        xor edi, edi
-;        xor ebx, ebx                                    ;Search index = 0
-;        .while ebx < dLength && ebx < dMaxIndex
-;          movzx eax, CHR ptr [xcx + sizeof(CHR)*xbx]
-;          GetCharType eax, edx
-;          .ifBitSet edx, CHR_BLANK
-;            inc ebx
-;          .else
-;            mov edi, ebx
-;            .break
-;          .endif
-;        .endw
-;      .endif
-;
-;      .if edi < [xsi].FirstVisChar.dCharIndex
-;        mov [xsi].FirstVisChar.dCharIndex, 0                   ;Adjust FirstVisChar.dCharIndex
-;        inc dNeedRedrawing
-;      .endif
-;      mov [xsi].CaretLocation.dCharIndex, edi
-;    .endif
-;    OCall xsi.CaretSet
-;
-;    .if dShiftKeyPressed != FALSE
-;      OCall xsi.SelectUpToCaretLocation
-;      inc dNeedRedrawing
-;    .else
-;      mov xcx, [xsi].pOwner
-;      OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionResetAll
-;      add dNeedRedrawing, eax
-;      OCall xsi.SelectBeginAtCaretLocation
-;    .endif
+    .if dControlKeyPressed != FALSE
+      OCall xsi.ScrollVisPageUp, -1                     ;Use saturation
+      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
+      mov [xsi].CaretLocation.dCharIndex, 0
+      mov [xsi].CaretLocation.dLineIndex, 0
+      mov [xsi].CaretViewLineIndex, 0
+      OCall xsi.CaretSet
+      inc dNeedRedrawing
+    .else
+      OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+      .if xax != NULL
+        ;Search the first non blank char from index 0 up to the current caret index
+        ;Set loop limits
+        mov xcx, [xax].$Obj(EditorLine).pBuffer
+        m2m dLength, [xax].$Obj(EditorLine).dLength, edx
+        mov edi, [xsi].CaretLocation.dCharIndex
+        .if edi != 0
+          mov dMaxIndex, edi
+          ;Start looping
+          xor edi, edi
+          xor ebx, ebx                                  ;Search index = 0
+          .while ebx < dLength && ebx < dMaxIndex
+            movzx eax, CHR ptr [xcx + sizeof(CHR)*xbx]
+            GetCharType eax, edx
+            .ifBitSet edx, CHR_BLANK
+              inc ebx
+            .else
+              mov edi, ebx
+              .break
+            .endif
+          .endw
+        .endif
+
+        .if edi < [xsi].FirstVisChar.dCharIndex
+          mov [xsi].FirstVisChar.dCharIndex, 0          ;Adjust FirstVisChar.dCharIndex
+          inc dNeedRedrawing
+        .endif
+        mov [xsi].CaretLocation.dCharIndex, edi
+      .endif
+      OCall xsi.CaretSet
+      OCall xsi.ScrollCaretInViewLeft
+
+      .if dShiftKeyPressed != FALSE
+        OCall xsi.SelectUpToCaretLocation
+        inc dNeedRedrawing
+      .else
+        mov xcx, [xsi].pOwner
+        OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionResetAll
+        add dNeedRedrawing, eax
+        OCall xsi.SelectBeginAtCaretLocation
+      .endif
+    .endif
 
   .elseif wParam == VK_END
-;    .if dControlKeyPressed != FALSE
-;      OCall xsi.ScrollVisPageDown, -1                   ;Use saturation
-;      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
-;      mov xax, [xsi].FirstVisChar.pEditorLine
-;      mov [xsi].CaretLocation.pEditorLine, xax
-;      mov ecx, [xax].$Obj(EditorLine).dLength
-;      mov [xsi].CaretLocation.dCharIndex, ecx
-;      mov edx, [xsi].FirstVisChar.dLineIndex
-;      mov [xsi].CaretLocation.dLineIndex, edx
-;      mov [xsi].sdCaretVisLineOffset, 0
-;      inc dNeedRedrawing
-;    .else
-;      ;Search the last char in line
-;      mov xax, [xsi].CaretLocation.pEditorLine
-;      .if xax == NULL
-;        ret
-;      .endif
-;      ;Is the horz index out of screen?
-;      mov edx, [xax].$Obj(EditorLine).dLength       ;Get last caret char index
-;      mov eax, [xsi].dCharMaxFullVis
-;      mov [xsi].CaretLocation.dCharIndex, edx           ;Store it
-;      mov ecx, edx                                      ;Calc view position
-;      sub ecx, [xsi].FirstVisChar.dCharIndex
-;      .if eax < ecx                                     ;Check if it is off view
-;        sub edx, eax
-;        mov [xsi].FirstVisChar.dCharIndex, edx          ;Adjust FirstVisChar.dCharIndex
-;        inc dNeedRedrawing
-;      .endif
-;    .endif
-;    OCall xsi.CaretSet
-;
-;    .if dShiftKeyPressed != FALSE
-;      OCall xsi.SelectUpToCaretLocation
-;      inc dNeedRedrawing
-;    .else
-;      OCall xbx::Editor.SelectionResetAll
-;      add dNeedRedrawing, eax
-;      OCall xsi.SelectBeginAtCaretLocation
-;    .endif
+    .if dControlKeyPressed != FALSE
+      OCall xsi.ScrollVisPageDown, -1                   ;Use saturation
+      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
+      mov edx, [xbx].$Obj(Editor).Lines.dCount
+      dec edx
+      mov [xsi].CaretLocation.dLineIndex, edx
+      OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+      m2m [xsi].CaretLocation.dCharIndex, [xax].$Obj(EditorLine).dLength, ecx
+      mov [xsi].CaretViewLineIndex, 0
+      OCall xsi.CaretSet
+      inc dNeedRedrawing
+    .else
+      ;Search the last char in line
+      OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+      .if xax != NULL
+        m2m [xsi].CaretLocation.dCharIndex, [xax].$Obj(EditorLine).dLength, edx
+        OCall xsi.ScrollCaretInViewRight
+        inc dNeedRedrawing
+      .endif
+      OCall xsi.CaretSet
+      OCall xsi.ScrollCaretInViewRight
+    .endif
+
+    .if dShiftKeyPressed != FALSE
+      OCall xsi.SelectUpToCaretLocation
+      inc dNeedRedrawing
+    .else
+      OCall xbx::Editor.SelectionResetAll
+      add dNeedRedrawing, eax
+      OCall xsi.SelectBeginAtCaretLocation
+    .endif
 
   .elseif wParam == VK_DELETE
-;    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
-;
-;    ;Check Selection
-;    mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-;    mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
-;    .if xcx == NULL || xdx == NULL
-;      ;Nothing selected => delete char at caret position
-;      ;Check if caret is at the line end => join lines
-;      mov xax, [xsi].CaretLocation.pEditorLine
-;      mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
-;      .if xcx != NULL
-;        mov ecx, [xsi].CaretLocation.dCharIndex
-;        .if ecx == [xax].$Obj(EditorLine).dLength
-;          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineIndex, dActionGroup
-;        .else
-;          mov edx, [xsi].CaretLocation.dLineIndex
-;          mov [xbx].$Obj(Editor).SelectionFst.pEditorLine, xax
-;          mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, ecx
-;          mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
-;          inc ecx
-;          mov [xbx].$Obj(Editor).SelectionLst.pEditorLine, xax
-;          mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, ecx
-;          mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
-;
-;          ;Do deletion; Caret does not move.
-;          OCall xbx::Editor.SelectionSet
-;          OCall xbx::Editor.SelectionDelete, dActionGroup
-;        .endif
-;      .endif
-;    .else
-;      OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-;      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
-;      OCall xsi.CaretRefLocLoad, addr RefLoc            ;Restore caret info
-;    .endif
-;
-;    OCall xsi.CaretSet                                  ;Set caret
-;    OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
-;    inc dNeedRedrawing
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+
+    ;Check Selection  
+    mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+    mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
+    .if xcx == NULL || xdx == NULL
+      ;Nothing selected => delete char at caret position
+      ;Check if caret is at the line end => join lines
+      OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+      .if xax != NULL
+        mov ecx, [xsi].CaretLocation.dCharIndex
+        .if ecx == [xax].$Obj(EditorLine).dLength
+          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineIndex, dActionGroup
+        .else
+          mov edx, [xsi].CaretLocation.dLineIndex
+          mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, ecx
+          mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
+          inc ecx
+          mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, ecx
+          mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
+          OCall xbx::Editor.SelectionSet
+        .endif
+      .endif
+    .endif
+    .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
+        [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+      OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
+      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretShow                               ;Show again after a selection
+    .endif
+
+    OCall xsi.CaretSet                                  ;Set caret
+    OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
+    inc dNeedRedrawing
 
   .elseif wParam == VK_BACK
-;    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))    
-;    
-;    ;Check Selection
-;    mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-;    mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
-;    .if xcx == NULL || xdx == NULL
-;      ;Nothing selected => delete char before caret position
-;      ;Check if caret is at the line begin => join lines
-;      mov xax, [xsi].CaretLocation.pEditorLine
-;      mov ecx, [xsi].CaretLocation.dCharIndex
-;      .if ecx == 0
-;        mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkBack
-;        .if xcx != NULL
-;          sub xcx, offset $Obj(EditorLine).LineLink
-;          mov edi, [xcx].$Obj(EditorLine).dLength
-;          ;Join the 2 lines
-;          OCall [xsi].CaretLocation.pEditorLine::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineIndex, dActionGroup
-;
-;          ;Move caret
-;          mov [xsi].CaretLocation.pEditorLine, xcx          ;xcx retunred from LineJoinPrev
-;          dec [xsi].CaretLocation.dLineIndex
-;          mov [xsi].CaretLocation.dCharIndex, edi
-;          dec [xsi].sdCaretVisLineOffset
-;        .endif
-;      .else
-;        mov edx, [xsi].CaretLocation.dLineIndex
-;        mov [xbx].$Obj(Editor).SelectionFst.pEditorLine, xax
-;        mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, ecx
-;        mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
-;        dec ecx
-;        mov [xbx].$Obj(Editor).SelectionLst.pEditorLine, xax
-;        mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, ecx
-;        mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
-;
-;        ;Do deletion
-;        OCall xbx::Editor.SelectionSet
-;        OCall xbx::Editor.SelectionDelete, dActionGroup
-;
-;        ;Move caret
-;        dec [xsi].CaretLocation.dCharIndex
-;      .endif
-;    .else
-;      OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-;      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
-;      OCall xsi.CaretRefLocLoad, addr RefLoc            ;Restore caret info
-;    .endif
-;
-;    OCall xsi.CaretSet                                  ;Set caret
-;    OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
-;    inc dNeedRedrawing
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+
+    ;Check Selection
+    mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+    mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
+    .if xcx == NULL || xdx == NULL
+      ;Nothing selected => delete char before caret position
+      ;Check if caret is at the line begin => join lines
+      .if [xsi].CaretLocation.dCharIndex == 0
+        m2m dPrevLineIndex, [xsi].CaretLocation.dLineIndex, eax
+        MoveToPrevEditorLine xbx, [xsi].CaretLocation.dLineIndex  ;CaretLocation.dLineIndex is updated
+        .if xax == NULL
+          m2m [xsi].CaretLocation.dLineIndex, dPrevLineIndex, eax
+        .else
+          mov edi, [xax].$Obj(EditorLine).dLength
+          ;Join the 2 lines
+          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineIndex, dActionGroup
+
+          ;Move caret
+          mov [xsi].CaretLocation.dCharIndex, edi
+          dec [xsi].CaretViewLineIndex
+        .endif
+      .else
+        mov edx, [xsi].CaretLocation.dLineIndex
+        mov ecx, [xsi].CaretLocation.dCharIndex
+        mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, ecx
+        mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
+        dec ecx
+        mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, ecx
+        mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
+
+        ;Do deletion
+        OCall xbx::Editor.SelectionSet
+        OCall xbx::Editor.SelectionDelete, dActionGroup ;Do deletion
+        OCall xsi.CaretShow                             ;Show again after a selection
+
+        ;Move caret
+        dec [xsi].CaretLocation.dCharIndex
+      .endif
+    .else
+      .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
+          [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+        OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+        OCall xbx::Editor.SelectionDelete, dActionGroup ;Do deletion
+        OCall xsi.CaretLocationLoad, addr RefLoc        ;Restore caret info
+        OCall xsi.CaretShow                             ;Show again after a selection
+      .endif
+    .endif
+
+    OCall xsi.CaretSet                                  ;Set caret
+    OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
+    inc dNeedRedrawing
 
   .elseif wParam == VK_TAB
 ;    .ifBitSet [???].$Obj(EditorResources).dFlags, ERF_TAB_TO_SPACE
 
-;    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
-;    OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
-;    OCall xbx::Editor.SelectionDelete, eax                   ;Do deletion
-;    OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
-;    mov xax, [xsi].CaretLocation.pEditorLine
-;    .if xax != NULL
-;      mov edx, [xsi].CaretLocation.dCharIndex
-;      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
-;        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), dActionGroup
-;      .else
-;        .if [xax].$Obj(EditorLine).dLength == edx
-;          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), dActionGroup
-;        .else
-;          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  "), dActionGroup
-;        .endif
-;      .endif
-;      .if eax != 0
-;        add [xsi].CaretLocation.dCharIndex, 2
-;        OCall xsi.CaretSet
-;        OCall xsi.ScrollCaretInViewRight
-;        OCall xsi.SelectBeginAtCaretLocation
-;        inc dNeedRedrawing
-;      .endif
-;    .endif
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
+        [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+      OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
+      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretShow                               ;Show again after a selection
+    .endif
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+    .if xax != NULL
+      mov edx, [xsi].CaretLocation.dCharIndex
+      .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
+        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), [xsi].CaretLocation.dLineIndex, dActionGroup
+      .else
+        .if [xax].$Obj(EditorLine).dLength == edx
+          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), [xsi].CaretLocation.dLineIndex, dActionGroup
+        .else
+          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  "), [xsi].CaretLocation.dLineIndex, dActionGroup
+        .endif
+      .endif
+      .if eax != 0
+        add [xsi].CaretLocation.dCharIndex, 2
+        OCall xsi.CaretSet
+        OCall xsi.ScrollCaretInViewRight
+        OCall xsi.SelectBeginAtCaretLocation
+        inc dNeedRedrawing
+      .endif
+    .endif
 
   .elseif wParam == VK_RETURN
-    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex 
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
     .if xax != NULL
       mov xdi, xax
       OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
@@ -675,7 +622,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       .if xax != NULL
         mov [xsi].CaretLocation.dCharIndex, 0
         inc [xsi].CaretLocation.dLineIndex
-        inc [xsi].sdCaretVisLineOffset
+        inc [xsi].CaretViewLineIndex
         OCall xsi.CaretSet
         inc dNeedRedrawing
       .endif
@@ -687,7 +634,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     OCall xbx::Editor.SelectionResetAll
     BitToggle [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
     .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
-;      OCall xsi.CaretAdjustHorz, [xsi].CaretLocation.pEditorLine
+      OCall xsi.CaretAdjustHorz, [xsi].CaretLocation.dLineIndex
       mov [xsi].CaretLocation.dCharIndex, eax                               ;Caret is still hidden
     .endif
     OCall xsi.UpdateStatusPanel

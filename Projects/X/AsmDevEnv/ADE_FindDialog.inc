@@ -261,7 +261,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
 ;          mov xcx, [xax].$Obj(Editor).pFocusedView
 ;          s2s [xcx].$Obj(EditorView).CaretLocation, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
 ;          s2s [xcx].$Obj(EditorView).FirstVisChar, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
-;          mov [xcx].$Obj(EditorView).sdCaretVisLineOffset, 0
+;          mov [xcx].$Obj(EditorView).CaretViewLineIndex, 0
 ;        .else
 ;          .if [xax].$Obj(Editor).SelectionRange.pBegSelInfo != NULL
 ;            .if [xsi].Choices.dDirection == FDD_DOWN
