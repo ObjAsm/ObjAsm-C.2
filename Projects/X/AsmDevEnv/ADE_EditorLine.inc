@@ -14,7 +14,7 @@ ELN_GRANULARITY             equ   32        ;Must be a power of 2, in characters
 ELE_OUTOFMEMORY             equ   10000
 
 ;EditorLine flags
-ELF_DIRTY_LINE_PREV         equ   BIT00     ;Prevoius line has changed
+ELF_DIRTY_LINE_PREV         equ   BIT00     ;Previous line has changed
 ELF_DIRTY_LINE_CURR         equ   BIT01     ;Current line has changed
 ELF_DIRTY_LINE_NEXT         equ   BIT02     ;Next line has changed
 ELF_SAVED_LINE_PREV         equ   BIT03     ;Previous line has been saved
@@ -23,7 +23,7 @@ ELF_SAVED_LINE_NEXT         equ   BIT05     ;Next line has been saved
 ELF_HIDDEN                  equ   BIT06     ;Current line is hidden
 ELF_ERROR_MARKED            equ   BIT07     ;Current line shows an error marker
 ELF_BOOK_MARKED             equ   BIT08     ;Current line shows a book marker
-ELF_EOL_MARKED              equ   BIT09     ;Current line shows an EOL marker
+;ELF_EOL_MARKED              equ   BIT09     ;Current line shows an EOL marker
 ELF_HAS_EXPAND_SYMBOL       equ   BIT10
 ELF_HAS_COLLAPSE_SYMBOL     equ   BIT11
 
@@ -411,10 +411,10 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xsi
-          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-          m2m [xbx].ACTION.dLineIndex, dLineIndex, edx
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
+          mov [xbx].ACTION.pEditorLine, xsi
+          m2m [xbx].ACTION.dLineIndex, dLineIndex, edx
           m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
           mov [xbx].ACTION.dChrCount, edi
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, edi)
@@ -432,10 +432,10 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xsi
-          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
+          mov [xbx].ACTION.pEditorLine, xsi
+          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, edx
           mov ecx, dDelIndex
@@ -546,10 +546,10 @@ Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWOR
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xsi
-          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           mov [xbx].ACTION.dAction, AAT_INSERTCHARS
+          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
+          mov [xbx].ACTION.pEditorLine, xsi
+          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           m2m [xbx].ACTION.dPosIndex, dInsIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, eax
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
@@ -612,10 +612,10 @@ Method EditorLine.CharReplace, uses xbx xsi, dRplIndex:DWORD, dCharCount:DWORD, 
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xsi
-          m2m [xbx].ACTION.dGroup, dActionGroup, edx
-          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dGroup, dActionGroup, edx
+          mov [xbx].ACTION.pEditorLine, xsi
+          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           mrm [xbx].ACTION.dPosIndex, dRplIndex, edx
           m2m [xbx].ACTION.dChrCount, dCharCount, ecx
           mov xax, [xsi].pBuffer
@@ -645,10 +645,10 @@ Method EditorLine.CharReplace, uses xbx xsi, dRplIndex:DWORD, dCharCount:DWORD, 
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
-          mov [xbx].ACTION.pEditorLine, xsi
-          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
-          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           mov [xbx].ACTION.dAction, AAT_INSERTCHARS
+          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
+          mov [xbx].ACTION.pEditorLine, xsi
+          m2m [xbx].ACTION.dLineIndex, dLineIndex, ecx
           m2m [xbx].ACTION.dPosIndex, dRplIndex, eax
           m2m [xbx].ACTION.dChrCount, dCharCount, eax
           mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
@@ -740,13 +740,12 @@ Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, 
   .endif
 
   ;Adjust dSelEndIndex to show an EOL selection marker
+  mov xcx, [xsi].pOwner
   mov eax, [xsi].Selection.dEndIndex
-  .ifBitSet [xsi].dFlags, ELF_EOL_MARKED
-    .if eax == [xsi].dLength
-      mov xcx, [xsi].pOwner
-      .ifBitClr [xcx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
-        inc eax
-      .endif
+  .ifBitClr [xcx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
+    .if eax == -1
+      mov eax, [xsi].dLength
+      inc eax
     .endif
   .endif
   mov dSelEndIndex, eax
@@ -1281,7 +1280,7 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
   local pNewEditorLine:$ObjPtr(EditorLine)
 
   SetObject xsi
-  mov xbx, [xsi].pOwner                                 ;xdi -> Editor
+  mov xbx, [xsi].pOwner                                 ;xbx -> Editor
 
   New EditorLine
   .if xax != NULL
@@ -1298,11 +1297,10 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
     .if dActionGroup != 0
       MemAlloc sizeof(ACTION)
       .if xax != NULL
-        m2m [xax].ACTION.pEditorLine, pNewEditorLine, xdx
-        m2m [xax].ACTION.dGroup, dActionGroup, edx
-        m2m [xax].ACTION.dLineIndex, dLineIndex, ecx
         mov [xax].ACTION.dAction, AAT_INSERTLINE
-        m2m [xax].ACTION.dLineIndex, dLineIndex, edx    ;New LineIndex
+        m2m [xax].ACTION.dGroup, dActionGroup, edx
+        m2m [xax].ACTION.pEditorLine, pNewEditorLine, xdx
+        m2m [xax].ACTION.dLineIndex, dLineIndex, ecx
         OCall [xbx].$Obj(Editor).Actions::ActionCollection.Insert, xax
       .endif
     .endif
@@ -1316,6 +1314,7 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
       sub eax, ecx
       OCall pNewEditorLine::EditorLine.CharInsert, 0, eax, xdi, dLineIndex, dActionGroup
       OCall xsi::EditorLine.CharDelete, dBreakIndex, -1, dLineIndex, dActionGroup
+      OCall xsi.SetDirty                                ;Set dirty only if chars are moved
     .endif
 
     ;Housekeeping
@@ -1324,7 +1323,6 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
       inc [xbx].$Obj(Editor).dVisLineCount
     .endif
 
-    OCall xsi.SetDirty
     mov xax, pNewEditorLine
     BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
   .endif
@@ -1352,8 +1350,10 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   dec edx
   .if !SIGN?
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
-    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
+    .if xax != NULL
+      BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
+      BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
+    .endif
   .endif
 
   ;Set Dirty marker on next line
@@ -1361,8 +1361,10 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   inc edx
   .if edx != [xbx].$Obj(Editor).Lines.dCount 
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
-    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
+    .if xax != NULL
+      BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
+      BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
+    .endif
   .endif
 
   ;Do deletion
@@ -1372,10 +1374,10 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   .if dActionGroup != 0
     MemAlloc sizeof(ACTION)
     .if xax != NULL
-      m2m [xax].ACTION.dGroup, dActionGroup, ecx
       mov [xax].ACTION.dAction, AAT_DELETELINE
-      m2m [xax].ACTION.dLineIndex, dLineIndex, ecx
+      m2m [xax].ACTION.dGroup, dActionGroup, ecx
       mov [xax].ACTION.pEditorLine, xsi
+      m2m [xax].ACTION.dLineIndex, dLineIndex, ecx
       OCall [xbx].$Obj(Editor).Actions::ActionCollection.Insert, xax
     .endif
   .endif
@@ -1386,21 +1388,23 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineJoinNext
 ; Purpose:    Join the current with the next EditorLine.
-; Arguments:  Arg1: LineIndex of this EditorLine.
+; Arguments:  Arg1: Line index of this EditorLine.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
-Method EditorLine.LineJoinNext, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
+Method EditorLine.LineJoinNext, uses xbx xdi xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
+  mov xbx, [xsi].pOwner                                 ;xbx -> Editor
+
   ;Goto next EditorLine
-  inc dLineIndex                                      ;Index from next EditorLine
-  mov xbx, [xsi].pOwner
-  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex
-  .if xax != NULL
+  mov edi, dLineIndex
+  inc edi                                               ;Index from next EditorLine
+  .if edi < [xbx].$Obj(Editor).Lines.dCount
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edi ;Get next line
     mov xbx, xax
-    OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, [xbx].$Obj(EditorLine).pBuffer, dLineIndex, dActionGroup
-    OCall xbx::EditorLine.LineDelete, dLineIndex, dActionGroup
-    mov xcx, xsi
+    OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, \
+                          [xbx].$Obj(EditorLine).pBuffer, dLineIndex, dActionGroup
+    OCall xbx::EditorLine.LineDelete, edi, dActionGroup
   .endif
 MethodEnd
 
@@ -1411,12 +1415,12 @@ MethodEnd
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
-Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineIndex:DWORD, dActionGroup:DWORD
+Method EditorLine.LineJoinPrev, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
   ;Goto previous EditorLine
   dec dLineIndex                                      ;Index from next EditorLine
   mov xbx, [xsi].pOwner
-  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex
+  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex ;Get pev line
   .if xax != NULL
     mov xbx, xax
     BitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
@@ -1485,7 +1489,6 @@ Method EditorLine.SelectionReset
   setne al
   mov [xcx].Selection.dBegIndex, 0
   mov [xcx].Selection.dEndIndex, 0
-  BitClr [xcx].dFlags, ELF_EOL_MARKED
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

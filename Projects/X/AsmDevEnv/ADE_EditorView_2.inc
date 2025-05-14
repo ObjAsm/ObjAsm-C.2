@@ -87,7 +87,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local dNeedRedrawing:DWORD, RefLoc:LOCATION, dActionGroup:DWORD, dPrevLineIndex:dword
+  local dNeedRedrawing:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
 
   ANNOTATION use:wParam lParam
 
@@ -98,6 +98,7 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov dNeedRedrawing, 0
   .if wParam >= ' '                                     ;Ignore control characters
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup
 
     .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
@@ -128,11 +129,13 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
 
+    OCall xbx::Editor.ManageEditCmds
     .if dNeedRedrawing != 0
       mov xax, [xsi].pOwner
       invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
     .endif
   .endif
+  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -147,15 +150,14 @@ CreateExceptionHandler EditorView_OnKeyDown
 Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dMenuKeyPressed:DWORD, dShiftKeyPressed:DWORD, dControlKeyPressed:DWORD
   local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
-  local dNeedRedrawing:DWORD, dReturnValue:DWORD, dPrevLineIndex:DWORD
+  local dNeedRedrawing:DWORD, dReturnValue:DWORD, dPrevLineIndex:DWORD, dCurrLineIndex:DWORD
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnKeyDown"
 ;  .try EditorView_OnKeyDown
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
+  mov xbx, [xsi].pEditor
 
   mov dMenuKeyPressed, 0
   mov dShiftKeyPressed, 0
@@ -218,6 +220,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
   .elseif wParam == VK_ESCAPE
     OCall xbx::Editor.SelectionResetAll
     add dNeedRedrawing, eax
+    OCall xsi.CaretShow
 
   .elseif wParam == VK_UP
     OCall xsi.MoveCaretUp, 1
@@ -230,6 +233,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xbx::Editor.SelectionResetAll
       add dNeedRedrawing, eax
       OCall xsi.SelectBeginAtCaretLocation
+      OCall xsi.CaretShow
     .endif
 
   .elseif wParam == VK_DOWN
@@ -243,6 +247,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xbx::Editor.SelectionResetAll
       add dNeedRedrawing, eax
       OCall xsi.SelectBeginAtCaretLocation
+      OCall xsi.CaretShow
     .endif
 
   .elseif wParam == VK_LEFT
@@ -255,8 +260,10 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           OCall xsi.ScrollCaretInViewLeft
           add dNeedRedrawing, eax
           OCall xsi.CaretSet
+          OCall xsi.CaretShow
         .else
-          MoveToPrevVisEditorLine xbx, [xsi].CaretLocation.dLineIndex
+          m2m dCurrLineIndex, [xsi].CaretLocation.dLineIndex, eax
+          MoveToPrevVisEditorLine xbx, dCurrLineIndex
           .if xax != NULL
             mov xdi, xax
             OCall xsi.MoveCaretUp, 1
@@ -314,26 +321,29 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .if dControlKeyPressed == FALSE
       ;<RIGHT>
       .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
+        ;Regular mode (INS/OVR)
         OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
-        mov ecx, [xax].$Obj(EditorLine).dLength
-        .if [xsi].CaretLocation.LOCATION.dCharIndex < ecx
-          mov [xsi].dLockedCharIndex, -1
-          inc [xsi].CaretLocation.LOCATION.dCharIndex
-          OCall xsi.ScrollCaretInViewRight
-          add dNeedRedrawing, eax
-          OCall xsi.CaretSet
-        .else
-          BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED   ;Mark previous line
-          mov edx, [xbx].$Obj(Editor).Lines.dCount
-          dec edx
-          .if edx != [xsi].CaretLocation.dLineIndex
-            OCall xsi.MoveCaretDown, 1
-            add dNeedRedrawing, eax
+        .if xax != NULL
+          mov ecx, [xax].$Obj(EditorLine).dLength
+          .if [xsi].CaretLocation.LOCATION.dCharIndex < ecx
             mov [xsi].dLockedCharIndex, -1
-            mov [xsi].CaretLocation.dCharIndex, 0
-            OCall xsi.ScrollCaretInViewLeft
+            inc [xsi].CaretLocation.LOCATION.dCharIndex
+            OCall xsi.ScrollCaretInViewRight
             add dNeedRedrawing, eax
             OCall xsi.CaretSet
+            OCall xsi.CaretShow
+          .else
+            mov edx, [xbx].$Obj(Editor).Lines.dCount
+            dec edx
+            .if edx != [xsi].CaretLocation.dLineIndex
+              OCall xsi.MoveCaretDown, 1
+              add dNeedRedrawing, eax
+              mov [xsi].dLockedCharIndex, -1
+              mov [xsi].CaretLocation.dCharIndex, 0
+              OCall xsi.ScrollCaretInViewLeft
+              add dNeedRedrawing, eax
+              OCall xsi.CaretSet
+            .endif
           .endif
         .endif
       .else
@@ -465,9 +475,11 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       dec edx
       mov [xsi].CaretLocation.dLineIndex, edx
       OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-      m2m [xsi].CaretLocation.dCharIndex, [xax].$Obj(EditorLine).dLength, ecx
-      mov [xsi].CaretViewLineIndex, 0
-      OCall xsi.CaretSet
+      .if xax != NULL
+        m2m [xsi].CaretLocation.dCharIndex, [xax].$Obj(EditorLine).dLength, ecx
+        mov [xsi].CaretViewLineIndex, 0
+        OCall xsi.CaretSet
+      .endif
       inc dNeedRedrawing
     .else
       ;Search the last char in line
@@ -492,8 +504,9 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
   .elseif wParam == VK_DELETE
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup
 
-    ;Check Selection  
+    ;Check Selection
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
     mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
     .if xcx == NULL || xdx == NULL
@@ -525,10 +538,12 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
     OCall xsi.CaretSet                                  ;Set caret
     OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
+    OCall xbx::Editor.ManageEditCmds
     inc dNeedRedrawing
 
   .elseif wParam == VK_BACK
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup
 
     ;Check Selection
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
@@ -579,12 +594,14 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
     OCall xsi.CaretSet                                  ;Set caret
     OCall xsi.SelectBeginAtCaretLocation                ;Set selection begin
+    OCall xbx::Editor.ManageEditCmds
     inc dNeedRedrawing
 
   .elseif wParam == VK_TAB
 ;    .ifBitSet [???].$Obj(EditorResources).dFlags, ERF_TAB_TO_SPACE
 
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup
     .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
       OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
@@ -609,6 +626,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
         OCall xsi.CaretSet
         OCall xsi.ScrollCaretInViewRight
         OCall xsi.SelectBeginAtCaretLocation
+        OCall xbx::Editor.ManageEditCmds
         inc dNeedRedrawing
       .endif
     .endif
@@ -617,13 +635,15 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
     .if xax != NULL
       mov xdi, xax
-      OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
-      OCall xdi::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex, eax
+      mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+      OCall xbx::Editor.CreateSelAction, dActionGroup
+      OCall xdi::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex, dActionGroup
       .if xax != NULL
         mov [xsi].CaretLocation.dCharIndex, 0
         inc [xsi].CaretLocation.dLineIndex
         inc [xsi].CaretViewLineIndex
         OCall xsi.CaretSet
+        OCall xbx::Editor.ManageEditCmds
         inc dNeedRedrawing
       .endif
     .endif

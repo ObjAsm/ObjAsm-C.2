@@ -352,15 +352,15 @@ PSELRANGE typedef ptr SELRANGE
 ;      |       |<> | dLineFoldingWidth
 ;      |       | <>| dLineIndicatorWidth
 ;       -------------------------------------------
-;      | 1)xxx | ¦ | Line N       |                |
-;      | xxxxx | ¦ |------------------------       |
+;      | 1)xxx | | | Line N       |                |
+;      | xxxxx | | |------------------------       |
 ;      | xxxxx |[-]| Line N+1               |      |
-;      | xxxxx | ¦ |---------------------------    |  xxxxxxx = line numbers
-;      | xxxxx | ¦ | Line N+2                  |   |  1) Selection bar
-;      | xxxxx | ¦ |---------------------------    |
-;      | xxxxx | ¦-| Line N+3              |       |
-;      | xxxxx | ¦ |-----------------------        |
-;      | xxxxx | ¦ |        ...                    |
+;      | xxxxx | | |---------------------------    |  xxxxxxx = line numbers
+;      | xxxxx | | | Line N+2                  |   |  1) Selection bar
+;      | xxxxx | | |---------------------------    |
+;      | xxxxx | |-| Line N+3              |       |
+;      | xxxxx | | |-----------------------        |
+;      | xxxxx | | |        ...                    |
 ;       -------------------------------------------
 ;      |           |                       |   |   |
 ;      |SelBarWidth|<----- Line width ---->|   |   |
@@ -482,7 +482,7 @@ ObjectEnd
 ;      |                                        |a |
 ;      |                                        |r |
 ;      |-------------------------------------------|
-;      |StatusPanel| Horizontal Scrollbar       |**| Splitter
+;      |StatusPanel| Horizontal Scrollbar       |# | Splitter
 ;       -------------------------------------------
 ;      |                                           |
 ;      |<----------- EditorDisplay width---------->|
@@ -529,14 +529,14 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
+Object ChildWnd, ADE_ChildWndID, MdiChildWnd            ;MDI child window.
   VirtualAbstract   ClpBrdDelete
   VirtualAbstract   ClpBrdCopy
   VirtualAbstract   ClpBrdCut
   VirtualAbstract   ClpBrdPaste
   VirtualAbstract   ManageEditCmds
   RedefineMethod    Done
-  RedefineMethod    Init,                 POINTER             ;-> Owner
+  RedefineMethod    Init,                 POINTER
   VirtualAbstract   Print
   VirtualAbstract   Save
   VirtualAbstract   UpdateStatusbar
@@ -552,19 +552,28 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-AAT_DELETECHARS     equ   0
-AAT_DELETELINE      equ   1
-AAT_INSERTCHARS     equ   2
-AAT_INSERTLINE      equ   3
+AAT_DELETECHARS     equ     0
+AAT_DELETELINE      equ     1
+AAT_INSERTCHARS     equ     2
+AAT_INSERTLINE      equ     3
+AAT_SELECTION       equ     4
 
 ACTION struct
-  dAction     DWORD               ?
-  dGroup      DWORD               ?
-  pEditorLine $ObjPtr(EditorLine) ?
-  dLineIndex  DWORD               ?
-  dPosIndex   DWORD               ?
-  dChrCount   DWORD               ?
-  pChars      PSTRING             ?
+  dAction     DWORD         ?
+  dGroup      DWORD         ?
+  union
+    struct
+      pEditorLine $ObjPtr(EditorLine) ?
+      dLineIndex  DWORD     ?
+      dPosIndex   DWORD     ?
+      dChrCount   DWORD     ?
+      pChars      PSTRING   ?
+    ends
+    struct
+      BegLocation LOCATION  {}
+      EndLocation LOCATION  {}
+    ends
+  ends
 ACTION ends
 PACTION typedef ptr ACTION
 
@@ -573,54 +582,30 @@ PACTION typedef ptr ACTION
 ; Purpose:    Implement a DataCollection of ACTIONs.
 
 Object ActionCollection, ADE_ActionCollectionID, DataCollection
-  RedefineMethod    DestroyItem,        PACTION
-  RedefineMethod    Insert,             PACTION
+  RedefineMethod    DestroyItem,          PACTION
+  RedefineMethod    Insert,               PACTION
 
-  StaticMethod      GetRedoAction,      DWORD
-  StaticMethod      GetUndoAction,      DWORD
+  StaticMethod      DisposeHistory
+  StaticMethod      GetRedoAction,        DWORD
+  StaticMethod      GetUndoAction,        DWORD
   StaticMethod      GetNewActionGroup
   StaticMethod      ShowActions
 
-  DefineVariable    dActionIndex,       DWORD,    0       ;Sort of stack pointer
-  DefineVariable    dActionGroup,       DWORD,    0       ;Grouping ID 
+  DefineVariable    dActionIndex,         DWORD,    0   ;Sort of stack pointer
+  DefineVariable    dActionGroup,         DWORD,    0   ;Grouping ID 
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
-
-; Editor Layout:
-; -------------
-;                                                      (NULL)
-;                                                        ^
-;                                                        |
-;                                         EditorLine(0).Link <----
-;                                                        ^|       |
-;                                                        |V       |
-;                                                                 |
-;                                                        ...      |
-;                                                                 |
-;                                                        ^|       |
-;                                                        |V       |    Editor.LinesHead
-;  Editor.FirstVisChar.pEditorLine ---->  EditorLine(M).Link       ---- FirstMember
-;                                                        ^|        ---- LastMember
-;                                                        |V       |
-;                                                                 |
-;                                                        ...      |
-;                                                                 |
-;                                                        ^|       |
-;                                                        |V       |
-;                                         EditorLine(N).Link <----
-;                                                         |
-;                                                         V
-;                                                       (NULL)
-
-
-;Caret Blink timeout: SPI_SETCARETTIMEOUT
+; Object:     Editor
+; Purpose:    Implement an general purpose Editor.
+; Note:       Caret blink timeout is set by SPI_SETCARETTIMEOUT.
 
 Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    ClpBrdDelete
   RedefineMethod    ClpBrdCopy
   RedefineMethod    ClpBrdCut
   RedefineMethod    ClpBrdPaste
+  StaticMethod      CreateSelAction,      DWORD
   RedefineMethod    Done
   VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PFINDDLGCHOICES
   VirtualMethod     InformDeletionOf,     DWORD
@@ -642,8 +627,9 @@ Object Editor, ADE_EditorID, ChildWnd
   VirtualMethod     SelectionIndent
   VirtualMethod     SelectionOutdent
   VirtualMethod     SelectionReplace,     PSTRING, DWORD
+  VirtualMethod     SelectionResetInfo
   VirtualMethod     SelectionResetAll
-  VirtualMethod     SelectionResetLines                             ;Reset selection on lines only
+  VirtualMethod     SelectionResetLines                 ;Reset selection on lines only
   VirtualMethod     SelectionSet
   VirtualMethod     SelectionUncomment
   VirtualMethod     SetDirty,             DWORD
@@ -887,8 +873,8 @@ DbgEditorMembers macro InstanceReg, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dCharIndex,, Dest
   OCall [InstanceReg].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(Editor).SelectionFst.dLineIndex
-  mov xdi, xax
-  .if xdi != NULL
+  .if xax != NULL
+    mov xdi, xax
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   
@@ -897,8 +883,8 @@ DbgEditorMembers macro InstanceReg, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dLineIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest
   OCall [InstanceReg].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(Editor).SelectionLst.dLineIndex
-  mov xdi, xax
-  .if xdi != NULL
+  .if xax != NULL
+    mov xdi, xax
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
 
@@ -915,8 +901,8 @@ DbgEditorViewMembers macro InstanceReg, Dest
   DbgHex [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex,, Dest
   mov xcx, [InstanceReg].$Obj(EditorView).pEditor
   OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex
-  mov xdi, xax
-  .if xdi != NULL
+  .if xax != NULL
+    mov xdi, xax
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex,, Dest
@@ -926,8 +912,8 @@ DbgEditorViewMembers macro InstanceReg, Dest
   DbgHex [InstanceReg].$Obj(EditorView).FirstVisChar.dLineIndex,, Dest
   mov xcx, [InstanceReg].$Obj(EditorView).pEditor
   OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [InstanceReg].$Obj(EditorView).CaretLocation.dLineIndex
-  mov xdi, xax
-  .if xdi != NULL
+  .if xax != NULL
+    mov xdi, xax
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).dFirstVisLineCount,, Dest

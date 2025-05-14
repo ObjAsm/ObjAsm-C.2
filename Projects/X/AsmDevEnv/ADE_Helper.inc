@@ -112,7 +112,7 @@ endm
 ; Arguments:  Arg1: (Non volatile register) -> Current Editor (Can not be NULL).
 ;             Arg2: Current Line Index variable.
 ;             Arg3: Last Visible Line index variable
-; Return:     xax -> Prev/Next EditorLine or NULL if the count could not be reached.
+; Return:     xax -> Prev/Next EditorLine or NULL if not found.
 
 MoveToNextVisEditorLine macro pEditorNoVolReg:req, CurrLineIndex:req, LastVisLineIndex
   .While TRUE
@@ -127,6 +127,7 @@ endif
       jmp @F
     .endif
     OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
+    .break .if xax == NULL
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .break
     .endif
@@ -145,6 +146,7 @@ endif
       .break
     .endif
     OCall [pEditorReg].$Obj(Editor).Lines::Collection.ItemAt, CurrLineIndex
+    .break .if xax == NULL
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .break
     .endif 
@@ -163,6 +165,7 @@ MoveToNextVisEditorPage macro pEditorNoVolReg, CurrLineIndex, PageSize, VisLineC
         jmp @F
       .endif
       OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
+      .break .if xax == NULL
       .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
         .break
       .endif
@@ -186,6 +189,7 @@ MoveToPrevVisEditorPage macro pEditorNoVolReg, CurrLineIndex, PageSize, VisLineC
         jmp @F
       .endif
       OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, CurrLineIndex
+      .break .if xax == NULL
       .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
         .break
       .endif
@@ -204,7 +208,7 @@ endm
 ; Purpose:    Return the pointer to the prev/next EditorLine.
 ; Arguments:  Arg1: (Non volatile register) -> Current Editor (Can not be NULL).
 ;             Arg2: Current Line Index variable.
-; Return:     xax -> Prev/Next EditorLine or NULL if the count could not be reached.
+; Return:     xax -> Prev/Next EditorLine or NULL if not found.
 
 MoveToNextEditorLine macro pEditorReg, CurrLineIndex
   inc CurrLineIndex

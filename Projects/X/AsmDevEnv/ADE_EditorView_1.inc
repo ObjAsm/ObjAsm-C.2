@@ -9,7 +9,8 @@
 ;EditorView flags
 EVF_CARET_CREATED           equ   BIT00
 EVF_CARET_VISIBLE           equ   BIT01
-EVF_LBUTTON_DOWN_SELBAR     equ   BIT02       ;Discriminates between SelBar and TextBox
+EVF_LBUTTON_DOWN_SELBAR     equ   BIT02
+EVF_LBUTTON_DOWN_TEXTBOX    equ   BIT03
 
 
 ; ==================================================================================================
@@ -99,40 +100,42 @@ Method EditorView.CaretMoveWordBeg, uses xbx xdi xsi
   mov dNeedRedrawing, 0
   mov xcx, [xsi].pEditor
   OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
-  mov edi, [xsi].CaretLocation.dCharIndex
-  xor edx, edx                                          ;Reset word begin flag
-
-  .while TRUE
-    .if edi == 0
-      ;We need to go to the previous line
-      mov xbx, xax
-      OCall xsi.MoveCaretUp, 1
-      add dNeedRedrawing, eax
-      mov xcx, [xsi].pEditor
-      OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
-      .if xbx != xax
-        mov edi, [xax].$Obj(EditorLine).dLength
-      .endif
-      .break
-    .endif
-
-    ;Detect previous word begin
-    mov xbx, [xax].$Obj(EditorLine).pBuffer
-    movzx ecx, CHR ptr [xbx + sizeof(CHR)*xdi - sizeof(CHR)]
-    GetCharType ecx, ebx
-    .ifAnyBitSet ebx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
-      .if edx != 0
+  .if xax != NULL
+    mov edi, [xsi].CaretLocation.dCharIndex
+    xor edx, edx                                          ;Reset word begin flag
+  
+    .while TRUE
+      .if edi == 0
+        ;We need to go to the previous line
+        mov xbx, xax
+        OCall xsi.MoveCaretUp, 1
+        add dNeedRedrawing, eax
+        mov xcx, [xsi].pEditor
+        OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+        .if xax != NULL && xbx != xax
+          mov edi, [xax].$Obj(EditorLine).dLength
+        .endif
         .break
       .endif
-    .else
-      inc edx
-    .endif
-    dec edi
-    .break .if ZERO? && edx != 0
-  .endw
-
-  mov [xsi].CaretLocation.dCharIndex, edi
-  OCall xsi.CaretSet
+  
+      ;Detect previous word begin
+      mov xbx, [xax].$Obj(EditorLine).pBuffer
+      movzx ecx, CHR ptr [xbx + sizeof(CHR)*xdi - sizeof(CHR)]
+      GetCharType ecx, ebx
+      .ifAnyBitSet ebx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
+        .if edx != 0
+          .break
+        .endif
+      .else
+        inc edx
+      .endif
+      dec edi
+      .break .if ZERO? && edx != 0
+    .endw
+  
+    mov [xsi].CaretLocation.dCharIndex, edi
+    OCall xsi.CaretSet
+  .endif
 
   xor eax, eax
   cmp dNeedRedrawing, 0
@@ -153,38 +156,40 @@ Method EditorView.CaretMoveWordEnd, uses xbx xdi xsi
   mov dNeedRedrawing, 0
   mov xcx, [xsi].pEditor
   OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
-  mov edi, [xsi].CaretLocation.dCharIndex
-  xor edx, edx                                          ;Reset flag
-  .if edi == [xax].$Obj(EditorLine).dLength
-    mov xbx, xax
-    OCall xsi.MoveCaretDown, 1
-    add dNeedRedrawing, eax
-    mov xcx, [xsi].pEditor
-    OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
-    .if xbx != xax
-      xor edi, edi
-    .else
-      jmp @F
+  .if xax != NULL
+    mov edi, [xsi].CaretLocation.dCharIndex
+    xor edx, edx                                          ;Reset flag
+    .if edi == [xax].$Obj(EditorLine).dLength
+      mov xbx, xax
+      OCall xsi.MoveCaretDown, 1
+      add dNeedRedrawing, eax
+      mov xcx, [xsi].pEditor
+      OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+      .if xax != NULL && xbx != xax
+        xor edi, edi
+      .else
+        jmp @F
+      .endif
     .endif
+  
+    .while TRUE
+      .break .if edi == [xax].$Obj(EditorLine).dLength
+  
+      ;Detect next word end
+      mov xbx, [xax].$Obj(EditorLine).pBuffer
+      movzx ecx, CHR ptr [xbx + sizeof(CHR)*xdi]
+      GetCharType ecx, ebx
+      .ifAnyBitSet ebx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
+        .break .if edx != 0
+      .else
+        inc edx
+      .endif
+      inc edi
+    .endw
+  
+    mov [xsi].CaretLocation.dCharIndex, edi
+    OCall xsi.CaretSet
   .endif
-
-  .while TRUE
-    .break .if edi == [xax].$Obj(EditorLine).dLength
-
-    ;Detect next word end
-    mov xbx, [xax].$Obj(EditorLine).pBuffer
-    movzx ecx, CHR ptr [xbx + sizeof(CHR)*xdi]
-    GetCharType ecx, ebx
-    .ifAnyBitSet ebx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
-      .break .if edx != 0
-    .else
-      inc edx
-    .endif
-    inc edi
-  .endw
-
-  mov [xsi].CaretLocation.dCharIndex, edi
-  OCall xsi.CaretSet
 
 @@:
   xor eax, eax
@@ -203,8 +208,7 @@ Method EditorView.CaretNew, uses xbx xsi
   SetObject xsi
   xor eax, eax
   .ifBitClr [xsi].dFlags, EVF_CARET_CREATED
-    mov xcx, [xsi].pOwner
-    mov xax, [xcx].$Obj(EditorDisplay).pOwner
+    mov xax, [xsi].pEditor
     mov xdx, [xsi].pResources
     .ifBitSet [xax].$Obj(Editor).dFlags, EDF_BLOCK_MODE
       m2z [xdx].$Obj(EditorResources).CaretBmpOffset.x        ;Block mode (wide |)
@@ -280,15 +284,11 @@ Method EditorView.CaretSet, uses xdi xsi
 ;  DbgText "EditorView.CaretSet"
   SetObject xsi
   mov xdi, [xsi].pResources
-  mov xcx, [xsi].pOwner
-  mov xdx, [xcx].$Obj(EditorDisplay).pOwner
   mov dRetValue, FALSE
   ;Calc caret horiontal position
   mov eax, [xsi].CaretLocation.dCharIndex
   sub eax, [xsi].FirstVisChar.dCharIndex
-;  mov eax, [xsi].CaretViewLocation.dCharIndex
   .if !SIGN? && eax <= [xsi].dCharMaxPartVis
-;  .if eax >= 0 && eax <= [xsi].dCharMaxPartVis
     mul [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.x  ;Convert to pixels
     add eax, [xsi].TextRect.left                        ;Offset by Selectionbar width
     mov CaretPosition.x, eax                            ;Store it
@@ -347,9 +347,10 @@ Method EditorView.ClpBrdDelete, uses xbx xsi
 ;  DbgText "EditorView.ClpBrdDelete"
   SetObject xsi
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
-  mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
   .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
       [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup 
     OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
     OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
     OCall xsi.CaretLocationLoad, addr RefLoc            ;Restore caret info
@@ -366,7 +367,7 @@ MethodEnd
 
 Method EditorView.ClpBrdCopy, uses xbx xdi xsi
   local dResult:DWORD, hBuffer:HANDLE, pGlobalMem:POINTER, dBufferSize:DWORD
-  local dLastEditorIndex:DWORD, dHasLineEnd:DWORD
+  local dLastLineIndex:DWORD, dHasLineEnd:DWORD
 
 ;  DbgText "EditorView.ClpBrdCopy"
   SetObject xsi
@@ -377,20 +378,22 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
     ;Allocate memory to copy the the content passed to the clipboard
     ;Calc the required size
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
-    m2m dLastEditorIndex, [xcx].LOCATION.dLineIndex, edx
+    m2m dLastLineIndex, [xcx].LOCATION.dLineIndex, edx
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-    mov edi, [xcx].LOCATION.dLineIndex
+    mov edi, [xcx].LOCATION.dLineIndex                  ;edi = current line index
     mov dBufferSize, 0
     .repeat
       OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edi
+      .break .if xax == NULL
       mov edx, [xax].$Obj(EditorLine).Selection.dEndIndex
-      sub edx, [xax].$Obj(EditorLine).Selection.dBegIndex
-      .ifBitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
+      .if edx == -1
+        mov edx, [xax].$Obj(EditorLine).dLength
         add edx, 2                                      ;CRLF
       .endif
+      sub edx, [xax].$Obj(EditorLine).Selection.dBegIndex
       add dBufferSize, edx
       inc edi
-    .until edi > dLastEditorIndex
+    .until edi > dLastLineIndex
     inc dBufferSize                                     ;Ending ZTC
   if sizeof(CHR) eq 2
     shl dBufferSize, 1
@@ -410,13 +413,18 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
       ;Do the copy job
       .repeat
         OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edi
+        .break .if xax == NULL
         mov dHasLineEnd, FALSE
-        .ifBitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
+        .if [xax].$Obj(EditorLine).Selection.dEndIndex == -1
           mov dHasLineEnd, TRUE
         .endif
         mov xcx, [xax].$Obj(EditorLine).pBuffer
         mov edx, [xax].$Obj(EditorLine).Selection.dBegIndex
-        mov eax, [xax].$Obj(EditorLine).Selection.dEndIndex
+        .if [xax].$Obj(EditorLine).Selection.dEndIndex == -1
+          mov eax, [xax].$Obj(EditorLine).dLength
+        .else
+          mov eax, [xax].$Obj(EditorLine).Selection.dEndIndex
+        .endif
         sub eax, edx
   if sizeof(CHR) eq 2
         shl edx, 1
@@ -430,7 +438,7 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
           add xsi, 2*sizeof(CHR)
         .endif
         inc edi
-      .until edi > dLastEditorIndex
+      .until edi > dLastLineIndex
       mov CHR ptr [xsi], 0
 
       invoke GlobalUnlock, pGlobalMem
@@ -450,9 +458,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorView.ClpBrdCut, uses xbx xsi
-  local RefLoc:LOCATION
-
+Method EditorView.ClpBrdCut, uses xsi
 ;  DbgText "EditorView.ClpBrdCut"
   SetObject xsi
   OCall xsi.ClpBrdCopy
@@ -474,13 +480,14 @@ MethodEnd
 
 Method EditorView.ClpBrdPaste, uses xbx xdi xsi
   local pEditorLine:$ObjPtr(EditorLine), dResult:DWORD, RefLoc:LOCATION, dInsLineCount:DWORD
-  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineIndex:DWORD, dBreakChar:DWORD, pLink:POINTER, dActionGroup:DWORD
+  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineIndex:DWORD, dBreakChar:DWORD, dActionGroup:DWORD
 
 ;  DbgText "EditorView.ClpBrdPaste"
   SetObject xsi
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
   mov dResult, FALSE
   mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+  OCall xbx::Editor.CreateSelAction, dActionGroup 
 
   .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
       [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
@@ -505,51 +512,53 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
             m2m dCharIndex, [xsi].CaretLocation.dCharIndex, ecx
             mrm dLineIndex, [xsi].CaretLocation.dLineIndex, edx
             OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-            mov pEditorLine, xax
-            mov dInsLineCount, 0
-            xor ebx, ebx                                ;ebx = char counter
-            .repeat
-              movzx edx, CHR ptr [xdi + sizeof(CHR)*xbx];Read buffer character
-              .break .if edx == 0                       ;ZTC = End of buffer?
-              .if edx != CR && edx != LF                ;EOL (CR/LF/CRLF) reached?
-                inc ebx                                 ;No
-              .else
-                mov dBreakChar, edx
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
-                mov edx, dCharIndex
-                add edx, ebx
-                OCall pEditorLine::EditorLine.LineBreak, edx, dLineIndex, dActionGroup
-                mov pEditorLine, xax                    ;xax -> new splitted off line
-
-                ;Move to next line in the clipboard buffer
-                lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
-                .if dBreakChar == CR && CHR ptr [xdi] == LF
-                  add xdi, sizeof CHR                   ;CRLF case
+            .if xax != NULL
+              mov pEditorLine, xax
+              mov dInsLineCount, 0
+              xor ebx, ebx                                ;ebx = char counter
+              .repeat
+                movzx edx, CHR ptr [xdi + sizeof(CHR)*xbx];Read buffer character
+                .break .if edx == 0                       ;ZTC = End of buffer?
+                .if edx != CR && edx != LF                ;EOL (CR/LF/CRLF) reached?
+                  inc ebx                                 ;No
+                .else
+                  mov dBreakChar, edx
+                  OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
+                  mov edx, dCharIndex
+                  add edx, ebx
+                  OCall pEditorLine::EditorLine.LineBreak, edx, dLineIndex, dActionGroup
+                  mov pEditorLine, xax                    ;xax -> new splitted off line
+  
+                  ;Move to next line in the clipboard buffer
+                  lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
+                  .if dBreakChar == CR && CHR ptr [xdi] == LF
+                    add xdi, sizeof CHR                   ;CRLF case
+                  .endif
+  
+                  ;Increment other counters
+                  inc dInsLineCount
+                  inc dLineIndex
+                  mov dCharIndex, 0
+                  xor ebx, ebx
                 .endif
-
-                ;Increment other counters
-                inc dInsLineCount
-                inc dLineIndex
-                mov dCharIndex, 0
-                xor ebx, ebx
+              .until FALSE
+  
+              ;Paste the rest
+              .if ebx != 0
+                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
+                add dCharIndex, ebx
               .endif
-            .until FALSE
-
-            ;Paste the rest
-            .if ebx != 0
-              OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
-              add dCharIndex, ebx
+              
+              ;Manage the caret
+              m2m [xsi].CaretLocation.dCharIndex, dCharIndex, edx
+              m2m [xsi].CaretLocation.dLineIndex, dLineIndex, edx
+              mov edx, dInsLineCount
+              add [xsi].CaretViewLineIndex, edx
+              OCall xsi.CaretSet 
+  
+              ;Scroll the view to show the last inserted line
+              OCall xsi.ScrollCaretInViewBottom
             .endif
-            
-            ;Manage the caret
-            m2m [xsi].CaretLocation.dCharIndex, dCharIndex, edx
-            m2m [xsi].CaretLocation.dLineIndex, dLineIndex, edx
-            mov edx, dInsLineCount
-            add [xsi].CaretViewLineIndex, edx
-            OCall xsi.CaretSet 
-
-            ;Scroll the view to show the last inserted line
-            OCall xsi.ScrollCaretInViewBottom
 
           .else
             ;Block mode insertion
@@ -579,12 +588,15 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   .endif
                   mov pEditorLine, xax
                   OCall pEditorLine::EditorLine.SpaceFill, dCharIndex, dLineIndex, dActionGroup
+                  OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
                 .else
                   mov xax, [xsi].pEditor
                   OCall [xax].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex
-                  mov pEditorLine, xax
+                  .if xax != NULL
+                    mov pEditorLine, xax
+                    OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
+                  .endif
                 .endif
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dLineIndex, dActionGroup
 
                 ;Move to next line link
                 mov xax, [xsi].pEditor
@@ -668,8 +680,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method EditorView.DrawEditorLines, uses xbx xdi xsi
-  local CodeLineRect:RECT, hBrush:HBRUSH, dCommentExitChar:DWORD
-  local dCurrLineIndex:DWORD, pCurrEditorLine:$ObjPtr(EditorLine)
+  local CodeLineRect:RECT, hBrush:HBRUSH, dCommentExitChar:DWORD, dCurrLineIndex:DWORD
 
 ;  DbgText "EditorView.OnPaint"
   SetObject xsi
@@ -707,6 +718,7 @@ Method EditorView.DrawEditorLines, uses xbx xdi xsi
           ExitMethod
         .endif
         OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dCurrLineIndex
+        .break .if xax == NULL
         test [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .until ZERO?
       mov ecx, [xdi].$Obj(EditorResources).dLineHeight
@@ -864,7 +876,6 @@ Method EditorView.Done, uses xsi
   invoke SelectObject, [xsi].hTextDC, [xsi].hPrvTextBmp ;xax = hTextBmp
   invoke DeleteObject, xax                              ;Delete memory bitmap
   invoke DeleteDC, [xsi].hTextDC                        ;Delete memory DC
-
   ACall xsi.Done
 MethodEnd
 
@@ -1133,56 +1144,58 @@ Method EditorView.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   SetObject xsi
   mov dNeedRedrawing, 0
   mov xdi, [xsi].pEditor
-  mov xbx, $OCall([xdi].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex)
-
-  ;Search for the end of a word
-  mov edx, [xsi].CaretLocation.dCharIndex
-  .while TRUE
-    mov xcx, [xbx].$Obj(EditorLine).pBuffer
-    movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx]
-    .break .if eax == 0
-    GetCharType eax, ecx
-    .if !(ecx & CHR_WORD)
-      .break
-    .endif
-    inc edx
-  .endw
-  mov dSelEnd, edx
-
-  ;Search beginning of word
-  mov edx, [xsi].CaretLocation.dCharIndex
-  .while edx > 0
-    mov xcx, [xbx].$Obj(EditorLine).pBuffer
-    movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx - sizeof(CHR)]
-    .if eax == '.'
-      .break
-    .else
+  OCall [xdi].$Obj(Editor).Lines::Collection.ItemAt, [xsi].CaretLocation.dLineIndex
+  .if xax != NULL
+    mov xbx, xax
+    ;Search for the end of a word
+    mov edx, [xsi].CaretLocation.dCharIndex
+    .while TRUE
+      mov xcx, [xbx].$Obj(EditorLine).pBuffer
+      movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx]
+      .break .if eax == 0
       GetCharType eax, ecx
       .if !(ecx & CHR_WORD)
         .break
       .endif
+      inc edx
+    .endw
+    mov dSelEnd, edx
+  
+    ;Search beginning of word
+    mov edx, [xsi].CaretLocation.dCharIndex
+    .while edx > 0
+      mov xcx, [xbx].$Obj(EditorLine).pBuffer
+      movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx - sizeof(CHR)]
+      .if eax == '.'
+        .break
+      .else
+        GetCharType eax, ecx
+        .if !(ecx & CHR_WORD)
+          .break
+        .endif
+      .endif
+      dec edx
+    .endw
+    mov dSelBeg, edx
+  
+    .if edx != dSelEnd
+      OCall xdi::Editor.SelectionResetLines
+      m2m [xdi].$Obj(Editor).SelectionFst.dCharIndex, dSelBeg, eax
+      mrm [xdi].$Obj(Editor).SelectionLst.dCharIndex, dSelEnd, eax
+      mov [xsi].CaretLocation.dCharIndex, eax             ;Move caret to the selection end
+  
+      mov eax, [xsi].CaretLocation.dLineIndex
+      mov [xdi].$Obj(Editor).SelectionFst.dLineIndex, eax
+      mov [xdi].$Obj(Editor).SelectionLst.dLineIndex, eax
+  
+      OCall xdi::Editor.SelectionSet
+      BitSet [xdi].$Obj(Editor).dFlags, EDF_CARET_LOCKED
+      inc dNeedRedrawing
     .endif
-    dec edx
-  .endw
-  mov dSelBeg, edx
-
-  .if edx != dSelEnd
-    OCall xdi::Editor.SelectionResetLines
-    m2m [xdi].$Obj(Editor).SelectionFst.dCharIndex, dSelBeg, eax
-    mrm [xdi].$Obj(Editor).SelectionLst.dCharIndex, dSelEnd, eax
-    mov [xsi].CaretLocation.dCharIndex, eax             ;Move caret to the selection end
-
-    mov eax, [xsi].CaretLocation.dLineIndex
-    mov [xdi].$Obj(Editor).SelectionFst.dLineIndex, eax
-    mov [xdi].$Obj(Editor).SelectionLst.dLineIndex, eax
-
-    OCall xdi::Editor.SelectionSet
-    BitSet [xdi].$Obj(Editor).dFlags, EDF_CARET_LOCKED
-    inc dNeedRedrawing
-  .endif
-
-  .if dNeedRedrawing != 0
-    invoke RedrawWindow, [xsi].hWnd, addr [xsi].TextRect, 0, RDW_UPDATENOW or RDW_INVALIDATE
+  
+    .if dNeedRedrawing != 0
+      invoke RedrawWindow, [xsi].hWnd, addr [xsi].TextRect, 0, RDW_UPDATENOW or RDW_INVALIDATE
+    .endif
   .endif
 
   xor eax, eax
@@ -1196,7 +1209,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local CursorPos:POINT, Index:POINT, dCurrEditorLineIndex:DWORD
+  local CursorPos:POINT, Index:POINT
 
   ANNOTATION use:wParam lParam
 
@@ -1209,14 +1222,15 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov [xbx].$Obj(Editor).dHilitedLen, 0
 
   PntS2Pnt CursorPos, lParam
+  OCall xsi.ClientPos2Index, addr Index, addr CursorPos
   invoke IsPntInRect, addr CursorPos, addr [xsi].TextRect   ;Clicked into TextRect?
   .if eax != FALSE
     BitClr [xsi].dFlags, EVF_LBUTTON_DOWN_SELBAR        ;Clear flag
+    BitSet [xsi].dFlags, EVF_LBUTTON_DOWN_TEXTBOX       ;Set flag
     ;Left-Clicked in TextRect
     OCall xbx::Editor.SelectionResetLines               ;Clear previous selection
 
     ;Compute Cursor Index.x and Index.y
-    OCall xsi.ClientPos2Index, addr Index, addr CursorPos
     OCall xsi.VertIndex2EditorLine, Index.y
     .if xax == NULL
       ;Limit the y position to the last visible EditorLine
@@ -1263,7 +1277,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
     .else
       ;Shift key pressed
-      OCall xbx::Editor.SelectionResetLines             ;Reset prev selected lines
+;      OCall xbx::Editor.SelectionResetLines             ;Reset prev selected lines
 
       ;Store caret information
       s2s [xbx].$Obj(Editor).SelectionLst, [xsi].CaretLocation, xax, xdx
@@ -1276,23 +1290,39 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .else
     ;Clicked into SelBarRect
     BitSet [xsi].dFlags, EVF_LBUTTON_DOWN_SELBAR        ;Set flag
-    OCall xsi.ClientPos2Index, addr Index, addr CursorPos
+    BitClr [xsi].dFlags, EVF_LBUTTON_DOWN_TEXTBOX       ;Clear flag
 
     invoke SetCapture, [xsi].hWnd                       ;Clicked in the RectRect
     mov [xsi].dLockedCharIndex, -1                      ;Reset persistant x caret position
-    OCall xbx::Editor.SelectionResetAll                 ;Reset selection
 
-    ;Make a full line selection
-    mov edx, [xsi].FirstVisChar.dLineIndex
-    add edx, Index.y
-    mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
-    mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
-    mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, 0
-    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-    m2m [xbx].$Obj(Editor).SelectionLst.dCharIndex, [xax].$Obj(EditorLine).dLength, edx
-    BitSet [xax].$Obj(EditorLine).dFlags, ELF_EOL_MARKED
-    OCall xbx::Editor.SelectionSet
-    
+    OCall xbx::Editor.SelectionResetLines               ;Reset selection
+    invoke GetKeyState, VK_SHIFT
+    .ifBitClr eax, BIT07
+      ;Shift key NOT pressed
+      ;Make a full line selection
+      mov edx, [xsi].FirstVisChar.dLineIndex
+      add edx, Index.y
+      mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
+      mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
+      mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, 0
+      mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, -1
+      OCall xbx::Editor.SelectionSet
+    .else
+      ;Shift key pressed
+      mov edx, [xsi].FirstVisChar.dLineIndex
+      add edx, Index.y
+      .if [xbx].$Obj(Editor).SelectionFst.dLineIndex < edx 
+        ;After first selection
+        mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
+      .else
+        ;Before first selection
+        mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
+        mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, 0
+      .endif
+      mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, -1
+      OCall xbx::Editor.SelectionSet
+    .endif
+      
     ;Manage the cursor
     m2m [xsi].CaretViewLineIndex, Index.y, eax    
     
@@ -1312,16 +1342,16 @@ MethodEnd
 
 Method EditorView.OnLButtonUp, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;  local CursorPos:POINT, CaretLocation:LOCATION
-  local CursorPos:POINT, Index:POINT
+;  local CursorPos:POINT, Index:POINT
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnLButtonUp"
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xbx, [xsi].pEditor
 
   BitClr [xsi].dFlags, EVF_LBUTTON_DOWN_SELBAR
+  BitClr [xsi].dFlags, EVF_LBUTTON_DOWN_TEXTBOX
   invoke ReleaseCapture
 
 ;  .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_CARET_LOCKED
@@ -1384,6 +1414,7 @@ Method EditorView.OnLButtonUp, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;    BitClr [xbx].$Obj(Editor).dFlags, EDF_CARET_LOCKED
 ;  .endif
 ;  OCall xsi.CaretShow
+  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1467,16 +1498,17 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, [xsi].pEditor
   mov dNeedRedrawing, 0
   PntS2Pnt CursorPos1, lParam
-  OCall xsi.ClientPos2Index, addr Index, addr CursorPos1    ;Indices can be negative!
+  OCall xsi.ClientPos2Index, addr Index, addr CursorPos1  ;Indices can be negative!
 
-;  invoke IsPntInRect, addr CursorPos1, addr [xsi].TextRect  ;Clicked into TextRect?
-;  .if eax != FALSE
-  .ifBitClr [xsi].dFlags, EVF_LBUTTON_DOWN_SELBAR
+  .ifBitSet [xsi].dFlags, EVF_LBUTTON_DOWN_TEXTBOX
     ;Moving in TextRect
     .ifBitSet wParam, MK_LBUTTON
       OCall xsi.VertIndex2EditorLine, Index.y
       .if xax != NULL
         mov xdi, xax
+        .if Index.x < 0
+          mov Index.x, 0                                ;Avoid a negative index                                    
+        .endif
         OCall xbx::Editor.SelectionResetLines
         ;In regular mode, limit the x position to the text length
         .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
@@ -1536,17 +1568,18 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
 
-  .else
+  .elseIfBitSet [xsi].dFlags, EVF_LBUTTON_DOWN_SELBAR
     ;Moving in SelBox
     .ifBitSet wParam, MK_LBUTTON
       OCall xsi.VertIndex2EditorLine, Index.y
       .if xax != NULL
         mov xdi, xax
         OCall xbx::Editor.SelectionResetLines           ;Reset previous selected lines
-        m2m [xbx].$Obj(Editor).SelectionLst.dLineIndex, Index.y, edx
-        m2m [xbx].$Obj(Editor).SelectionLst.dCharIndex, [xdi].$Obj(EditorLine).dLength, edx
-        BitSet [xdi].$Obj(EditorLine).dFlags, ELF_EOL_MARKED  ;Set it
-        OCall xbx::Editor.SelectionSet                  ;Last EOL-Marker is not set
+        mov edx, Index.y
+        add edx, [xsi].FirstVisChar.dLineIndex
+        mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
+        mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, -1
+        OCall xbx::Editor.SelectionSet
         inc dNeedRedrawing
 
   ;        xor eax, eax
@@ -1601,7 +1634,7 @@ MethodEnd
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if the message is processed.
-; Note:       Precision scrolling (multiples of 120) can be implemented here §§§§§§§§§§§§§
+; Note:       Precision scrolling (multiples of 120) can be implemented here
 
 Method EditorView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dNeedRedrawing:DWORD
@@ -1763,15 +1796,13 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, hDC:HDC, CodeLineRect:RECT, hBrush:HBRUSH, dCommentExitChar:DWORD
-  local dCurrLineIndex:DWORD, pCurrEditorLine:$ObjPtr(EditorLine)
+Method EditorView.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+  local PS:PAINTSTRUCT, hDC:HDC
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnPaint"
   SetObject xsi
-  mov xdi, [xsi].pResources
   mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)     ;Hides the caret automatically
 
   OCall xsi.DrawEditorLines
@@ -1800,12 +1831,11 @@ Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "EditorView.OnRButtonDown"
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xbx, [xsi].pEditor                                ;xbx -> Editor
   PntS2Pnt CursorPos, lParam
   invoke IsPntInRect, addr CursorPos, addr [xsi].SelBarRect  ;Clicked into SelBarRect?
   .if eax != FALSE
-    ;Toggle relative linenumbering
+    ;Toggle relative line numbering
     .if [xsi].sdLineNumberOffset == 0
       OCall xsi.ClientPos2Index, addr Index, addr CursorPos
       mov eax, [xsi].FirstVisChar.dLineIndex
@@ -1818,6 +1848,15 @@ Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].pOwner::EditorDisplay.SetGuiLayout      ;LineNumbers length may have changed
     mov xax, [xsi].pOwner
     invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_UPDATENOW or RDW_INVALIDATE
+  .else
+    ;Debug helper
+    OCall xsi.ClientPos2Index, addr Index, addr CursorPos
+    mov edx, [xsi].FirstVisChar.dLineIndex
+    add edx, Index.y
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+    .if xax != NULL
+      DbgEditorLine xax,, "EditorLine"
+    .endif 
   .endif
   xor eax, eax
 MethodEnd
@@ -1870,8 +1909,7 @@ Method EditorView.OnSetFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "EditorView.OnSetFocus"
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xdx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xdx, [xsi].pEditor
   mov [xdx].$Obj(Editor).pFocusedView, xsi
   OCall xsi.CaretNew
   OCall xsi.CaretSet
@@ -1995,6 +2033,7 @@ Method EditorView.ScrollVisLineDown, uses xbx xdi xsi
       .break
     .endif
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edi
+    .break .if xax == NULL
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .break
     .endif
@@ -2040,8 +2079,7 @@ MethodEnd
 
 Method EditorView.ScrollLineRight, uses xsi
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xdx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xdx, [xsi].pEditor
 
   xor eax, eax                                          ;Set return value to FALSE
   mov edx, [xdx].$Obj(Editor).dMaxLineCharCount
@@ -2073,6 +2111,7 @@ Method EditorView.ScrollVisLineUp, uses xbx xdi xsi
       .break
     .endif
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edi
+    .break .if xax == NULL
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .break
     .endif
@@ -2141,8 +2180,7 @@ Method EditorView.ScrollPageRight, uses xbx xsi, dPageSize:DWORD
   ?mov edx, dPageSize
   .if edx != 0
     SetObject xsi
-    mov xcx, [xsi].pOwner
-    mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+    mov xbx, [xsi].pEditor
     .if edx != -1
       mov eax, [xsi].FirstVisChar.dCharIndex
       add eax, edx
@@ -2168,7 +2206,7 @@ MethodEnd
 ; Arguments:  Arg1: Number of lines in a page.
 ; Return:     eax = Number of scrolled visible lines.
 
-Method EditorView.ScrollVisPageDown, uses xbx xdi xsi, dPageSize:DWORD
+Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
   local dVisLineCount:DWORD, dLastVisLine:DWORD
 
 ;  DbgText "EditorView.ScrollVisPageDown"
@@ -2242,8 +2280,7 @@ MethodEnd
 Method EditorView.SelectUpToCaretLocation, uses xbx xsi
 ;  DbgText "EditorView.SelectUpToCaretLocation"
   SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xbx, [xsi].pEditor
   OCall xbx::Editor.SelectionResetLines
 
   mov edx, [xsi].CaretLocation.dCharIndex
@@ -2307,6 +2344,7 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
       .break
     .endif
     OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, ebx
+    .break .if xax == NULL
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       add edi, dLineHeight
       .break .if edi >= [xsi].TextRect.bottom

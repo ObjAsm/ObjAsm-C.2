@@ -73,39 +73,36 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.InformDeletionOf
 ; Purpose:    Inform that a specific lines was deleted.
-; Arguments:  Arg1: Line number of Arg1.
+; Arguments:  Arg1: Line number.
 ; Return:     Nothing.
 
-Method EditorDisplay.InformDeletionOf, uses xsi, dLineNumber:DWORD
-;  SetObject xsi
-;  mov ecx, dLineNumber
-;  .if ecx < [xsi].View.FirstVisChar.dLineIndex                   ;A line before the 1st vis line is to be deleted
-;    dec [xsi].View.dFirstVisLineCount
-;    dec [xsi].View.FirstVisChar.dLineIndex
-;  .elseif ecx == [xsi].View.FirstVisChar.dLineIndex              ;The 1st vis line is to be deleted
-;    mov xax, [xsi].View.FirstVisChar.pEditorLine
-;    GotoNextVisEditorLine xax,,, edx
-;    .if xax != NULL
-;      sub [xsi].View.dFirstVisLineCount, edx
-;    .else
-;      mov xax, [xsi].View.FirstVisChar.pEditorLine
-;      GotoPrevVisEditorLine xax,,, edx
-;      .if xax != NULL
-;        sub [xsi].View.dFirstVisLineCount, edx
-;      .else
-;        mov [xsi].View.FirstVisChar.dLineIndex, 0
-;        mov [xsi].View.dFirstVisLineCount, 0
-;      .endif
-;    .endif
-;    mov [xsi].View.FirstVisChar.pEditorLine, xax
-;  .endif
-;  DbgEditorDisplay xsi,, "EditorDisplay"
+Method EditorDisplay.InformDeletionOf, uses xbx xsi, dLineNumber:DWORD
+  SetObject xsi
+  mov xbx, [xsi].pOwner                                 ;xbx -> Editor
+  mov ecx, dLineNumber
+  .if ecx < [xsi].View.FirstVisChar.dLineIndex          ;A line before the 1st vis line is to be deleted
+    dec [xsi].View.dFirstVisLineCount
+    dec [xsi].View.FirstVisChar.dLineIndex
+  .elseif ecx == [xsi].View.FirstVisChar.dLineIndex     ;The 1st vis line is to be deleted
+    MoveToNextVisEditorLine xbx, dLineNumber
+    .if xax != NULL
+      dec [xsi].View.dFirstVisLineCount
+    .else
+      MoveToPrevVisEditorLine xbx, dLineNumber
+      .if xax != NULL
+        dec [xsi].View.dFirstVisLineCount
+      .else
+        mov [xsi].View.FirstVisChar.dLineIndex, 0
+        mov [xsi].View.dFirstVisLineCount, 0
+      .endif
+    .endif
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.InformInsertionOf
 ; Purpose:    Inform that a specific lines was inserted.
-; Arguments:  Arg1: Line number of Arg1.
+; Arguments:  Arg1: Line number.
 ; Return:     Nothing.
 
 Method EditorDisplay.InformInsertionOf, uses xsi, dLineNumber:DWORD
@@ -115,7 +112,6 @@ Method EditorDisplay.InformInsertionOf, uses xsi, dLineNumber:DWORD
     inc [xsi].View.dFirstVisLineCount
     inc [xsi].View.FirstVisChar.dLineIndex
   .endif
-;  DbgEditorDisplay xsi,, "EditorDisplay"
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

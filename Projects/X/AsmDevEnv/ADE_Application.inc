@@ -123,10 +123,8 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
-  local DrawAttr:DRAW_ATTR, FontDef:FONT_DEF, dIniFilePresent:DWORD
-  local pDescription:PSTRING, dIndex:DWORD, pGroup:PKEYWORDGROUP
-  local pLastChar:PCHR, dLength:DWORD, dFlags:DWORD, hDC:HDC
-  local cFullFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
+  local dIniFilePresent:DWORD, dIndex:DWORD, hDC:HDC
+  local cFullFileName[1024]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
 
   SetObject xsi
   invoke GetFullPathName, pIniFileName, lengthof cFullFileName - 1, addr cFullFileName, NULL
@@ -388,7 +386,7 @@ Method Application.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_REDO")         ;31
 
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_INDENT")       ;32
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_UNINDENT")     ;33
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_OUTDENT")      ;33
 
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COMMENT")      ;34
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_UNCOMMENT")    ;35
@@ -1043,6 +1041,20 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xax::Editor.Redo                          ;Polymorphic call
     .endif
     xor eax, eax
+  .elseif ax == IDM_EDIT_DELHIST
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xbx, xax
+        invoke GetObjectID, xax
+        .if eax == ADE_EditorID
+          OCall [xbx].$Obj(Editor).Actions::ActionCollection.DisposeHistory
+          OCall xbx::Editor.ManageEditCmds
+        .endif
+      .endif
+    .endif
+    xor eax, eax
 
 
   ;Messages for language selection
@@ -1242,7 +1254,6 @@ Method Application.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, lParam
   .if [xbx].NMHDR.code == TBN_DROPDOWN && [xbx].NMTOOLBAR.iItem == IDM_FILE_NEW
     ;Get the coordinates of the button.
-    DbgDec [xbx].NMTOOLBAR.iItem
     invoke SendMessage, [xbx].NMHDR.hwndFrom, TB_GETRECT, [xbx].NMTOOLBAR.iItem, addr BtnRect
 
     ;Convert to screen coordinates.

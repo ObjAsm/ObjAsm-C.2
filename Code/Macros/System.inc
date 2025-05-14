@@ -1331,8 +1331,8 @@ endif
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      WriteF
 ; Purpose:    Write a formated string to memory. If format includes format specifiers (subsequences
-;             beginning with ¦), the additional arguments following format are formatted & inserted
-;             in the resulting string replacing their respective specifiers.
+;             beginning with a trigger character), the additional arguments following format are
+;             formatted & inserted in the resulting string replacing their respective specifiers.
 ;             Escape sequences are supported to overcome MASM limitations. Escape sequences begin
 ;             with a \ character.
 ; Arguments:  Arg1: Non-volatile register pointing to the beginning of the output buffer.
@@ -1402,6 +1402,7 @@ endif
 ; Example:    WriteF xdi, "Memory at ¦HXh: ¦F3", xsi, REAL4 ptr [xsi]
 ;             WriteF xdi, "The value is: ¦BZ ¦SU", <<<invoke udword2dec, xdi, 15>>>, addr cUnit
 
+??WF_TriggerChar  textequ   <¦>
 
 WriteFT macro DstReg:req, Format:req, Args:vararg
   local pBegin
@@ -1439,7 +1440,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             $$WF_Replace = 0
           endif
         else
-          ifidn <&$$WF_Character>, <¦>
+          ifidn <&$$WF_Character>, ??WF_TriggerChar
             $$WF_Replace = 1                            ;;Set replace flag
           endif
         endif
@@ -2012,7 +2013,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           else                                          ;;No matching format specifiers found
-            $$WF_Text CatStr $$WF_Text, <¦>, $$WF_ReplType  ;;Emit the format specifiers
+            $$WF_Text CatStr $$WF_Text, ??WF_TriggerChar, $$WF_ReplType  ;;Emit the format specifiers
 
           endif
           $$WF_Replace = 0                              ;;Reset replace flag
@@ -2105,14 +2106,14 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
           $$WF_Text CatStr $$WF_Text, <\>
         else
           $$WF_Text CatStr $$WF_Text, <\>;, <&$$WF_Character>
-          ifidn <&$$WF_Character>, <¦>
+          ifidn <&$$WF_Character>, ??WF_TriggerChar
             $$WF_Replace = 1                            ;;Set replace flag
           else
             $$WF_Text CatStr $$WF_Text, <&$$WF_Character>
           endif
         endif
       else
-        ifidn <&$$WF_Character>, <¦>
+        ifidn <&$$WF_Character>, ??WF_TriggerChar
           $$WF_Replace = 1                              ;;Set replace flag
         elseifidn <&$$WF_Character>, <\>
           $$WF_Escape = 1                               ;;Set escape flag
