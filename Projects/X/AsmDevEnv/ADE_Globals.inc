@@ -164,6 +164,10 @@ ZOOM_FACTOR_INIT            equ   1024
 ZOOM_FACTOR_MIN             equ   ZOOM_FACTOR_INIT/8
 ZOOM_FACTOR_MAX             equ   ZOOM_FACTOR_INIT*8
 
+LINEINDICATOR_SPACE_TOP     equ   3
+LINEINDICATOR_SPACE_BOTTOM  equ   5
+LINEINDICATOR_SPACE_LEFT    equ   3
+
 .data
 dSetupOption1   DWORD   3     ;None
 

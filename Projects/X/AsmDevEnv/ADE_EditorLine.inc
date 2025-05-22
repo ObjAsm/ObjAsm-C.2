@@ -23,9 +23,10 @@ ELF_SAVED_LINE_NEXT         equ   BIT05     ;Next line has been saved
 ELF_HIDDEN                  equ   BIT06     ;Current line is hidden
 ELF_ERROR_MARKED            equ   BIT07     ;Current line shows an error marker
 ELF_BOOK_MARKED             equ   BIT08     ;Current line shows a book marker
-;ELF_EOL_MARKED              equ   BIT09     ;Current line shows an EOL marker
-ELF_HAS_EXPAND_SYMBOL       equ   BIT10
-ELF_HAS_COLLAPSE_SYMBOL     equ   BIT11
+ELF_FOLD_HEAD_EXPAND        equ   BIT09
+ELF_FOLD_HEAD_COLLAPSE      equ   BIT10
+ELF_FOLD_LINE               equ   BIT11
+ELF_FOLD_END                equ   BIT12
 
 
 ;EditorLine char table flags
@@ -701,7 +702,7 @@ Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, 
 
   SetObject xsi
   ?mov xdx, pEditorView
-  m2m hDC, [xdx].$Obj(EditorView).hTextDC, xcx
+  m2m hDC, [xdx].$Obj(EditorView).hViewDC, xcx
   mov xax, [xsi].pOwner                                 ;xax -> Editor
   mov xdx, [xax].$Obj(Editor).pResources                ;xdx -> EditorResources
   mov pEditorResources, xdx
@@ -1348,23 +1349,19 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
   ;Set Dirty marker on previous line
   mov edx, dLineIndex
   dec edx
-  .if !SIGN?
+  .if edx < [xbx].$Obj(Editor).Lines.dCount
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-    .if xax != NULL
-      BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
-      BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
-    .endif
+    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_NEXT
+    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_NEXT
   .endif
 
   ;Set Dirty marker on next line
   mov edx, dLineIndex
   inc edx
-  .if edx != [xbx].$Obj(Editor).Lines.dCount 
+  .if edx < [xbx].$Obj(Editor).Lines.dCount 
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
-    .if xax != NULL
-      BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
-      BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
-    .endif
+    BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_PREV
+    BitClr [xax].$Obj(EditorLine).dFlags, ELF_SAVED_LINE_PREV
   .endif
 
   ;Do deletion
@@ -1411,7 +1408,7 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineJoinPrev
 ; Purpose:    Join the current with the previous EditorLine.
-; Arguments:  Arg1: Line Number of this EditorLine.
+; Arguments:  Arg1: Line Index of this EditorLine.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
@@ -1420,11 +1417,13 @@ Method EditorLine.LineJoinPrev, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWO
   ;Goto previous EditorLine
   dec dLineIndex                                      ;Index from next EditorLine
   mov xbx, [xsi].pOwner
-  OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, dLineIndex ;Get pev line
-  .if xax != NULL
+  mov edx, dLineIndex
+  .if edx < [xbx].$Obj(Editor).Lines.dCount
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx  ;Get prev line
     mov xbx, xax
     BitSet [xbx].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
-    OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, [xsi].pBuffer, dLineIndex, dActionGroup
+    OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, \
+                                      [xsi].pBuffer, dLineIndex, dActionGroup
     inc dLineIndex
     OCall xsi.LineDelete, dLineIndex, dActionGroup
   .endif

@@ -149,7 +149,7 @@ Method FindDialog.CtlsSet, uses xbx xsi
 
 ;  DbgText "FindDialog.CtlsSet"
   SetObject xsi
-  
+
   ;Fill the comboboxes with initial values
   mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_FIND)
   invoke SendMessage, hComboBox, CB_RESETCONTENT, 0, 0
@@ -203,7 +203,86 @@ Method FindDialog.Done, uses xsi
   SetObject xsi
   OCall [xsi].FindStrings::%StrCollection.Done
   OCall [xsi].ReplStrings::%StrCollection.Done
+  OCall [xsi].EditorWndHandles::XWCollection.Done
   ACall xsi.Done
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     FindDialog.FindFirst
+; Purpose:    Initialize search structures and perform the first search.
+; Arguments:  Arg1: -> Editor.
+;             Arg2: -> String to find.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method FindDialog.FindFirst, uses xdi xsi, pEditor:$ObjPtr(Editor), pFindStr:PSTRING
+  SetObject xsi
+  mov xdi, pEditor
+  .if [xsi].Choices.dScope == FDS_CURRENT_FILE
+    ;Set SrchBeg
+    .if [xsi].Choices.dDirection == FDD_ALL
+      ;Start at the first editor line
+      mov [xsi].SrchBeg.dLineIndex, 0
+      mov [xsi].SrchBeg.dCharIndex, 0
+      ;Set view
+      mov xcx, [xdi].$Obj(Editor).pFocusedView
+      .if xcx != NULL
+        s2s [xcx].$Obj(EditorView).FirstVisChar, [xsi].SrchBeg, xax, xdx
+      .endif
+    .else
+      .if [xdi].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \    ;Something selected?
+          [xdi].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+        ;Selection
+        .if [xsi].Choices.dDirection == FDD_DOWN
+          ;Use the selection begin
+          mov xcx, [xdi].$Obj(Editor).SelectionRange.pBegSelInfo
+          s2s [xsi].SrchBeg, LOCATION ptr [xcx], xdx, xax
+        .else
+          ;Use the selection end
+          mov xcx, [xdi].$Obj(Editor).SelectionRange.pEndSelInfo
+          s2s [xsi].SrchBeg, LOCATION ptr [xcx], xdx, xax
+        .endif
+      .else
+        ;No selection => Use the current caret location
+        mov xcx, [xdi].$Obj(Editor).pFocusedView
+        s2s [xsi].SrchBeg, [xcx].$Obj(EditorView).CaretLocation, xdx, xax
+      .endif
+    .endif
+    mov xcx, [xdi].$Obj(Editor).pFocusedView
+    .if xcx != NULL
+      s2s [xcx].$Obj(EditorView).CaretLocation, [xsi].SrchBeg, xax, xdx
+    .endif
+
+    ;Set SrchEnd
+    .if [xsi].Choices.dDirection == FDD_DOWN || [xsi].Choices.dDirection == FDD_ALL
+      mov [xsi].SrchEnd.dLineIndex, -1
+      mov [xsi].SrchEnd.dCharIndex, -1
+    .else                                               ;FDD_UP
+      mov [xsi].SrchEnd.dCharIndex, 0                   ;Get the first editor line
+      mov [xsi].SrchEnd.dLineIndex, 0
+    .endif
+  .else
+    ;Set SrchBeg
+    mov [xsi].SrchBeg.dLineIndex, 0
+    mov [xsi].SrchBeg.dCharIndex, 0
+    ;Set SrchEnd
+    mov [xsi].SrchEnd.dLineIndex, -1
+    mov [xsi].SrchEnd.dCharIndex, -1
+  .endif
+
+  OCall xdi::Editor.FindStr, pFindStr, addr [xsi].SrchBeg, addr [xsi].SrchEnd, addr [xsi].Choices
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     FindDialog.FindNext
+; Purpose:    Perform successiv search.
+; Arguments:  Arg1: -> Editor.
+;             Arg2: -> String to find.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method FindDialog.FindNext, uses xsi, pEditor:$ObjPtr(Editor), pFindStr:PSTRING
+  SetObject xsi
+  mov xcx, pEditor
+  OCall xcx::Editor.FindStr, pFindStr, addr [xsi].SrchBeg, addr [xsi].SrchEnd, addr [xsi].Choices
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -212,27 +291,29 @@ MethodEnd
 ; Arguments:  Arg1: -> Active child window object.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-FindInOpenFile proc uses xdi xsi hChildWnd:HWND, pSelf:POINTER
+CaptureEditorWndHandle proc uses xdi xsi hChildWnd:HWND, pSelf:POINTER
   SetObject xsi, FindDialog
   invoke SendMessage, hChildWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
     mov xdi, xax
     invoke GetObjectID, xdi
     .if eax == ADE_EditorID
-;      OCall xdi::Editor.FindFrom, [xsi].pFindStr, addr [xsi].dLineIndex, addr [xsi].dCharIndex
+      ;Store the window handle, the object instance may be destroyed at some point
+      OCall [xsi].EditorWndHandles::XWCollection.Insert, hChildWnd
     .endif
   .endif
   ReleaseObject
   ret
-FindInOpenFile endp
+CaptureEditorWndHandle endp
 
-Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
-  local cFindStr[2024]:CHR, hComboBox:HWND, dRet:DWORD
+Method FindDialog.Find, uses xbx xdi xsi
+  local cFindStr[2024]:CHR, hComboBox:HWND, dRetValue:DWORD
 
   SetObject xsi
-  mov dRet, FALSE
+  mov dRetValue, FALSE
 
-  ;Read the Find combobox
+  OCall xsi.CtlsGet
+  ;Read the "Find" combobox
   mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_FIND)
   lea xbx, cFindStr
   invoke SendMessage, hComboBox, WM_GETTEXT, lengthof(cFindStr), xbx
@@ -241,82 +322,109 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
     invoke SendMessage, hComboBox, CB_INSERTSTRING, 0, xbx
   .endif
 
-  OCall xsi.CtlsGet
 
   .if [xsi].Choices.dScope == FDS_CURRENT_FILE
-    invoke GetObjectID, pChildWndObject
-    .if eax == ADE_EditorID
-      mov xax, pChildWndObject
-      ;Get the start LOCATION
-      .if [xsi].dContinue == FALSE
-        ;Set SrchBeg
-        .if [xsi].Choices.dDirection == FDD_ALL
-          ;Get the first editor line
-          mov [xsi].SrchBeg.dLineIndex, 0
-          mov [xsi].SrchBeg.dCharIndex, 0
-          
-          mov xax, pChildWndObject
-          mov xcx, [xax].$Obj(Editor).pFocusedView
-          s2s [xcx].$Obj(EditorView).CaretLocation, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
-          s2s [xcx].$Obj(EditorView).FirstVisChar, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
-          mov [xcx].$Obj(EditorView).CaretViewLineIndex, 0
-        .else
-          .if [xax].$Obj(Editor).SelectionRange.pBegSelInfo != NULL
-            .if [xsi].Choices.dDirection == FDD_DOWN
-              ;Use the selection begin
-              mov xcx, [xax].$Obj(Editor).SelectionRange.pBegSelInfo
-              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xdx
-            .else
-              ;Use the selection end
-              mov xcx, [xax].$Obj(Editor).SelectionRange.pEndSelInfo
-              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xdx
-            .endif
-          .else
-            ;Use the current caret location
-            mov xcx, [xax].$Obj(Editor).pFocusedView
-            s2s [xsi].SrchBeg, [xcx].$Obj(EditorView).CaretLocation, xmm0, xmm1, xmm2, xmm3, xdx
-          .endif
-        .endif
-  
-        ;Set SrchEnd
-        .if [xsi].Choices.dDirection == FDD_DOWN || [xsi].Choices.dDirection == FDD_ALL  
-          ;Get the last editor line
-          mov edx, [xax].$Obj(Editor).Lines.dCount
-          .if edx > 0
-            dec edx
-            OCall [xax].$Obj(Editor).Lines::Collection.ItemAt, edx   ;xax -> last EditorLine
-            m2m [xsi].SrchEnd.dCharIndex, [xax].$Obj(EditorLine).dLength, ecx
-            mov [xsi].SrchEnd.dLineIndex, 0               ;Unknown
-          .endif
-        .else                                             ;[xsi].Choices.dDirection == FDD_UP
-          ;Get the first editor line
-          mov [xsi].SrchEnd.dCharIndex, 0
-          mov [xsi].SrchEnd.dLineIndex, 0
+    .if [xsi].dContinue == FALSE
+      mov [xsi].hEditor, 0
+      mov xax, [xsi].pOwner
+      mov xcx, [xax].$Obj(MdiApp).pClientWnd
+      invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+      mov xbx, xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xdi, xax
+        invoke GetObjectID, xdi
+        .if eax == ADE_EditorID
+          mov [xsi].hEditor, xbx
         .endif
       .endif
-
-      OCall pChildWndObject::Editor.FindStr, addr cFindStr, addr [xsi].SrchBeg, addr [xsi].SrchEnd, addr [xsi].Choices
+    .else
+      invoke SendMessage, [xsi].hEditor, WM_GETOBJECTINSTANCE, 0, 0
+      mov xdi, xax
+    .endif
+    
+    .if xdi != NULL
+      .if [xsi].dContinue == FALSE
+        OCall xsi.FindFirst, xdi, addr cFindStr
+      .else
+        OCall xsi.FindNext, xdi, addr cFindStr
+      .endif
+      mov [xsi].dContinue, eax
+      mov dRetValue, eax
       .if eax != FALSE
         invoke RedrawWindow, [xdi].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+        mov xax, [xsi].pOwner
+        mov xcx, [xax].$Obj(MdiApp).pClientWnd
+        invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIACTIVATE, [xdi].$Obj(Editor).hWnd, 0
+        invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
+        invoke EnableWindow, xax, [xsi].dContinue
       .endif
-      mov dRet, eax
-      mov [xsi].dContinue, eax
-      invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
-      invoke EnableWindow, xax, [xsi].dContinue
-      
+    .else
+      mov [xsi].dContinue, FALSE
+      mov dRetValue, FALSE
     .endif
 
+
   .elseif [xsi].Choices.dScope == FDS_OPEN_FILES
-    mov xax, [xsi].pOwner
-    mov xbx, [xax].$Obj(MdiApp).pClientWnd
-;    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset , xsi  doesnt work since it does not stop
+    .if [xsi].dContinue == FALSE
+      ;Gatter all open editors in EditorWndHandles collection
+      mov xax, [xsi].pOwner
+      mov xbx, [xax].$Obj(MdiApp).pClientWnd
+      OCall [xsi].EditorWndHandles::XWCollection.DisposeAll
+      invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CaptureEditorWndHandle, xsi
+      mov [xsi].dContinueSameEditor, FALSE
+    .endif
+
+    .while TRUE
+      mov eax, [xsi].EditorWndHandles.dCount
+      .break .if eax == 0
+      OCall [xsi].EditorWndHandles::XWCollection.ItemAt, 0  ;Get the first Editor in the collection
+      mov [xsi].hEditor, xax                            ;Used in replace command
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xdi, xax
+        .if [xsi].dContinueSameEditor == FALSE
+          OCall xsi.FindFirst, xdi, addr cFindStr
+        .else
+          OCall xsi.FindNext, xdi, addr cFindStr
+        .endif
+        mov [xsi].dContinueSameEditor, eax
+
+        .if eax == FALSE
+          ;Nothing found => continue with the next Editor
+          invoke RedrawWindow, [xdi].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+          OCall [xsi].EditorWndHandles::XWCollection.DeleteAt, 0
+          .continue
+        .endif
+      .else
+        OCall [xsi].EditorWndHandles::XWCollection.DeleteAt, 0  ;Not exist => remove it
+        .continue
+      .endif
+      mov eax, TRUE
+      .break
+    .endw
+    mov [xsi].dContinue, eax
+    mov dRetValue, eax
+
+    .if eax != FALSE
+      mov xcx, [xdi].$Obj(Editor).pOwner
+      invoke RedrawWindow, [xdi].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+      mov xax, [xsi].pOwner
+      mov xcx, [xax].$Obj(MdiApp).pClientWnd
+      invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIACTIVATE, [xdi].$Obj(Editor).hWnd, 0
+      invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
+      invoke EnableWindow, xax, [xsi].dContinue
+    .endif
+
 
   .elseif [xsi].Choices.dScope == FDS_PROJECT_FILES
 
+
   .elseif [xsi].Choices.dScope == FDS_ALL_FILES
 
+
   .endif
-  mov eax, dRet
+  mov eax, dRetValue
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -373,6 +481,7 @@ Method FindDialog.Init, uses xsi, pOwner:POINTER
 
   OCall [xsi].FindStrings::%StrCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
   OCall [xsi].ReplStrings::%StrCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
+  OCall [xsi].EditorWndHandles::XWCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -393,7 +502,7 @@ Method FindDialog.OnActivate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .if ax != WA_INACTIVE                                 ;If any form of activation
 
     invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
-    invoke EnableWindow, xax, [xsi].dContinue 
+    invoke EnableWindow, xax, [xsi].dContinue
 
     mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_FIND)
 
@@ -403,27 +512,30 @@ Method FindDialog.OnActivate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
     .if xax != NULL
-      mov xdi, xax
-      invoke GetObjectID, xdi
+      mov xbx, xax
+      invoke GetObjectID, xbx
       .if eax == ADE_EditorID
         ;If something is selected, write it to the ComboBox
-        mov xax, [xdi].$Obj(Editor).SelectionRange.SELRANGE.pBegSelInfo
-        mov xcx, [xdi].$Obj(Editor).SelectionRange.SELRANGE.pEndSelInfo
+        mov xax, [xbx].$Obj(Editor).SelectionRange.SELRANGE.pBegSelInfo
+        mov xcx, [xbx].$Obj(Editor).SelectionRange.SELRANGE.pEndSelInfo
         .if xax != NULL && xcx != NULL
           mov edx, [xax].LOCATION.dLineIndex
           ;Only if the selection is on the same line!
           .if edx == [xcx].LOCATION.dLineIndex
-            OCall [xdi].$Obj(Editor).Lines::Collection.ItemAt, edx
-            .if xax != NULL
+            .if edx < [xbx].$Obj(Editor).Lines.dCount
+              OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
               mov xdx, [xax].$Obj(EditorLine).pBuffer
-              mov xcx, [xdi].$Obj(Editor).SelectionRange.SELRANGE.pBegSelInfo
-              mov ebx, [xcx].LOCATION.dCharIndex
-              lea xdx, [xdx + xbx*sizeof(CHR)]            ;xdx -> Selection begin
-              mov xcx, [xdi].$Obj(Editor).SelectionRange.SELRANGE.pEndSelInfo
+              mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+              mov edi, [xcx].LOCATION.dCharIndex
+              lea xdx, [xdx + xdi*sizeof(CHR)]          ;xdx -> Selection begin
+              mov xcx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
+              mov ebx, [xax].$Obj(EditorLine).dLength
               mov eax, [xcx].LOCATION.dCharIndex
-              sub eax, ebx                                ;eax = char count
-              lea xcx, cBuffer
-              invoke StrCCopy, xcx, xdx, eax
+              .if eax == -1
+                mov eax, ebx
+              .endif
+              sub eax, edi                              ;eax = char count
+              invoke StrCCopy, addr cBuffer, xdx, eax
               invoke SendMessage, hComboBox, WM_SETTEXT, 0, addr cBuffer
             .endif
           .endif
@@ -456,37 +568,60 @@ Method FindDialog.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov [xsi].dContinue, FALSE
     invoke ShowWindow, [xsi].hWnd, SW_HIDE
   .elseif ax != IDOK && ax != IDC_BTN_REPLACE && ax != IDC_BTN_REPLACEALL
-    ;Any change on the FINDDLGCHOICES controls will stop the continuation
+    ;Any change on dialog controls will prevent further processing.
+    .if ax == IDC_CBO_FIND || ax == IDC_CBO_REPLACE
+      mov xax, wParam
+      shr eax, 16
+      .if ax != CBN_SELCHANGE || ax != CBN_EDITCHANGE   ;Only this ComboBox messages will reset the search
+        ExitMethod
+      .endif
+    .endif
+
+    ;Manage the Direction radiobuttons according to the file Scope
+    .if ax == IDC_RBN_CURRFILE
+      invoke GetDlgItem, [xsi].hWnd, IDC_RBN_DOWN
+      invoke EnableWindow, xax, TRUE
+      invoke GetDlgItem, [xsi].hWnd, IDC_RBN_UP
+      invoke EnableWindow, xax, TRUE
+    .elseif ax == IDC_RBN_OPENFILES || ax == IDC_RBN_PROJFILES || ax == IDC_RBN_ALLFILES
+      invoke GetDlgItem, [xsi].hWnd, IDC_RBN_DOWN
+      invoke EnableWindow, xax, FALSE
+      invoke GetDlgItem, [xsi].hWnd, IDC_RBN_UP
+      invoke EnableWindow, xax, FALSE
+      invoke CheckRadioButton, [xsi].hWnd, IDC_RBN_DOWN, IDC_RBN_ALL, IDC_RBN_ALL
+    .endif
+
     mov [xsi].dContinue, FALSE
     invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
-    invoke EnableWindow, xax, FALSE 
+    invoke EnableWindow, xax, FALSE
+
   .else
     mov xax, [xsi].pOwner
     mov xcx, [xax].$Obj(MdiApp).pClientWnd
     invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
     .if xax != NULL
-      mov xdi, xax
+      mov xdi, xax                                      ;xdi -> Editor
       LoWord(wParam)
-      .if ax == IDOK                                        ;Find Button
-        OCall xsi.Find, xdi
+      .if ax == IDOK                                    ;Find Button
+        OCall xsi.Find
         .if eax == FALSE
           invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Find"), MB_OK or MB_ICONINFORMATION
         .endif
 
       .elseif ax == IDC_BTN_REPLACE
-        OCall xsi.Replace, xdi
+        OCall xsi.Replace
         .if eax == FALSE
           invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
         .endif
 
       .elseif ax == IDC_BTN_REPLACEALL
-        OCall xsi.ReplaceAll, xdi
+        OCall xsi.ReplaceAll
         .if eax == 0
           invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Replace all"), MB_OK or MB_ICONINFORMATION
         .else
           lea xbx, cMessage
-          WriteF xbx, "ï¿½UD matches replaced.", eax
+          WriteF xbx, "¦UD matches replaced.", eax
           invoke MessageBox, [xsi].hWnd, addr cMessage, $OfsCStr("Replace all"), MB_OK or MB_ICONINFORMATION
         .endif
       .endif
@@ -511,17 +646,17 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Replace
 ; Purpose:    Replace the editor selection with the content of the replace combobox.
-; Arguments:  Arg1: -> Active child window object.
+; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method FindDialog.Replace, uses xbx xsi, pChildWndObject:POINTER
-  local cReplStr[2024]:CHR, hComboBox:HWND, dRet:DWORD, dNeedUpdate:DWORD, dActionGroup:DWORD
+Method FindDialog.Replace, uses xbx xsi
+  local cReplStr[2024]:CHR, hComboBox:HWND, dRetValue:DWORD, dNeedRedrawing:DWORD, dActionGroup:DWORD
 
   SetObject xsi
-  mov dRet, FALSE
-  mov dNeedUpdate, FALSE
-  
-  ;Read the Replace combobox
+  mov dRetValue, FALSE
+
+  OCall xsi.CtlsGet
+  ;Read the "Replace" combobox
   mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_REPLACE)
   lea xbx, cReplStr
   invoke SendMessage, hComboBox, WM_GETTEXT, lengthof(cReplStr), xbx
@@ -530,52 +665,38 @@ Method FindDialog.Replace, uses xbx xsi, pChildWndObject:POINTER
     invoke SendMessage, hComboBox, CB_INSERTSTRING, 0, xbx
   .endif
 
-  OCall xsi.CtlsGet
-
-  .if [xsi].Choices.dScope == FDS_CURRENT_FILE
-    invoke GetObjectID, pChildWndObject
-    .if eax == ADE_EditorID
-      mov xcx, pChildWndObject
-      mov dActionGroup, $32($OCall([xcx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
-      OCall pChildWndObject::Editor.CreateSelAction, dActionGroup
-
-      OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr, dActionGroup
-      .if eax == FALSE
-        invoke MessageBox, [xsi].hWnd, $OfsCStr("Nothing selected."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
-      .else
-        mov dNeedUpdate, TRUE
-      .endif
-      OCall xsi.Find, pChildWndObject
-      mov dRet, eax
-      .if eax == FALSE && dNeedUpdate != FALSE
-        mov xcx, pChildWndObject
-        invoke RedrawWindow, [xcx].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
-      .endif
+  invoke SendMessage, [xsi].hEditor, WM_GETOBJECTINSTANCE, 0, 0
+  .if xax != NULL
+    mov xbx, xax
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+    OCall xbx::Editor.CreateSelAction, dActionGroup
+    OCall xbx::Editor.SelectionReplace, addr cReplStr, dActionGroup
+    mov dNeedRedrawing, eax
+    .if eax == FALSE
+      invoke MessageBox, [xsi].hWnd, $OfsCStr("Nothing selected."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
     .endif
-
-  .elseif [xsi].Choices.dScope == FDS_OPEN_FILES
-
-  .elseif [xsi].Choices.dScope == FDS_PROJECT_FILES
-
-  .elseif [xsi].Choices.dScope == FDS_ALL_FILES
-
+    OCall xsi.Find
+    mov dRetValue, eax
+    .if dNeedRedrawing != FALSE
+      invoke RedrawWindow, [xbx].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+    .endif
   .endif
-  mov eax, dRet
+  mov eax, dRetValue
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.ReplaceAll
 ; Purpose:    Replace all occurrences with the content of the replace combobox.
-; Arguments:  Arg1: -> Active child window object.
+; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method FindDialog.ReplaceAll, uses xbx xdi xsi, pChildWndObject:POINTER
-  local cFindStr[2024]:CHR, cReplStr[2024]:CHR, hComboBox:HWND, dReplCounter:DWORD, dActionGroup:DWORD
+Method FindDialog.ReplaceAll, uses xbx xdi xsi
+  local cFindStr[2024]:CHR, cReplStr[2024]:CHR, hComboBox:HWND, dActionGroup:DWORD
+  local dReplCounter:DWORD, dTotalReplCounter:DWORD
 
   ANNOTATION use:pChildWndObject
 
   SetObject xsi
-  mov dReplCounter, FALSE
 
   ;Read the Find combobox
   mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_FIND)
@@ -598,39 +719,88 @@ Method FindDialog.ReplaceAll, uses xbx xdi xsi, pChildWndObject:POINTER
   OCall xsi.CtlsGet
 
   .if [xsi].Choices.dScope == FDS_CURRENT_FILE
-    invoke GetObjectID, pChildWndObject
-    .if eax == ADE_EditorID
-
-      mov xcx, pChildWndObject 
-      mov dActionGroup, $32($OCall([xcx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
-      OCall pChildWndObject::Editor.CreateSelAction, dActionGroup
-
-      mov eax, TRUE
-      .if [xsi].dContinue == FALSE
-        OCall xsi.Find, pChildWndObject
-      .endif
-
-      .While eax == TRUE
-        OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr, dActionGroup
-        .if eax == FALSE
-          invoke MessageBox, [xsi].hWnd, $OfsCStr("Replacement failed."), $OfsCStr("Replace all"), MB_OK or MB_ICONERROR
-          .break
+    mov xax, [xsi].pOwner
+    mov xcx, [xax].$Obj(MdiApp).pClientWnd
+    invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    .if xax != NULL
+      mov xbx, xax
+      mov dTotalReplCounter, 0
+      invoke GetObjectID, xbx
+      .if eax == ADE_EditorID
+        OCall xsi.FindFirst, xbx, addr cFindStr
+        .if eax != FALSE
+          mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+          OCall xbx::Editor.CreateSelAction, dActionGroup
+          OCall xbx::Editor.SelectionReplace, addr cReplStr, dActionGroup
+          add dTotalReplCounter, eax
+          .while TRUE
+            OCall xsi.FindNext, xbx, addr cFindStr
+            .break .if eax == FALSE
+            OCall xbx::Editor.SelectionReplace, addr cReplStr, dActionGroup
+            add dTotalReplCounter, eax
+          .endw
         .endif
-        inc dReplCounter
-        OCall pChildWndObject::Editor.FindStr, addr cFindStr, addr [xsi].SrchBeg, addr [xsi].SrchEnd, addr [xsi].Choices
-      .endw
-      .if dReplCounter != 0
-        invoke RedrawWindow, [xdi].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
       .endif
-      mov [xsi].dContinue, FALSE
+      .if dTotalReplCounter != 0
+        invoke RedrawWindow, [xbx].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+      .endif
+      mov xax, [xsi].pOwner
+      mov xcx, [xax].$Obj(MdiApp).pClientWnd
+      invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIACTIVATE, [xbx].$Obj(Editor).hWnd, 0
+      invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
+      invoke EnableWindow, xax, FALSE
     .endif
 
   .elseif [xsi].Choices.dScope == FDS_OPEN_FILES
+    mov xax, [xsi].pOwner
+    mov xbx, [xax].$Obj(MdiApp).pClientWnd
+    OCall [xsi].EditorWndHandles::XWCollection.DisposeAll
+    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CaptureEditorWndHandle, xsi
+    mov dTotalReplCounter, 0
+
+    .while TRUE
+      .break .if [xsi].EditorWndHandles.dCount == 0
+      OCall [xsi].EditorWndHandles::XWCollection.ItemAt, 0   ;Get the first Editor in the collection
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xbx, xax
+        mov dReplCounter, 0
+        invoke GetObjectID, xbx
+        .if eax == ADE_EditorID
+          OCall xsi.FindFirst, xbx, addr cFindStr
+          .if eax != FALSE
+            mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+            OCall xbx::Editor.CreateSelAction, dActionGroup
+            OCall xbx::Editor.SelectionReplace, addr cReplStr, dActionGroup
+            add dReplCounter, eax
+            .while TRUE
+              OCall xsi.FindNext, xbx, addr cFindStr
+              .break .if eax == FALSE
+              OCall xbx::Editor.SelectionReplace, addr cReplStr, dActionGroup
+              add dReplCounter, eax
+            .endw
+          .endif
+        .endif
+        .if dReplCounter != 0
+          invoke RedrawWindow, [xbx].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+        .endif
+      .endif
+      mov eax, dReplCounter
+      add dTotalReplCounter, eax
+      OCall [xsi].EditorWndHandles::XWCollection.DisposeAt, 0
+      mov xax, [xsi].pOwner
+      mov xcx, [xax].$Obj(MdiApp).pClientWnd
+      invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIACTIVATE, [xbx].$Obj(Editor).hWnd, 0
+    .endw
+    invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
+    invoke EnableWindow, xax, FALSE
+        
 
   .elseif [xsi].Choices.dScope == FDS_PROJECT_FILES
 
   .elseif [xsi].Choices.dScope == FDS_ALL_FILES
 
   .endif
-  mov eax, dReplCounter
+  mov eax, dTotalReplCounter
 MethodEnd

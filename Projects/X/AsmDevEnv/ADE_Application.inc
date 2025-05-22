@@ -766,6 +766,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xdi::Editor.Init, [xsi].pClientWnd, xbx, NULL
       .if eax == FALSE
         Kill xdi
+      .else
+        invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
       .endif
     .endif
     xor eax, eax
@@ -775,6 +777,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].AsmEditorResources, NULL
       .if eax == FALSE
         Kill xdi
+      .else
+        invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
       .endif
     .endif
     xor eax, eax
@@ -784,6 +788,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].ResEditorResources, NULL
       .if eax == FALSE
         Kill xdi
+      .else
+        invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
       .endif
     .endif
     xor eax, eax
@@ -793,6 +799,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].TxtEditorResources, NULL
       .if eax == FALSE
         Kill xdi
+      .else
+        invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
       .endif
     .endif
     xor eax, eax
@@ -833,6 +841,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pDisplayName
           .if eax == FALSE
             Kill xdi
+          .else
+            invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
           .endif
           ICall pIShellItem::IShellItem.Release
           inc ebx

@@ -107,75 +107,74 @@ endif
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      MoveToNextVisEditorLine
+; Macro:      MoveToNextVisEditorLine / MoveToPrevVisEditorLine
 ; Purpose:    Return the pointer to the prev/next visible EditorLine.
 ; Arguments:  Arg1: (Non volatile register) -> Current Editor (Can not be NULL).
-;             Arg2: Current Line Index variable.
-;             Arg3: Last Visible Line index variable
+;             Arg2: (in, out) Current line index variable.
 ; Return:     xax -> Prev/Next EditorLine or NULL if not found.
 
-MoveToNextVisEditorLine macro pEditorNoVolReg:req, CurrLineIndex:req, LastVisLineIndex
+MoveToNextVisEditorLine macro pEditorNoVolReg:req, CurrLineIndex:req
   .While TRUE
     mov edx, CurrLineIndex
-ifnb <LastVisLineIndex>
-    mov LastVisLineIndex, edx
-endif
     inc edx
     mov CurrLineIndex, edx
-    .if [pEditorNoVolReg].$Obj(Editor).Lines.dCount <= edx
+    .if edx >= [pEditorNoVolReg].$Obj(Editor).Lines.dCount
       xor eax, eax
-      jmp @F
-    .endif
-    OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
-    .break .if xax == NULL
-    .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
       .break
     .endif
+    OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
+    .break .if !([xax].$Obj(EditorLine).dFlags & ELF_HIDDEN)    ;Found
   .endw
-@@:
 endm
 
-MoveToPrevVisEditorLine macro pEditorReg:req, CurrLineIndex:req, LastVisLineIndex
+MoveToPrevVisEditorLine macro pEditorReg:req, CurrLineIndex:req
   .While TRUE
-ifnb <LastVisLineIndex>
-    mov LastVisLineIndex, edx
-endif
     dec CurrLineIndex
     .if SIGN?
       xor eax, eax
       .break
     .endif
     OCall [pEditorReg].$Obj(Editor).Lines::Collection.ItemAt, CurrLineIndex
-    .break .if xax == NULL
-    .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
-      .break
-    .endif 
+    .break .if !([xax].$Obj(EditorLine).dFlags & ELF_HIDDEN)    ;Found
   .endw
 endm
 
-MoveToNextVisEditorPage macro pEditorNoVolReg, CurrLineIndex, PageSize, VisLineCounter, LastVisLineIndex
-  .while PageSize != 0
-    m2m LastVisLineIndex, CurrLineIndex, edx
-    .While TRUE
-      inc CurrLineIndex
-      mov edx, CurrLineIndex
-      .if [pEditorNoVolReg].$Obj(Editor).Lines.dCount == edx
-        mrm CurrLineIndex, LastVisLineIndex, edx
+; --------------------------------------------------------------------------------------------------
+; Macro:      MoveToNextVisEditorPage / MoveToPrevVisEditorPage
+; Purpose:    Return the pointer to the n prev/next visible EditorLine.
+; Arguments:  Arg1: (Non volatile register) -> Current Editor (Can not be NULL).
+;             Arg2: (in, out) Current Line Index variable.
+;             Arg3: (in) Page, number of lines to advance.
+;             Arg4: (opt) Visible line acummulator.
+;             Arg4: (out) Last visisble line index.
+; Return:     xax -> Prev/Next EditorLine or NULL if not found.
+
+MoveToNextVisEditorPage macro pEditorNoVolReg, CurrLineIndex, VisPageSize, VisLineCounter, LastVisLineIndex
+  .if VisPageSize != 0
+    .while VisPageSize != 0
+      m2m LastVisLineIndex, CurrLineIndex, edx          ;Save last vis Line index
+      ;Find next vis line
+      .While TRUE
+        inc CurrLineIndex
+        mov edx, CurrLineIndex
+        .if [pEditorNoVolReg].$Obj(Editor).Lines.dCount <= edx
+          mrm CurrLineIndex, LastVisLineIndex, edx
+          jmp @F
+        .endif
         OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
-        jmp @F
-      .endif
-      OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
-      .break .if xax == NULL
-      .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
-        .break
-      .endif
+        .break .if !([xax].$Obj(EditorLine).dFlags && ELF_HIDDEN)    ;Found
+      .endw
+  ifnb <VisLineCounter>
+      inc VisLineCounter
+  endif
+      dec VisPageSize
     .endw
-ifnb <VisLineCounter>
-    inc VisLineCounter
-endif
-    dec PageSize
-  .endw
+  .else
+    mov edx, CurrLineIndex
 @@:
+    OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx 
+  .endif
+
 endm
 
 MoveToPrevVisEditorPage macro pEditorNoVolReg, CurrLineIndex, PageSize, VisLineCounter, LastVisLineIndex
@@ -213,7 +212,7 @@ endm
 MoveToNextEditorLine macro pEditorReg, CurrLineIndex
   inc CurrLineIndex
   mov edx, CurrLineIndex
-  .if [pEditorReg].$Obj(Editor).Lines.dCount == edx 
+  .if edx >= [pEditorReg].$Obj(Editor).Lines.dCount 
     xor eax, eax
   .else
     OCall [pEditorReg].$Obj(Editor).Lines::Collection.ItemAt, edx

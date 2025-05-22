@@ -121,6 +121,9 @@ Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall pEditor::Editor.Init, xsi, xax, pFileName 
     .if eax == FALSE
       Kill pEditor
+    .else
+      mov xcx, pEditor
+      invoke ShowWindow, [xcx].$Obj(Editor).hWnd, SW_SHOW
     .endif
     invoke StrDispose, pFileName
   .endw

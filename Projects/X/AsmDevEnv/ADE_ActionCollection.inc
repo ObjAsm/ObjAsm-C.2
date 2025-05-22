@@ -7,7 +7,7 @@
 
 
 ; ==================================================================================================
-; ActionCollection implementation
+; ActionCollection implementation 
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
@@ -158,46 +158,3 @@ Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
   inc [xsi].dActionIndex
 MethodEnd
 
-;Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
-;  SetObject xsi
-;  mov ebx, [xsi].dCount
-;  .if ebx > [xsi].dActionIndex
-;    ;Dispose all now invalid redo actions 
-;    .while TRUE
-;      dec ebx
-;      OCall xsi.DisposeAt, ebx
-;      .break .if ebx == [xsi].dActionIndex
-;    .endw
-;  .endif
-;
-;  mov eax, [xsi].dCount
-;  .if eax != 0
-;    dec eax
-;    OCall xsi.ItemAt, eax
-;    mov xcx, pItem
-;    .if [xax].ACTION.dAction == AAT_INSERTCHARS && [xcx].ACTION.dAction == AAT_INSERTCHARS
-;      mov xdx, [xax].ACTION.pEditorLine
-;      .if xdx == [xcx].ACTION.pEditorLine
-;        mov edx, [xax].ACTION.dPosIndex
-;        add edx, [xax].ACTION.dChrCount
-;        .if edx == [xcx].ACTION.dPosIndex
-;          mov xbx, xax
-;          mov edx, [xcx].ACTION.dChrCount
-;          add [xbx].ACTION.dChrCount, edx
-;          mov xdi, $invoke(StrAlloc, [xbx].ACTION.dChrCount)
-;          invoke StrECopy, xdi, [xbx].ACTION.pChars
-;          mov xdx, pItem
-;          invoke StrCopy, xax, [xdx].ACTION.pChars
-;          invoke StrDispose, [xbx].ACTION.pChars
-;          mov [xbx].ACTION.pChars, xdi
-;          mov xdx, pItem
-;          invoke StrDispose, [xdx].ACTION.pChars
-;          MemFree pItem
-;          ExitMethod
-;        .endif
-;      .endif
-;    .endif
-;  .endif
-;  ACall xsi::DataCollection.Insert, pItem
-;  inc [xsi].dActionIndex
-;MethodEnd
