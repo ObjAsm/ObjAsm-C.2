@@ -1127,11 +1127,17 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax
 
+  .elseif ax == IDM_WINDOW_NEXT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDINEXT, 0, 0
+    xor eax, eax
+
+  .elseif ax == IDM_WINDOW_PREV
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDINEXT, 0, -1
+    xor eax, eax
+
   ;Messages for help menu
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("\Help\ObjAsm_Reference_Volume-I.pdf"), \
-                                     addr cBuffer, lengthof(cBuffer)
-    invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
+    invoke PdfView, [xsi].hWnd, $OfsCStr("ADE_Manual.pdf"), NULL
     xor eax, eax
 
   .elseif ax == IDM_HELP_ABOUT

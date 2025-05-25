@@ -26,15 +26,15 @@ DbgOutInterfaceName proc uses xbx pIID:ptr GUID, dForeColor:DWORD, dBackColor:DW
   FillStringA [xbx], <Interface\{>                       ;??StrLen = 11
   invoke GUID2StrA, addr SubKey[??StrLen], pIID
   invoke DbgOutTextA, addr SubKey[??StrLen] , dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd
-  mov DCHRA ptr [xbx + ??StrLen + GUID2STR_MAX_CHARS - 1], "}"
+  mov DCHRA ptr [xbx + ??StrLen + GUID2STR_MAX_CHARS - 1], '}'
   m2z hKey
   invoke RegOpenKeyA, HKEY_CLASSES_ROOT, xbx, addr hKey
   .if eax == ERROR_SUCCESS
-    mov DCHRA ptr [xbx], "( "
+    mov DCHRA ptr [xbx], '( '
     mov dSubKeyLenght, sizeof(SubKey) - 2*sizeof(CHRA)
     invoke RegQueryValueA, hKey, NULL, addr SubKey[2], addr dSubKeyLenght
     mov eax, dSubKeyLenght
-    mov CHRA ptr [xax + xbx + 1], ")"
+    mov DCHRA ptr [xax + xbx + 1], ')'
     invoke DbgOutTextA, xbx, dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd
     invoke RegCloseKey, hKey
   .endif

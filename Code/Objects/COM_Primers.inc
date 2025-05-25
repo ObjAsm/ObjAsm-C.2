@@ -48,34 +48,36 @@ ObjectEnd
 ;             and implements a way to reuse other COM objects called aggregation, shown in the
 ;             following diagram:
 ;
-;                                                                --ÅE;                                                               |   |
-;                                                                --ÅE;                                                                 |
+;                                                                ---
+;                                                               |   |
+;                                                                ---Å
+;                                                                 |
 ;              Outer Component                                    |
 ;              ---------------------------------------------------|------------------------------
 ;             |                                                   |                              |
-;             |                                      ----------------ÅE      ÅEÅEÅEÅEÅEÅEÅEÅEÅE  |
+;             |                                      -----------------      Å-Å-Å-Å-Å-Å-Å-Å-Å-   |
 ;             |                                     |                 |     |                 |  |
 ;             |                                     |      Outer      |        Outer IUnknown    |
 ;             |                                     |     IUnknown    |---->|  Non Delegating |  |
 ;             |                                     |                 |                          |
 ;             |                                     |        I.RefCnt |     |     C.+A.RefCnt |  |
-;             |                                     '----------------ÅE      ÅEÅEÅEÅEÅEÅEÅEÅEÅE  |
+;             |                                     '-----------------'     Å-Å-Å-Å-Å-Å-Å-Å-Å-   |
 ;             |                                                                  /|\   /|\       |
 ;             |                                                                   |     |        |
-;             |                    --ÅE                aggr. redirection          |     |        |
-;             |                   |   |        ----------------------------------ÅE     |        |
-;             |                    --ÅE       |                                         |        |
+;             |                    ---                aggr. redirection           |     |        |
+;             |                   |   |        -----------------------------------'     |        |
+;             |                    ---        |                                         |        |
 ;             |                     |         |                                         |        |
 ;             |    Inner Component  |         |                                         |        |
-;             |    -----------------|---------|--------------------------ÅE             |        |
+;             |    -----------------|---------|---------------------------              |        |
 ;             |   |                 |         |                           |             |        |
-;             |   |    ----------------ÅE     |      ÅEÅEÅEÅEÅEÅEÅEÅEÅE   |             |        |
+;             |   |    -----------------      |      -Å-Å-Å-Å-Å-Å-Å-Å-    |             |        |
 ;             |   |   |                 |     |     |                 |   |             |        |
 ;             |   |   |                 |     |           IUnknown        |             |        |
-;             |   |   |     IUnknown    |----ÅEÅEÅE>|  Non Delegating |   |             |        |
+;             |   |   |     IUnknown    |----Å-Å-Å->|  Non Delegating |   |             |        |
 ;             |   |   |                 |                                 |             |        |
 ;             |   |   |        I.RefCnt |           |        C.RefCnt |   |             |        |
-;             |   |   '----------------ÅE            ÅEÅEÅEÅEÅEÅEÅEÅEÅE   |             |        |
+;             |   |   '-----------------'            -Å-Å-Å-Å-Å-Å-Å-Å-    |             |        |
 ;             |   |                                         /|\           |             |        |
 ;             |   |                                                       |             |        |
 ;             |   |  Aggregated Interface                    |            |             |        |
@@ -83,14 +85,14 @@ ObjectEnd
 ;             |   | |                                        |         |  |             |        |
 ;             |   | |   ----------------                               |  |             |        |
 ;             |   |    |                |                    |            |             |        |
-;     --ÅE    |   | |  |    IUnknown    |                          aggr. redirection    |        |
-;    |   |-------------|   Descendant   |----------------------------------------------ÅE        |
-;     --ÅE    |   | |  |                |                              |  |                      |
+;     ---     |   | |  |    IUnknown    |                          aggr. redirection    |        |
+;    |   |-------------|   Descendant   |-----------------------------------------------'        |
+;     ---     |   | |  |                |                              |  |                      |
 ;             |   |    |       I.RefCnt |                                 |                      |
 ;             |   | |  '----------------'                              |  |                      |
 ;             |   | |                                                  |  |                      |
 ;             |   |  --  --  --  --  --  --  --  --  --  --  --  --  --   |                      |
-;             |   '------------------------------------------------------ÅE                      |
+;             |   '-------------------------------------------------------'                      |
 ;             |                                                                                  |
 ;             '----------------------------------------------------------------------------------'
 ;
@@ -240,7 +242,7 @@ if IMPLEMENT
 ; Return:     eax = HRESULT.
 
 Method IUnknown.QueryInterface,, pReqIID:REFIID, ppInterface:POINTER
-  DbgText "IUnkown.QueryInterface", "IUnkown"
+;  DbgText "IUnkown.QueryInterface", "IUnkown"
   if DEBUGGING
     invoke PrintQueryInfoBeg, pSelf, pReqIID, $RGB(0,192,0), $OfsCStrW("IUnkown")
   endif
@@ -264,7 +266,7 @@ MethodEnd
 ; Return:     eax = Current reference count.
 
 Method IUnknown.AddRef, uses xsi
-  DbgText "IUnknown.AddRef", "IUnkown"
+;  DbgText "IUnknown.AddRef", "IUnkown"
   SetObject xsi
   mov xdx, [xsi].pOwner                                 ;Component
   .if [xdx].$Obj(Component).pIUnkOuter == NULL
@@ -275,9 +277,9 @@ Method IUnknown.AddRef, uses xsi
   ICall xax::IUnknown.AddRef
   lock inc [xsi].dRefCount                              ;Increment interface reference count
   mov eax, [xsi].dRefCount                              ;Return interface reference count (debug)
-  if DEBUGGING
-    invoke PrintRefCounters, xsi, $RGB(0,128,255), $OfsCStrW("IUnkown")
-  endif
+;  if DEBUGGING
+;    invoke PrintRefCounters, xsi, $RGB(0,128,255), $OfsCStrW("IUnkown")
+;  endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -287,7 +289,7 @@ MethodEnd
 ; Return:     eax = (optional) Current reference count.
 
 Method IUnknown.Release, uses xsi
-  DbgText "IUnknown.Release", "IUnkown"
+;  DbgText "IUnknown.Release", "IUnkown"
   SetObject xsi
   mov xdx, [xsi].pOwner                                 ;Component
   .if [xdx].$Obj(Component).pIUnkOuter == NULL
@@ -533,7 +535,7 @@ endif
 Method Component.GetInterface, uses xsi, pReqIID:REFIID, ppInterface:POINTER
   local pInterface:POINTER
 
-  DbgText "Component.GetInterface", "Component"
+;  DbgText "Component.GetInterface", "Component"
   SetObject xsi
   ;Search for native interfaces
   OCall [xsi].Interfaces::Collection.FirstThatNot, \
@@ -568,7 +570,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Component.Init, uses xsi, pOwner:POINTER, pIUnkOuter:POINTER
-  DbgText "Component.Init", "Component"
+;  DbgText "Component.Init", "Component"
   SetObject xsi
 ;  DbgHex xsi,, "Component"
   ACall xsi.Init, pOwner

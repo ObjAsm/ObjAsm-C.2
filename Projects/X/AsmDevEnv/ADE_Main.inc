@@ -115,16 +115,18 @@ FINDDLGCHOICES struct
 FINDDLGCHOICES ends
 PFINDDLGCHOICES typedef ptr FINDDLGCHOICES
 
-FF_PROJECT  equ   BIT00
-FF_OPEN     equ   BIT01
-FF_CMD      equ   BIT02
+PIF_ROOT     equ   0
+PIF_FOLDER   equ   1
+PIF_FILE     equ   2
+PIF_CMD      equ   3
 
-FILE struct
+PROJECTITEM struct
   pDisplayName  PSTRING   ?
   pFullFileName PSTRING   ?
   dFlags        DWORD     ?
-FILE ends
-PFILE typedef ptr FILE
+  hEditor       HANDLE    ?
+PROJECTITEM ends
+PPROJECTITEM typedef ptr PROJECTITEM
 
 ;BLOCK struct
 ;  pParent       PBLOCK    ?
@@ -160,6 +162,24 @@ KEYWORD struc
   pString           PSTRING   ?
 KEYWORD ends
 PKEYWORD typedef ptr KEYWORD
+
+; --------------------------------------------------------------------------------------------------
+; Object:     IDropTarget
+; Purpose:    Implement IDropTarget COM interface.
+
+Object IDropTarget, , IUnknown
+  RedefineMethod    Init,           POINTER, HWND
+
+  InterfaceMethod   DragEnter,      POINTER, DWORD, POINTL, POINTER 
+  InterfaceMethod   DragOver,       DWORD, POINTL, POINTER 
+  InterfaceMethod   DragLeave      
+  InterfaceMethod   Drop,           POINTER, DWORD, POINTL, POINTER 
+
+  RedefineVariable  pIID,           offset IID_IDropTarget
+
+  DefineVariable    dEffect,        DWORD,      DROPEFFECT_NONE
+  DefineVariable    hTreeView,      HWND,       0
+ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     KeywordGroupCollection
@@ -706,9 +726,15 @@ Object ProjectWnd,, Window
   StaticMethod      ConfigSave
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
+  StaticMethod      IsFilePresent,        PSTRING
+  StaticMethod      GetFolderByIndex,     DWORD
+  StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, DWORD, HWND
   StaticMethod      Startup
 
   VirtualEvent      OnCreate,             WM_CREATE
+  VirtualEvent      OnLButtonUp,          WM_LBUTTONUP
+  VirtualEvent      OnMouseMove,          WM_MOUSEMOVE
+  VirtualEvent      OnNotify,             WM_NOTIFY
   VirtualEvent      OnPaint,              WM_PAINT
 
   DefineVariable    dToolbarHeight,       DWORD,      0
@@ -716,13 +742,13 @@ Object ProjectWnd,, Window
   DefineVariable    dReqMainVersion,      DWORD,      1
   DefineVariable    dMinSubVersion,       DWORD,      0
   DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dDragging,            DWORD,      FALSE
+  DefineVariable    hDragSrcItem,         HTREEITEM,  0
 
   Embed     TBar,               Toolbar
   Embed     TView,              TreeView
   Embed     IconImageList,      MaskedImageList
-
-  Embed     Files,              DataCollection            ;of FILE structures §§§
-  Embed     TVHandles,          %XWordVector
+  Embed     DragDrop,           Component
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1005,6 +1031,7 @@ endm
 include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectWnd.inc
+include ADE_ProjectWnd_IDropTarget.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc

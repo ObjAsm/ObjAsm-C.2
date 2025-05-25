@@ -661,30 +661,31 @@ GetFontDefFromString endp
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFileFromString
-; Purpose:    Allocate an load a FILE structure from a string.
-; Arguments:  Arg1: -> String.
-; Return:     xax -> FILE structure.
-;             edx: TV HANDLE index.
+; Purpose:    Allocate an load a PROJECTITEM structure from a string.
+; Arguments:  Arg1: -> String (Format: FolderID, Flags, Display name, File path).
+; Return:     xax -> PROJECTITEM structure.
+;             edx: Parent folder index.
 
 align ALIGN_CODE
 GetFileFromString proc uses xbx xdi xsi pString:PSTRING
-  local dHandleIndex:DWORD
+  local dParentFolderIndex:DWORD
 
-  mov xbx, $MemAlloc(sizeof(FILE))
+  mov xbx, $MemAlloc(sizeof(PROJECTITEM))
   invoke GetIntegerFromString, pString, 0
-  mov dHandleIndex, eax
+  mov dParentFolderIndex, eax
   invoke GetIntegerFromString, addr [xcx + sizeof(CHR)], 0
-  mov [xbx].FILE.dFlags, eax
+  mov [xbx].PROJECTITEM.dFlags, eax
   invoke GetStringFromString, addr [xcx + sizeof(CHR)]
   mov xdi, xcx
   invoke StrCNew, xax, edx
-  mov [xbx].FILE.pDisplayName, xax
+  mov [xbx].PROJECTITEM.pDisplayName, xax
   invoke GetStringFromString, addr [xdi + sizeof CHR]
   mov xdi, xcx
   invoke StrCNew, xax, edx
-  mov [xbx].FILE.pFullFileName, xax
+  mov [xbx].PROJECTITEM.pFullFileName, xax
+  mov [xbx].PROJECTITEM.hEditor, 0
   mov xax, xbx
-  mov edx, dHandleIndex
+  mov edx, dParentFolderIndex
   ret
 GetFileFromString endp
 

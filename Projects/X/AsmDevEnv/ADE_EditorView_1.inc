@@ -819,7 +819,8 @@ Method EditorView.DrawEditorLines, uses xbx xdi xsi
   .if edx < [xbx].$Obj(Editor).Lines.dCount
     OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
     .repeat
-      OCall xax::EditorLine.Draw, xsi, addr CodeLineRect, dCommentExitChar
+      mov xcx, xax
+      OCall xcx::EditorLine.Draw, xsi, addr CodeLineRect, dCommentExitChar
       mov dCommentExitChar, eax
 
       ;Search for the next visible EditorLine
@@ -1283,7 +1284,6 @@ Method EditorView.OnGesture, uses xsi, wParam:WPARAM, lParam:LPARAM
         mov eax, ecx
         sub eax, [xsi].GesturePanPos.y
         mov [xsi].GesturePanPos.y, ecx
-        DbgDec eax
         .if SIGN?
           OCall xsi.ScrollVisPageDown, edx
           .if eax != 0

@@ -20,10 +20,10 @@
 .code
 align ALIGN_CODE
 BStrReplace proc ppOldBStr:POINTER, pNewBStr:POINTER
-  mov xax, ppOldString
+  mov xax, ppOldBStr
   invoke BStrDispose, POINTER ptr [xax]
   invoke BStrNew, pNewBStr
-  mov xcx, ppOldString
+  mov xcx, ppOldBStr
   mov [xcx], xax
   ret
 BStrReplace endp

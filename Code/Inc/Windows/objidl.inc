@@ -3008,7 +3008,7 @@ ifndef __objidl_h__
       DVTARGETDEVICE ends
       tagDVTARGETDEVICE typedef DVTARGETDEVICE
       LPCLIPFORMAT typedef ptr CLIPFORMAT
-      FORMATETC struct 4
+      FORMATETC struct sizeof(POINTER)
         cfFormat CLIPFORMAT ?
         ptd POINTER ?
         dwAspect DWORD ?

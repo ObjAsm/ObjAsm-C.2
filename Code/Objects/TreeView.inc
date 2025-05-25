@@ -99,12 +99,12 @@ MethodEnd
 ; Arguments:  Arg1: Parent node handle.
 ;             Arg2: Handle of the node, after the new node is inserted.
 ;             Arg3: Node text pointer.
-;             Arg4: Normal icon index.
+;             Arg4: Regular icon index.
 ;             Arg5: Selected icon index.
 ; Return:     xax = Node handle.
 
 Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRING, \
-                             dImgNorIndex:DWORD, dImgSelIndex:DWORD
+                             dImgIndex:DWORD, dImgSelIndex:DWORD
   local TVI:TV_INSERTSTRUCT
 
   SetObject xcx
@@ -112,7 +112,7 @@ Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRIN
   m2m TVI.hInsertAfter, hNodeAfter, xdx
   mov TVI.item.mask_, TVIF_TEXT or TVIF_IMAGE or TVIF_SELECTEDIMAGE
   m2m TVI.item.pszText, pText, xax
-  m2m TVI.item.iImage, dImgNorIndex, edx
+  m2m TVI.item.iImage, dImgIndex, edx
   m2m TVI.item.iSelectedImage, dImgSelIndex, eax
   invoke SendMessage, [xcx].hWnd, TVM_INSERTITEM, 0, addr TVI
 MethodEnd
@@ -127,6 +127,7 @@ MethodEnd
 ; Note:       Window HANDLE is passed in pSelf (hidden parameter).
 
 Method TreeView.WndProc,, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
+  ;DbgMessage uMsg, "TreeView.WndProc"
   GetSubclassingInst TreeView, pSelf
   OCall xax::TreeView.Dispatch, pSelf, uMsg, wParam, lParam
 MethodEnd

@@ -96,6 +96,7 @@ DefGUID CLSID_FileSaveDialog, %sCLSID_FileSaveDialog
 DefGUID IID_IFileOpenDialog, %sIID_IFileOpenDialog
 DefGUID IID_IFileSaveDialog, %sIID_IFileSaveDialog
 DefGUID IID_IFileDialog2, %sIID_IFileDialog2
+DefGUID IID_IDropTarget, %sIID_IDropTarget
 
 .code
 ;Load or build the following objects
@@ -110,7 +111,7 @@ MakeObjects WinControl, Toolbar, Rebar, Statusbar, ComboBox, TreeView, ListView,
 MakeObjects XWCollection, TextView
 MakeObjects FlipBox, Splitter
 MakeObjects WinApp, MdiApp
-;MakeObjects COM_Primers
+MakeObjects COM_Primers
 
 include ADE_Globals.inc                                 ;Application globals
 include ADE_PropertiesWnd.inc
@@ -122,13 +123,13 @@ start proc SEH_FRAME                                    ;Program entry point
 
   ResGuard_Start
   invoke InitCommonControls  
-  invoke CoInitialize, NULL
+  invoke OleInitialize, NULL                            ;Calls CoInitializeEx(COINIT_APARTMENTTHREADED)
 
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
-  invoke CoUninitialize
+  invoke OleUninitialize
   ResGuard_Show
   ResGuard_Stop
 

@@ -410,7 +410,7 @@ MethodEnd
 ; Note:       This method creates a hidden MDI window that needs to be shown using ShowWindow.
 
 Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorResources), pFileName:PSTRINGW
-  local cBuffer[MAX_PATH]:CHR
+  local cBuffer[MAX_PATH]:CHR, dStyle:DWORD
 
   SetObject xsi
   ACall xsi.Init, pOwner                                ;hWnd is set in WndProc
@@ -437,8 +437,19 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     mov xcx, pFileName
   .endif
   mov [xsi].pFullFileName, $invoke(StrNewW, xcx)
+  
+  ;Check if the avtive window is maximized
+  mov xcx, pOwner                                       ;-> ClientWnd
+  mov dStyle, 0
+  invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+  .if xax != 0
+    invoke IsZoomed, xax
+    .if eax != FALSE
+      mov dStyle, WS_MAXIMIZE
+    .endif
+  .endif
 
-  invoke CreateMDIWindowW, offset szEditorClassName, [xsi].pFullFileName, 0, \
+  invoke CreateMDIWindowW, offset szEditorClassName, [xsi].pFullFileName, dStyle, \
                            CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
                            [xdi].$Obj(ClientWnd).hWnd, hInstance, pSelf
   .if xax != NULL
