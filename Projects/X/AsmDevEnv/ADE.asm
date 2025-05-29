@@ -87,6 +87,7 @@ endif
 sCLSID_FileOpenDialog   textequ   <DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7>
 sCLSID_FileSaveDialog   textequ   <C0B4E2F3-BA21-4773-8DBA-335EC946EB8B>
 sIID_IFileDialog2       textequ   <61744FC7-85B5-4791-A9B0-272276309B13>
+sIID_IShellItem         textequ   <43826d1e-e718-42ee-bc55-a1e261c37bfe>
 
 .const
 DefGUID IID_NULL, %sGUID_NULL
@@ -97,6 +98,7 @@ DefGUID IID_IFileOpenDialog, %sIID_IFileOpenDialog
 DefGUID IID_IFileSaveDialog, %sIID_IFileSaveDialog
 DefGUID IID_IFileDialog2, %sIID_IFileDialog2
 DefGUID IID_IDropTarget, %sIID_IDropTarget
+DefGUID IID_IShellItem, %sIID_IShellItem
 
 .code
 ;Load or build the following objects
@@ -115,7 +117,7 @@ MakeObjects COM_Primers
 
 include ADE_Globals.inc                                 ;Application globals
 include ADE_PropertiesWnd.inc
-include ADE_Main.inc                                    ;Application object
+include ADE_Main.inc                                    ;Application objects
 
 start proc SEH_FRAME                                    ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
@@ -124,6 +126,7 @@ start proc SEH_FRAME                                    ;Program entry point
   ResGuard_Start
   invoke InitCommonControls  
   invoke OleInitialize, NULL                            ;Calls CoInitializeEx(COINIT_APARTMENTTHREADED)
+  ;invoke SetExceptionMessage, NULL, NULL, NULL
 
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application

@@ -60,7 +60,7 @@ ToolbarWindow DEF_TOOLBAR {IDC_TOOLBARWINDOW, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, 
   TBBUTTON {IDB_WINDOW_ZOOMOUT,   IDM_WINDOW_ZOOMOUT,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
 AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 5}
-  DEF_STATUSBAR_PART {120, 100, 4, SBT_NOBORDERS, NULL}
+  DEF_STATUSBAR_PART {200, 100, 4, SBT_NOBORDERS, NULL}
   DEF_STATUSBAR_PART {120,  20, 1, SBT_SUNKEN,    NULL}
   DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ;Spring
   DEF_STATUSBAR_PART {060,  20, 2, SBT_SUNKEN,    NULL}
@@ -115,16 +115,19 @@ FINDDLGCHOICES struct
 FINDDLGCHOICES ends
 PFINDDLGCHOICES typedef ptr FINDDLGCHOICES
 
-PIF_ROOT     equ   0
-PIF_FOLDER   equ   1
+PIF_PROJ     equ   0
+PIF_GROUP    equ   1
 PIF_FILE     equ   2
 PIF_CMD      equ   3
 
 PROJECTITEM struct
-  pDisplayName  PSTRING   ?
-  pFullFileName PSTRING   ?
-  dFlags        DWORD     ?
-  hEditor       HANDLE    ?
+  pDisplayName    PSTRINGW  ?
+  union
+    pFullFileName PSTRINGW  ?
+    pCommand      PSTRINGW  ?
+  ends
+  dFlags          DWORD     ?
+  hEditor         HANDLE    ?
 PROJECTITEM ends
 PPROJECTITEM typedef ptr PROJECTITEM
 
@@ -335,7 +338,7 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      LineDelete,           DWORD, DWORD
   StaticMethod      LineJoinNext,         DWORD, DWORD
   StaticMethod      LineJoinPrev,         DWORD, DWORD
-  StaticMethod      LineReinsert,         DWORD, DWORD
+  StaticMethod      LineReinsert,         DWORD
   StaticMethod      Redo,                 POINTER               ;PACTION
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
@@ -722,26 +725,34 @@ ObjectEnd
 ; Purpose: Implement a project window used as a control container on some apps.
 
 Object ProjectWnd,, Window
-  StaticMethod      ConfigLoad,           PSTRING
+  StaticMethod      ConfigLoadFrom,       PSTRING
   StaticMethod      ConfigSave
+  StaticMethod      ConfigSaveTo,         PSTRING
+  StaticMethod      CreateNewProject
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
-  StaticMethod      IsFilePresent,        PSTRING
-  StaticMethod      GetFolderByIndex,     DWORD
+  StaticMethod      IsFileAlreadyPresent, PSTRING
+  StaticMethod      GetGroupByIndex,     DWORD
   StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, DWORD, HWND
+;  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
   StaticMethod      Startup
 
+  VirtualEvent      OnContextMenu,        WM_CONTEXTMENU
   VirtualEvent      OnCreate,             WM_CREATE
   VirtualEvent      OnLButtonUp,          WM_LBUTTONUP
   VirtualEvent      OnMouseMove,          WM_MOUSEMOVE
   VirtualEvent      OnNotify,             WM_NOTIFY
   VirtualEvent      OnPaint,              WM_PAINT
 
-  DefineVariable    dToolbarHeight,       DWORD,      0
-
+  DefineVariable    pProjName,            PSTRING,    NULL
+  DefineVariable    pProjFileName,        PSTRING,    NULL
+  DefineVariable    pProjDirPath,         PSTRING,    NULL
+  DefineVariable    pProjDescription,     PSTRING,    NULL
   DefineVariable    dReqMainVersion,      DWORD,      1
   DefineVariable    dMinSubVersion,       DWORD,      0
+
   DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dToolbarHeight,       DWORD,      0
   DefineVariable    dDragging,            DWORD,      FALSE
   DefineVariable    hDragSrcItem,         HTREEITEM,  0
 
@@ -749,6 +760,19 @@ Object ProjectWnd,, Window
   Embed     TView,              TreeView
   Embed     IconImageList,      MaskedImageList
   Embed     DragDrop,           Component
+  Embed     DefaultGroups,      %StrCollection
+ObjectEnd
+
+; --------------------------------------------------------------------------------------------------
+; Object:  ProjectPropertiesDialog
+; Purpose: Implement a project properties dialog.
+
+Object ProjectPropertiesDialog,, DialogModal
+  RedefineMethod    CtlsGet
+  RedefineMethod    CtlsSet
+  VirtualMethod     GetDirectoryName
+  RedefineMethod    Init,               POINTER, HWND
+  RedefineMethod    OnCommand,          WPARAM, LPARAM
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -829,8 +853,6 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    hMenuChildWnd,        HMENU,      0
   DefineVariable    hMenuContextEditor,   HMENU,      0
   DefineVariable    dFlags,               DWORD,      0
-  DefineVariable    pDirectory,           PSTRING,    NULL
-  DefineVariable    pProjFileName,        PSTRING,    NULL
 
   DefineVariable    PrintMargin,          RECT,       {}
   DefineVariable    hDevMode,             HGLOBAL,    0
@@ -1032,6 +1054,7 @@ include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectWnd.inc
 include ADE_ProjectWnd_IDropTarget.inc
+include ADE_ProjectPropertiesDialog.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc

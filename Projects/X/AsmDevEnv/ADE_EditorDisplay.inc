@@ -596,7 +596,7 @@ MethodEnd
 ;             Window HANDLE is passed in pSelf (hidden parameter).
 
 Method EditorDisplay.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-    ANNOTATION use:wParam
+  ANNOTATION use:wParam
 
 ;  DbgMessage uMsg, "EditorDisplay.WndProc"
   .if uMsg == WM_NCCREATE

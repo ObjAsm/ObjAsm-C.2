@@ -75,6 +75,9 @@ Method FileTypeCollection.GetContentType, uses xsi, pFileName:PSTRINGW
       mov eax, [xax].FILETYPE.dContentType
     .endif
   .endif
+  
+    ;invoke AssocGetPerceivedType   
+
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

@@ -1436,7 +1436,7 @@ MethodEnd
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
-Method EditorLine.LineReinsert, uses xbx xsi, dLineIndex:DWORD, dActionGroup:DWORD
+Method EditorLine.LineReinsert, uses xbx xsi, dLineIndex:DWORD
   SetObject xsi
   mov xbx, [xsi].pOwner
   OCall [xbx].$Obj(Editor).Lines::Collection.InsertAt, dLineIndex, xsi 
@@ -1467,7 +1467,7 @@ Method EditorLine.Redo, uses xbx xsi, pAction:POINTER
     OCall xsi.LineDelete, [xbx].ACTION.dLineIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_INSERTLINE
-    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex, 0
+    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex
 
   .else
     xor eax, eax
@@ -1545,7 +1545,7 @@ Method EditorLine.Undo, uses xbx xsi, pAction:POINTER
 ;    mov [xsi].Selection.dEndIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_DELETELINE
-    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex, 0
+    OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex
 
   .elseif [xbx].ACTION.dAction == AAT_INSERTLINE
     OCall xsi.LineDelete, [xbx].ACTION.dLineIndex, 0

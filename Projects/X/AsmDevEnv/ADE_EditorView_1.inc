@@ -351,7 +351,7 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 ; Note:       The caret is only displayed if it is in the TextRect.
 
-Method EditorView.CaretSet, uses xdi xsi
+Method EditorView.CaretSet, uses xbx xdi xsi
   local CaretPosition:POINT, dRetValue:DWORD
 
 ;  DbgText "EditorView.CaretSet"
@@ -416,7 +416,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = Vertical index or -1 if the caret is off view or last line was reached.
 
-Method EditorView.CaretVertIndex, uses xbx xdi xsi
+Method EditorView.CaretVertIndex, uses xbx xsi
   local dCurVisLineIndex:DWORD, dCurLineIndex:DWORD
 
 ;  DbgText "EditorView.CaretVertIndex"
@@ -861,7 +861,6 @@ Method EditorView.DrawSelectionBar, uses xbx xdi xsi
   local LineNumberRect:RECT, dLineHeight:DWORD
   local PrevLineIndicatorRect:RECT, CurrLineIndicatorRect:RECT, NextLineIndicatorRect:RECT
   local LineFoldingRect:RECT, FoldHeadRect:RECT, dFoldHeadSize:DWORD
-  local SignalRect:RECT
   local hPrvPen:HPEN, hPrvBrush:HBRUSH
 
 ;  DbgText "EditorView.DrawSelectionBar"
@@ -1539,7 +1538,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method EditorView.OnLButtonUp, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method EditorView.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnLButtonUp"
@@ -1833,7 +1832,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method EditorView.OnMouseHWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method EditorView.OnMouseHWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dNeedRedrawing:DWORD, CtrlKeyState:DWORD
 
   ANNOTATION use:wParam lParam
@@ -1928,7 +1927,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local CursorPos:POINT, Index:POINT, dCurVisIndex:DWORD, dLastVisLineIndex:DWORD, VisLineCounter
+  local CursorPos:POINT, Index:POINT, dCurVisIndex:DWORD, dLastVisLineIndex:DWORD
 
   ANNOTATION use:wParam lParam
 
@@ -2606,7 +2605,7 @@ MethodEnd
 ;             Window HANDLE is passed in pSelf (hidden parameter).
 
 Method EditorView.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-    ANNOTATION use:wParam
+  ANNOTATION use:wParam
 
 ;  DbgMessage uMsg, "EditorView.WndProc"
   .if uMsg == WM_NCCREATE

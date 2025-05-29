@@ -52,7 +52,7 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
 
   SetObject xsi
   
-  invoke GetPrivateProfileString, addr cIniSectIdentification, addr cVersion, NULL, \
+  invoke GetPrivateProfileString, addr cIdentification, addr cVersion, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
 
   ;Load element attributes

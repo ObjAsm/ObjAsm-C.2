@@ -24,7 +24,7 @@ ProcName textequ <dec2dwordA>
 ;                   followed by a sequence of chars between "0".."9" and finalized by a ZTC.
 ;                   Other characters terminate the convertion returning zero.
 ; Return:     eax = Converted DWORD.
-;             rcx = Conversion result. Zero if succeeded, otherwise failed.
+;             ecx = Conversion result. Zero if succeeded, otherwise failed.
 
 % include &ObjMemPath&Common\\dec2xword_TX.inc
 

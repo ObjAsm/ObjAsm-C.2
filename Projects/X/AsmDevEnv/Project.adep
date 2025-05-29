@@ -1,25 +1,123 @@
-[Identification]
-Description= Assembler Test Project
-Version=1.0
-
-[Project Groups]
-1=Added Files:1
-2=Assemblies:1
-3=Macros:1
-4=Miscellaneous:1
-5=Modules:1
-6=Includes:1
-7=Objects:1
-8=Resources:1
-
-[Project Files]
-1=ADE.asm:2
-2=ADE_Main.inc:6
-3=ADE_Globals.inc:6
-4=ADE.rc:8
-
-[Make]
-1=ADE_RC.cmd
-2=ADE_ASM.cmd
-3=ADE_LINK.cmd
-4=ADE_DEBUG.cmd
+{
+  "Identification": {
+    "Description": "Assembler Development Environment - Project file",
+    "Version": "1.0"
+  },
+  "Project": {
+    "Name": "Testproject",
+    "Path": "D:\ObjAsm\Projects\X\AsmDevEnv",
+    "Description", "This is a test project"
+  },
+  "Groups": [
+    {
+      "Name": "Tools",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Make",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Added",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Assembly",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Macros",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Include",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Objects",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Miscellaneous",
+      "Expanded": TRUE
+    },
+    {
+      "Name": "Resources",
+      "Expanded": TRUE
+    }
+  ],
+  "Files": [
+    {
+      "DispName": "Calculator",
+      "FileName": "C:\Windows\System32\calc.exe",
+      "Type": 3
+      "Group": "Tools"
+    },
+    {
+      "DispName": "Notepad",
+      "FileName": "C:\Windows\System32\notepad.exe",
+      "Type": 3
+      "Group": "Tools"
+    },
+    {
+      "DispName": "Notepad++",
+      "FileName": "C:\Program Files\Notepad++\notepad++.exe",
+      "Type": 3
+      "Group": "Tools"
+    },
+    {
+      "DispName": "Assemble",
+      "FileName": "%ObjAsm%\Build\RA_ASM.cmd",
+      "Type": 3
+      "Group": "Make"
+    },
+    {
+      "DispName": "Build All",
+      "FileName": ".\Make.cmd",
+      "Type": 3
+      "Group": "Make"
+    },
+    {
+      "DispName": "Build Resources",
+      "FileName": "%ObjAsm%\Build\RA_RC.cmd",
+      "Type": 3
+      "Group": "Make"
+    },
+    {
+      "DispName": "Link",
+      "FileName": "%ObjAsm%\Build\RA_LINK.cmd",
+      "Type": 3
+      "Group": "Make"
+    },
+    {
+      "DispName": "ADE.asm",
+      "FileName": "ADE.asm",
+      "Type": 2
+      "Group": "Assembly"
+    },
+    {
+      "DispName": "Dialog.asm",
+      "FileName": "Dialog.asm",
+      "Type": 2
+      "Group": "Assembly"
+    },
+    {
+      "DispName": "ADE_FindDialog.inc",
+      "FileName": "ADE_FindDialog.inc",
+      "Type": 2
+      "Group": "Include"
+    },
+    {
+      "DispName": "ADE_Main.asm",
+      "FileName": "ADE_Main.asm",
+      "Type": 2
+      "Group": "Assembly"
+    },
+    {
+      "DispName": "ADE_About.inc",
+      "FileName": "ADE_About.inc",
+      "Type": 2
+      "Group": "Include"
+    }
+  ]
+}

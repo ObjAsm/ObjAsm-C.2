@@ -536,23 +536,6 @@ CreateDrawAttrFont proc uses xdi xbx pDrawAttr:PDRAW_ATTR
 CreateDrawAttrFont endp
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  CreateDrawAttrResources
-; Purpose:    Create the font and background brush specified in the DRAW_ATTR structure.
-; Arguments:  Arg1: DC HANDLE.
-;             Arg2: -> DRAW_ATTR.
-
-align ALIGN_CODE
-CreateDrawAttrResources proc uses xbx hDC:HDC, pDrawAttr:PDRAW_ATTR
-  mov xbx, pDrawAttr
-  ;Create the background brush
-  invoke CreateSolidBrush, [xbx].DRAW_ATTR.Background.Color
-  mov [xbx].DRAW_ATTR.Background.hBrush, xax
-  ;Create the font
-  invoke CreateDrawAttrFont, xbx
-  ret
-CreateDrawAttrResources endp
-
-; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetDrawAttrFromString
 ; Purpose:    Load DRAW_ATTR from current string pointer.
 ; Arguments:  Arg1: -> DRAW_ATTR.
@@ -667,7 +650,7 @@ GetFontDefFromString endp
 ;             edx: Parent folder index.
 
 align ALIGN_CODE
-GetFileFromString proc uses xbx xdi xsi pString:PSTRING
+GetFileFromString proc uses xbx xdi pString:PSTRING
   local dParentFolderIndex:DWORD
 
   mov xbx, $MemAlloc(sizeof(PROJECTITEM))

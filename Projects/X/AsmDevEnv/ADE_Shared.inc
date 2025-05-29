@@ -16,71 +16,97 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       161
-BUILD_DATE_STR                textequ   <2025-05-25>
+BUILD_NUMBER                  equ       195
+BUILD_DATE_STR                textequ   <2025-05-29>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
 ;Menu IDs
 IDM_FILE                      equ       050
 IDM_FILE_NEW                  equ       051
-IDM_FILE_OPEN                 equ       052
-IDM_FILE_SAVE                 equ       053
-IDM_FILE_SAVEAS               equ       054
-IDM_FILE_SAVEALL              equ       055
-IDM_FILE_CLOSE                equ       056
-IDM_FILE_CLOSEALL             equ       057
-IDM_FILE_PAGESETUP            equ       058
-IDM_FILE_PRINTERSETUP         equ       059
-IDM_FILE_PRINT                equ       060
-IDM_FILE_PIN                  equ       061
-IDM_FILE_SETUP                equ       062
-IDM_FILE_EXIT                 equ       063
-IDM_FILE_SAVE_CTX             equ       064
-IDM_FILE_LOAD_CTX             equ       065
-IDM_FILE_BREAK                equ       066
+IDM_FILE_NEW_MASM             equ       052
+IDM_FILE_NEW_RESOURCE         equ       053
+IDM_FILE_NEW_TEXT             equ       054
+IDM_FILE_OPEN                 equ       055
+IDM_FILE_SAVE                 equ       056
+IDM_FILE_SAVEAS               equ       057
+IDM_FILE_SAVEALL              equ       058
+IDM_FILE_CLOSE                equ       059
+IDM_FILE_CLOSEALL             equ       060
+IDM_FILE_PAGESETUP            equ       061
+IDM_FILE_PRINTERSETUP         equ       062
+IDM_FILE_PRINT                equ       063
+IDM_FILE_PIN                  equ       064
+IDM_FILE_SETUP                equ       065
+IDM_FILE_EXIT                 equ       066
+IDM_FILE_SAVE_CTX             equ       067
+IDM_FILE_LOAD_CTX             equ       068
+IDM_FILE_BREAK                equ       069
 
-IDM_EDIT                      equ       070
-IDM_EDIT_UNDO                 equ       071
-IDM_EDIT_REDO                 equ       072
-IDM_EDIT_DELHIST              equ       073
-IDM_EDIT_CUT                  equ       074
-IDM_EDIT_COPY                 equ       075
-IDM_EDIT_PASTE                equ       076
-IDM_EDIT_DELETE               equ       077
-IDM_EDIT_SELECTALL            equ       078
-IDM_EDIT_FIND                 equ       079
-IDM_EDIT_INDENT               equ       080
-IDM_EDIT_OUTDENT              equ       081
-IDM_EDIT_COMMENT              equ       082
-IDM_EDIT_UNCOMMENT            equ       083
+IDM_PROJECT                   equ       100
+IDM_PROJ_NEW                  equ       101
+IDM_PROJ_OPEN                 equ       102
+IDM_PROJ_SAVE                 equ       103
+IDM_PROJ_SAVEAS               equ       104
+IDM_PROJ_PROPS                equ       105
+IDM_PROJ_GROUP                equ       106
+IDM_PROJ_GROUP_NEW            equ       107
+IDM_PROJ_GROUP_ADDFILE        equ       108
+IDM_PROJ_GROUP_DELETE         equ       109
+IDM_PROJ_GROUP_RENAME         equ       110
+IDM_PROJ_FILE_REMOVE          equ       111
+IDM_PROJ_FILE_RENAME          equ       112
+IDM_PROJ_CMD_EXECUTE          equ       113
+IDM_PROJ_CMD_REMOVE           equ       114
+IDM_PROJ_CMD_RENAME           equ       115
 
-IDM_LANGUAGE                  equ       090
-IDM_LANGUAGE_ENGLISH          equ       091
-IDM_LANGUAGE_GERMAN           equ       092
-IDM_LANGUAGE_ITALIAN          equ       093
-IDM_LANGUAGE_RUSSIAN          equ       094
-IDM_LANGUAGE_SPANISH          equ       095
+IDM_EDIT                      equ       150
+IDM_EDIT_UNDO                 equ       151
+IDM_EDIT_REDO                 equ       152
+IDM_EDIT_DELHIST              equ       153
+IDM_EDIT_CUT                  equ       154
+IDM_EDIT_COPY                 equ       155
+IDM_EDIT_PASTE                equ       156
+IDM_EDIT_DELETE               equ       157
+IDM_EDIT_SELECTALL            equ       158
+IDM_EDIT_FIND                 equ       159
+IDM_EDIT_INDENT               equ       160
+IDM_EDIT_OUTDENT              equ       161
+IDM_EDIT_COMMENT              equ       162
+IDM_EDIT_UNCOMMENT            equ       163
+IDM_EDIT_INETSEARCH           equ       164
+IDM_EDIT_UPPERCASE            equ       165
+IDM_EDIT_LOWERCASE            equ       166
+IDM_EDIT_TRIMENDBLANKS        equ       167
 
-IDM_WINDOW                    equ       110
-IDM_WINDOW_CASCADE            equ       111
-IDM_WINDOW_TILE_HOR           equ       112
-IDM_WINDOW_TILE_VER           equ       113
-IDM_WINDOW_ARRANGE            equ       114
-IDM_WINDOW_NEXT               equ       115
-IDM_WINDOW_PREV               equ       116
-IDM_WINDOW_ZOOMIN             equ       117
-IDM_WINDOW_ZOOMOUT            equ       118
+IDM_LANGUAGE                  equ       200
+IDM_LANGUAGE_ENGLISH          equ       201
+IDM_LANGUAGE_GERMAN           equ       202
+IDM_LANGUAGE_ITALIAN          equ       203
+IDM_LANGUAGE_RUSSIAN          equ       204
+IDM_LANGUAGE_SPANISH          equ       205
 
-IDM_HELP                      equ       130
-IDM_HELP_HELP                 equ       131
-IDM_HELP_ABOUT                equ       132
+IDM_WINDOW                    equ       250
+IDM_WINDOW_CASCADE            equ       251
+IDM_WINDOW_TILE_HOR           equ       252
+IDM_WINDOW_TILE_VER           equ       253
+IDM_WINDOW_ARRANGE            equ       254
+IDM_WINDOW_NEXT               equ       255
+IDM_WINDOW_PREV               equ       256
+IDM_WINDOW_ZOOMIN             equ       257
+IDM_WINDOW_ZOOMOUT            equ       258
 
-IDM_NEW_MASM                  equ       140
-IDM_NEW_RESOURCE              equ       141
-IDM_NEW_TEXT                  equ       142
+IDM_HELP                      equ       900
+IDM_HELP_HELP                 equ       901
+IDM_HELP_ABOUT                equ       902
 
-IDM_CONTEXT_EDITOR            equ       150
+IDM_CONTEXT_EDITOR            equ       500
+
+IDM_CONTEXT_PROJECT           equ       600
+IDM_CONTEXT_GROUP             equ       601
+IDM_CONTEXT_FILE              equ       602
+IDM_CONTEXT_COMMAND           equ       603
+
 
 ;Dialog IDs 
 IDC_CONTROL                   equ       800
@@ -106,6 +132,10 @@ IDB_FILE_PRINT                equ       011
 IDB_FILE_PIN                  equ       012
 IDB_FILE_SETUP                equ       013
 IDB_FILE_EXIT                 equ       014
+
+IDB_PROJ_OPEN                 equ       0
+IDB_PROJ_SAVE                 equ       1
+IDB_PROJ_CLOSE                equ       2
 
 IDB_EDIT_UNDO                 equ       030
 IDB_EDIT_REDO                 equ       031

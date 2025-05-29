@@ -65,9 +65,16 @@ FOLDING_RULE struc
 FOLDING_RULE ends
 PFOLDING_RULE typedef ptr FOLDING_RULE
 
-CStr cIniSectIdentification,      "Identification"
-CStr cEditorCodePrefix,           "Code"
+CStr cIdentification,             "Identification"
 CStr cVersion,                    "Version"
+CStr cDescription,                "Description"
+CStr cGUI,                        "GUI"
+CStr cProject,                    "Project"
+CStr cGroups,                     "Groups"
+CStr cFiles,                      "Files"
+CStr cName,                       "Name"
+CStr cPath,                       "Path"
+CStr cEditorCodePrefix,           "Code"
 CStr cFont,                       "Font"
 CStr cBackground,                 "Background"
 CStr cHighlight,                  "Highlight"
@@ -85,8 +92,8 @@ CStr cAlignLines,                 "AlignLines"
 CStr cRevHorzMouseWheelRot,       "ReverseHorzMouseWheelRotation"
 CStr cRevVertMouseWheelRot,       "ReverseVertMouseWheelRotation"
 CStr cLineTermination,            "LineTermination"
-CStr cIniSectGUI,                 "GUI"
 CStr cLanguage,                   "Language"
+CStr cPercieved,                  "Percieved"
 
 CStr cDefaultFontFace,            "Lucida Console"
 CStr cMetricChar,                 "X"
@@ -122,6 +129,13 @@ MultiFileSpec label COMDLG_FILTERSPEC
   POINTER $OfsCStrW("Text")
   POINTER $OfsCStrW("*.txt")
 MultiFileSpecCount = ($ - MultiFileSpec)/sizeof(COMDLG_FILTERSPEC)
+
+MultiProjSpec label COMDLG_FILTERSPEC
+  POINTER $OfsCStrW("All")
+  POINTER $OfsCStrW("*.*")
+  POINTER $OfsCStrW("Project")
+  POINTER $OfsCStrW("*.adep")
+MultiProjSpecCount = ($ - MultiProjSpec)/sizeof(COMDLG_FILTERSPEC)
 
 cDefaultEditorFontFace      textequ <cDefaultFontFace>
 DefaultEditorFontPointSize  equ   13

@@ -17,7 +17,7 @@
 ;                   followed by a sequence of chars between "0".."9" and finalized by a ZTC.
 ;                   Other characters terminate the convertion returning zero.
 ; Return:     eax = Converted DWORD/QWORD.
-;             rcx = Conversion result. Zero if succeeded, otherwise failed.
+;             ecx = Conversion result. Zero if succeeded, otherwise failed.
 
 OPTION PROC:NONE
 
@@ -50,7 +50,7 @@ endif
     sub CharReg, "0"
     .if CharReg > 9
       xor eax, eax
-      mov xcx, -1                                       ;Failed => exit now
+      mov ecx, -1                                       ;Failed => exit now
       pop xsi
 if TARGET_BITNESS eq 32
       ret 4

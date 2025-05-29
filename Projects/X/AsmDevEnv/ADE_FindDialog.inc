@@ -292,6 +292,8 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 CaptureEditorWndHandle proc uses xdi xsi hChildWnd:HWND, pSelf:POINTER
+  ANNOTATION use:pSelf
+
   SetObject xsi, FindDialog
   invoke SendMessage, hChildWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
@@ -446,7 +448,7 @@ MethodEnd
 
 .data
 align ALIGN_DATA
-DlgChildrenInfo label DL_HEADER
+FindDlgChildrenInfo label DL_HEADER
 DL_HEADER     {DLF_LOAD_MINMAX or DLF_LIMIT_MIN or DLF_LIMIT_MAX_Y or DLF_ADD_GRIPPER}
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Search Label
 DL_CHILD_INFO {{000, 000, 100, 000}}      ;Search Combo
@@ -475,9 +477,9 @@ DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 Method FindDialog.Init, uses xsi, pOwner:POINTER
   SetObject xsi
   mov xax, pOwner
-  ACall xsi.Init, pOwner, [xax].$Obj(MdiApp).hWnd, 2000, addr [xax].$Obj(MdiApp).hActiveMlsDlg
+  ACall xsi.Init, pOwner, [xax].$Obj(MdiApp).hWnd, IDD_DLG_FIND, addr [xax].$Obj(MdiApp).hActiveMlsDlg
 
-  c2m [xsi].pDynamicLayout, offset DlgChildrenInfo, xcx
+  c2m [xsi].pDynamicLayout, offset FindDlgChildrenInfo, xcx
 
   OCall [xsi].FindStrings::%StrCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
   OCall [xsi].ReplStrings::%StrCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
@@ -690,7 +692,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method FindDialog.ReplaceAll, uses xbx xdi xsi
+Method FindDialog.ReplaceAll, uses xbx xsi
   local cFindStr[2024]:CHR, cReplStr[2024]:CHR, hComboBox:HWND, dActionGroup:DWORD
   local dReplCounter:DWORD, dTotalReplCounter:DWORD
 
