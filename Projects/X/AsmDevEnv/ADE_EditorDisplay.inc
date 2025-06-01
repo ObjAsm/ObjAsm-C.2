@@ -44,11 +44,11 @@ Method EditorDisplay.DrawStatusPanel, uses xbx xdi xsi
   mov hPrevFont, $invoke(SelectObject, [xsi].hPanelDC, [xdi].$Obj(EditorResources).StatusPanelText.hFont)
   mov xax, [xsi].pOwner
   .ifBitSet [xax].$Obj(Editor).dFlags, EDF_BLOCK_MODE
-    lea xdx, cBlockModeLabel
+    lea xdx, szBlockModeLabel
   .elseIfBitSet [xax].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
-    lea xdx, cOverwriteModeLabel
+    lea xdx, szOverwriteModeLabel
   .else
-    lea xdx, cInsertModeLabel
+    lea xdx, szInsertModeLabel
   .endif
   sub DrawRect.right, 4                                 ;Add space from the right side
   invoke DrawText, [xsi].hPanelDC, xdx, -1, addr DrawRect, DT_SINGLELINE or DT_VCENTER or DT_RIGHT or DT_NOCLIP

@@ -61,6 +61,7 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % includelib &LibPath&Windows\Ole32.lib
 % includelib &LibPath&Windows\OleAut32.lib
 % includelib &LibPath&Windows\Msimg32.lib
+% includelib &LibPath&Windows\shlwapi.lib
 
 % include &IncPath&Windows\CommCtrl.inc
 % include &IncPath&Windows\UxTheme.inc
@@ -73,6 +74,7 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % include &IncPath&Windows\ShObjIDL.inc
 % include &IncPath&Windows\ShTypes.inc
 % include &IncPath&Windows\sGUID.inc
+% include &IncPath&Windows\shlwapi.inc
 
 if TARGET_BITNESS eq 32
 % include &MacPath&Exception32.inc
@@ -102,7 +104,7 @@ DefGUID IID_IShellItem, %sIID_IShellItem
 
 .code
 ;Load or build the following objects
-MakeObjects Primer, Stream, DiskStream
+MakeObjects Primer, Stream, DiskStream, Json
 MakeObjects Collection, SortedCollection, DataCollection, SortedDataCollection, StrCollection
 MakeObjects Vector, XWordVector
 MakeObjects WinPrimer, Window, Dialog, DialogModal, DialogModeless

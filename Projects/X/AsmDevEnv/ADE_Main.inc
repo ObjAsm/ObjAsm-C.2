@@ -121,13 +121,13 @@ PIF_FILE     equ   2
 PIF_CMD      equ   3
 
 PROJECTITEM struct
-  pDisplayName    PSTRINGW  ?
+  pDispName     PSTRINGW  ?
   union
-    pFullFileName PSTRINGW  ?
-    pCommand      PSTRINGW  ?
+    pFileName   PSTRINGW  ?
+    pCommand    PSTRINGW  ?
   ends
-  dFlags          DWORD     ?
-  hEditor         HANDLE    ?
+  dFlags        DWORD     ?
+  hEditor       HANDLE    ?
 PROJECTITEM ends
 PPROJECTITEM typedef ptr PROJECTITEM
 
@@ -170,7 +170,7 @@ PKEYWORD typedef ptr KEYWORD
 ; Object:     IDropTarget
 ; Purpose:    Implement IDropTarget COM interface.
 
-Object IDropTarget, , IUnknown
+Object IDropTarget, ADE_IDropTargetID, IUnknown
   RedefineMethod    Init,           POINTER, HWND
 
   InterfaceMethod   DragEnter,      POINTER, DWORD, POINTL, POINTER 
@@ -444,6 +444,7 @@ Object EditorView, ADE_EditorViewID, Window
 
   ;Events
   StaticEvent       OnChar,               WM_CHAR
+  StaticEvent       OnContextMenu,        WM_CONTEXTMENU
   StaticEvent       OnCreate,             WM_CREATE
   StaticEvent       OnGesture,            WM_GESTURE
   StaticEvent       OnKeyDown,            WM_KEYDOWN
@@ -640,6 +641,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticMethod      HilitedWordReset
   VirtualMethod     InformDeletionOf,     DWORD
   VirtualMethod     InformInsertionOf,    DWORD
+  VirtualMethod     InternetSearch
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
   VirtualMethod     LineNew,              DWORD, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
@@ -721,10 +723,10 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Object:  ProjectWnd
+; Object:  ProjectManager
 ; Purpose: Implement a project window used as a control container on some apps.
 
-Object ProjectWnd,, Window
+Object ProjectManager, ADE_ProjectManagerID, Window
   StaticMethod      ConfigLoadFrom,       PSTRING
   StaticMethod      ConfigSave
   StaticMethod      ConfigSaveTo,         PSTRING
@@ -732,9 +734,9 @@ Object ProjectWnd,, Window
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
   StaticMethod      IsFileAlreadyPresent, PSTRING
-  StaticMethod      GetGroupByIndex,     DWORD
-  StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, DWORD, HWND
-;  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
+  StaticMethod      GetGroupByIndex,      DWORD
+  StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, HWND
+  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
   StaticMethod      Startup
 
   VirtualEvent      OnContextMenu,        WM_CONTEXTMENU
@@ -755,6 +757,7 @@ Object ProjectWnd,, Window
   DefineVariable    dToolbarHeight,       DWORD,      0
   DefineVariable    dDragging,            DWORD,      FALSE
   DefineVariable    hDragSrcItem,         HTREEITEM,  0
+  DefineVariable    hEdit,                HWND,       0         ;TreeView item Edit control
 
   Embed     TBar,               Toolbar
   Embed     TView,              TreeView
@@ -764,15 +767,29 @@ Object ProjectWnd,, Window
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Object:  ProjectPropertiesDialog
+; Object:  ProjPropsDialog
 ; Purpose: Implement a project properties dialog.
 
-Object ProjectPropertiesDialog,, DialogModal
+Object ProjPropsDialog, ADE_ProjPropsDialogID, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   VirtualMethod     GetDirectoryName
   RedefineMethod    Init,               POINTER, HWND
   RedefineMethod    OnCommand,          WPARAM, LPARAM
+ObjectEnd
+
+; --------------------------------------------------------------------------------------------------
+; Object:  FilePropsDialog
+; Purpose: Implement a file properties dialog.
+
+Object FilePropsDialog, ADE_FilePropsDialogID, DialogModal
+  RedefineMethod    CtlsGet
+  RedefineMethod    CtlsSet
+  VirtualMethod     GetFileName
+  RedefineMethod    Init,               POINTER, HWND, HTREEITEM
+  RedefineMethod    OnCommand,          WPARAM, LPARAM
+  
+  DefineVariable    hItem,      HTREEITEM
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -826,7 +843,10 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticMethod      ConfigSave
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
+  StaticMethod      GetActiveChildWnd
+  StaticMethod      GetActiveEditor
   RedefineMethod    Init
+  StaticMethod      Launch,               PSTRING
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   VirtualMethod     LoadContext,          PSTRING
   StaticMethod      ManageGuiCmds,        HWND
@@ -852,6 +872,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    hMenuChild,           HMENU,      0
   DefineVariable    hMenuChildWnd,        HMENU,      0
   DefineVariable    hMenuContextEditor,   HMENU,      0
+  DefineVariable    hMenuContextProject,  HMENU,      0
   DefineVariable    dFlags,               DWORD,      0
 
   DefineVariable    PrintMargin,          RECT,       {}
@@ -868,7 +889,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     TbEdit,             Toolbar
   Embed     TbWindow,           Toolbar
   Embed     Menu,               XMenu
-  Embed     ProjWnd,            ProjectWnd
+  Embed     ProjMgr,            ProjectManager
   Embed     PropWnd,            PropertiesWnd
   Embed     SplitterVert,       Splitter
   Embed     SplitterHorz,       Splitter
@@ -1052,9 +1073,10 @@ endm
 
 include ADE_Helper.inc
 include ADE_About.inc
-include ADE_ProjectWnd.inc
-include ADE_ProjectWnd_IDropTarget.inc
-include ADE_ProjectPropertiesDialog.inc
+include ADE_ProjectManager.inc
+include ADE_ProjectManager_IDropTarget.inc
+include ADE_ProjPropsDialog.inc
+include ADE_FilePropsDialog.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc

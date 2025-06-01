@@ -17,7 +17,7 @@ IDM_PROP_SAVE   equ   201
 IDM_PROP_CLOSE  equ   202
 
 ; --------------------------------------------------------------------------------------------------
-; Object:   ProjectWnd
+; Object:   ProjectManager
 ; Purpose:  Implement a project window used as a control container on some apps.
 
 Object PropertiesWnd,, Window

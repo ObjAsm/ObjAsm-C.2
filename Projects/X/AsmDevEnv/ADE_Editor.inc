@@ -463,6 +463,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
       OCall xbx::Application.ManageGuiCmds, [xsi].hWnd
       invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
     .endif
+    OCall xsi.ManageEditCmds
 
     OCall [xsi].EditorDisplays::Collection.ItemAt, 0
     invoke SetFocus, [xax].$Obj(EditorDisplay).View.hWnd
@@ -473,6 +474,38 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
                        addr cError, MB_OK or MB_ICONERROR
     xor eax, eax
   .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Editor.InternetSearch
+; Purpose:    Open Google web page for a search of the line selection. 
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.InternetSearch, uses xbx xdi xsi
+  local cSearchBuffer[4096]:CHR
+  
+  SetObject xsi
+  mov xbx, [xsi].SelectionRange.pBegSelInfo
+  mov xdx, [xsi].SelectionRange.pEndSelInfo
+  .if xbx != NULL && xdx != NULL
+    mov eax, [xbx].LOCATION.dLineIndex
+    .if eax == [xdx].LOCATION.dLineIndex                ;Same line?
+      .if eax < [xsi].Lines.dCount
+        OCall [xsi].Lines::Collection.ItemAt, eax
+        mov xdi, [xax].$Obj(EditorLine).pBuffer
+        mov ecx, [xbx].LOCATION.dCharIndex
+        lea xdi, [xdi + xcx*sizeof(CHR)]
+        mov xdx, [xsi].SelectionRange.pEndSelInfo
+        mov eax, [xdx].LOCATION.dCharIndex
+        sub eax, [xbx].LOCATION.dCharIndex
+        FillString cSearchBuffer, <https://www.google.com/search?q=>
+        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax 
+        invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), addr cSearchBuffer, NULL, NULL, SW_SHOWNORMAL
+      .endif
+    .endif
+  .endif
+  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -541,14 +574,15 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Editor.ManageEditCmds, uses xbx xdi xsi
-  local hMenu:HMENU, dActivate:DWORD
+  local hCurrentMenu:HMENU, dActivate:DWORD
 
 ;  DbgText "Editor.ManageEditCmds"
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xdi, [xcx].$Obj(ClientWnd).pOwner
-  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)   ;Get the current menu
+  mov hCurrentMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)   ;Get the current menu
   .if [xsi].SelectionRange.pBegSelInfo == NULL || [xsi].SelectionRange.pEndSelInfo == NULL
+    ;No selection
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
@@ -557,7 +591,7 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_OUTDENT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COMMENT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNCOMMENT, FALSE
-    mov xbx, hMenu
+    mov xbx, hCurrentMenu
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
@@ -565,10 +599,11 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_OUTDENT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COMMENT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_UNCOMMENT, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(Application).hMenuContextEditor
+    mov xbx, [xdi].$Obj(Application).hMenuContextEditor
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_INETSEARCH, MF_BYCOMMAND or MF_GRAYED
   .else
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
@@ -578,7 +613,7 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_OUTDENT, TRUE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COMMENT, TRUE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNCOMMENT, TRUE
-    mov xbx, hMenu
+    mov xbx, hCurrentMenu
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
@@ -590,6 +625,7 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_INETSEARCH, MF_BYCOMMAND or MF_ENABLED
   .endif
 
   ;Paste command
@@ -609,47 +645,38 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
   .else
     mov ebx, MF_BYCOMMAND or MF_GRAYED
   .endif
-  invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, ebx
+  invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_PASTE, ebx
   invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_PASTE, ebx
 
   .if [xsi].Actions.dActionIndex == 0
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, FALSE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_GRAYED
   .else
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, TRUE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_ENABLED
   .endif
 
   mov edx, [xsi].Actions.dActionIndex
   .if edx < [xsi].Actions.dCount
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, TRUE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_REDO, MF_BYCOMMAND or MF_ENABLED
-    mov edx, [xsi].Actions.dActionIndex
+    invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_REDO, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_REDO, MF_BYCOMMAND or MF_ENABLED
   .else
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, FALSE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_REDO, MF_BYCOMMAND or MF_GRAYED
-    mov edx, [xsi].Actions.dActionIndex
+    invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_REDO, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_REDO, MF_BYCOMMAND or MF_GRAYED
   .endif
 
   lea xbx, [xdi].$Obj(Application).TbEdit
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
-  mov xbx, hMenu
-  invoke EnableMenuItem, xbx, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
-
-  mov xbx, [xdi].$Obj(Application).hMenuContextEditor
-  invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
-  invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
-  invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
-  invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
-  invoke EnableMenuItem, xbx, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, hCurrentMenu, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_FIND, MF_BYCOMMAND or MF_ENABLED
 
 MethodEnd
 
@@ -848,9 +875,14 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
 
         .else
           .if dFileFormat == EFF_UNKNOWN
-            lea xbx, cMessage
-            WriteF xbx, "Unknown information for file\n\´¦SU\´ \:", pFullFileName
-            invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+            ;We don't know what it is => try to delegate it to the OS
+            invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), pFullFileName, NULL, NULL, SW_SHOWNORMAL
+            .if SDWORD ptr eax <= 32                    ;Error occured?
+              lea xbx, cMessage
+              mov edi, eax
+              WriteF xbx, "The file\n\´¦SU\´ can not be opened\:\nError ¦SD", pFullFileName, edi
+              invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+            .endif
             jmp @@Exit
           .elseif dFileFormat == EFF_UTF8BOM
             lea xbx, cMessage

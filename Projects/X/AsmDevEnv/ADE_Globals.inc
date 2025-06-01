@@ -8,49 +8,49 @@
 
 include ADE_Shared.inc
 
-%CStr szAppTitle, "&APP_TITLE"
-%CStr szAboutText,"&ABOUT_TEXT", 13, 10, \
-                  "Version &VER_PRODUCTVERSION_STR", 13, 10, \
-                  "Designed with ObjAsm", 13, 10, \
-                  "© &COPYRIGHT", 13, 10, 13, 10, \
-                  @CatStr(<!">, %BUILD_DATE_STR, \
-                          <  -  Build: >, %BUILD_NUMBER, <->, %ASSEMBLER, <->, \
-                          %TARGET_MODE_STR, <->, %BUILD_BITNESS, <!">)
+%CStr szAppTitle,   "&APP_TITLE"
+%CStr szAboutText,  "&ABOUT_TEXT", 13, 10, \
+                    "Version &VER_PRODUCTVERSION_STR", 13, 10, \
+                    "Designed with ObjAsm", 13, 10, \
+                    "© &COPYRIGHT", 13, 10, 13, 10, \
+                    @CatStr(<!">, %BUILD_DATE_STR, \
+                            <  -  Build: >, %BUILD_NUMBER, <->, %ASSEMBLER, <->, \
+                            %TARGET_MODE_STR, <->, %BUILD_BITNESS, <!">)
 
-CStr cWarning,    "Warning Message"
-CStr cWarnNoConf, "{PA20}", \
-                  "[FI55]",\
-                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]No Configuration File found        [~]{P}", \
-                    "[C#5F4FFF]", \
-                      "[I]Using default values...[~]", \
-                    "[~]", \
-                  "[~]"
-CStr cWarnOldConf,"{PA20}", \
-                  "[FI55]",\
-                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]Outdated Configuration File[~]{P}", \
-                    "[C#5F4FFF]", \
-                      "[I]Using default values where required...[~]", \
-                    "[~]", \
-                  "[~]"
+CStr szWarning,     "Warning Message"
+CStr szWarnNoConf,  "{PA20}", \
+                    "[FI55]",\
+                      "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                      "[H+2]No Configuration File found        [~]{P}", \
+                      "[C#5F4FFF]", \
+                        "[I]Using default values...[~]", \
+                      "[~]", \
+                    "[~]"
+CStr szWarnOldConf, "{PA20}", \
+                    "[FI55]",\
+                      "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                      "[H+2]Outdated Configuration File[~]{P}", \
+                      "[C#5F4FFF]", \
+                        "[I]Using default values where required...[~]", \
+                      "[~]", \
+                    "[~]"
 
-CStr cWarnNoProj, "{PA20}", \
-                  "[FI55]",\
-                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]No Project File found        [~]{P}", \
-                    "[C#5F4FFF]", \
-                      "[I]Using default values...[~]", \
-                    "[~]", \
-                  "[~]"
-CStr cWarnOldProj,"{PA20}", \
-                  "[FI55]",\
-                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]Outdated Project File[~]{P}", \
-                    "[C#5F4FFF]", \
-                      "[I]Using default values where required...[~]", \
-                    "[~]", \
-                  "[~]"
+CStr szWarnNoProj,  "{PA20}", \
+                    "[FI55]",\
+                      "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                      "[H+2]No Project File found        [~]{P}", \
+                      "[C#5F4FFF]", \
+                        "[I]Using default values...[~]", \
+                      "[~]", \
+                    "[~]"
+CStr cWarnOldProj,  "{PA20}", \
+                    "[FI55]",\
+                      "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                      "[H+2]Outdated Project File[~]{P}", \
+                      "[C#5F4FFF]", \
+                        "[I]Using default values where required...[~]", \
+                      "[~]", \
+                    "[~]"
 
 FONT_MONOSPACED         equ   BIT00
 EditorResourcesID       equ   0
@@ -65,57 +65,66 @@ FOLDING_RULE struc
 FOLDING_RULE ends
 PFOLDING_RULE typedef ptr FOLDING_RULE
 
-CStr cIdentification,             "Identification"
-CStr cVersion,                    "Version"
-CStr cDescription,                "Description"
-CStr cGUI,                        "GUI"
-CStr cProject,                    "Project"
-CStr cGroups,                     "Groups"
-CStr cFiles,                      "Files"
-CStr cName,                       "Name"
-CStr cPath,                       "Path"
-CStr cEditorCodePrefix,           "Code"
-CStr cFont,                       "Font"
-CStr cBackground,                 "Background"
-CStr cHighlight,                  "Highlight"
-CStr cRegular,                    "Regular"
-CStr cSelect,                     "Select"
-CStr cQuote,                      "Quote"
-CStr cComment,                    "Comment"
-CStr cNumber,                     "Number"
-CStr cOperator,                   "Operator"
-CStr cLineSpace,                  "LineSpace"
-CStr cTabWidth,                   "TabWidth"
-CStr cTab2Spaces,                 "Tab2Spaces"
-CStr cAlignTabs,                  "AlignTabs"
-CStr cAlignLines,                 "AlignLines"
-CStr cRevHorzMouseWheelRot,       "ReverseHorzMouseWheelRotation"
-CStr cRevVertMouseWheelRot,       "ReverseVertMouseWheelRotation"
-CStr cLineTermination,            "LineTermination"
-CStr cLanguage,                   "Language"
-CStr cPercieved,                  "Percieved"
+CStr szIdentification,        "Identification"
+CStr szVersion,               "Version"
+CStr szDescription,           "Description"
+CStr szSolution,              "Solution"
+CStr szGUI,                   "GUI"
+CStr szProject,               "Project"
+CStr szGroups,                "Groups"
+CStr szFiles,                 "Files"
+CStr szName,                  "Name"
+CStr szDispName,              "DispName"
+CStr szFileName,              "FileName"
+CStr szType,                  "Type"
+CStr szGroup,                 "Group"
+CStr szExpanded,              "Expanded"
+CStr szPath,                  "Path"
+CStr szEditorCodePrefix,      "Code"
+CStr szFont,                  "Font"
+CStr szBackground,            "Background"
+CStr szHighlight,             "Highlight"
+CStr szRegular,               "Regular"
+CStr szSelect,                "Select"
+CStr szQuote,                 "Quote"
+CStr szComment,               "Comment"
+CStr szNumber,                "Number"
+CStr szOperator,              "Operator"
+CStr szLineSpace,             "LineSpace"
+CStr szTabWidth,              "TabWidth"
+CStr szTab2Spaces,            "Tab2Spaces"
+CStr szAlignTabs,             "AlignTabs"
+CStr szAlignLines,            "AlignLines"
+CStr szRevHorzMouseWheelRot,  "ReverseHorzMouseWheelRotation"
+CStr szRevVertMouseWheelRot,  "ReverseVertMouseWheelRotation"
+CStr szLineTermination,       "LineTermination"
+CStr szLanguage,              "Language"
+CStr szPercieved,             "Percieved"
 
-CStr cDefaultFontFace,            "Lucida Console"
-CStr cMetricChar,                 "X"
-CStr cON,                         "ON"
-CStr cOFF,                        "OFF"
-CStr cStrCRLF,                    "CRLF"
-CStr cStrLF,                      "LF"
-CStr cNULL,                       "NULL"
-CStr cOverwriteModeLabel,         "OVR"
-CStr cInsertModeLabel,            "INS"
-CStr cBlockModeLabel,             "BLK"
+CStr szDefaultFontFace,       "Lucida Console"
+CStr szMetricChar,            "X"
+CStr szON,                    "ON"
+CStr szOFF,                   "OFF"
+CStr szStrCRLF,               "CRLF"
+CStr szStrLF,                 "LF"
+CStr szNULL,                  "NULL"
+CStr szOverwriteModeLabel,    "OVR"
+CStr szInsertModeLabel,       "INS"
+CStr szBlockModeLabel,        "BLK"
 
-CStr cAsmExt,                     ".asm"
-CStr cIncExt,                     ".inc"
-CStr cResExt,                     ".rc"
-CStr cTxtExt,                     ".txt"
-CStr cIniExt,                     ".ini"
+CStr szAsmExt,                ".asm"
+CStr szIncExt,                ".inc"
+CStr szResExt,                ".rc"
+CStr szTxtExt,                ".txt"
+CStr szIniExt,                ".ini"
+
+CStr szDescADEP,              "Assembler Development Environment - Project file"
+CStr szLocalPath,             ".\"
 
 ;Don't change the order of the next 3 string allocations
-CStr cLoadFilter,                 "Assembly files (*.asm, *.inc)", 0, "*.asm;*.inc", 0, \
-                                  "Text files (*.txt)", 0, "*.txt", 0, \
-                                  "Other files (*.*)", 0, "*.*", 0
+CStr szLoadFilter,            "Assembly files (*.asm, *.inc)", 0, "*.asm;*.inc", 0, \
+                              "Text files (*.txt)", 0, "*.txt", 0, \
+                              "Other files (*.*)", 0, "*.*", 0
 
 MultiFileSpec label COMDLG_FILTERSPEC
   POINTER $OfsCStrW("All")
@@ -137,7 +146,7 @@ MultiProjSpec label COMDLG_FILTERSPEC
   POINTER $OfsCStrW("*.adep")
 MultiProjSpecCount = ($ - MultiProjSpec)/sizeof(COMDLG_FILTERSPEC)
 
-cDefaultEditorFontFace      textequ <cDefaultFontFace>
+szDefaultEditorFontFace     textequ <szDefaultFontFace>
 DefaultEditorFontPointSize  equ   13
 DefaultEditorBG             equ   $RGB(000,000,000)
 DefaultEditorTextRegularFG  equ   $RGB(196,196,192)
@@ -155,14 +164,14 @@ DefaultEditorTextNumberBG   equ   DefaultEditorBG
 DefaultEditorTextOperatorFG equ   $RGB(000,000,128)
 DefaultEditorTextOperatorBG equ   DefaultEditorBG
 
-cDefaultSelBarFontFace      textequ <cDefaultFontFace>
+szDefaultSelBarFontFace     textequ <szDefaultFontFace>
 DefaultSelBarFontPointSize  equ   10
 DefaultSelBarTextRegFG      equ   $RGB(255,255,255)
 DefaultSelBarTextRegBG      equ   $RGB(063,063,063)
 DefaultSelBarTextSelFG      equ   $RGB(127,255,127)
 DefaultSelBarTextSelBG      equ   $RGB(127,255,127)
 
-cDefaultStatusFontFace      textequ <cDefaultFontFace>
+szDefaultStatusFontFace     textequ <szDefaultFontFace>
 DefaultStatusTextPointSize  equ   8
 DefaultStatusPanelTextFG    equ   $RGB(255,255,255)
 DefaultStatusPanelTextBG    equ   $RGB(127,127,127)
@@ -181,6 +190,10 @@ ZOOM_FACTOR_MAX             equ   ZOOM_FACTOR_INIT*8
 LINEINDICATOR_SPACE_TOP     equ   3
 LINEINDICATOR_SPACE_BOTTOM  equ   5
 LINEINDICATOR_SPACE_LEFT    equ   3
+
+ICON_INDEX_FILE             equ   5
+ICON_INDEX_CMD              equ   6
+
 
 .data
 dSetupOption1   DWORD   3     ;None

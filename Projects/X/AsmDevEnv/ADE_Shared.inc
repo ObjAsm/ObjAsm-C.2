@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       195
-BUILD_DATE_STR                textequ   <2025-05-29>
+BUILD_NUMBER                  equ       11
+BUILD_DATE_STR                textequ   <2025-06-01>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
@@ -44,21 +44,23 @@ IDM_FILE_LOAD_CTX             equ       068
 IDM_FILE_BREAK                equ       069
 
 IDM_PROJECT                   equ       100
-IDM_PROJ_NEW                  equ       101
-IDM_PROJ_OPEN                 equ       102
-IDM_PROJ_SAVE                 equ       103
-IDM_PROJ_SAVEAS               equ       104
-IDM_PROJ_PROPS                equ       105
-IDM_PROJ_GROUP                equ       106
-IDM_PROJ_GROUP_NEW            equ       107
-IDM_PROJ_GROUP_ADDFILE        equ       108
-IDM_PROJ_GROUP_DELETE         equ       109
-IDM_PROJ_GROUP_RENAME         equ       110
-IDM_PROJ_FILE_REMOVE          equ       111
-IDM_PROJ_FILE_RENAME          equ       112
-IDM_PROJ_CMD_EXECUTE          equ       113
-IDM_PROJ_CMD_REMOVE           equ       114
-IDM_PROJ_CMD_RENAME           equ       115
+IDM_PROJ_EDIT                 equ       101
+IDM_PROJ_NEW                  equ       102
+IDM_PROJ_OPEN                 equ       103
+IDM_PROJ_SAVE                 equ       104
+IDM_PROJ_SAVEAS               equ       105
+IDM_PROJ_NEWGROUP             equ       106
+IDM_PROJ_GROUP                equ       107
+IDM_PROJ_GROUP_EDIT           equ       108
+IDM_PROJ_GROUP_NEW            equ       109
+IDM_PROJ_GROUP_ADDFILE        equ       110
+IDM_PROJ_GROUP_DELETE         equ       111
+IDM_PROJ_FILE_EDIT            equ       112
+IDM_PROJ_FILE_OPEN            equ       113
+IDM_PROJ_FILE_REMOVE          equ       114
+IDM_PROJ_CMD_EDIT             equ       115
+IDM_PROJ_CMD_EXECUTE          equ       116
+IDM_PROJ_CMD_REMOVE           equ       117
 
 IDM_EDIT                      equ       150
 IDM_EDIT_UNDO                 equ       151

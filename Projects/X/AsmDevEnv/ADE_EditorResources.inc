@@ -52,24 +52,24 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
 
   SetObject xsi
   
-  invoke GetPrivateProfileString, addr cIdentification, addr cVersion, NULL, \
+  invoke GetPrivateProfileString, addr szIdentification, addr szVersion, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
 
   ;Load element attributes
   ;Code Selection Bar Section
   lea xdi, cSectionName
   WriteF xdi, "¦ST Selection Bar", pSectionPrefix
-  invoke GetPrivateProfileString, addr cSectionName, addr cFont, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szFont, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetFontDefFromString, addr FontDef, addr cItemBuffer, \
-                      addr cDefaultSelBarFontFace, DefaultSelBarFontPointSize
+                      addr szDefaultSelBarFontFace, DefaultSelBarFontPointSize
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cRegular, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szRegular, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].SelBarTextRegular, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultSelBarTextRegFG, DefaultSelBarTextRegBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cSelect, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szSelect, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].SelBarTextSelect, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultSelBarTextSelFG, DefaultSelBarTextSelBG
@@ -77,12 +77,12 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
   ;Code Status Panel Section
   lea xdi, cSectionName
   WriteF xdi, "¦ST Status Panel", pSectionPrefix
-  invoke GetPrivateProfileString, addr cSectionName, addr cFont, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szFont, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetFontDefFromString, addr FontDef, addr cItemBuffer, \
-                      addr cDefaultStatusFontFace, DefaultStatusTextPointSize
+                      addr szDefaultStatusFontFace, DefaultStatusTextPointSize
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cRegular, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szRegular, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].StatusPanelText, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultStatusPanelTextFG, DefaultStatusPanelTextBG
@@ -90,92 +90,92 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
   ;Code Editor Section
   lea xdi, cSectionName
   WriteF xdi, "¦ST Editor", pSectionPrefix
-  invoke GetPrivateProfileString, addr cSectionName, addr cFont, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szFont, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetFontDefFromString, addr FontDef, addr cItemBuffer, \
-                      addr cDefaultEditorFontFace, DefaultEditorFontPointSize
+                      addr szDefaultEditorFontFace, DefaultEditorFontPointSize
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cBackground, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szBackground, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetColorFromString, addr cItemBuffer, DefaultEditorBG
   mov [xsi].EditorBG.Color, eax
   mov [xsi].EditorBG.hBrush, $invoke(CreateSolidBrush, [xsi].EditorBG.Color)
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cRegular, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szRegular, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextRegular, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextRegularFG, [xsi].EditorBG.Color
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cSelect, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szSelect, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextSelect, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextSelectFG, DefaultEditorTextSelectBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cHighlight, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szHighlight, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextHighlight, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextHilightFG, DefaultEditorTextHilightBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cQuote, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szQuote, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextQuote, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextQuoteFG, DefaultEditorTextQuoteBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cComment, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szComment, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextComment, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextCommentFG, DefaultEditorTextCommentBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cNumber, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szNumber, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextNumber, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextNumberFG, DefaultEditorTextNumberBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cOperator, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szOperator, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   invoke GetDrawAttrFromString, addr [xsi].EditorTextOperator, addr cItemBuffer, \
                       addr FontDef, hDC, DefaultEditorTextOperatorFG, DefaultEditorTextOperatorBG
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cLineSpace, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szLineSpace, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   mov [xsi].dCodeLineSpace, $32($invoke(GetIntegerFromString, addr cItemBuffer, DefaultLineSpace))
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cTabWidth, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szTabWidth, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
   mov [xsi].dTabWidth, $32($invoke(GetIntegerFromString, addr cItemBuffer, DefaultTabWidth))
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cTab2Spaces, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szTab2Spaces, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
-  invoke StrIComp, addr cItemBuffer, addr cON
+  invoke StrIComp, addr cItemBuffer, addr szON
   .if eax == 0
     BitSet [xsi].dFlags, ERF_TAB_2_SPACES
   .endif
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cAlignLines, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szAlignLines, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
-  invoke StrIComp, addr cItemBuffer, addr cON
+  invoke StrIComp, addr cItemBuffer, addr szON
   .if eax == 0
     BitSet [xsi].dFlags, ERF_SHOW_ALIGN_LINES
   .endif
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cRevHorzMouseWheelRot, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szRevHorzMouseWheelRot, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
-  invoke StrIComp, addr cItemBuffer, addr cON
+  invoke StrIComp, addr cItemBuffer, addr szON
   .if eax == 0
     BitSet [xsi].dFlags, ERF_REVERSE_MOUSE_WHEEL_HORZ
   .endif
 
-  invoke GetPrivateProfileString, addr cSectionName, addr cRevVertMouseWheelRot, NULL, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szRevVertMouseWheelRot, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
-  invoke StrIComp, addr cItemBuffer, addr cON
+  invoke StrIComp, addr cItemBuffer, addr szON
   .if eax == 0
     BitSet [xsi].dFlags, ERF_REVERSE_MOUSE_WHEEL_VERT
   .endif
 
   mov [xsi].dLineTermination, ELT_CRLF
-  invoke GetPrivateProfileString, addr cSectionName, addr cLineTermination, addr cStrCRLF, \
+  invoke GetPrivateProfileString, addr cSectionName, addr szLineTermination, addr szStrCRLF, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
-  invoke StrIComp, addr cItemBuffer, addr cStrLF
+  invoke StrIComp, addr cItemBuffer, addr szStrLF
   .if eax == 0
     mov [xsi].dLineTermination, ELT_LF
   .else

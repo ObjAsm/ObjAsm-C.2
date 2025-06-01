@@ -605,16 +605,6 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
   SetObject xsi
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
   mov dRetValue, FALSE
-  mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
-  OCall xbx::Editor.CreateSelAction, dActionGroup
-
-  .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
-      [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
-    OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-    OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
-    OCall xsi.CaretLocationLoad, addr RefLoc            ;Restore caret info
-    OCall xsi.CaretShow                                 ;Show again after a selection
-  .endif
   invoke IsClipboardFormatAvailable, CF_TEXT + (CF_UNICODETEXT - CF_TEXT)*(sizeof(CHR) - sizeof(CHRA))
   .if eax != FALSE
     invoke OpenClipboard, [xsi].hWnd
@@ -624,6 +614,20 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
         invoke GlobalLock, xax
         .if xax != NULL
           mov pGlobalMem, xax
+          
+          mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+          OCall xbx::Editor.CreateSelAction, dActionGroup
+        
+          .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
+              [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
+            OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
+            OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
+            OCall xsi.CaretLocationLoad, addr RefLoc            ;Restore caret info
+            OCall xsi.CaretShow                                 ;Show again after a selection
+          .else
+            OCall xbx::Editor.ManageEditCmds
+          .endif
+          
           OCall xsi.ScrollCaretInViewTop
           .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
             ;INS/OVR mode
@@ -1156,6 +1160,38 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnCreate
+; Purpose:    Event procedure for WM_CONTEXTMENU message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method EditorView.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+  local ClientPoint:POINT, SceenPoint:POINT, hContextMenu:HMENU 
+
+  ANNOTATION use:wParam
+  
+;  DbgText "OnContextMenu.Init"
+  SetObject xsi
+  PntS2Pnt SceenPoint, lParam
+  s2s ClientPoint, SceenPoint, xax, xdx
+  invoke ScreenToClient, [xsi].hWnd, addr ClientPoint
+
+  mov xdx, [xsi].pOwner
+  mov xcx, [xdx].$Obj(EditorDisplay).pOwner
+  mov xdx, [xcx].$Obj(Editor).pOwner
+  mov xbx, [xdx].$Obj(ClientWnd).pOwner                 ;xbx -> Application
+  
+  mov hContextMenu, $invoke(GetSubMenu, [xbx].$Obj(Application).hMenuContextEditor, 0)
+
+  ;Get the Application.hWnd since the XMenu is acting as an interceptor on that window
+  invoke TrackPopupMenuEx, hContextMenu, TPM_LEFTALIGN or TPM_TOPALIGN or TPM_RIGHTBUTTON, \
+                           SceenPoint.x, SceenPoint.y, [xbx].$Obj(Application).hWnd, NULL
+  invoke PostMessage, [xbx].$Obj(Application).hWnd, WM_NULL, 0, 0     ;Fix: not popping up right
+  xor eax, eax
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorView.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
@@ -1489,6 +1525,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke RedrawWindow, [xsi].hWnd, addr [xsi].TextRect, 0, RDW_UPDATENOW or RDW_INVALIDATE
     OCall xsi.CaretSet
     OCall xsi.CaretShow
+    OCall xbx::Editor.ManageEditCmds
 
   .else
     ;Clicked into SelBarRect

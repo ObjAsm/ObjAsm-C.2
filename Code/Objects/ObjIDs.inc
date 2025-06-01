@@ -440,8 +440,12 @@ ADE_KeywordListID                 equ     0000012209
 ADE_FileTypeCollectionID          equ     0000012210
 ADE_EditorSharedResourcesID       equ     0000012211
 ADE_EditorResourcesID             equ     0000012212
-ADE_ScrollBarVertID               equ     0000012213
-ADE_DialogAboutID                 equ     0000012214
+ADE_ProjectManagerID              equ     0000012213  
+ADE_IDropTargetID                 equ     0000012214
+ADE_ProjPropsDialogID             equ     0000012215
+ADE_FilePropsDialogID             equ     0000012216
+ADE_ScrollBarVertID               equ     0000012217
+ADE_DialogAboutID                 equ     0000012218
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

@@ -131,21 +131,21 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
   invoke FileExist, addr cFullFileName
   mov dIniFilePresent, eax
   .if eax == FALSE
-    invoke MsgBox, 0, addr cWarnNoConf, addr cWarning, MB_OK or MB_ICONWARNING
+    invoke MsgBox, 0, addr szWarnNoConf, addr szWarning, MB_OK or MB_ICONWARNING
   .endif
 
-  invoke GetPrivateProfileString, addr cIdentification, addr cVersion, NULL, \
+  invoke GetPrivateProfileString, addr szIdentification, addr szVersion, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
   .if dIniFilePresent != FALSE
     ;Check Version
     invoke GetVersionFromString, addr cItemBuffer
     .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
-      invoke MsgBox, 0, addr cWarnOldConf, addr cWarning, MB_OK or MB_ICONWARNING
+      invoke MsgBox, 0, addr szWarnOldConf, addr szWarning, MB_OK or MB_ICONWARNING
     .endif
   .endif
 
   ;Load GUI language
-  invoke GetPrivateProfileString, addr cGUI, addr cLanguage, $OfsCStr("EN"), \
+  invoke GetPrivateProfileString, addr szGUI, addr szLanguage, $OfsCStr("EN"), \
                       addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
   DoesStringMatch? cItemBuffer, <EN>
   .if ZERO?
@@ -173,7 +173,7 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
   .endif
 
   ;Load default editor type for the new button
-  invoke GetPrivateProfileString, addr cGUI, $OfsCStr("NewDefault"), $OfsCStr("ASM"), \
+  invoke GetPrivateProfileString, addr szGUI, $OfsCStr("NewDefault"), $OfsCStr("ASM"), \
                       addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
   DoesStringMatch? cItemBuffer, <RES>
   .if ZERO?
@@ -188,16 +188,16 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
   .endif
 
   ;Load default groups for a new project
-  lea xbx, [xsi].ProjWnd
+  lea xbx, [xsi].ProjMgr
   mov dIndex, 0
   .while TRUE
     lea xdi, cItemName
     WriteF xdi, "¦UD", dIndex
-    invoke GetPrivateProfileString, addr cGroups, addr cItemName, NULL, \
+    invoke GetPrivateProfileString, addr szGroups, addr cItemName, NULL, \
                                     addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
     .break .if xax == NULL
     invoke StrNew, addr cItemBuffer
-    OCall [xbx].$Obj(ProjectWnd).DefaultGroups::%StrCollection.InsertAt, dIndex, xax
+    OCall [xbx].$Obj(ProjectManager).DefaultGroups::%StrCollection.InsertAt, dIndex, xax
     inc dIndex
   .endw
 
@@ -281,8 +281,8 @@ MethodEnd
 
 Method Application.ConfigSave, uses xsi
   SetObject xsi
-  OCall [xsi].ProjWnd::ProjectWnd.ConfigSave
-  lea xax, [xsi].ProjWnd
+  OCall [xsi].ProjMgr::ProjectManager.ConfigSave
+  lea xax, [xsi].ProjMgr
   invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
   OCall xsi.ManageGuiCmds, xax
 MethodEnd
@@ -330,7 +330,7 @@ Method Application.Done, uses xsi
   OCall [xsi].TbFile::Toolbar.Done
   OCall [xsi].TbWindow::Toolbar.Done
   OCall [xsi].PropWnd::PropertiesWnd.Done
-  OCall [xsi].ProjWnd::ProjectWnd.Done
+  OCall [xsi].ProjMgr::ProjectManager.Done
   OCall [xsi].SplitterVert::Splitter.Done
   OCall [xsi].SplitterHorz::Splitter.Done
   OCall [xsi].Menu::XMenu.Done
@@ -340,6 +340,40 @@ Method Application.Done, uses xsi
   Destroy [xsi].pClientWnd
 
   ACall xsi.Done
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.GetActiveChildWnd
+; Purpose:    Return the currently active Child window.
+; Arguments:  None.
+; Return:     xax -> ChildWnd object or NULL.
+
+Method Application.GetActiveChildWnd
+  SetObject xcx
+  mov xax, [xcx].pClientWnd
+  mov xcx, [xax].$Obj(ClientWnd).hWnd
+  invoke SendMessage, xcx, WM_MDIGETACTIVE, 0, 0
+  .if xax
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.GetActiveEditor
+; Purpose:    Return the currently active Editor.
+; Arguments:  None.
+; Return:     xax -> Editor or NULL.
+
+Method Application.GetActiveEditor, uses xbx
+  SetObject xcx
+  OCall xcx.GetActiveChildWnd
+  .if xax != NULL
+    mov xbx, xax
+    invoke GetObjectID, xax
+    .if eax == ADE_EditorID
+      mov xax, xbx
+    .endif
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -419,6 +453,8 @@ Method Application.Init, uses xbx xdi xsi
   mov [xsi].hMenuChild, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUCHILD"))
   mov [xsi].hMenuChildWnd, $invoke(GetSubMenu, [xsi].hMenuChild, 4)
   mov [xsi].hMenuContextEditor, $invoke(LoadMenu, hInstance, $OfsCStr("CONTEXTMENU_EDITOR"))
+  mov [xsi].hMenuContextProject, $invoke(LoadMenu, hInstance, $OfsCStr("CONTEXTMENU_PROJECT"))
+
 
 ;  ;Create the MDI Frame window in the center of the monitor
 ;  mov WndSize.x, 1600
@@ -479,6 +515,32 @@ Method Application.Init, uses xbx xdi xsi
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   invoke UpdateWindow, [xsi].hWnd
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Launch
+; Purpose:    Try opening an editor. If that fails, try opening the file using an external 
+;             application.
+; Arguments:  Arg1: -> File name.
+; Return:     Nothing.
+
+Method Application.Launch, uses xdi xsi, pFileName:PSTRING
+  SetObject xsi
+  mov xdi, $New(Editor)
+  OCall [xsi].FileTypes::FileTypeCollection.GetContentType, pFileName
+  .if eax == ECT_ASM
+    lea xax, [xsi].AsmEditorResources
+  .elseif eax == ECT_RES
+    lea xax, [xsi].ResEditorResources
+  .else
+    lea xax, [xsi].TxtEditorResources
+  .endif
+  OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pFileName
+  .if eax == FALSE
+    Kill xdi
+  .else
+    invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -571,9 +633,10 @@ CheckEditorDirty proc uses xdi hWnd:HWND, lParam:XWORD
 CheckEditorDirty endp
 
 Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
-  local dApplDirty:DWORD, dEditorDirty:DWORD
+  local dApplicationDirty:DWORD, dActiveEditorDirty:DWORD, dHasMDIChildren:DWORD
 
   SetObject xsi
+  mov dHasMDIChildren, 0 
 
   ;Editor menu and toolbar management
   mov xax, hActiveWnd
@@ -582,48 +645,58 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   .endif
   .if xax != NULL
     mov xdi, xax
-    invoke GetObjectID, xax
+
+    mov xcx, [xsi].pClientWnd
+    xor eax, eax
+    cmp [xcx].$Obj(ClientWnd).dChildCount, 0
+    setnz al
+    mov dHasMDIChildren, eax 
+
+    invoke GetObjectID, xdi
     .if eax == ADE_EditorID ;----------------------------------------------
-      lea xbx, [xsi].TbFile
+      ;Check application & active Editor for dirtyness
       xor eax, eax
       test [xdi].$Obj(Editor).dFlags, EDF_DIRTY
       setnz al
-      mov dEditorDirty, eax
-      mov dApplDirty, eax
+      mov dActiveEditorDirty, eax
+      mov dApplicationDirty, eax
       .if ZERO?
         mov xcx, [xsi].pClientWnd
-        invoke EnumChildWindows, [xcx].$Obj(ClientWnd).hWnd, addr CheckEditorDirty, addr dApplDirty
+        invoke EnumChildWindows, [xcx].$Obj(ClientWnd).hWnd, addr CheckEditorDirty, addr dApplicationDirty
       .endif
 
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, dEditorDirty
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, dEditorDirty
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, dApplDirty
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+      lea xbx, [xsi].TbFile
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, dActiveEditorDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, dActiveEditorDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, dApplicationDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, dHasMDIChildren
 
       lea xbx, [xsi].TbWindow
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
-      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, dHasMDIChildren
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, dHasMDIChildren
 
-      mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
-      .if dEditorDirty == FALSE
+      mov xbx, $invoke(GetMenu, [xsi].hWnd)             ;Get the current menu
+      .if dActiveEditorDirty == FALSE
         mov edi, MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
       .else
         mov edi, MF_BYCOMMAND or MF_ENABLED
       .endif
-      invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          edi
-      invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        edi
-      .if dApplDirty == FALSE
+      invoke EnableMenuItem, xbx, IDM_FILE_SAVE,   edi
+      invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS, edi
+
+      .if dApplicationDirty == FALSE
         mov edi, MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
       .else
         mov edi, MF_BYCOMMAND or MF_ENABLED
       .endif
       invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       edi
+
       invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_ENABLED
@@ -634,7 +707,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
       invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_ENABLED
     .endif
-    ExitMethod
+    jmp @F
   .endif
 
   lea xbx, [xsi].TbFile
@@ -689,24 +762,60 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   invoke EnableMenuItem, xbx, IDM_EDIT_UNCOMMENT,     MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
   invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
 
+  mov xbx, [xsi].hMenuContextEditor
+  invoke EnableMenuItem, xbx, IDM_EDIT_CUT,           MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_COPY,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_PASTE,         MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_DELETE,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_UNDO,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_REDO,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_INDENT,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_OUTDENT,       MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_COMMENT,       MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_UNCOMMENT,     MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_INETSEARCH,    MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+
+@@:
   ;Project menu management
   mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
-  .ifBitSet [xsi].ProjWnd.dFlags, PWF_EMPTY
+  .ifBitSet [xsi].ProjMgr.dFlags, PMF_EMPTY
+    invoke EnableMenuItem, xbx, IDM_PROJ_EDIT,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_PROJ_SAVE,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_PROJ_SAVEAS,      MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_PROJ_PROPS,       MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_EDIT,  MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_NEW,   MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_DELETE,MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_RENAME,MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
   .else
-    .ifBitSet [xsi].ProjWnd.dFlags, PWF_DIRTY
+    .ifBitSet [xsi].ProjMgr.dFlags, PMF_DIRTY
       invoke EnableMenuItem, xbx, IDM_PROJ_SAVE,      MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_PROJ_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
     .endif
-    invoke EnableMenuItem, xbx, IDM_PROJ_PROPS,       MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_PROJ_EDIT,        MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_EDIT,  MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_NEW,   MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_DELETE,MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_RENAME,MF_BYCOMMAND or MF_ENABLED
+  .endif
+
+  ;Project context menu management
+  mov xbx, [xsi].hMenuContextProject
+  .ifBitSet [xsi].ProjMgr.dFlags, PMF_EMPTY
+    invoke EnableMenuItem, xbx, IDM_PROJ_EDIT,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_SAVE,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_SAVEAS,      MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_EDIT,  MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_NEW,   MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_DELETE,MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  .else
+    .ifBitSet [xsi].ProjMgr.dFlags, PMF_DIRTY
+      invoke EnableMenuItem, xbx, IDM_PROJ_SAVE,      MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_PROJ_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
+    .endif
+    invoke EnableMenuItem, xbx, IDM_PROJ_EDIT,        MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_NEW,   MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_DELETE,MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_PROJ_GROUP_EDIT,  MF_BYCOMMAND or MF_ENABLED
   .endif
 
 MethodEnd
@@ -789,10 +898,11 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(SetupDialog)
   local pIFODlg:POINTER, pIFileDialog2:POINTER
   local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER
-  local ProjPropsDlg:$Obj(ProjectPropertiesDialog), PageSetup:PAGESETUPDLG
+  local ProjPropsDlg:$Obj(ProjPropsDialog), FilePropsDlg:$Obj(FilePropsDialog)
+  local PageSetup:PAGESETUPDLG
   local Item:TVITEM
 
-  ANNOTATION use:wParam lParam
+  ANNOTATION use:lParam
 
   SetObject xsi
   mov xax, wParam
@@ -873,21 +983,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .while ebx < dCount
           ICall pISIArr::IShellItemArray.GetItemAt, ebx, addr pIShellItem
           ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-          mov xdi, $New(Editor)
-          OCall [xsi].FileTypes::FileTypeCollection.GetContentType, pDisplayName
-          .if eax == ECT_ASM
-            lea xax, [xsi].AsmEditorResources
-          .elseif eax == ECT_RES
-            lea xax, [xsi].ResEditorResources
-          .else
-            lea xax, [xsi].TxtEditorResources
-          .endif
-          OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pDisplayName
-          .if eax == FALSE
-            Kill xdi
-          .else
-            invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
-          .endif
+          OCall xsi.Launch, pDisplayName
+          invoke CoTaskMemFree, pDisplayName
           ICall pIShellItem::IShellItem.Release
           inc ebx
         .endw
@@ -904,37 +1001,29 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;;    mov OpenFileName.lpstrTitle, xcx
 
   .elseif ax == IDM_FILE_SAVE
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
     .if xax != NULL
-      mov xbx, xax
-      invoke GetObjectID, xax
-      .if eax == ADE_EditorID
-        .ifBitSet [xbx].$Obj(Editor).dFlags, EDF_NEW_FILE
-          OCall xbx::Editor.SaveAs
-        .else
-          OCall xbx::Editor.SaveTo, [xbx].$Obj(Editor).pFullFileName
-        .endif
+      .ifBitSet [xax].$Obj(Editor).dFlags, EDF_NEW_FILE
+        OCall xax::Editor.SaveAs
+      .else
+        OCall xax::Editor.SaveTo, [xax].$Obj(Editor).pFullFileName
       .endif
     .endif
     xor eax, eax
   .elseif ax == IDM_FILE_SAVEAS
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
     .if xax != NULL
-      mov xbx, xax
-      invoke GetObjectID, xax
-      .if eax == ADE_EditorID
-        OCall xbx::Editor.SaveAs
-      .endif
+      OCall xax::Editor.SaveAs
     .endif
     xor eax, eax
   .elseif ax == IDM_FILE_SAVEALL
     invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, NULL
     xor eax, eax
   .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ;Close the active window
-    mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
-    invoke SendMessage, hChildWnd, WM_CLOSE, 0, 0
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
+      invoke SendMessage, xax, WM_CLOSE, 0, 0
+    .endif
     xor eax, eax
   .elseif ax == IDM_FILE_CLOSEALL                     ;Attempt to close all windows
     invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CloseEnumProc, 0
@@ -965,9 +1054,8 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax
   .elseif ax == IDM_FILE_PRINT
-    invoke SendMessage, xbx, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
       OCall xax::ChildWnd.Print                         ;Polymorphic call
     .endif
     xor eax, eax
@@ -1012,118 +1100,100 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_EDIT_COPY
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::ChildWnd.ClpBrdCopy                 ;Polymorphic call
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
+      OCall xax::ChildWnd.ClpBrdCopy                    ;Polymorphic call
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_CUT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::ChildWnd.ClpBrdCut                  ;Polymorphic call
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
+      OCall xax::ChildWnd.ClpBrdCut                     ;Polymorphic call
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_PASTE
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::ChildWnd.ClpBrdPaste                ;Polymorphic call
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
+      OCall xax::ChildWnd.ClpBrdPaste                   ;Polymorphic call
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_DELETE
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::ChildWnd.ClpBrdDelete                ;Polymorphic call
+    OCall xsi.GetActiveChildWnd
+    .if xax != NULL
+      OCall xax::ChildWnd.ClpBrdDelete                  ;Polymorphic call
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_FIND
     invoke ShowWindow, [xsi].FindDlg.hWnd, SW_SHOW
     xor eax, eax
   .elseif ax == IDM_EDIT_INDENT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
       OCall xax::Editor.SelectionIndent
     .endif
     xor eax, eax
-
   .elseif ax == IDM_EDIT_SELECTALL
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax != 0
-      mov xdi, $invoke(SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0)
-      invoke GetObjectID, xdi
-      .if eax == ADE_EditorID
-        OCall xdi::Editor.SelectAll
-        xor eax, eax
-      .endif
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      OCall xax::Editor.SelectAll
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_OUTDENT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
       OCall xax::Editor.SelectionOutdent
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_COMMENT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
       OCall xax::Editor.SelectionComment
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_UNCOMMENT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
       OCall xax::Editor.SelectionUncomment
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_UNDO
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::Editor.Undo                          ;Polymorphic call
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      OCall xax::Editor.Undo
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_REDO
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::Editor.Redo                          ;Polymorphic call
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      OCall xax::Editor.Redo
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_DELHIST
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      .if xax != NULL
-        mov xbx, xax
-        invoke GetObjectID, xax
-        .if eax == ADE_EditorID
-          OCall [xbx].$Obj(Editor).Actions::ActionCollection.DisposeHistory
-          OCall xbx::Editor.ManageEditCmds
-        .endif
-      .endif
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      mov xbx, xax
+      OCall [xbx].$Obj(Editor).Actions::ActionCollection.DisposeHistory
+      OCall xbx::Editor.ManageEditCmds
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_INETSEARCH
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      OCall xax::Editor.InternetSearch
     .endif
     xor eax, eax
 
-
   .elseif ax == IDM_PROJ_NEW
-    New ProjPropsDlg::ProjectPropertiesDialog
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Init, xsi, [xsi].hWnd
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Show
+    New ProjPropsDlg::ProjPropsDialog
+    OCall ProjPropsDlg::ProjPropsDialog.Init, xsi, [xsi].hWnd
+    OCall ProjPropsDlg::ProjPropsDialog.Show
     .if ax == IDOK
-      OCall [xsi].ProjWnd::ProjectWnd.CreateNewProject
+      OCall [xsi].ProjMgr::ProjectManager.CreateNewProject
       invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
       OCall xsi.ManageGuiCmds, xax
     .endif
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Done
+    OCall ProjPropsDlg::ProjPropsDialog.Done
     xor eax, eax
-
   .elseif ax == IDM_PROJ_OPEN
     invoke CoCreateInstance, offset CLSID_FileOpenDialog, NULL, CLSCTX_ALL, \
                              offset IID_IFileOpenDialog, addr pIFODlg
@@ -1143,12 +1213,15 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
       ICall pIFODlg::IFileOpenDialog.Show, [xsi].hWnd
       .if SUCCEEDED(eax)
+        .ifBitSet [xsi].ProjMgr.dFlags, PMF_DIRTY
+          OCall [xsi].ProjMgr::ProjectManager.ConfigSave
+        .endif
         ICall pIFODlg::IFileOpenDialog.GetResults, addr pISIArr
         ICall pISIArr::IShellItemArray.GetCount, addr dCount
         ICall pISIArr::IShellItemArray.GetItemAt, 0, addr pIShellItem
         ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-
-        OCall [xsi].ProjWnd::ProjectWnd.ConfigLoadFrom, pDisplayName
+        OCall [xsi].ProjMgr::ProjectManager.ConfigLoadFrom, pDisplayName
+        invoke CoTaskMemFree, pDisplayName
         invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
         OCall xsi.ManageGuiCmds, xax
 
@@ -1158,27 +1231,103 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       ICall pIFODlg::IFileOpenDialog.Release
     .endif
     xor eax, eax
-
-  .elseif ax == IDM_PROJ_PROPS
-    New ProjPropsDlg::ProjectPropertiesDialog
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Init, xsi, [xsi].hWnd
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Show
+  .elseif ax == IDM_PROJ_SAVE
+    OCall [xsi].ProjMgr::ProjectManager.ConfigSave
+    xor eax, eax
+  .elseif ax == IDM_PROJ_EDIT
+    New ProjPropsDlg::ProjPropsDialog
+    OCall ProjPropsDlg::ProjPropsDialog.Init, xsi, [xsi].hWnd
+    OCall ProjPropsDlg::ProjPropsDialog.Show
     .if ax == IDOK
-      lea xbx, [xsi].ProjWnd
-      invoke SendMessage, [xbx].$Obj(ProjectWnd).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
+      lea xbx, [xsi].ProjMgr
+      invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
       .if xax != 0
         mov Item.hItem, xax
         mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
-        invoke SendMessage, [xbx].$Obj(ProjectWnd).TView.hWnd, TVM_GETITEM, 0, addr Item
+        invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
         mov xcx, Item.lParam
-        invoke StrReplace, addr [xcx].PROJECTITEM.pDisplayName, [xbx].$Obj(ProjectWnd).pProjName
+        invoke StrReplace, addr [xcx].PROJECTITEM.pDispName, [xbx].$Obj(ProjectManager).pProjName
         mov Item.mask_, TVIF_HANDLE or TVIF_TEXT
-        m2m Item.pszText, [xbx].$Obj(ProjectWnd).pProjName, xax
-        invoke SendMessage, [xbx].$Obj(ProjectWnd).TView.hWnd, TVM_SETITEM, 0, addr Item 
+        invoke StrLength, [xbx].$Obj(ProjectManager).pProjName
+        mov Item.cchTextMax, eax 
+        m2m Item.pszText, [xbx].$Obj(ProjectManager).pProjName, xax
+        invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_SETITEM, 0, addr Item
       .endif
     .endif
-    OCall ProjPropsDlg::ProjectPropertiesDialog.Done
+    OCall ProjPropsDlg::ProjPropsDialog.Done
     xor eax, eax
+  .elseif ax == IDM_PROJ_NEWGROUP
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0 
+    OCall xbx::ProjectManager.ProjItemInsert, xax, TVI_FIRST, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
+    xor eax, eax    
+  .elseif ax == IDM_PROJ_GROUP_DELETE
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
+    xor eax, eax 
+  .elseif ax == IDM_PROJ_GROUP_NEW
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
+    mov xdi, xax 
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    OCall xbx::ProjectManager.ProjItemInsert, xdi, xax, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
+    xor eax, eax    
+  .elseif ax == IDM_PROJ_GROUP_EDIT
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_EDITLABEL, 0, xax
+    xor eax, eax 
+  .elseif ax == IDM_PROJ_GROUP_ADDFILE
+    xor eax, eax    
+  
+
+  .elseif ax == IDM_PROJ_FILE_EDIT
+    New FilePropsDlg::FilePropsDialog
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
+    OCall FilePropsDlg::FilePropsDialog.Init, xsi, [xsi].hWnd, xax
+    OCall FilePropsDlg::FilePropsDialog.Show
+    OCall FilePropsDlg::FilePropsDialog.Done
+    xor eax, eax
+  .elseif ax == IDM_PROJ_FILE_OPEN
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.lParam
+    OCall xsi.Launch, [xax].PROJECTITEM.pFileName
+    xor eax, eax
+  .elseif ax == IDM_PROJ_FILE_REMOVE
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
+    xor eax, eax 
+   
+     
+  .elseif ax == IDM_PROJ_CMD_EXECUTE
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.lParam
+    invoke ShellExecute, [xsi].hWnd, NULL, [xax].PROJECTITEM.pCommand, NULL, NULL, SW_SHOW
+  .elseif ax == IDM_PROJ_CMD_REMOVE
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
+    xor eax, eax 
+  .elseif ax == IDM_PROJ_CMD_EDIT
+    New FilePropsDlg::FilePropsDialog
+    lea xbx, [xsi].ProjMgr
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
+    OCall FilePropsDlg::FilePropsDialog.Init, xsi, [xsi].hWnd, xax
+    OCall FilePropsDlg::FilePropsDialog.Show
+    OCall FilePropsDlg::FilePropsDialog.Done
+    xor eax, eax
+
 
   ;Messages for language selection
   .elseif (ax >= IDM_LANGUAGE_ENGLISH) && (ax <= IDM_LANGUAGE_SPANISH)
@@ -1188,6 +1337,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mul ecx
     OCall xsi.ChangeLanguage, eax
     xor eax, eax
+
 
   ;Messages for arranging child windows
   .elseif ax == IDM_WINDOW_TILE_HOR
@@ -1204,38 +1354,24 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_WINDOW_ZOOMIN
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax != 0
-     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      .if xax != NULL
-        mov xdi, xax
-        invoke GetObjectID, xax
-        .if eax == ADE_EditorID
-          mov xdi, [xdi].$Obj(Editor).pResources
-          invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 11, 10
-          OCall xdi::EditorResources.Zoom, eax
-          .if eax != FALSE
-            OCall xbx::ClientWnd.UpdateEditors
-          .endif
-        .endif
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      mov xdi, [xax].$Obj(Editor).pResources
+      invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 11, 10
+      OCall xdi::EditorResources.Zoom, eax
+      .if eax != FALSE
+        OCall xbx::ClientWnd.UpdateEditors
       .endif
     .endif
     xor eax, eax
   .elseif ax == IDM_WINDOW_ZOOMOUT
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax != 0
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      .if xax != NULL
-        mov xdi, xax
-        invoke GetObjectID, xax
-        .if eax == ADE_EditorID
-          mov xdi, [xdi].$Obj(Editor).pResources
-          invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 10, 11
-          OCall xdi::EditorResources.Zoom, eax
-          .if eax != FALSE
-            OCall xbx::ClientWnd.UpdateEditors
-          .endif
-        .endif
+    OCall xsi.GetActiveEditor
+    .if xax != NULL
+      mov xdi, [xax].$Obj(Editor).pResources
+      invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 10, 11
+      OCall xdi::EditorResources.Zoom, eax
+      .if eax != FALSE
+        OCall xbx::ClientWnd.UpdateEditors
       .endif
     .endif
     xor eax, eax
@@ -1289,8 +1425,8 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Initialize project window
-  OCall [xsi].ProjWnd::ProjectWnd.Init, xsi, [xsi].hWnd
-;  OCall [xsi].ProjWnd::ProjectWnd.ConfigLoad, $OfsCStr("MyProject.ini")
+  OCall [xsi].ProjMgr::ProjectManager.Init, xsi, [xsi].hWnd
+;  OCall [xsi].ProjMgr::ProjectManager.ConfigLoad, $OfsCStr("MyProject.ini")
 
   ;Initialize properties window
   OCall [xsi].PropWnd::PropertiesWnd.Init, xsi, [xsi].hWnd
@@ -1347,6 +1483,9 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
   .if [xsi].hMenuContextEditor
     invoke DestroyMenu, [xsi].hMenuContextEditor
+  .endif
+  .if [xsi].hMenuContextProject
+    invoke DestroyMenu, [xsi].hMenuContextProject
   .endif
   .if [xsi].hAccelerators
     invoke DestroyAcceleratorTable, [xsi].hAccelerators
@@ -1462,12 +1601,12 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
     invoke MoveWindow, [xsi].SplitterHorz.hWnd, 0, SpHorRect.top, SpVerRect.left, eax, FALSE
 
     ;Place project window
-    invoke GetWindowRect, [xsi].ProjWnd.hWnd, addr ProjWndRect
+    invoke GetWindowRect, [xsi].ProjMgr.hWnd, addr ProjWndRect
     invoke ScreenToClient, [xsi].hWnd, addr ProjWndRect.left
     invoke ScreenToClient, [xsi].hWnd, addr ProjWndRect.right
     mov eax, SpHorRect.top
     sub eax, dTop
-    invoke MoveWindow, [xsi].ProjWnd.hWnd, 0, dTop, SpVerRect.left, eax, FALSE
+    invoke MoveWindow, [xsi].ProjMgr.hWnd, 0, dTop, SpVerRect.left, eax, FALSE
 
     ;Place properties window
     invoke GetWindowRect, [xsi].PropWnd.hWnd, addr PropWndRect

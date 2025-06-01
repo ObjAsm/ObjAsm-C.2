@@ -1,123 +1,303 @@
 {
-  "Identification": {
-    "Description": "Assembler Development Environment - Project file",
-    "Version": "1.0"
+  "Identification":{
+    "Description":"Assembler Development Environment - Project file",
+    "Version":"1.0"
   },
-  "Project": {
-    "Name": "Testproject",
-    "Path": "D:\ObjAsm\Projects\X\AsmDevEnv",
-    "Description", "This is a test project"
+  "Project":{
+    "Name":"Testproject",
+    "Path":"D:\\ObjAsm\\Projects\\X\\AsmDevEnv",
+    "Description":"This is a test project"
   },
-  "Groups": [
+  "Groups":[
     {
-      "Name": "Tools",
-      "Expanded": TRUE
+      "Name":"Tools",
+      "Expanded":true
     },
     {
-      "Name": "Make",
-      "Expanded": TRUE
+      "Name":"Make",
+      "Expanded":true
     },
     {
-      "Name": "Added",
-      "Expanded": TRUE
+      "Name":"Added",
+      "Expanded":true
     },
     {
-      "Name": "Assembly",
-      "Expanded": TRUE
+      "Name":"Assembly",
+      "Expanded":false
     },
     {
-      "Name": "Macros",
-      "Expanded": TRUE
+      "Name":"Macros",
+      "Expanded":false
     },
     {
-      "Name": "Include",
-      "Expanded": TRUE
+      "Name":"Include",
+      "Expanded":false
     },
     {
-      "Name": "Objects",
-      "Expanded": TRUE
+      "Name":"Objects",
+      "Expanded":false
     },
     {
-      "Name": "Miscellaneous",
-      "Expanded": TRUE
+      "Name":"Miscellaneous",
+      "Expanded":false
     },
     {
-      "Name": "Resources",
-      "Expanded": TRUE
+      "Name":"Resources",
+      "Expanded":true
     }
   ],
-  "Files": [
+  "Files":[
     {
-      "DispName": "Calculator",
-      "FileName": "C:\Windows\System32\calc.exe",
-      "Type": 3
-      "Group": "Tools"
+      "DispName":"Calculator",
+      "FileName":"C:\\Windows\\System32\\calc.exe",
+      "Type":3,
+      "Group":1
     },
     {
-      "DispName": "Notepad",
-      "FileName": "C:\Windows\System32\notepad.exe",
-      "Type": 3
-      "Group": "Tools"
+      "DispName":"Notepad",
+      "FileName":"C:\\Windows\\System32\\notepad.exe",
+      "Type":3,
+      "Group":1
     },
     {
-      "DispName": "Notepad++",
-      "FileName": "C:\Program Files\Notepad++\notepad++.exe",
-      "Type": 3
-      "Group": "Tools"
+      "DispName":"Notepad++",
+      "FileName":"C:\\Program Files\\Notepad++\\notepad++.exe",
+      "Type":3,
+      "Group":1
     },
     {
-      "DispName": "Assemble",
-      "FileName": "%ObjAsm%\Build\RA_ASM.cmd",
-      "Type": 3
-      "Group": "Make"
+      "DispName":"Assemble",
+      "FileName":"%ObjAsm%\\Build\\RA_ASM.cmd",
+      "Type":3,
+      "Group":2
     },
     {
-      "DispName": "Build All",
-      "FileName": ".\Make.cmd",
-      "Type": 3
-      "Group": "Make"
+      "DispName":"Build All",
+      "FileName":".\\Make.cmd",
+      "Type":3,
+      "Group":2
     },
     {
-      "DispName": "Build Resources",
-      "FileName": "%ObjAsm%\Build\RA_RC.cmd",
-      "Type": 3
-      "Group": "Make"
+      "DispName":"Build Resource File",
+      "FileName":"%ObjAsm%\\Build\\RA_RC.cmd",
+      "Type":3,
+      "Group":2
     },
     {
-      "DispName": "Link",
-      "FileName": "%ObjAsm%\Build\RA_LINK.cmd",
-      "Type": 3
-      "Group": "Make"
+      "DispName":"Link",
+      "FileName":"%ObjAsm%\\Build\\RA_LINK.cmd",
+      "Type":3,
+      "Group":2
     },
     {
-      "DispName": "ADE.asm",
-      "FileName": "ADE.asm",
-      "Type": 2
-      "Group": "Assembly"
+      "DispName":"ADE_FilePropsDialog.inc",
+      "FileName":".\\ADE_FilePropsDialog.inc",
+      "Type":2,
+      "Group":3
     },
     {
-      "DispName": "Dialog.asm",
-      "FileName": "Dialog.asm",
-      "Type": 2
-      "Group": "Assembly"
+      "DispName":"ADE.asm",
+      "FileName":"..\\AsmDevEnv - Linked List\\ADE.asm",
+      "Type":2,
+      "Group":4
     },
     {
-      "DispName": "ADE_FindDialog.inc",
-      "FileName": "ADE_FindDialog.inc",
-      "Type": 2
-      "Group": "Include"
+      "DispName":"ADE_About.inc",
+      "FileName":".\\ADE_About.inc",
+      "Type":2,
+      "Group":7
     },
     {
-      "DispName": "ADE_Main.asm",
-      "FileName": "ADE_Main.asm",
-      "Type": 2
-      "Group": "Assembly"
+      "DispName":"ADE_ActionCollection.inc",
+      "FileName":".\\ADE_ActionCollection.inc",
+      "Type":2,
+      "Group":7
     },
     {
-      "DispName": "ADE_About.inc",
-      "FileName": "ADE_About.inc",
-      "Type": 2
-      "Group": "Include"
+      "DispName":"ADE_Application.inc",
+      "FileName":".\\ADE_Application.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ChildWnd.inc",
+      "FileName":".\\ADE_ChildWnd.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ClientWnd.inc",
+      "FileName":".\\ADE_ClientWnd.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Editor.inc",
+      "FileName":".\\ADE_Editor.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorDisplay.inc",
+      "FileName":".\\ADE_EditorDisplay.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorLine.inc",
+      "FileName":".\\ADE_EditorLine.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorResources.inc",
+      "FileName":".\\ADE_EditorResources.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorSharedResources.inc",
+      "FileName":".\\ADE_EditorSharedResources.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorTextLine_UTF8.inc",
+      "FileName":".\\ADE_EditorTextLine_UTF8.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorView_1.inc",
+      "FileName":".\\ADE_EditorView_1.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_EditorView_2.inc",
+      "FileName":".\\ADE_EditorView_2.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_FeatureList.txt",
+      "FileName":".\\ADE_FeatureList.txt",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_FileTypeCollection.inc",
+      "FileName":".\\ADE_FileTypeCollection.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_FindDialog.inc",
+      "FileName":".\\ADE_FindDialog.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Globals.inc",
+      "FileName":".\\ADE_Globals.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Helper.inc",
+      "FileName":".\\ADE_Helper.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_IniFileReader.inc",
+      "FileName":".\\ADE_IniFileReader.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_KeywordCollection.inc",
+      "FileName":".\\ADE_KeywordCollection.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_KeywordGroupCollection.inc",
+      "FileName":".\\ADE_KeywordGroupCollection.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Main.inc",
+      "FileName":".\\ADE_Main.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Manual.pdf",
+      "FileName":".\\ADE_Manual.pdf",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ProjectManager.inc",
+      "FileName":".\\ADE_ProjectManager.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ProjectManager_IDropTarget.inc",
+      "FileName":".\\ADE_ProjectManager_IDropTarget.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ProjPropsDialog.inc",
+      "FileName":".\\ADE_ProjPropsDialog.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_PropertiesWnd.inc",
+      "FileName":".\\ADE_PropertiesWnd.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_ScrollbarVert.inc",
+      "FileName":".\\ADE_ScrollbarVert.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_SetupDialog.inc",
+      "FileName":".\\ADE_SetupDialog.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Shared.inc",
+      "FileName":".\\ADE_Shared.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_UndoRedo.inc",
+      "FileName":".\\ADE_UndoRedo.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"DbgOutMsg_X.inc",
+      "FileName":"..\\..\\..\\Code\\ObjMem\\Common\\DbgOutMsg_X.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE.rc",
+      "FileName":".\\ADE.rc",
+      "Type":2,
+      "Group":9
     }
   ]
 }

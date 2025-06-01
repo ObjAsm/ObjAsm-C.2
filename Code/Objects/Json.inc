@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.2.4
+; Version:    C.2.5
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -27,7 +27,9 @@
 ;             Version C.2.3, September 2023.
 ;               - JsonGetNumberEnd bug corrected.
 ;             Version C.2.4, March 2024.
-;               - JSON_TYPE_NULL leack corrected.
+;               - JSON_TYPE_NULL leak corrected.
+;             Version C.2.5, April 2025.
+;               - Quotes removed from JSON_TYPE_BOOLEAN and JSON_TYPE_NULL.
 ; ==================================================================================================
 
 
@@ -68,6 +70,41 @@ JSON_PROPERTY ends
 ;               strings may lead to data loss when converting to ANSI.
 ;             - In this implementation, a propety is a Key/Value pair.
 ;             - The root property is always unnamed.
+;
+; Sample code when creating a new JSON:
+;
+;    local DskStream:$Obj(DiskStream), pParent:PJSON_PROPERTY, pChild:PJSON_PROPERTY
+;
+;    New DskStream::DiskStream
+;    OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_WRITE, \
+;                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+;    mov xbx, $New(Json)
+;    OCall xbx::Json.Init, xsi
+;    mov [xbx].$Obj(Json).RootProperty.dType, JSON_TYPE_OBJECT
+;    
+;    ...
+;
+;    OCall xbx::Json.Write, addr DskStream
+;    Destroy xbx
+;    OCall DskStream::DiskStream.Truncate
+;    OCall DskStream::DiskStream.Done
+;
+;
+; Sample code when reading an existing JSON:
+;  
+;    local DskStream:$Obj(DiskStream)
+;  
+;    New DskStream::DiskStream
+;    OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_READ, \
+;                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+;    mov xbx, $New(Json)
+;    OCall xbx::Json.Init, xsi
+;    OCall xbx::Json.Read, addr DskStream
+;  
+;  
+;    Destroy xbx
+;    OCall DskStream::DiskStream.Done
+
 
 Object Json, JsonID, Streamable
   VirtualMethod     AddArray,         PJSON_PROPERTY, PSTRING
@@ -419,8 +456,9 @@ MethodEnd
 ; Method:     Json.AddData
 ; Purpose:    Create a new JSON value.
 ; Arguments:  Arg1: -> Owner JSON_PROPERTY.
-;             Arg2: Property type [JSON_TYPE_STRING, JSON_TYPE_NUMBER, JSON_TYPE_BOOLEAN].
-;             Arg3: -> String representation of the value.
+;             Arg2: -> Name.
+;             Arg3: Property type [JSON_TYPE_STRING, JSON_TYPE_NUMBER, JSON_TYPE_BOOLEAN].
+;             Arg4: -> String representation of the value.
 ; Return:     xax -> JSON_PROPERTY or NULL if failed.
 
 Method Json.AddData, uses xbx xdi,pParent:PJSON_PROPERTY, pName:PSTRING, dType:DWORD, pValue:PSTRING
@@ -1094,7 +1132,7 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       OCall pStream::Stream.BinWrite8, "]"
     .endif
 
-  .elseif [xbx].JSON_PROPERTY.dType == JSON_TYPE_STRING || [xbx].JSON_PROPERTY.dType == JSON_TYPE_BOOLEAN
+  .elseif [xbx].JSON_PROPERTY.dType == JSON_TYPE_STRING
     OCall pStream::Stream.BinWrite8, '"'
     .if [xbx].JSON_PROPERTY.pValue != NULL
       invoke StrSize, [xbx].JSON_PROPERTY.pValue
@@ -1118,6 +1156,29 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       MemFree pEncBuffer
     .endif
     OCall pStream::Stream.BinWrite8, '"'
+
+  .elseif [xbx].JSON_PROPERTY.dType == JSON_TYPE_BOOLEAN || [xbx].JSON_PROPERTY.dType == JSON_TYPE_NULL
+    .if [xbx].JSON_PROPERTY.pValue != NULL
+      invoke StrSize, [xbx].JSON_PROPERTY.pValue
+      mov edi, eax
+      if TARGET_STR_TYPE eq STR_TYPE_WIDE
+        shl eax, 1                                      ;Each char can have max 2 escape chars
+      else
+        shl eax, 2                                      ;ANSI => WIDE + each char can have max 2 escape chars
+      endif
+      mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
+      if TARGET_STR_TYPE eq STR_TYPE_WIDE
+        shr edi, 1                                      ;Chars, incl ZTC
+      endif
+      invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
+      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes
+      mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
+      invoke WideToUTF8, xsi, pEncBuffer, -1
+      dec eax                                           ;Discard ZTC
+      OCall pStream::Stream.BinWrite, xsi, eax
+      MemFree xsi
+      MemFree pEncBuffer
+    .endif
 
   .elseif [xbx].JSON_PROPERTY.dType == JSON_TYPE_NUMBER
     invoke StrSize, [xbx].JSON_PROPERTY.pValue

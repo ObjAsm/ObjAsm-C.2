@@ -108,23 +108,7 @@ Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov edi, eax
     mov pFileName, $invoke(StrAllocW, eax)
     invoke DragQueryFileW, wParam, ebx, xax, edi
-    mov pEditor, $New(Editor)
-    mov xdi, [xsi].$Obj(ClientWnd).pOwner
-    OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetContentType, pFileName
-    .if eax == ECT_ASM
-      lea xax, [xdi].$Obj(Application).AsmEditorResources
-    .elseif eax == ECT_RES
-      lea xax, [xdi].$Obj(Application).ResEditorResources
-    .else
-      lea xax, [xdi].$Obj(Application).TxtEditorResources
-    .endif
-    OCall pEditor::Editor.Init, xsi, xax, pFileName 
-    .if eax == FALSE
-      Kill pEditor
-    .else
-      mov xcx, pEditor
-      invoke ShowWindow, [xcx].$Obj(Editor).hWnd, SW_SHOW
-    .endif
+    OCall [xsi].pOwner::Application.Launch, pFileName
     invoke StrDispose, pFileName
   .endw
   invoke DragFinish, wParam

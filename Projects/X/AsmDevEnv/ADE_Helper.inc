@@ -521,7 +521,7 @@ CreateDrawAttrFont proc uses xdi xbx pDrawAttr:PDRAW_ATTR
 
   ;Test if the font is monospaced
   mov hPrevFont, $invoke(SelectObject, xdi, [xbx].DRAW_ATTR.hFont)
-  invoke GetTextExtentPoint32, xdi, addr cMetricChar, 1, addr [xbx].DRAW_ATTR.FontMetric
+  invoke GetTextExtentPoint32, xdi, addr szMetricChar, 1, addr [xbx].DRAW_ATTR.FontMetric
   invoke GetTextExtentPoint32, xdi, $OfsCStr("."), 1, addr CharSize
   mov eax, [xbx].DRAW_ATTR.FontMetric.x
   .if eax == CharSize.x
@@ -661,11 +661,11 @@ GetFileFromString proc uses xbx xdi pString:PSTRING
   invoke GetStringFromString, addr [xcx + sizeof(CHR)]
   mov xdi, xcx
   invoke StrCNew, xax, edx
-  mov [xbx].PROJECTITEM.pDisplayName, xax
+  mov [xbx].PROJECTITEM.pDispName, xax
   invoke GetStringFromString, addr [xdi + sizeof CHR]
   mov xdi, xcx
   invoke StrCNew, xax, edx
-  mov [xbx].PROJECTITEM.pFullFileName, xax
+  mov [xbx].PROJECTITEM.pFileName, xax
   mov [xbx].PROJECTITEM.hEditor, 0
   mov xax, xbx
   mov edx, dParentFolderIndex
