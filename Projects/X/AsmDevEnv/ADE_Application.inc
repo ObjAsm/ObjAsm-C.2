@@ -519,7 +519,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Launch
-; Purpose:    Try opening an editor. If that fails, try opening the file using an external 
+; Purpose:    Try opening an editor. If that fails, try opening the file using an external
 ;             application.
 ; Arguments:  Arg1: -> File name.
 ; Return:     Nothing.
@@ -636,7 +636,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   local dApplicationDirty:DWORD, dActiveEditorDirty:DWORD, dHasMDIChildren:DWORD
 
   SetObject xsi
-  mov dHasMDIChildren, 0 
+  mov dHasMDIChildren, 0
 
   ;Editor menu and toolbar management
   mov xax, hActiveWnd
@@ -650,7 +650,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
     xor eax, eax
     cmp [xcx].$Obj(ClientWnd).dChildCount, 0
     setnz al
-    mov dHasMDIChildren, eax 
+    mov dHasMDIChildren, eax
 
     invoke GetObjectID, xdi
     .if eax == ADE_EditorID ;----------------------------------------------
@@ -907,6 +907,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
+  DbgDec eax
   .if ax == IDM_FILE_NEW                                ;Create a new default editor instance
     mov xdi, $New(Editor)
     .if xdi != NULL
@@ -1020,7 +1021,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, NULL
     xor eax, eax
   .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ;Close the active window
-    OCall xsi.GetActiveChildWnd
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     .if xax != NULL
       invoke SendMessage, xax, WM_CLOSE, 0, 0
     .endif
@@ -1084,7 +1085,6 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_FILE_BREAK
     int 3
     xor eax, eax
-
 
   .elseif ax == SC_RESTORE                              ;Restore the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
@@ -1249,7 +1249,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke StrReplace, addr [xcx].PROJECTITEM.pDispName, [xbx].$Obj(ProjectManager).pProjName
         mov Item.mask_, TVIF_HANDLE or TVIF_TEXT
         invoke StrLength, [xbx].$Obj(ProjectManager).pProjName
-        mov Item.cchTextMax, eax 
+        mov Item.cchTextMax, eax
         m2m Item.pszText, [xbx].$Obj(ProjectManager).pProjName, xax
         invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_SETITEM, 0, addr Item
       .endif
@@ -1258,29 +1258,29 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
   .elseif ax == IDM_PROJ_NEWGROUP
     lea xbx, [xsi].ProjMgr
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0 
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
     OCall xbx::ProjectManager.ProjItemInsert, xax, TVI_FIRST, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
-    xor eax, eax    
+    xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_DELETE
     lea xbx, [xsi].ProjMgr
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
-    xor eax, eax 
+    xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_NEW
     lea xbx, [xsi].ProjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
-    mov xdi, xax 
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    mov xdi, xax
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     OCall xbx::ProjectManager.ProjItemInsert, xdi, xax, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
-    xor eax, eax    
+    xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_EDIT
     lea xbx, [xsi].ProjMgr
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_EDITLABEL, 0, xax
-    xor eax, eax 
+    xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_ADDFILE
-    xor eax, eax    
-  
+    xor eax, eax
+
 
   .elseif ax == IDM_PROJ_FILE_EDIT
     New FilePropsDlg::FilePropsDialog
@@ -1301,11 +1301,11 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
   .elseif ax == IDM_PROJ_FILE_REMOVE
     lea xbx, [xsi].ProjMgr
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
-    xor eax, eax 
-   
-     
+    xor eax, eax
+
+
   .elseif ax == IDM_PROJ_CMD_EXECUTE
     lea xbx, [xsi].ProjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
@@ -1316,9 +1316,9 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke ShellExecute, [xsi].hWnd, NULL, [xax].PROJECTITEM.pCommand, NULL, NULL, SW_SHOW
   .elseif ax == IDM_PROJ_CMD_REMOVE
     lea xbx, [xsi].ProjMgr
-    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0  
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
-    xor eax, eax 
+    xor eax, eax
   .elseif ax == IDM_PROJ_CMD_EDIT
     New FilePropsDlg::FilePropsDialog
     lea xbx, [xsi].ProjMgr

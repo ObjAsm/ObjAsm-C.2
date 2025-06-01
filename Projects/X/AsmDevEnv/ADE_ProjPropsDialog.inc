@@ -63,7 +63,7 @@ Method ProjPropsDialog.CtlsSet, uses xbx xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_NAME, [xbx].$Obj(ProjectManager).pProjName
   invoke GetDlgItem, [xsi].hWnd, IDC_EDT_NAME
   invoke SendMessage, xax, EM_SETCUEBANNER, FALSE, $OfsCStrW("Enter a new project name")
-  
+
   invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_FILENAME, [xbx].$Obj(ProjectManager).pProjFileName
   invoke GetDlgItem, [xsi].hWnd, IDC_EDT_FILENAME
   invoke SendMessage, xax, EM_SETCUEBANNER, FALSE, $OfsCStrW("Enter a new file name")
@@ -121,7 +121,7 @@ Method ProjPropsDialog.GetDirectoryName, uses xbx xdi xsi
       ICall pIFODlg::IFileOpenDialog.SetDefaultFolder, pIShellItem
       ICall pIShellItem::IShellItem.Release
     .endif
-    
+
     ;Call the dialog
     ICall pIFODlg::IFileOpenDialog.Show, [xsi].hWnd
     .if SUCCEEDED(eax)

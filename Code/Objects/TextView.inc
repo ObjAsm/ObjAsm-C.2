@@ -250,14 +250,14 @@ ObjectEnd
 ;          |     -----------------------------------------------------     |
 ;          |    |    <-------------- Line Length -------------------->|    |
 ;          |    |<-->Lorem ipsum dolor sit amet, consetetur sadipscing|<-------DrawExtent
-;          |    |  ¦     <------------ Line Length ------------------>|    |
-;          |    |  ¦     elitr, sed diam nonumy eirmod tempor invidunt|    |
-;          |    |  ¦     <----------- Line Length ---------------->   |    |
+;          |    |  |     <------------ Line Length ------------------>|    |
+;          |    |  |     elitr, sed diam nonumy eirmod tempor invidunt|    |
+;          |    |  |     <----------- Line Length ---------------->   |    |
 ;          |    |<------>ut labore et dolore magna aliquyam erat...   |    |
-;          |    |  ¦  ¦                                               |    |
-;          |    |  ¦  ¦                                               |    |
-;          |    |  ¦  Hanging                                         |    |
-;  Left    |    |  ¦                                                  |    | Right
+;          |    |  |  |                                               |    |
+;          |    |  |  |                                               |    |
+;          |    |  |  Hanging                                         |    |
+;  Left    |    |  |                                                  |    | Right
 ;  Padding |<-->|  Indent                                             |<-->| Padding
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |

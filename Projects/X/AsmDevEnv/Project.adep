@@ -19,7 +19,7 @@
     },
     {
       "Name":"Added",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Assembly",
@@ -35,7 +35,7 @@
     },
     {
       "Name":"Objects",
-      "Expanded":false
+      "Expanded":true
     },
     {
       "Name":"Miscellaneous",

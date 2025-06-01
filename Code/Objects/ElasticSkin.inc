@@ -32,19 +32,19 @@ PELASTICSKIN_DATA typedef ptr ELASTICSKIN_DATA
 ;           It uses the following reginon layout:
 ;
 ;    ---------------------------------------------------
-;    |      ¦               2                ¦         |       1 Top Left corner
-;    |   1  ¦--------------------------------¦    3    |       2 Top Horizontal filler
-;    |      ¦               9                ¦         |       3 Top Right corner
+;    |      |               2                |         |       1 Top Left corner
+;    |   1  |--------------------------------|    3    |       2 Top Horizontal filler
+;    |      |               9                |         |       3 Top Right corner
 ;    |-------------------------------------------------|       4 Right Vertical Filler
-;    |   ¦                                       ¦     |       5 Bottom Right corner
-;    |   ¦                                       ¦     |       6 Bottom Horizontal filler
-;    | 8 ¦                 10                    ¦  4  |       7 Bottom Left corner
-;    |   ¦                                       ¦     |       8 Left Vertical filler
-;    |   ¦                                       ¦     |       9 Title area => TitleRect
+;    |   |                                       |     |       5 Bottom Right corner
+;    |   |                                       |     |       6 Bottom Horizontal filler
+;    | 8 |                 10                    |  4  |       7 Bottom Left corner
+;    |   |                                       |     |       8 Left Vertical filler
+;    |   |                                       |     |       9 Title area => TitleRect
 ;    |-------------------------------------------------|      10 User area => UserRect
-;    |          ¦                              ¦       |
-;    |     7    ¦              6               ¦   5   |      Note: The whole surface is contained
-;    |          ¦                              ¦       |            in the window client RECT.
+;    |          |                              |       |
+;    |     7    |              6               |   5   |      Note: The whole surface is contained
+;    |          |                              |       |            in the window client RECT.
 ;    ---------------------------------------------------
 
 Object ElasticSkin, ElasticSkinID, MsgInterceptor

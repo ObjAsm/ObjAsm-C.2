@@ -173,10 +173,10 @@ PKEYWORD typedef ptr KEYWORD
 Object IDropTarget, ADE_IDropTargetID, IUnknown
   RedefineMethod    Init,           POINTER, HWND
 
-  InterfaceMethod   DragEnter,      POINTER, DWORD, POINTL, POINTER 
-  InterfaceMethod   DragOver,       DWORD, POINTL, POINTER 
-  InterfaceMethod   DragLeave      
-  InterfaceMethod   Drop,           POINTER, DWORD, POINTL, POINTER 
+  InterfaceMethod   DragEnter,      POINTER, DWORD, POINTL, POINTER
+  InterfaceMethod   DragOver,       DWORD, POINTL, POINTER
+  InterfaceMethod   DragLeave
+  InterfaceMethod   Drop,           POINTER, DWORD, POINTL, POINTER
 
   RedefineVariable  pIID,           offset IID_IDropTarget
 
@@ -622,7 +622,7 @@ Object ActionCollection, ADE_ActionCollectionID, DataCollection
   StaticMethod      ShowActions
 
   DefineVariable    dActionIndex,         DWORD,    0   ;Sort of stack pointer
-  DefineVariable    dActionGroup,         DWORD,    0   ;Grouping ID 
+  DefineVariable    dActionGroup,         DWORD,    0   ;Grouping ID
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -788,7 +788,7 @@ Object FilePropsDialog, ADE_FilePropsDialogID, DialogModal
   VirtualMethod     GetFileName
   RedefineMethod    Init,               POINTER, HWND, HTREEITEM
   RedefineMethod    OnCommand,          WPARAM, LPARAM
-  
+
   DefineVariable    hItem,      HTREEITEM
 ObjectEnd
 
@@ -958,7 +958,7 @@ DbgEditorMembers macro InstanceReg, Dest
     mov xdi, xax
     DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
-  
+
   lea xdi, [InstanceReg].$Obj(Editor).SelectionLst
   DbgHex xdi, "SelectionLst", Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest

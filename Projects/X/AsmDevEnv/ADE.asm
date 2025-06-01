@@ -29,22 +29,22 @@
 ;   - ChildWnd magnetic snapping
 ;   - 32 and 64 bit release versions
 ;   - Fast loading (~100MB/s) and rendering
-;   - WM_QUERYENDSESSION logic 
-;   - File.New now has the option to select the editor template 
+;   - WM_QUERYENDSESSION logic
+;   - File.New now has the option to select the editor template
 ;   - Same functionality for the "New" toolbar button using a drop down button.
-;   - Editor templates: MASM, Resource & Plain Text. Each template has its own settings in the ini file 
-;   - Information in the status bar what the application thinks it is editing 
-;   - Tooltips for the toolbars 
+;   - Editor templates: MASM, Resource & Plain Text. Each template has its own settings in the ini file
+;   - Information in the status bar what the application thinks it is editing
+;   - Tooltips for the toolbars
 ;   - GetThemeBitmap, BeginBufferedAnimation
-; 
+;
 ; ==================================================================================================
 
-;Note: comment $$RegCntMM = 0 in system.inc 
+;Note: comment $$RegCntMM = 0 in system.inc
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
 SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
-;Note: don't use ANSI_STRING 
+;Note: don't use ANSI_STRING
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
 % include &MacPath&ConstDiv.inc
@@ -126,7 +126,7 @@ start proc SEH_FRAME                                    ;Program entry point
   DbgClearAll
 
   ResGuard_Start
-  invoke InitCommonControls  
+  invoke InitCommonControls
   invoke OleInitialize, NULL                            ;Calls CoInitializeEx(COINIT_APARTMENTTHREADED)
   ;invoke SetExceptionMessage, NULL, NULL, NULL
 

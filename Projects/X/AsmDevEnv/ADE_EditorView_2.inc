@@ -32,6 +32,7 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
       OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretSet
       OCall xsi.CaretShow                               ;Show again after a selection
     .endif
     mov edx, [xsi].CaretLocation.dLineIndex
@@ -118,8 +119,8 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     OCall xsi.ClpBrdCut
     .if eax != FALSE
       OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
-      inc dNeedRedrawing
       OCall xsi.CaretSet
+      inc dNeedRedrawing
     .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'V'
@@ -501,6 +502,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
       OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretSet
       OCall xsi.CaretShow                               ;Show again after a selection
     .endif
 
@@ -555,6 +557,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
         OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
         OCall xbx::Editor.SelectionDelete, dActionGroup ;Do deletion
         OCall xsi.CaretLocationLoad, addr RefLoc        ;Restore caret info
+        OCall xsi.CaretSet
         OCall xsi.CaretShow                             ;Show again after a selection
       .endif
     .endif
@@ -574,6 +577,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
       OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretSet
       OCall xsi.CaretShow                               ;Show again after a selection
     .endif
     mov edx, [xsi].CaretLocation.dLineIndex
@@ -609,6 +613,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
       OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
+      OCall xsi.CaretSet
       OCall xdi::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex, dActionGroup
       .if xax != NULL
         mov [xsi].CaretLocation.dCharIndex, 0

@@ -473,6 +473,7 @@ Method EditorView.ClpBrdDelete, uses xbx xsi
     OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
     OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
     OCall xsi.CaretLocationLoad, addr RefLoc            ;Restore caret info
+    OCall xsi.CaretSet
     OCall xsi.CaretShow                                 ;Show again after a selection
   .endif
   mov eax, TRUE
@@ -623,6 +624,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
             OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
             OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
             OCall xsi.CaretLocationLoad, addr RefLoc            ;Restore caret info
+            OCall xsi.CaretSet
             OCall xsi.CaretShow                                 ;Show again after a selection
           .else
             OCall xbx::Editor.ManageEditCmds

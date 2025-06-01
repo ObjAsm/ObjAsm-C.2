@@ -90,7 +90,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   .else
     mov xdx, [xax].JSON_PROPERTY.pValue
   .endif
-  invoke StrReplace, addr [xsi].pProjName, xdx 
+  invoke StrReplace, addr [xsi].pProjName, xdx
   OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIF_PROJ, 3, 0
   mov hRootItem, xax
 
@@ -145,7 +145,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     invoke StrNew, [xax].JSON_PROPERTY.pValue
     mov [xdi].PROJECTITEM.pFileName, xax
     OCall xbx::Json.GetProperty, pChild, addr szType
-    invoke dec2dword, [xax].JSON_PROPERTY.pValue 
+    invoke dec2dword, [xax].JSON_PROPERTY.pValue
     mov [xdi].PROJECTITEM.dFlags, eax
     OCall xbx::Json.GetProperty, pChild, addr szGroup
     invoke dec2dword, [xax].JSON_PROPERTY.pValue
@@ -189,7 +189,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
 
   ;Always make the Root visible
   invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_FIRSTVISIBLE, hRootItem
-    
+
 @@Error:
   Destroy xbx
   OCall DskStream::DiskStream.Done
@@ -232,7 +232,7 @@ SaveGroups proc uses xbx hTreeView:HWND, hParent:HTREEITEM, pJson:$ObjPtr(Json),
       .endif
       mov pExpanded, xax
       mov pChild, $OCall(pJson::Json.AddObject, pParent, NULL)
-      OCall pJson::Json.AddData, pChild, addr szName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pDispName  
+      OCall pJson::Json.AddData, pChild, addr szName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pDispName
       OCall pJson::Json.AddData, pChild, addr szExpanded, JSON_TYPE_BOOLEAN, pExpanded
     .endif
     invoke SendMessage, hTreeView, TVM_GETNEXTITEM, TVGN_NEXT, Item.hItem
@@ -255,7 +255,7 @@ SaveFilesInBranch proc uses xbx hTreeView:HWND, hParent:HTREEITEM, pJson:$ObjPtr
       invoke SaveFilesInBranch, hTreeView, Item.hItem, pJson, pParent, pGroupCounter
     .else
       mov pChild, $OCall(pJson::Json.AddObject, pParent, NULL)
-      OCall pJson::Json.AddData, pChild, addr szDispName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pDispName  
+      OCall pJson::Json.AddData, pChild, addr szDispName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pDispName
       OCall pJson::Json.AddData, pChild, addr szFileName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pFileName
       invoke dword2dec, addr cBuffer, [xbx].PROJECTITEM.dFlags
       OCall pJson::Json.AddData, pChild, addr szType, JSON_TYPE_NUMBER, addr cBuffer
@@ -287,15 +287,15 @@ Method ProjectManager.ConfigSaveTo, uses xbx xsi, pConfigFileName:PSTRING
 
     ;Save "Identification" data
     mov pParent, $OCall(xbx::Json.AddObject, addr [xbx].$Obj(Json).RootProperty, addr szIdentification)
-    OCall xbx::Json.AddData, pParent, addr szDescription, JSON_TYPE_STRING, addr szDescADEP 
+    OCall xbx::Json.AddData, pParent, addr szDescription, JSON_TYPE_STRING, addr szDescADEP
     OCall xbx::Json.AddData, pParent, addr szVersion, JSON_TYPE_STRING, $OfsCStr("1.0")
 
     ;Save "Project" data
     mov pParent, $OCall(xbx::Json.AddObject, addr [xbx].$Obj(Json).RootProperty, addr szProject)
-    OCall xbx::Json.AddData, pParent, addr szName, JSON_TYPE_STRING, [xsi].pProjName  
-    OCall xbx::Json.AddData, pParent, addr szPath, JSON_TYPE_STRING, [xsi].pProjDirPath  
+    OCall xbx::Json.AddData, pParent, addr szName, JSON_TYPE_STRING, [xsi].pProjName
+    OCall xbx::Json.AddData, pParent, addr szPath, JSON_TYPE_STRING, [xsi].pProjDirPath
     OCall xbx::Json.AddData, pParent, addr szDescription, JSON_TYPE_STRING, [xsi].pProjDescription
-    
+
     ;Save "Groups" data
     mov pParent, $OCall(xbx::Json.AddArray, addr [xbx].$Obj(Json).RootProperty, addr szGroups)
     invoke SaveGroups, [xsi].TView.hWnd, hRoot, xbx, pParent
@@ -502,10 +502,10 @@ MethodEnd
 
 Method ProjectManager.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local SceenPoint:POINT, tvht:TVHITTESTINFO, Item:TVITEM
-  local hContextMenu:HMENU, hContextSubMenu:HMENU 
+  local hContextMenu:HMENU, hContextSubMenu:HMENU
 
   ANNOTATION use:wParam
-  
+
   SetObject xsi
   PntS2Pnt SceenPoint, lParam
   s2s tvht.pt, SceenPoint, xax, xdx
@@ -578,7 +578,7 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 ;  DbgText "ProjectManager.OnLButtonUp"
   SetObject xsi
   .if [xsi].dDragging != FALSE
-    ;Manage the "Drop" operation 
+    ;Manage the "Drop" operation
     ;Get destination item.
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_DROPHILITE, 0
     .if xax != 0
@@ -593,7 +593,7 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
           invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, hDropOnItem
           mov hDropOnItem, xax
         .endif
-  
+
         ;Insert the new item
         mov DragSrcItem.mask_, TVIF_HANDLE or TVIF_IMAGE or TVIF_PARAM
         m2m DragSrcItem.hItem, [xsi].hDragSrcItem, xax
@@ -605,10 +605,10 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
                                   DragSrcItem.iImage, \
                                   [xbx].PROJECTITEM.hEditor
         ;Delete old item
-        invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, [xsi].hDragSrcItem  
+        invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, [xsi].hDragSrcItem
 
         ;Expand parent
-        invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, hDropOnItem  
+        invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, hDropOnItem
       .endif
       invoke ImageList_EndDrag
       invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, 0    ;Remove Hilite
@@ -657,7 +657,7 @@ Method ProjectManager.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
       invoke SendMessage, [xsi].TView.hWnd, WM_HSCROLL, SB_LINERIGHT, 0
     .endif
     ;Turn the dragged image on again
-    invoke ImageList_DragShowNolock, TRUE               
+    invoke ImageList_DragShowNolock, TRUE
   .endif
   xor eax, eax
 MethodEnd
@@ -759,7 +759,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .endif
       .endif
     .endif
-    
+
   .elseif [xbx].NMHDR.code == TVN_KEYDOWN
     mov xax, [xsi].TView.hWnd
     .if [xbx].NMHDR.hwndFrom == xax
@@ -771,7 +771,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .if xdi != xax
           invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, xdi
           BitSet [xsi].dFlags, PMF_DIRTY
-        .endif 
+        .endif
       .elseif [xbx].NMTVKEYDOWN.wVKey == VK_INSERT
         invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
         mov Item.hItem, xax
@@ -810,7 +810,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .else
       mov eax, TRUE                                     ;Cancel operation
     .endif
-    
+
   .elseif [xbx].NMHDR.code == TVN_ENDLABELEDIT
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     mov Item.hItem, xax
@@ -818,7 +818,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
     invoke GetWindowText, [xsi].hEdit, addr cBuffer, lengthof(cBuffer)
     inc eax
-    mov Item.TVITEM.cchTextMax, eax 
+    mov Item.TVITEM.cchTextMax, eax
     mov Item.mask_, TVIF_HANDLE or TVIF_TEXT
     mov xcx, Item.lParam
     invoke StrReplace, addr [xcx].PROJECTITEM.pDispName, addr cBuffer
@@ -826,7 +826,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.pszText, xdx
     invoke SendMessage, [xsi].TView.hWnd, TVM_SETITEM, 0, addr Item
     mov [xsi].hEdit, 0
-    
+
   .else
     invoke DefWindowProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
   .endif
@@ -944,7 +944,7 @@ MethodEnd
 
 Method ProjectManager.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam
-  
+
 ;  DbgMessage uMsg, "ProjectManager.WndProc"
   .if uMsg == WM_NCCREATE
     mov xax, lParam

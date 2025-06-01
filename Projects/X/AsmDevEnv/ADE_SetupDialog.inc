@@ -75,7 +75,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method SetupDialog.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
-  ANNOTATION use:wParam lParam
+  ANNOTATION use:lParam
 
   SetObject xsi
   LoWord(wParam)
@@ -168,7 +168,7 @@ MethodEnd
 ; Return:     eax = Brush handle that Windows uses to paint the background of the static control.
 
 Method Tab1.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
-  ANNOTATION use:wParam lParam
+  ANNOTATION use:wParam
 
   SetObject xsi
   invoke GetDlgItem, [xsi].hWnd, IDC_CONTROL

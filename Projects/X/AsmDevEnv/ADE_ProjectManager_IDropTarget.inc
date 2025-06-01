@@ -78,7 +78,7 @@ Method IDropTarget.DragOver, uses xsi, dKeyState:DWORD, Pt:POINTL, pEffect:POINT
       mov edx, [xsi].dEffect
       mov xax, TestItem.hItem
     .endif
-  .else 
+  .else
 ;    .if tvht.flags == TVHT_ABOVE
 ;      invoke SendMessage, [xsi].hTreeView, WM_VSCROLL, SB_LINEUP, 0
 ;    .elseif tvht.flags == TVHT_BELOW
@@ -93,7 +93,7 @@ Method IDropTarget.DragOver, uses xsi, dKeyState:DWORD, Pt:POINTL, pEffect:POINT
   .endif
   mov xcx, pEffect
   mov DWORD ptr [xcx], edx
-  invoke SendMessage, [xsi].hTreeView, TVM_SELECTITEM, TVGN_DROPHILITE, xax 
+  invoke SendMessage, [xsi].hTreeView, TVM_SELECTITEM, TVGN_DROPHILITE, xax
 
   mov eax, S_OK
 MethodEnd
@@ -159,7 +159,7 @@ Method IDropTarget.Drop, uses xdi xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt
           invoke SendMessage, [xsi].hTreeView, TVM_GETNEXTITEM, TVGN_PARENT, hDropOnItem
           mov hDropOnItem, xax
         .endif
-        
+
         ;Get the files and insert them in the TreeView
         mov ebx, $32($invoke(DragQueryFile, Medium.hGlobal, -1, NULL, 0))   ;Get the dropped files count
         .while ebx != 0
@@ -167,30 +167,30 @@ Method IDropTarget.Drop, uses xdi xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt
           invoke DragQueryFile, Medium.hGlobal, ebx, NULL, 0        ;Get the number of Chars
           inc eax                                                   ;Add the ZTC
           mov dStrChars, eax
-          mov pFullFileName, $invoke(StrAlloc, dStrChars)           ;Allocate memory                  
+          mov pFullFileName, $invoke(StrAlloc, dStrChars)           ;Allocate memory
           mov pRelFileName, $invoke(StrAlloc, dStrChars)            ;Allocate memory
-          mov CHR ptr [xax], 0                 
+          mov CHR ptr [xax], 0
           invoke DragQueryFile, Medium.hGlobal, ebx, pFullFileName, dStrChars   ;Get the string
           mov xcx, [xsi].pOwner
           mov xdi, [xcx].$Obj(Component).pOwner
           invoke PathRelativePathTo, pRelFileName, [xdi].$Obj(ProjectManager).pProjDirPath, \
                                      FILE_ATTRIBUTE_DIRECTORY, pFullFileName, FILE_ATTRIBUTE_NORMAL
-  
+
           ;Check if the absolute or relative file path is already contained in the project
           OCall xdi::ProjectManager.IsFileAlreadyPresent, pFullFileName
           .if eax == 0
             OCall xdi::ProjectManager.IsFileAlreadyPresent, pRelFileName
-          .endif 
+          .endif
           .if eax == FALSE
-            ;Not present => insert 
+            ;Not present => insert
             mov xdi, $MemAlloc(sizeof(PROJECTITEM))
             mov [xdi].PROJECTITEM.hEditor, 0
             mov [xdi].PROJECTITEM.dFlags, PIF_FILE
             m2m [xdi].PROJECTITEM.pFileName, pRelFileName, xax
-            invoke GetFullPathName, pFullFileName, lengthof cBuffer, addr cBuffer, addr pFilePart 
+            invoke GetFullPathName, pFullFileName, lengthof cBuffer, addr cBuffer, addr pFilePart
             invoke StrNew, pFilePart
             mov [xdi].PROJECTITEM.pDispName, xax
-    
+
             m2m TVIS.hParent, hDropOnItem, eax
             mov TVIS.hInsertAfter, TVI_SORT
             mov TVIS.item.mask_, TVIF_HANDLE or TVIF_TEXT or TVIF_IMAGE or TVIF_SELECTEDIMAGE or TVIF_PARAM
@@ -201,9 +201,9 @@ Method IDropTarget.Drop, uses xdi xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt
             mov TVIS.item.iSelectedImage, ICON_INDEX_FILE
             mov TVIS.item.lParam, xdi
             invoke SendMessage, [xsi].hTreeView, TVM_INSERTITEM, 0, addr TVIS
-            
+
             ;Expand parent
-            invoke SendMessage, [xsi].hTreeView, TVM_EXPAND, TVE_EXPAND, hDropOnItem  
+            invoke SendMessage, [xsi].hTreeView, TVM_EXPAND, TVE_EXPAND, hDropOnItem
 
             mov xax, [xsi].pOwner
             mov xcx, [xax].$Obj(Component).pOwner
