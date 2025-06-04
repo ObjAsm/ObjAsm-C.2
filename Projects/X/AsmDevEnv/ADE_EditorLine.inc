@@ -307,11 +307,12 @@ CharTable label BYTE
   db CHR_ALPHA
 CHAR_TABLE_ENTRIES = ($ - offset CharTable)/sizeof(BYTE)
 
-.code
+
 ; ==================================================================================================
 ; EditorLine implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.BufferResize
 ; Purpose:    Get more memory to allocate the char buffer.

@@ -6,20 +6,21 @@
 ; ==================================================================================================
 
 
-IDD_DLG_FILEPROPS	            	equ 4000
-IDC_STC_DISPNAME	            	equ 1001
-IDC_EDT_DISPNAME	            	equ 1002
-IDC_STC_FILENAME	            	equ 1003
-IDC_EDT_FILENAME	            	equ 1004
-IDC_BTN_SEARCHFILE	          	equ 1005
-IDC_CHK_CMD	                  	equ 1006
-IDC_BTN_OK	                  	equ 1
-IDC_BTN_CANCEL	              	equ 2
+IDD_DLG_FILEPROPS               equ 4000
+IDC_STC_DISPNAME                equ 1001
+IDC_EDT_DISPNAME                equ 1002
+IDC_STC_FILENAME                equ 1003
+IDC_EDT_FILENAME                equ 1004
+IDC_BTN_SEARCHFILE              equ 1005
+IDC_CHK_CMD                     equ 1006
+IDC_BTN_OK                      equ 1
+IDC_BTN_CANCEL                  equ 2
 
 ; ==================================================================================================
 ; FilePropsDialog implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     FilePropsDialog.CtlsGet
 ; Purpose:    Read the setting of all controls.
@@ -48,15 +49,20 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
   m2m Item.pszText, [xdi].PROJECTITEM.pDispName, xdx
   mov Item.iImage, ICON_INDEX_FILE
   mov Item.iSelectedImage, ICON_INDEX_FILE
-  mov [xdi].PROJECTITEM.dFlags, PIF_FILE
+  mov [xdi].PROJECTITEM.dType, PIT_FILE
   invoke IsDlgButtonChecked, [xsi].hWnd, IDC_CHK_CMD
   .if eax == BST_CHECKED
     mov Item.iImage, ICON_INDEX_CMD
     mov Item.iSelectedImage, ICON_INDEX_CMD
-    mov [xdi].PROJECTITEM.dFlags, PIF_CMD
+    mov [xdi].PROJECTITEM.dType, PIT_COMMAND
   .endif
   invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_SETITEM, 0, addr Item
   BitSet [xbx].$Obj(ProjectManager).dFlags, PMF_DIRTY
+  mov xbx, [xsi].pOwner
+  mov xcx, [xbx].$Obj(Application).pClientWnd
+  invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+  OCall xbx::Application.ManageGuiCmds, xax
+  
   mov eax, TRUE
 MethodEnd
 
@@ -88,7 +94,7 @@ Method FilePropsDialog.CtlsSet, uses xbx xdi xsi
   invoke SendMessage, xax, EM_SETCUEBANNER, FALSE, $OfsCStrW("Enter a file name or use the button on the right")
 
   mov eax, BST_UNCHECKED
-  .if [xdi].PROJECTITEM.dFlags == PIF_CMD
+  .if [xdi].PROJECTITEM.dType == PIT_COMMAND
     mov eax, BST_CHECKED
   .endif
   invoke CheckDlgButton, [xsi].hWnd, IDC_CHK_CMD, eax

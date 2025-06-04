@@ -10,6 +10,7 @@
 ; ActionCollection implementation 
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ActionCollection.DisposeHistory
 ; Purpose:    Dispose the Undo/Redo history.

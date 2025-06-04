@@ -10,6 +10,7 @@
 ; Application implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
@@ -122,12 +123,68 @@ MethodEnd
 ; Arguments:  Arg1: -> Ini-File Name.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+GetFileTypeArgs proc uses xsi pInput:PSTRING
+  xor ebx, ebx                                        ;On exit ebx => File Format
+  xor edi, edi                                        ;On exit edi => File Type
+  xor esi, esi
+  invoke StrLScan, pInput, ','
+  .if xax != NULL
+    lea xdi, [xax + sizeof(CHR)]
+    m2z CHR ptr [xax]
+  .endif
+  .if xdi != NULL
+    invoke StrLScan, xdi, ','
+    .if xax != NULL
+      lea xbx, [xax + sizeof(CHR)]
+      m2z CHR ptr [xax]
+    .endif
+    .if xbx != NULL
+      DoesStringMatch? [xdi], <ASM>
+      .if ZERO?
+        mov edi, ECT_ASM
+      .else
+        DoesStringMatch? [xdi], <RES>
+        .if ZERO?
+          mov edi, ECT_RES
+        .else
+          mov edi, ECT_TXT
+        .endif
+      .endif
+
+      DoesStringMatch? [xbx], <ANSI>
+      .if ZERO?
+        mov ebx, EFF_ANSI
+      .else
+        DoesStringMatch? [xbx], <UTF8>
+        .if ZERO?
+          mov ebx, EFF_UTF8
+        .else
+          DoesStringMatch? [xbx], <UTF8BOM>
+          .if ZERO?
+            mov ebx, EFF_UTF8BOM
+          .else
+            DoesStringMatch? [xbx], <UTF16BOM>
+            .if ZERO?
+              mov ebx, EFF_UTF16BOM
+            .else
+              mov ebx, EFF_UNKNOWN
+            .endif
+          .endif
+        .endif
+      .endif
+      mov esi, TRUE
+    .endif
+  .endif
+  mov eax, esi
+  ret
+GetFileTypeArgs endp
+
 Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
   local dIniFilePresent:DWORD, dIndex:DWORD, hDC:HDC
   local cFullFileName[1024]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
 
   SetObject xsi
-  invoke GetFullPathName, pIniFileName, lengthof cFullFileName - 1, addr cFullFileName, NULL
+  invoke GetFullPathName, pIniFileName, lengthof cFullFileName, addr cFullFileName, NULL
   invoke FileExist, addr cFullFileName
   mov dIniFilePresent, eax
   .if eax == FALSE
@@ -207,62 +264,20 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
     inc dIndex
     lea xdi, cItemName
     WriteF xdi, "FT¦UD", dIndex
-    invoke GetPrivateProfileString, $OfsCStr("File Types"), addr cItemName, NULL, \
+    invoke GetPrivateProfileString, addr szFileTypes, addr cItemName, NULL, \
                                     addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
     .break .if eax == 0
-    invoke StrLScan, addr cItemBuffer, ','
-    xor edi, edi
-    .if xax != NULL
-      lea xdi, [xax + sizeof(CHR)]
-      m2z CHR ptr [xax]
-    .endif
-    .if xdi != NULL
-      invoke StrLScan, xdi, ','
-      xor ebx, ebx
-      .if xax != NULL
-        lea xbx, [xax + sizeof(CHR)]
-        m2z CHR ptr [xax]
-      .endif
-      .if xbx != NULL
-        DoesStringMatch? [xdi], <ASM>
-        .if ZERO?
-          mov edi, ECT_ASM
-        .else
-          DoesStringMatch? [xdi], <RES>
-          .if ZERO?
-            mov edi, ECT_RES
-          .else
-            mov edi, ECT_TXT
-          .endif
-        .endif
-
-        DoesStringMatch? [xbx], <ANSI>
-        .if ZERO?
-          mov ebx, EFF_ANSI
-        .else
-          DoesStringMatch? [xbx], <UTF8>
-          .if ZERO?
-            mov ebx, EFF_UTF8
-          .else
-            DoesStringMatch? [xbx], <UTF8BOM>
-            .if ZERO?
-              mov ebx, EFF_UTF8BOM
-            .else
-              DoesStringMatch? [xbx], <UTF16BOM>
-              .if ZERO?
-                mov ebx, EFF_UTF16BOM
-              .else
-                mov ebx, EFF_UNKNOWN
-              .endif
-            .endif
-          .endif
-        .endif
-
-        OCall [xsi].FileTypes::FileTypeCollection.Insert, addr cItemBuffer, edi, ebx
-
-      .endif
+    invoke GetFileTypeArgs, addr cItemBuffer
+    .if eax != FALSE
+      OCall [xsi].FileTypes::FileTypeCollection.Insert, addr cItemBuffer, edi, ebx
     .endif
   .endw
+  ;Load perceived text type
+  invoke GetPrivateProfileString, addr szFileTypes, addr szPercieved, NULL, \
+                                  addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
+  invoke GetFileTypeArgs, addr cItemBuffer
+  mov [xsi].FileTypes.PerceivedTextType.dFileFormat, ebx
+  mov [xsi].FileTypes.PerceivedTextType.dContentType, edi
 
   ;Load Editor resources
   mov hDC, $invoke(GetWindowDC, [xsi].hWnd)
@@ -340,6 +355,58 @@ Method Application.Done, uses xsi
   Destroy [xsi].pClientWnd
 
   ACall xsi.Done
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Execute
+; Purpose:    Excecute a command.
+; Arguments:  Arg1 -> Command string.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+;             ecx = Error code.
+
+Method Application.Execute, uses xbx xdi xsi, pCommand:PSTRING
+  local dRetValue:DWORD, dErrCode:DWORD, SEI:SHELLEXECUTEINFO
+  
+  SetObject xsi
+  mov dRetValue, FALSE
+  mov dErrCode, 0
+  invoke ExpandEnvironmentStrings, pCommand, NULL, 0
+  mov edi, eax
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    add eax, eax
+  endif
+  mov xbx, $MemAlloc(eax)
+  .if xax != NULL
+    invoke ExpandEnvironmentStrings, pCommand, xbx, edi
+    mov SEI.cbSize, sizeof(SEI)
+    mov SEI.fMask, SEE_MASK_DEFAULT
+    m2m SEI.hwnd, [xsi].hWnd, xax
+    c2m SEI.lpVerb, $OfsCStr("open"), xax 
+    mov SEI.lpFile, xbx
+    mov SEI.lpParameters, NULL
+    mov SEI.lpDirectory, NULL
+    mov SEI.nShow, SW_SHOW
+    mov SEI.hInstApp, 0
+    mov SEI.lpIDList, NULL
+    mov SEI.lpClass, NULL
+    mov SEI.hkeyClass, 0
+    mov SEI.dwHotKey, 0
+    mov SEI.hIcon, 0
+    mov SEI.hMonitor, 0
+    mov SEI.hProcess, 0
+    invoke ShellExecuteEx, addr SEI
+    .if eax == FALSE
+      invoke GetLastError
+      mov dErrCode, eax
+    .else
+      mov dRetValue, TRUE
+    .endif
+    MemFree xbx
+  .else
+    mov dErrCode, ERROR_NOT_ENOUGH_MEMORY
+  .endif
+  mov eax, dRetValue
+  mov ecx, dErrCode
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -518,28 +585,57 @@ Method Application.Init, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     Application.Launch
-; Purpose:    Try opening an editor. If that fails, try opening the file using an external
-;             application.
+; Method:     Application.LaunchEditor
+; Purpose:    Try opening an editor.
 ; Arguments:  Arg1: -> File name.
-; Return:     Nothing.
+; Return:     xax -> New Editor or NULL if failed.
 
-Method Application.Launch, uses xdi xsi, pFileName:PSTRING
+Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING
+  local cMessage[1024]:CHR, cBuffer[1024]:CHR, pExpandedFileName:PSTRING, pFullFileName:PSTRING
+
   SetObject xsi
-  mov xdi, $New(Editor)
-  OCall [xsi].FileTypes::FileTypeCollection.GetContentType, pFileName
-  .if eax == ECT_ASM
-    lea xax, [xsi].AsmEditorResources
-  .elseif eax == ECT_RES
-    lea xax, [xsi].ResEditorResources
-  .else
-    lea xax, [xsi].TxtEditorResources
-  .endif
-  OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pFileName
-  .if eax == FALSE
-    Kill xdi
-  .else
-    invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+
+  invoke ExpandEnvironmentStrings, pFileName, NULL, 0
+  mov edi, eax
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    add eax, eax
+  endif
+  mov pExpandedFileName, $MemAlloc(eax)
+  .if xax != NULL
+    invoke ExpandEnvironmentStrings, pFileName, pExpandedFileName, edi
+    OCall [xsi].FileTypes::FileTypeCollection.GetFileTypeInfo, pFileName
+    .if xax != NULL
+      mov xbx, xax
+      invoke GetFullPathName, pExpandedFileName, lengthof(cBuffer), addr cBuffer, NULL
+      New Editor
+      .if xax != NULL
+        mov xdi, xax
+        mov ecx, [xbx].FILETYPEINFO.dContentType
+        .if ecx == ECT_ASM
+          lea xax, [xsi].AsmEditorResources
+        .elseif ecx == ECT_RES
+          lea xax, [xsi].ResEditorResources
+        .else
+          lea xax, [xsi].TxtEditorResources
+        .endif
+        OCall xdi::Editor.Init, [xsi].pClientWnd, xax, addr cBuffer
+        .if eax != FALSE
+          invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+          mov xax, xdi
+        .else
+          Kill xdi
+          lea xdi, cMessage
+          lea xbx, cBuffer
+          WriteF xdi, "The file \´¦ST\´ can not be opened.", xbx
+          invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+        .endif
+      .endif
+      ExitMethod
+    .endif
+    lea xdi, cBuffer
+    WriteF xdi, "The file type from \´¦ST\´ is unknown.", pFileName
+    invoke MessageBox, [xsi].hWnd, addr cBuffer, addr cError, MB_OK or MB_ICONERROR
+    xor eax, eax
   .endif
 MethodEnd
 
@@ -635,13 +731,14 @@ CheckEditorDirty endp
 Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   local dApplicationDirty:DWORD, dActiveEditorDirty:DWORD, dHasMDIChildren:DWORD
 
+;  DbgText "Application.ManageGuiCmds"
   SetObject xsi
   mov dHasMDIChildren, 0
 
   ;Editor menu and toolbar management
   mov xax, hActiveWnd
   .if xax != 0
-    invoke SendMessage, hActiveWnd, WM_GETOBJECTINSTANCE, 0, 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
   .endif
   .if xax != NULL
     mov xdi, xax
@@ -899,15 +996,14 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local pIFODlg:POINTER, pIFileDialog2:POINTER
   local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER
   local ProjPropsDlg:$Obj(ProjPropsDialog), FilePropsDlg:$Obj(FilePropsDialog)
-  local PageSetup:PAGESETUPDLG
-  local Item:TVITEM
+  local PageSetup:PAGESETUPDLG, Item:TVITEM
 
   ANNOTATION use:lParam
 
   SetObject xsi
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
-  DbgDec eax
+;  DbgDec eax
   .if ax == IDM_FILE_NEW                                ;Create a new default editor instance
     mov xdi, $New(Editor)
     .if xdi != NULL
@@ -919,10 +1015,10 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         lea xbx, [xsi].AsmEditorResources
       .endif
       OCall xdi::Editor.Init, [xsi].pClientWnd, xbx, NULL
-      .if eax == FALSE
-        Kill xdi
-      .else
+      .if eax != FALSE
         invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+      .else
+        Kill xdi
       .endif
     .endif
     xor eax, eax
@@ -930,10 +1026,10 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov xdi, $New(Editor)
     .if xdi != NULL
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].AsmEditorResources, NULL
-      .if eax == FALSE
-        Kill xdi
-      .else
+      .if eax != FALSE
         invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+      .else
+        Kill xdi
       .endif
     .endif
     xor eax, eax
@@ -941,10 +1037,10 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov xdi, $New(Editor)
     .if xdi != NULL
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].ResEditorResources, NULL
-      .if eax == FALSE
-        Kill xdi
-      .else
+      .if eax != FALSE
         invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+      .else
+        Kill xdi
       .endif
     .endif
     xor eax, eax
@@ -952,10 +1048,10 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov xdi, $New(Editor)
     .if xdi != NULL
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].TxtEditorResources, NULL
-      .if eax == FALSE
-        Kill xdi
-      .else
+      .if eax != FALSE
         invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+      .else
+        Kill xdi
       .endif
     .endif
     xor eax, eax
@@ -984,7 +1080,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .while ebx < dCount
           ICall pISIArr::IShellItemArray.GetItemAt, ebx, addr pIShellItem
           ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-          OCall xsi.Launch, pDisplayName
+          OCall xsi.LaunchEditor, pDisplayName
           invoke CoTaskMemFree, pDisplayName
           ICall pIShellItem::IShellItem.Release
           inc ebx
@@ -1259,7 +1355,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_PROJ_NEWGROUP
     lea xbx, [xsi].ProjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
-    OCall xbx::ProjectManager.ProjItemInsert, xax, TVI_FIRST, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
+    OCall xbx::ProjectManager.ProjItemInsert, xax, TVI_FIRST, $OfsCStr("New Group"), NULL, PIT_GROUP, 3, 0
     xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_DELETE
     lea xbx, [xsi].ProjMgr
@@ -1271,7 +1367,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
     mov xdi, xax
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
-    OCall xbx::ProjectManager.ProjItemInsert, xdi, xax, $OfsCStr("New Group"), NULL, PIF_GROUP, 3, 0
+    OCall xbx::ProjectManager.ProjItemInsert, xdi, xax, $OfsCStr("New Group"), NULL, PIT_GROUP, 3, 0
     xor eax, eax
   .elseif ax == IDM_PROJ_GROUP_EDIT
     lea xbx, [xsi].ProjMgr
@@ -1297,7 +1393,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xax, Item.lParam
-    OCall xsi.Launch, [xax].PROJECTITEM.pFileName
+    OCall xsi.LaunchEditor, [xax].PROJECTITEM.pFileName
     xor eax, eax
   .elseif ax == IDM_PROJ_FILE_REMOVE
     lea xbx, [xsi].ProjMgr
@@ -1313,7 +1409,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xax, Item.lParam
-    invoke ShellExecute, [xsi].hWnd, NULL, [xax].PROJECTITEM.pCommand, NULL, NULL, SW_SHOW
+    OCall xsi.Execute, [xax].PROJECTITEM.pCommand
   .elseif ax == IDM_PROJ_CMD_REMOVE
     lea xbx, [xsi].ProjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0

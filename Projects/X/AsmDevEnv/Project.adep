@@ -23,11 +23,11 @@
     },
     {
       "Name":"Assembly",
-      "Expanded":false
+      "Expanded":true
     },
     {
       "Name":"Macros",
-      "Expanded":false
+      "Expanded":true
     },
     {
       "Name":"Include",
@@ -35,7 +35,7 @@
     },
     {
       "Name":"Objects",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Miscellaneous",
@@ -67,7 +67,7 @@
     },
     {
       "DispName":"Assemble",
-      "FileName":"%ObjAsm%\\Build\\RA_ASM.cmd",
+      "FileName":"%OBJASM_PATH%\\Build\\RA_ASM.cmd",
       "Type":3,
       "Group":2
     },
@@ -90,8 +90,8 @@
       "Group":2
     },
     {
-      "DispName":"ADE_FilePropsDialog.inc",
-      "FileName":".\\ADE_FilePropsDialog.inc",
+      "DispName":"ADE.ini",
+      "FileName":"D:\\ObjAsm\\Projects\\X\\AsmDevEnv\\ADE.ini",
       "Type":2,
       "Group":3
     },
@@ -100,6 +100,168 @@
       "FileName":"..\\AsmDevEnv - Linked List\\ADE.asm",
       "Type":2,
       "Group":4
+    },
+    {
+      "DispName":"AStrings.inc",
+      "FileName":"%OBJASM_PATH%\\Code\\Macros\\AStrings.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"BStrings.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\BStrings.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"CDLL.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\CDLL.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"ConstDiv.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\ConstDiv.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Debug.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Debug.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"DebugShare.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\DebugShare.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"DlgTmpl.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\DlgTmpl.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Exception32.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Exception32.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Exception64.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Exception64.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"fMath.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\fMath.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"LDLL.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\LDLL.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"LSLL.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\LSLL.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"MemBlock.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\MemBlock.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Memory.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Memory.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Model.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Model.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Objects.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Objects.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"qMath.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\qMath.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"qMathData.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\qMathData.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"QuadWord.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\QuadWord.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"SDLL.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\SDLL.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"SIMD_Math.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\SIMD_Math.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"Strings.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\Strings.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"System.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\System.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"UefiMac.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\UefiMac.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"WinHelpers.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\WinHelpers.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"WStrings.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\WStrings.inc",
+      "Type":2,
+      "Group":5
+    },
+    {
+      "DispName":"xLSLL.inc",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Code\\Macros\\xLSLL.inc",
+      "Type":2,
+      "Group":5
     },
     {
       "DispName":"ADE_About.inc",
@@ -182,6 +344,12 @@
     {
       "DispName":"ADE_FeatureList.txt",
       "FileName":".\\ADE_FeatureList.txt",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_FilePropsDialog.inc",
+      "FileName":".\\ADE_FilePropsDialog.inc",
       "Type":2,
       "Group":7
     },
@@ -296,6 +464,12 @@
     {
       "DispName":"ADE.rc",
       "FileName":".\\ADE.rc",
+      "Type":2,
+      "Group":9
+    },
+    {
+      "DispName":"Project.css",
+      "FileName":"C:\\Users\\frge\\OneDrive - Metall Zug AG\\_MySoftware_\\ObjAsm\\Projects\\X\\AsmDevEnv\\Project.css",
       "Type":2,
       "Group":9
     }

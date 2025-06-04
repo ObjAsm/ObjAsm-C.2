@@ -18,6 +18,7 @@ EDF_CARET_LOCKED            equ   BIT04
 ; Editor implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.ClpBrdDelete
 ; Purpose:    Clipboard delete opration.
@@ -834,11 +835,13 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
   m2m dLineTermination, [xbx].$Obj(EditorResources).dLineTermination, eax
   mov xax, [xsi].pOwner
   mov xdi, [xax].$Obj(ClientWnd).pOwner
-  OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetContentType, pFullFileName
-  mov [xsi].dContentType, eax
-  OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetFileFormat, pFullFileName
-  mov [xsi].dFileFormat, eax
-  mov dFileFormat, eax
+  OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetFileTypeInfo, pFullFileName
+  .if xax == NULL
+    ExitMethod
+  .endif
+  m2m [xsi].FileTypeInfo.dContentType, [xax].FILETYPEINFO.dContentType, edx
+  m2m [xsi].FileTypeInfo.dFileFormat, [xax].FILETYPEINFO.dFileFormat, ecx
+  mov dFileFormat, ecx
   invoke LoadCursor, 0, IDC_WAIT
   invoke SetCursor, xax
   invoke CreateFileW, pFullFileName, GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, \
@@ -876,13 +879,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
         .else
           .if dFileFormat == EFF_UNKNOWN
             ;We don't know what it is => try to delegate it to the OS
-            invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), pFullFileName, NULL, NULL, SW_SHOWNORMAL
-            .if SDWORD ptr eax <= 32                    ;Error occured?
-              lea xbx, cMessage
-              mov edi, eax
-              WriteF xbx, "The file\n\´¦SU\´ can not be opened\:\nError ¦SD", pFullFileName, edi
-              invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
-            .endif
+            OCall xdi::Application.Execute, pFullFileName
             jmp @@Exit
           .elseif dFileFormat == EFF_UTF8BOM
             lea xbx, cMessage
@@ -1325,13 +1322,13 @@ Method Editor.SaveAs, uses xbx xsi
       ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
       mov xcx, [xsi].pOwner                             ;ClientWnd
       mov xax, [xcx].$Obj(ClientWnd).pOwner
-      OCall [xax].$Obj(Application).FileTypes::FileTypeCollection.GetFileFormat, pDisplayName
-      .if eax == EFF_UNKNOWN
+      OCall [xax].$Obj(Application).FileTypes::FileTypeCollection.GetFileTypeInfo, pDisplayName
+      .if xax == NULL
         lea xbx, cMessage
         WriteF xbx, "Unknown format for file\n\´¦SU\´ \:\n\nChoose a known file extension.", pDisplayName
         invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
       .else
-        mov [xsi].dFileFormat, eax
+        m2m [xsi].FileTypeInfo.dFileFormat, [xax].FILETYPEINFO.dFileFormat, ecx
         BitSet [xsi].dFlags, EDF_DIRTY                  ;Force save operation
         OCall xsi.SaveTo, pDisplayName
         .if eax != FALSE
@@ -1369,10 +1366,10 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
         mov hFile, xax
 
         ;Write the BOM if required
-        .if [xsi].dFileFormat == EFF_UTF8BOM
+        .if [xsi].FileTypeInfo.dFileFormat == EFF_UTF8BOM
           mov DWORD ptr bBOM, 0BFBBEFh                  ;EF BB BF ...
           invoke WriteFile, hFile, addr bBOM, 3, xdi, NULL
-        .elseif [xsi].dFileFormat == EFF_UTF16BOM
+        .elseif [xsi].FileTypeInfo.dFileFormat == EFF_UTF16BOM
           mov DWORD ptr bBOM, 0FEFFh                    ;FF FE ...
           invoke WriteFile, hFile, addr bBOM, 2, xdi, NULL
         .endif
@@ -1402,12 +1399,12 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
             xor eax, eax
             .if [xbx].$Obj(EditorLine).pBuffer != NULL
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-              .if [xsi].dFileFormat == EFF_ANSI
+              .if [xsi].FileTypeInfo.dFileFormat == EFF_ANSI
                 invoke WideCharToMultiByte, CP_ACP, 0, [xbx].$Obj(EditorLine).pBuffer, \
                                             [xbx].$Obj(EditorLine).dLength, \
                                             pMemBuffer, dMemBufferSize, NULL, NULL
                 invoke WriteFile, hFile, pMemBuffer, eax, xdi, NULL
-              .elseif [xsi].dFileFormat == EFF_UTF16BOM
+              .elseif [xsi].FileTypeInfo.dFileFormat == EFF_UTF16BOM
                 mov ecx, [xbx].$Obj(EditorLine).dLength
                 lea eax, [ecx * sizeof(CHR)]
                 invoke WriteFile, hFile, [xbx].$Obj(EditorLine).pBuffer, eax, xdi, NULL
@@ -1438,7 +1435,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
             mov eax, [xcx].$Obj(EditorResources).dLineTermination
             mov xcx, pMemBuffer
             .if eax == ELT_LF
-              .if [xsi].dFileFormat == EFF_UTF16BOM
+              .if [xsi].FileTypeInfo.dFileFormat == EFF_UTF16BOM
                 mov xcx, pMemBuffer
                 mov CHRW ptr [xcx], LF                  ;Add LF to the end
                 invoke WriteFile, hFile, pMemBuffer, 2, xdi, NULL
@@ -1448,7 +1445,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
                 invoke WriteFile, hFile, pMemBuffer, 1, xdi, NULL
               .endif
             .elseif eax == ELT_NULL
-              .if [xsi].dFileFormat == EFF_UTF16BOM
+              .if [xsi].FileTypeInfo.dFileFormat == EFF_UTF16BOM
                 mov xcx, pMemBuffer
                 mov DCHRW ptr [xcx], 0                  ;Add NULL to the end
                 invoke WriteFile, hFile, pMemBuffer, 2, xdi, NULL
@@ -1458,7 +1455,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
                 invoke WriteFile, hFile, pMemBuffer, 1, xdi, NULL
               .endif
             .else
-              .if [xsi].dFileFormat == EFF_UTF16BOM
+              .if [xsi].FileTypeInfo.dFileFormat == EFF_UTF16BOM
                 mov xcx, pMemBuffer
                 mov DCHRW ptr [xcx], LF*256*256 + CR    ;Add CRLF to the end
                 invoke WriteFile, hFile, pMemBuffer, 4, xdi, NULL
@@ -2217,7 +2214,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   mov xbx, [xcx].$Obj(ClientWnd).pOwner                 ;xbx -> Application
 
   lea xdi, cTextBuffer
-  mov eax, [xsi].dContentType
+  mov eax, [xsi].FileTypeInfo.dContentType
   .if eax == ECT_ASM
     c2m pContentType, $OfsCStr("MASM"), ecx
   .elseif eax == ECT_RES
@@ -2229,7 +2226,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 3, addr cTextBuffer, SBT_SUNKEN
 
   lea xdi, cTextBuffer
-  mov eax, [xsi].dFileFormat
+  mov eax, [xsi].FileTypeInfo.dFileFormat
   .if eax == EFF_ANSI
     c2m pFileFormat, $OfsCStr("ANSI"), ecx
   .elseif eax == EFF_UTF8

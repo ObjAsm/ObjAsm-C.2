@@ -27,6 +27,11 @@ ProjTreeView DEF_TREEVIEW {100, PROJTVSTYLE, 0, NULL, {<0,0,0,0>}}
 ;  TBBUTTON {IDB_PROJ_SAVE,  IDM_PROJ_SAVE,  TBSTATE_ENABLED, TBSTYLE_BUTTON}
 ;  TBBUTTON {IDB_PROJ_CLOSE, IDM_PROJ_CLOSE, TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
+
+; ==================================================================================================
+; ProjectManager implementation
+; ==================================================================================================
+
 .code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectManager.ConfigLoadFrom
@@ -91,7 +96,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     mov xdx, [xax].JSON_PROPERTY.pValue
   .endif
   invoke StrReplace, addr [xsi].pProjName, xdx
-  OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIF_PROJ, 3, 0
+  OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIT_PROJECT, 3, 0
   mov hRootItem, xax
 
   OCall xbx::Json.GetProperty, pParent, addr szPath
@@ -119,7 +124,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     OCall xbx::Json.GetArrayItem, pGroups, dIndex
     .break .if xax == NULL
     OCall xbx::Json.GetProperty, xax, addr szName
-    OCall xsi.ProjItemInsert, hRootItem, TVI_LAST, [xax].JSON_PROPERTY.pValue, NULL, PIF_GROUP, 3, 0
+    OCall xsi.ProjItemInsert, hRootItem, TVI_LAST, [xax].JSON_PROPERTY.pValue, NULL, PIT_GROUP, 3, 0
     inc dIndex
   .endw
 
@@ -146,7 +151,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     mov [xdi].PROJECTITEM.pFileName, xax
     OCall xbx::Json.GetProperty, pChild, addr szType
     invoke dec2dword, [xax].JSON_PROPERTY.pValue
-    mov [xdi].PROJECTITEM.dFlags, eax
+    mov [xdi].PROJECTITEM.dType, eax
     OCall xbx::Json.GetProperty, pChild, addr szGroup
     invoke dec2dword, [xax].JSON_PROPERTY.pValue
     OCall xsi.GetGroupByIndex, eax                      ;xax = HTREEITEM
@@ -158,7 +163,7 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     m2m TVI.item.pszText, [xdi].PROJECTITEM.pDispName, xdx
     mov TVI.item.iImage, ICON_INDEX_FILE
     mov TVI.item.iSelectedImage, ICON_INDEX_FILE
-    .if [xdi].PROJECTITEM.dFlags == PIF_CMD
+    .if [xdi].PROJECTITEM.dType == PIT_COMMAND
       mov TVI.item.iImage, ICON_INDEX_CMD
       mov TVI.item.iSelectedImage, ICON_INDEX_CMD
     .endif
@@ -195,6 +200,11 @@ Method ProjectManager.ConfigLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   OCall DskStream::DiskStream.Done
 
   BitClr [xsi].dFlags, PMF_EMPTY or PMF_DIRTY
+  mov xbx, [xsi].pOwner
+  mov xcx, [xbx].$Obj(Application).pClientWnd
+  invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+  OCall xbx::Application.ManageGuiCmds, xax
+  
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -225,7 +235,7 @@ SaveGroups proc uses xbx hTreeView:HWND, hParent:HTREEITEM, pJson:$ObjPtr(Json),
     mov Item.hItem, xax
     invoke SendMessage, hTreeView, TVM_GETITEM, 0, addr Item
     mov xbx, Item.lParam
-    .if [xbx].PROJECTITEM.dFlags == PIF_GROUP
+    .if [xbx].PROJECTITEM.dType == PIT_GROUP
       lea xax, JSON_FALSE
       .ifBitSet Item.state, TVIS_EXPANDED
         lea xax, JSON_TRUE
@@ -249,7 +259,7 @@ SaveFilesInBranch proc uses xbx hTreeView:HWND, hParent:HTREEITEM, pJson:$ObjPtr
     mov Item.hItem, xax
     invoke SendMessage, hTreeView, TVM_GETITEM, 0, addr Item
     mov xbx, Item.lParam
-    .if [xbx].PROJECTITEM.dFlags == PIF_GROUP
+    .if [xbx].PROJECTITEM.dType == PIT_GROUP
       mov xax, pGroupCounter
       inc DWORD ptr [xax]
       invoke SaveFilesInBranch, hTreeView, Item.hItem, pJson, pParent, pGroupCounter
@@ -257,7 +267,7 @@ SaveFilesInBranch proc uses xbx hTreeView:HWND, hParent:HTREEITEM, pJson:$ObjPtr
       mov pChild, $OCall(pJson::Json.AddObject, pParent, NULL)
       OCall pJson::Json.AddData, pChild, addr szDispName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pDispName
       OCall pJson::Json.AddData, pChild, addr szFileName, JSON_TYPE_STRING, [xbx].PROJECTITEM.pFileName
-      invoke dword2dec, addr cBuffer, [xbx].PROJECTITEM.dFlags
+      invoke dword2dec, addr cBuffer, [xbx].PROJECTITEM.dType
       OCall pJson::Json.AddData, pChild, addr szType, JSON_TYPE_NUMBER, addr cBuffer
       mov xax, pGroupCounter
       invoke dword2dec, addr cBuffer, DWORD ptr [xax]
@@ -348,7 +358,7 @@ Method ProjectManager.CreateNewProject, uses xbx xdi xsi
     .endif
     mov [xsi].pProjName, $invoke(StrNew, xax)
   .endif
-  OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIF_PROJ, 3, 0
+  OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIT_PROJECT, 3, 0
   mov hRootItem, xax
 
   ;Create the file name
@@ -369,7 +379,7 @@ Method ProjectManager.CreateNewProject, uses xbx xdi xsi
     inc ebx
     .break .if ebx >= [xsi].DefaultGroups.dCount
     OCall [xsi].DefaultGroups::%StrCollection.ItemAt, ebx
-    OCall xsi.ProjItemInsert, hRootItem, TVI_LAST, xax, NULL, PIF_GROUP, 3, 0
+    OCall xsi.ProjItemInsert, hRootItem, TVI_LAST, xax, NULL, PIT_GROUP, 3, 0
   .endw
 
   ;Expand all items
@@ -410,7 +420,7 @@ MethodEnd
 ; Method:     ProjectManager.IsFileAlreadyPresent
 ; Purpose:    Check if the file is already present.
 ; Arguments:  Arg1: -> Full file name.
-; Return:     eax: HTREEITEM if it is present, otherwise 0.
+; Return:     xax: HTREEITEM if it is present, otherwise 0.
 
 SearchInBranch proc hTreeView:HWND, hParent:HTREEITEM, pFullFileName:PSTRING
   local Item:TVITEM
@@ -422,11 +432,11 @@ SearchInBranch proc hTreeView:HWND, hParent:HTREEITEM, pFullFileName:PSTRING
     invoke SendMessage, hTreeView, TVM_GETITEM, 0, addr Item
     .if eax != FALSE
       mov xax, Item.lParam
-      .if [xax].PROJECTITEM.dFlags == PIF_GROUP
+      .if [xax].PROJECTITEM.dType == PIT_GROUP
         invoke SearchInBranch, hTreeView, Item.hItem, pFullFileName
         .break .if xax != 0
       .else
-        .if [xax].PROJECTITEM.dFlags == PIF_FILE
+        .if [xax].PROJECTITEM.dType == PIT_FILE
           invoke StrComp, [xax].PROJECTITEM.pFileName, pFullFileName
           .if eax == 0
             mov xax, Item.hItem
@@ -466,6 +476,89 @@ Method ProjectManager.GetGroupByIndex, uses xbx xsi, dIndex:DWORD
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, xax
     dec ebx
   .endw
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ProjectManager.GroupsCollapse
+; Purpose:    Collapses the TreeView to only show the groups.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method ProjectManager.GroupsCollapse, uses xbx xdi xsi
+  local Item:TVITEM, hGroup:HTREEITEM, hProject:HTREEITEM
+
+  SetObject xsi
+  
+  ;Store the first visible item in the root item 
+  mov hProject, $invoke(SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0)
+  mov Item.hItem, xax
+  mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+  invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+  invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_FIRSTVISIBLE, 0
+  mov xcx, Item.lParam
+  mov [xcx].PROJECTITEM.hVisible, xax  
+  
+  ;Store expansion information amd collapse groups
+  invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CHILD, hProject
+  .while xax != 0
+    mov hGroup, xax
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_STATE or TVIF_PARAM
+    mov Item.stateMask, TVIS_EXPANDED
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.lParam
+    .ifBitSet Item.state, TVIS_EXPANDED
+      BitSet [xax].PROJECTITEM.dFlags, PIF_EXPANDED
+      invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_COLLAPSE, hGroup
+    .else
+      BitClr [xax].PROJECTITEM.dFlags, PIF_EXPANDED
+    .endif
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, hGroup
+  .endw
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ProjectManager.GroupsExpandRestore
+; Purpose:    Restore each group to its original state before the GroupsCollapse invocation.
+; Arguments:  Arg1: HTREEITEM of the item we want to show. If zero, the original item before the 
+;             GroupsCollapse invocation is retored.
+; Return:     Nothing.
+
+Method ProjectManager.GroupsExpandRestore, uses xbx xdi xsi, hFirstVisible:HTREEITEM
+  local Item:TVITEM, hGroup:HTREEITEM, hProject:HTREEITEM
+
+  SetObject xsi
+  ;Restore group expansion
+  invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
+  invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CHILD, xax
+  .while xax != 0
+    mov hGroup, xax
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xcx, Item.lParam
+    .ifBitSet [xcx].PROJECTITEM.dFlags, PIF_EXPANDED
+      invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, hGroup
+    .endif
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, hGroup
+  .endw
+
+  ;Restore first visible item
+  mov xax, hFirstVisible 
+  .if xax != 0
+    ;Expand the parent
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, hFirstVisible
+    invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, xax
+    ;Make it visible
+    invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_FIRSTVISIBLE, hFirstVisible
+  .else
+    mov hProject, $invoke(SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0)
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.lParam
+    invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_FIRSTVISIBLE, [xax].PROJECTITEM.hVisible
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -519,11 +612,11 @@ Method ProjectManager.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xbx, Item.lParam
     mov hContextMenu, $invoke(LoadMenu, hInstance, $OfsCStr("CONTEXTMENU_PROJECT"))
-    .if [xbx].PROJECTITEM.dFlags == PIF_GROUP
+    .if [xbx].PROJECTITEM.dType == PIT_GROUP
       mov edx, 1
-    .elseif [xbx].PROJECTITEM.dFlags == PIF_FILE
+    .elseif [xbx].PROJECTITEM.dType == PIT_FILE
       mov edx, 2
-    .elseif [xbx].PROJECTITEM.dFlags == PIF_CMD
+    .elseif [xbx].PROJECTITEM.dType == PIT_COMMAND
       mov edx, 3
     .else
       xor edx, edx
@@ -588,8 +681,8 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
       mov DropOnItem.mask_, TVIF_HANDLE or TVIF_PARAM
       invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr DropOnItem
       mov xbx, DropOnItem.lParam
-      .if [xbx].PROJECTITEM.dFlags != PIF_PROJ          ;Don't drop on the root
-        .if [xbx].PROJECTITEM.dFlags != PIF_GROUP
+      .if [xbx].PROJECTITEM.dType != PIT_PROJECT          ;Don't drop on the root
+        .if [xbx].PROJECTITEM.dType != PIT_GROUP
           invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, hDropOnItem
           mov hDropOnItem, xax
         .endif
@@ -601,7 +694,7 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
         mov xbx, DragSrcItem.lParam
         OCall xsi.ProjItemInsert, hDropOnItem, TVI_SORT, \
                                   [xbx].PROJECTITEM.pDispName, [xbx].PROJECTITEM.pFileName, \
-                                  [xbx].PROJECTITEM.dFlags, \
+                                  [xbx].PROJECTITEM.dType, \
                                   DragSrcItem.iImage, \
                                   [xbx].PROJECTITEM.hEditor
         ;Delete old item
@@ -636,28 +729,37 @@ Method ProjectManager.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  DbgText "ProjectManager.OnMouseMove"
   SetObject xsi
   .if [xsi].dDragging != FALSE
-    PntS2Pnt Pnt, lParam
-    invoke ClientToScreen, [xsi].hWnd, addr Pnt
-    invoke ScreenToClient, [xsi].TView.hWnd, addr Pnt
-    invoke ImageList_DragMove, Pnt.x, Pnt.y
-    ;Turn the dragged image off so the background can be refreshed.
-    invoke ImageList_DragShowNolock, FALSE
-    ;Find out if the cursor is on the item. If it is, highlight the item as a drop target.
-    s2s POINT ptr tvht.pt, POINT ptr Pnt.x, xax, xdx
-    invoke SendMessage, [xsi].TView.hWnd, TVM_HITTEST, 0, addr tvht
-    .if xax != 0
-      invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, tvht.hItem  ;Draw
-    .elseif tvht.flags == TVHT_ABOVE
-      invoke SendMessage, [xsi].TView.hWnd, WM_VSCROLL, SB_LINEUP, 0
-    .elseif tvht.flags == TVHT_BELOW
-      invoke SendMessage, [xsi].TView.hWnd, WM_VSCROLL, SB_LINEDOWN, 0
-    .elseif tvht.flags == TVHT_TOLEFT
-      invoke SendMessage, [xsi].TView.hWnd, WM_HSCROLL, SB_LINELEFT, 0
-    .elseif tvht.flags == TVHT_TORIGHT
-      invoke SendMessage, [xsi].TView.hWnd, WM_HSCROLL, SB_LINERIGHT, 0
+    invoke GetKeyState, VK_ESCAPE
+    .ifBitSet eax, BIT07
+      invoke ImageList_EndDrag
+      invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, 0    ;Remove Hilite
+      invoke ReleaseCapture
+      invoke ShowCursor, TRUE
+      mov [xsi].dDragging, FALSE
+    .else
+      PntS2Pnt Pnt, lParam
+      invoke ClientToScreen, [xsi].hWnd, addr Pnt
+      invoke ScreenToClient, [xsi].TView.hWnd, addr Pnt
+      invoke ImageList_DragMove, Pnt.x, Pnt.y
+      ;Turn the dragged image off so the background can be refreshed.
+      invoke ImageList_DragShowNolock, FALSE
+      ;Find out if the cursor is on the item. If it is, highlight the item as a drop target.
+      s2s POINT ptr tvht.pt, POINT ptr Pnt.x, xax, xdx
+      invoke SendMessage, [xsi].TView.hWnd, TVM_HITTEST, 0, addr tvht
+      .if xax != 0
+        invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, tvht.hItem  ;Draw
+      .elseif tvht.flags == TVHT_ABOVE
+        invoke SendMessage, [xsi].TView.hWnd, WM_VSCROLL, SB_LINEUP, 0
+      .elseif tvht.flags == TVHT_BELOW
+        invoke SendMessage, [xsi].TView.hWnd, WM_VSCROLL, SB_LINEDOWN, 0
+      .elseif tvht.flags == TVHT_TOLEFT
+        invoke SendMessage, [xsi].TView.hWnd, WM_HSCROLL, SB_LINELEFT, 0
+      .elseif tvht.flags == TVHT_TORIGHT
+        invoke SendMessage, [xsi].TView.hWnd, WM_HSCROLL, SB_LINERIGHT, 0
+      .endif
+      ;Turn the dragged image on again
+      invoke ImageList_DragShowNolock, TRUE
     .endif
-    ;Turn the dragged image on again
-    invoke ImageList_DragShowNolock, TRUE
   .endif
   xor eax, eax
 MethodEnd
@@ -671,20 +773,18 @@ MethodEnd
 ; Link:       https://learn.microsoft.com/en-us/windows/win32/controls/drag-a-tree-view-item
 
 Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local hImgList:HIMAGELIST, Item:TVITEM, pEditor:$ObjPtr(Editor), cBuffer[1024]:CHR
+  local hImgList:HIMAGELIST, Item:TVITEM, cBuffer[1024]:CHR
 
 ;  DbgText "ProjectManager.OnNotify"
   SetObject xsi
   mov xbx, lParam
-;  DbgDec [xbx].NMHDR.code
   .if [xbx].NMHDR.code == TVN_BEGINDRAG
-;    invoke SetFocus, [xsi].hWnd                         ;Get keybort input (ESC notification)
     m2m Item.hItem, [xbx].NMTREEVIEW.itemNew.hItem, xax
     mov Item.mask_, TVIF_PARAM
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
     .if eax != FALSE
       mov xcx, Item.lParam
-      .if [xcx].PROJECTITEM.dFlags == PIF_FILE || [xcx].PROJECTITEM.dFlags == PIF_CMD
+      .if [xcx].PROJECTITEM.dType == PIT_FILE || [xcx].PROJECTITEM.dType == PIT_COMMAND
         ;Tell the tree-view control to create an image to use for dragging.
         mrm [xsi].hDragSrcItem, [xbx].NMTREEVIEW.itemNew.hItem, xax
         invoke SendMessage, [xsi].TView.hWnd, TVM_CREATEDRAGIMAGE, 0, xax
@@ -702,8 +802,11 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif [xbx].NMHDR.code == TVN_DELETEITEM
     mov xbx, [xbx].NMTREEVIEW.itemOld.lParam
-    invoke StrDispose, [xbx].PROJECTITEM.pDispName
-    invoke StrDispose, [xbx].PROJECTITEM.pFileName
+    mov ecx, [xbx].PROJECTITEM.dType
+    .if ecx == PIT_FILE || ecx == PIT_COMMAND 
+      invoke StrDispose, [xbx].PROJECTITEM.pDispName
+      invoke StrDispose, [xbx].PROJECTITEM.pFileName
+    .endif
     MemFree xbx
 
   .elseif [xbx].NMHDR.code == NM_DBLCLK
@@ -716,7 +819,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
         .if eax != FALSE
           mov xbx, Item.lParam
-          .if [xbx].PROJECTITEM.dFlags == PIF_FILE
+          .if [xbx].PROJECTITEM.dType == PIT_FILE
             mov xdi, [xsi].pOwner                         ;xdi -> Application
             .if [xbx].PROJECTITEM.hEditor != 0
               mov xax, [xdi].$Obj(Application).pClientWnd
@@ -727,33 +830,14 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
                 ExitMethod
               .endif
             .endif
-            New Editor
-            .if xax != NULL
-              mov pEditor, xax
-              OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetContentType, [xbx].PROJECTITEM.pFileName
-              .if eax == ECT_ASM
-                lea xax, [xdi].$Obj(Application).AsmEditorResources
-              .elseif eax == ECT_RES
-                lea xax, [xdi].$Obj(Application).ResEditorResources
-              .else
-                lea xax, [xdi].$Obj(Application).TxtEditorResources
-              .endif
-              OCall pEditor::Editor.Init, [xdi].$Obj(Application).pClientWnd, xax, [xbx].PROJECTITEM.pFileName
-              .if eax == FALSE
-                Destroy pEditor
-              .else
-                mov xax, pEditor
-                mov xcx, [xax].$Obj(Editor).hWnd
-                mov [xbx].PROJECTITEM.hEditor, xcx
-                invoke ShowWindow, xcx, SW_SHOW
-              .endif
-            .endif
+            OCall xdi::Application.LaunchEditor, [xbx].PROJECTITEM.pFileName
 
-          .elseif [xbx].PROJECTITEM.dFlags == PIF_GROUP
+          .elseif [xbx].PROJECTITEM.dType == PIT_GROUP
             invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_TOGGLE, Item.hItem
 
-          .elseif [xbx].PROJECTITEM.dFlags == PIF_CMD
-            invoke ShellExecute, [xsi].hWnd, NULL, [xbx].PROJECTITEM.pCommand, NULL, NULL, SW_SHOW
+          .elseif [xbx].PROJECTITEM.dType == PIT_COMMAND
+            mov xcx, [xsi].pOwner
+            invoke SendMessage, [xcx].$Obj(Application).hWnd, WM_COMMAND, IDM_PROJ_CMD_EXECUTE, 0
 
           .endif
         .endif
@@ -769,8 +853,29 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         ;Never delete the root item
         invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
         .if xdi != xax
+          mov Item.hItem, xdi
+          mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+          invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+          mov xcx, Item.lParam
+          .if [xcx].PROJECTITEM.dType == PIT_GROUP
+            invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CHILD, xdi
+            .if xax != 0
+              lea xbx, cBuffer
+              mov xax, Item.lParam
+              WriteF xbx, "Are you sure that you want to delete the \´¦ST\´ group and all of its files?", [xax].PROJECTITEM.pDispName  
+              invoke MessageBox, [xsi].hWnd, addr cBuffer, $OfsCStr("Warning"), MB_OKCANCEL or MB_ICONWARNING 
+              .if eax == IDCANCEL
+                xor eax, eax
+                ExitMethod
+              .endif
+            .endif
+          .endif
           invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, xdi
           BitSet [xsi].dFlags, PMF_DIRTY
+          mov xbx, [xsi].pOwner
+          mov xcx, [xbx].$Obj(Application).pClientWnd
+          invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+          OCall xbx::Application.ManageGuiCmds, xax
         .endif
       .elseif [xbx].NMTVKEYDOWN.wVKey == VK_INSERT
         invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
@@ -779,24 +884,25 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
         mov xcx, Item.lParam
         mov xax, [xsi].pOwner
-        .if [xcx].PROJECTITEM.dFlags == PIF_PROJ
+        .if [xcx].PROJECTITEM.dType == PIT_PROJECT
           invoke SendMessage, [xax].$Obj(Application).hWnd, WM_COMMAND, IDM_PROJ_NEWGROUP, 0
-        .elseif [xcx].PROJECTITEM.dFlags == PIF_GROUP
+        .elseif [xcx].PROJECTITEM.dType == PIT_GROUP
           invoke SendMessage, [xax].$Obj(Application).hWnd, WM_COMMAND, IDM_PROJ_GROUP_NEW, 0
         .endif
-;      .elseif [xbx].NMTVKEYDOWN.wVKey == VK_ESCAPE
-;        .if [xsi].dDragging != FALSE
-;          invoke ImageList_EndDrag
-;          invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, 0    ;Remove Hilite
-;          invoke ReleaseCapture
-;          invoke ShowCursor, TRUE
-;          mov [xsi].dDragging, FALSE
-;        .endif
+        BitSet [xsi].dFlags, PMF_DIRTY
+        mov xbx, [xsi].pOwner
+        mov xcx, [xbx].$Obj(Application).pClientWnd
+        invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+        OCall xbx::Application.ManageGuiCmds, xax
       .endif
     .endif
 
   .elseif [xbx].NMHDR.code == TVN_ITEMEXPANDED
     BitSet [xsi].dFlags, PMF_DIRTY
+    mov xbx, [xsi].pOwner
+    mov xcx, [xbx].$Obj(Application).pClientWnd
+    invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    OCall xbx::Application.ManageGuiCmds, xax
 
   .elseif [xbx].NMHDR.code == TVN_BEGINLABELEDIT
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
@@ -804,7 +910,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xcx, Item.lParam
-    .if [xcx].PROJECTITEM.dFlags == PIF_GROUP
+    .if [xcx].PROJECTITEM.dType == PIT_GROUP
       mov [xsi].hEdit, $invoke(SendMessage, [xsi].TView.hWnd, TVM_GETEDITCONTROL, 0, 0)
       xor eax, eax
     .else
@@ -826,6 +932,11 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.pszText, xdx
     invoke SendMessage, [xsi].TView.hWnd, TVM_SETITEM, 0, addr Item
     mov [xsi].hEdit, 0
+    BitSet [xsi].dFlags, PMF_DIRTY
+    mov xbx, [xsi].pOwner
+    mov xcx, [xbx].$Obj(Application).pClientWnd
+    invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    OCall xbx::Application.ManageGuiCmds, xax
 
   .else
     invoke DefWindowProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
@@ -892,7 +1003,7 @@ Method ProjectManager.ProjItemInsert, uses xbx xsi, hNodeParent:HANDLE, hNodeAft
     mov [xbx].PROJECTITEM.pDispName, xax
     invoke StrNew, pFullFileName
     mov [xbx].PROJECTITEM.pFileName, xax
-    m2m [xbx].PROJECTITEM.dFlags, dFlags, ecx
+    m2m [xbx].PROJECTITEM.dType, dFlags, ecx
     m2m [xbx].PROJECTITEM.hEditor, hEditor, xdx
 
     m2m TVI.hParent, hNodeParent, xax
@@ -945,7 +1056,7 @@ MethodEnd
 Method ProjectManager.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam
 
-;  DbgMessage uMsg, "ProjectManager.WndProc"
+  DbgMessage uMsg, "ProjectManager.WndProc"
   .if uMsg == WM_NCCREATE
     mov xax, lParam
     mov xsi, [xax].CREATESTRUCT.lpCreateParams

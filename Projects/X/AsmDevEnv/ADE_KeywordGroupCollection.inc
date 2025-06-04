@@ -10,6 +10,7 @@
 ; KeywordGroupCollection implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     KeywordGroupCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!

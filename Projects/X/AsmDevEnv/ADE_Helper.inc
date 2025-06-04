@@ -657,7 +657,7 @@ GetFileFromString proc uses xbx xdi pString:PSTRING
   invoke GetIntegerFromString, pString, 0
   mov dParentFolderIndex, eax
   invoke GetIntegerFromString, addr [xcx + sizeof(CHR)], 0
-  mov [xbx].PROJECTITEM.dFlags, eax
+  mov [xbx].PROJECTITEM.dType, eax
   invoke GetStringFromString, addr [xcx + sizeof(CHR)]
   mov xdi, xcx
   invoke StrCNew, xax, edx

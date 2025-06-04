@@ -346,7 +346,7 @@ MethodEnd
 ; Note:       Window HANDLE is passed in pSelf (hidden parameter).
 
 Method MdiChildWnd.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-;  DbgMessage uMsg,, "MDI Child Window"
+  DbgMessage uMsg,, "MDI Child Window"
   .if uMsg == WM_NCCREATE
     mov xax, lParam
     mov xcx, [xax].CREATESTRUCT.lpCreateParams

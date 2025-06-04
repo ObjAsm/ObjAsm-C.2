@@ -10,6 +10,7 @@
 ; KeywordCollection implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:    KeywordCollection.Compare
 ; Purpose:   Compare the WIDE strings Key1 and Key2.

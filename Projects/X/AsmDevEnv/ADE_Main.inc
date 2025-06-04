@@ -109,25 +109,37 @@ RANGE ends
 PRANGE typedef ptr RANGE
 
 FINDDLGCHOICES struct
-  dScope        DWORD  ?
-  dOptions      DWORD  ?
-  dDirection    DWORD  ?
+  dScope            DWORD     ?
+  dOptions          DWORD     ?
+  dDirection        DWORD     ?
 FINDDLGCHOICES ends
 PFINDDLGCHOICES typedef ptr FINDDLGCHOICES
 
-PIF_PROJ     equ   0
-PIF_GROUP    equ   1
-PIF_FILE     equ   2
-PIF_CMD      equ   3
+PIT_PROJECT         equ     0
+PIT_GROUP           equ     1
+PIT_FILE            equ     2
+PIT_COMMAND         equ     3
+
+PIF_EXPANDED        equ     BIT00 
 
 PROJECTITEM struct
-  pDispName     PSTRINGW  ?
-  union
-    pFileName   PSTRINGW  ?
-    pCommand    PSTRINGW  ?
+  dType             DWORD     ?
+  pDispName         PSTRINGW  ?
+  union             
+    struct                                ;Files
+      pFileName     PSTRINGW  ?
+      hEditor       HANDLE    ?           ;Associated Editor window handle
+    ends            
+    struct                                ;Commands
+      pCommand      PSTRINGW  ?
+    ends            
+    struct          
+      union                               ;Groups
+        hVisible    HTREEITEM ?           ;Root => First visible node after restoration
+        dFlags      DWORD     ?           ;For regular Groups only: PIF_XXX
+      ends
+    ends
   ends
-  dFlags        DWORD     ?
-  hEditor       HANDLE    ?
 PROJECTITEM ends
 PPROJECTITEM typedef ptr PROJECTITEM
 
@@ -135,17 +147,6 @@ PPROJECTITEM typedef ptr PROJECTITEM
 ;  pParent       PBLOCK    ?
 ;BLOCK ends
 ;PBLOCK typedef ptr BLOCK
-
-;; --------------------------------------------------------------------------------------------------
-;; Object:    ScrollBarV
-;; Purpose:   Customized drawing of the vertical ScrollBar.
-;
-;Object ScrollBarVert, ADE_ScrollBarVertID, ScrollBar
-;  VirtualEvent      OnPaint,            WM_PAINT
-;  VirtualEvent      OnSetScrollInfo,    SBM_SETSCROLLINFO
-;ObjectEnd
-
-; --------------------------------------------------------------------------------------------------
 
 KEYWORDGROUP struc
                     DRAW_ATTR {}
@@ -208,24 +209,30 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-FILETYPE struc
-  pExtension        PSTRINGW  ?
+FILETYPEINFO struc
   dFileFormat       DWORD     ?           ;EFF_XXX
   dContentType      DWORD     ?           ;ECT_XXX
-FILETYPE ends
-PFILETYPE typedef ptr FILETYPE
+FILETYPEINFO ends
+PFILETYPEINFO typedef ptr FILETYPEINFO
+
+FILETYPEINFOEX struc
+                    FILETYPEINFO          {}
+  pExtension        PSTRINGW  ?
+FILETYPEINFOEX ends
+PFILETYPEINFOEX typedef ptr FILETYPEINFOEX
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     FileTypeCollection
-; Purpose:    Implement a collection of FILETYPE entries.
+; Purpose:    Implement a collection of FILETYPEINFOEX entries.
 
 Object FileTypeCollection, ADE_FileTypeCollectionID, SortedDataCollection
   RedefineMethod    Compare,              PSTRINGW, PSTRINGW
-  RedefineMethod    DestroyItem,          PFILETYPE
-  StaticMethod      GetFileFormat,        PSTRINGW
-  StaticMethod      GetContentType,       PSTRINGW
+  RedefineMethod    DestroyItem,          PFILETYPEINFOEX
+  StaticMethod      GetFileTypeInfo,      PSTRINGW
   RedefineMethod    Insert,               PSTRING, DWORD, DWORD
-  RedefineMethod    KeyOf,                PFILETYPE
+  RedefineMethod    KeyOf,                PFILETYPEINFOEX
+  
+  DefineVariable    PerceivedTextType,    FILETYPEINFOEX,   {}
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -574,8 +581,7 @@ Object ChildWnd, ADE_ChildWndID, MdiChildWnd            ;MDI child window.
   VirtualEvent      OnMdiActivate,        WM_MDIACTIVATE
 
   DefineVariable    pFullFileName,        PSTRING,    NULL
-  DefineVariable    dFileFormat,          DWORD,      EFF_UNKNOWN
-  DefineVariable    dContentType,         DWORD,      ECT_TXT
+  DefineVariable    FileTypeInfo,         FILETYPEINFO, {EFF_UNKNOWN, ECT_TXT}
 
   Embed   Snapper,  Magnetism
 ObjectEnd
@@ -637,37 +643,37 @@ Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    ClpBrdPaste
   StaticMethod      CreateSelAction,      DWORD
   RedefineMethod    Done
-  VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PFINDDLGCHOICES
+  StaticMethod      FindStr,              PSTRING, PLOCATION, PLOCATION, PFINDDLGCHOICES
   StaticMethod      HilitedWordReset
-  VirtualMethod     InformDeletionOf,     DWORD
-  VirtualMethod     InformInsertionOf,    DWORD
-  VirtualMethod     InternetSearch
+  StaticMethod      InformDeletionOf,     DWORD
+  StaticMethod      InformInsertionOf,    DWORD
+  StaticMethod      InternetSearch
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
-  VirtualMethod     LineNew,              DWORD, DWORD
+  StaticMethod      LineNew,              DWORD, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   RedefineMethod    ManageEditCmds
-  VirtualMethod     Open,                 PSTRINGW
+  StaticMethod      Open,                 PSTRINGW
   RedefineMethod    OnSize,               WPARAM, LPARAM
   RedefineMethod    Print
-  VirtualMethod     Redo
+  StaticMethod      Redo
   RedefineMethod    Save
-  VirtualMethod     SaveAs
-  VirtualMethod     SaveTo,               PSTRING
-  VirtualMethod     SelectAll
-  VirtualMethod     SelectionComment
-  VirtualMethod     SelectionDelete,      DWORD
-  VirtualMethod     SelectionIndent
-  VirtualMethod     SelectionOutdent
-  VirtualMethod     SelectionReplace,     PSTRING, DWORD
-  VirtualMethod     SelectionResetInfo
-  VirtualMethod     SelectionResetAll
-  VirtualMethod     SelectionResetLines                 ;Reset selection on lines only
-  VirtualMethod     SelectionSet
-  VirtualMethod     SelectionUncomment
-  VirtualMethod     SetDirty,             DWORD
+  StaticMethod      SaveAs
+  StaticMethod      SaveTo,               PSTRING
+  StaticMethod      SelectAll
+  StaticMethod      SelectionComment
+  StaticMethod      SelectionDelete,      DWORD
+  StaticMethod      SelectionIndent
+  StaticMethod      SelectionOutdent
+  StaticMethod      SelectionReplace,     PSTRING, DWORD
+  StaticMethod      SelectionResetInfo
+  StaticMethod      SelectionResetAll
+  StaticMethod      SelectionResetLines                 ;Reset selection on lines only
+  StaticMethod      SelectionSet
+  StaticMethod      SelectionUncomment
+  StaticMethod      SetDirty,             DWORD
   StaticMethod      Startup
   RedefineMethod    Store,                $ObjPtr(Stream)
-  VirtualMethod     Undo
+  StaticMethod      Undo
   RedefineMethod    UpdateStatusbar
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
@@ -717,7 +723,6 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
   DefineVariable    dUnnamedCount,        DWORD,      0         ;Incremental ID for unnamed ChildWnds
 
   ;Management
-  DefineVariable    hLastFocusedWnd,      HANDLE,     0
   DefineVariable    dFlags,               DWORD,      0
 
 ObjectEnd
@@ -735,8 +740,10 @@ Object ProjectManager, ADE_ProjectManagerID, Window
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
   StaticMethod      IsFileAlreadyPresent, PSTRING
   StaticMethod      GetGroupByIndex,      DWORD
+  StaticMethod      GroupsCollapse
+  StaticMethod      GroupsExpandRestore,  HTREEITEM
   StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, HWND
-  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
+;  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
   StaticMethod      Startup
 
   VirtualEvent      OnContextMenu,        WM_CONTEXTMENU
@@ -773,7 +780,7 @@ ObjectEnd
 Object ProjPropsDialog, ADE_ProjPropsDialogID, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
-  VirtualMethod     GetDirectoryName
+  StaticMethod      GetDirectoryName
   RedefineMethod    Init,               POINTER, HWND
   RedefineMethod    OnCommand,          WPARAM, LPARAM
 ObjectEnd
@@ -785,7 +792,7 @@ ObjectEnd
 Object FilePropsDialog, ADE_FilePropsDialogID, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
-  VirtualMethod     GetFileName
+  StaticMethod      GetFileName
   RedefineMethod    Init,               POINTER, HWND, HTREEITEM
   RedefineMethod    OnCommand,          WPARAM, LPARAM
 
@@ -838,24 +845,25 @@ ObjectEnd
 ; --------------------------------------------------------------------------------------------------
 
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
-  VirtualMethod     ChangeLanguage,       DWORD                 ;IDLANG_XXX
+  StaticMethod      ChangeLanguage,       DWORD                 ;IDLANG_XXX
   StaticMethod      ConfigLoad,           PSTRING
   StaticMethod      ConfigSave
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
+  StaticMethod      Execute,              PSTRING
   StaticMethod      GetActiveChildWnd
   StaticMethod      GetActiveEditor
   RedefineMethod    Init
-  StaticMethod      Launch,               PSTRING
+  StaticMethod      LaunchEditor,         PSTRING
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     LoadContext,          PSTRING
+  StaticMethod      LoadContext,          PSTRING
   StaticMethod      ManageGuiCmds,        HWND
   RedefineMethod    OnSize,               WPARAM, LPARAM
   StaticMethod      ProjectOpen,          PSTRING
 ;  StaticMethod      ProjectSave
-  VirtualMethod     SaveContext,          PSTRING
+  StaticMethod      SaveContext,          PSTRING
   StaticMethod      Startup
-  VirtualMethod     StatusbarHelp,        PSTRING               ;-> Help string
+  StaticMethod      StatusbarHelp,        PSTRING               ;-> Help string
   RedefineMethod    Store,                $ObjPtr(Stream)
 
   StaticEvent       OnClose,              WM_CLOSE, WM_QUERYENDSESSION

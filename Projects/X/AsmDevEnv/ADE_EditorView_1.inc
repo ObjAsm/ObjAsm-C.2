@@ -17,6 +17,7 @@ EVF_LBUTTON_DOWN_TEXTBOX    equ   BIT03
 ; EditorView implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretAdjustHorz
 ; Purpose:    Correct caret horizontal position, e.g. after a vertical move.

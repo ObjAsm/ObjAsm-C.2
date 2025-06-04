@@ -36,6 +36,7 @@ IDC_RBN_UP                      equ 1022
 IDC_RBN_ALL                     equ 1023
 ;IDC_CHK_WRAPAROUND              equ 1024
 
+.code
 ;SetCtrlText macro ControlID, TextID
 ;  lea edx, [ebx + TextID]
 ;  invoke LoadString, hInstance, edx, xdi, lengthof(cBuffer) - 1

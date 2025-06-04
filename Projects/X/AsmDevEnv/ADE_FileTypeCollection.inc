@@ -10,6 +10,7 @@
 ; FileTypeCollection implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:    FileTypeCollection.Compare
 ; Purpose:   Compare the WIDE strings Key1 and Key2.
@@ -29,55 +30,47 @@ MethodEnd
 ; Arguments:  -> Item.
 ; Return:     Nothing.
 
-Method FileTypeCollection.DestroyItem, uses xdi, pItem:PFILETYPE
+Method FileTypeCollection.DestroyItem, uses xdi, pItem:PFILETYPEINFOEX
   mov xdi, pItem
   .if xdi != NULL
-    invoke StrDispose, [xdi].FILETYPE.pExtension      ;Dispose file extension string
+    invoke StrDispose, [xdi].FILETYPEINFOEX.pExtension  ;Dispose file extension string
     MemFree xdi                                         ;Free data
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     FileTypeCollection.GetFileFormat
-; Purpose:    Return the stored file format for a FileName.
+; Method:     FileTypeCollection.GetFileTypeInfo
+; Purpose:    Return the stored file tyoe information for a given FileName, based on its extension.
 ; Arguments:  Arg1: -> FileName
-; Return:     eax: EFF_XXX.
+; Return:     xax -> FILETYPEINFOEX or NULL if not available.
 
-Method FileTypeCollection.GetFileFormat, uses xsi, pFileName:PSTRINGW
+Method FileTypeCollection.GetFileTypeInfo, uses xbx xsi, pFileName:PSTRINGW
+  local dPerceivedType:DWORD, dFlag:DWORD
+
   SetObject xsi
   invoke StrRScanW, pFileName, '.'
   .if xax != NULL
+    mov xbx, xax
     lea xdx, [xax + sizeof(CHRW)]
     OCall xsi::FileTypeCollection.Search, xdx 
-    .if xax != FALSE
-      mov eax, ecx
-      OCall xsi::FileTypeCollection.ItemAt, eax
-      mov eax, [xax].FILETYPE.dFileFormat
+    .if eax != FALSE
+      mov edx, ecx
+      OCall xsi::FileTypeCollection.ItemAt, edx
+    .else
+      invoke AssocGetPerceivedType, xbx, addr dPerceivedType, addr dFlag, NULL
+      .if eax == S_OK
+        .if dPerceivedType == PERCEIVED_TYPE_TEXT
+          lea xax, [xsi].PerceivedTextType
+        .else
+          xor eax, eax
+        .endif
+      .else
+        xor eax, eax
+      .endif
     .endif
+  .else
+    xor eax, eax
   .endif
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     FileTypeCollection.GetContentType
-; Purpose:    Return the stored file type for a FileName.
-; Arguments:  Arg1: -> FileName
-; Return:     eax: ECT_XXX.
-
-Method FileTypeCollection.GetContentType, uses xsi, pFileName:PSTRINGW
-  SetObject xsi
-  invoke StrRScanW, pFileName, '.'
-  .if xax != NULL
-    lea xdx, [xax + sizeof(CHRW)]
-    OCall xsi::FileTypeCollection.Search, xdx 
-    .if xax != FALSE
-      mov eax, ecx
-      OCall xsi::FileTypeCollection.ItemAt, eax
-      mov eax, [xax].FILETYPE.dContentType
-    .endif
-  .endif
-  
-    ;invoke AssocGetPerceivedType   
-
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -92,21 +85,21 @@ MethodEnd
 
 Method FileTypeCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dContentType:DWORD, dFileFormat:DWORD
   SetObject xsi
-  MemAlloc sizeof(FILETYPE)
+  MemAlloc sizeof(FILETYPEINFOEX)
   .if xax != NULL
     mov xbx, xax
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
     invoke StrLengthA, pExtension
     lea edi, [eax*sizeof(CHRW)]
     invoke StrAllocW, eax
-    mov [xbx].FILETYPE.pExtension, xax
+    mov [xbx].FILETYPEINFOEX.pExtension, xax
     invoke MultiByteToWideChar, CP_ACP, 0, pExtension, -1, xax, edi
   else
     invoke StrNewW, pExtension
-    mov [xbx].FILETYPE.pExtension, xax
+    mov [xbx].FILETYPEINFOEX.pExtension, xax
   endif
-    m2m [xbx].FILETYPE.dFileFormat, dFileFormat, ecx
-    m2m [xbx].FILETYPE.dContentType, dContentType, edx
+    m2m [xbx].FILETYPEINFOEX.dFileFormat, dFileFormat, ecx
+    m2m [xbx].FILETYPEINFOEX.dContentType, dContentType, edx
     OCall xsi.KeyOf, xbx
     OCall xsi.Search, xax                                 ;Ret: eax = Found (TRUE/FALSE), ecx = Idx
     .if eax == FALSE                                      ;Found?
@@ -114,9 +107,9 @@ Method FileTypeCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dContent
       OCall xsi.InsertAt, edx, xbx
     .else
       DbgText "--- Duplicate Keyword ---"
-      DbgStrW [xbx].FILETYPE.pExtension
-      DbgDec [xbx].FILETYPE.dFileFormat
-      invoke StrDispose, [xbx].FILETYPE.pExtension
+      DbgStrW [xbx].FILETYPEINFOEX.pExtension
+      DbgDec [xbx].FILETYPEINFOEX.dFileFormat
+      invoke StrDispose, [xbx].FILETYPEINFOEX.pExtension
       MemFree xbx
       xor eax, eax
     .endif
@@ -130,9 +123,9 @@ MethodEnd
 ; Return:     eax = Given an item from the collection, KeyOf should return the corresponding key of
 ;                   the item. The default KeyOf simply returns Item.
 
-Method FileTypeCollection.KeyOf,, pItem:PFILETYPE
+Method FileTypeCollection.KeyOf,, pItem:PFILETYPEINFOEX
   mov xcx, pItem
-  mov xax, [xcx].FILETYPE.pExtension
+  mov xax, [xcx].FILETYPEINFOEX.pExtension
 MethodEnd
 
 

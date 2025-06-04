@@ -6,24 +6,26 @@
 ; ==================================================================================================
 
 
-IDD_DLG_PROJPROPS	            	equ 3000
-IDC_STC_PROJNAME	            	equ 1001
-IDC_EDT_NAME	                	equ 1002
-IDC_STC_FILENAME	            	equ 1003
-IDC_EDT_FILENAME	            	equ 1004
-IDC_STC_DIRPATH	              	equ 1005
-IDC_EDT_DIRPATH	              	equ 1006
-IDC_BTN_SEARCHDIR	            	equ 1007
-IDC_STC_DESC	                	equ 1007
-IDC_EDT_DESC	                	equ 1008
-IDC_CHK_CRASH	                	equ 1009
-IDC_BTN_OK	                  	equ 1
-IDC_BTN_CANCEL	              	equ 2
+IDD_DLG_PROJPROPS               equ 3000
+IDC_STC_PROJNAME                equ 1001
+IDC_EDT_NAME                    equ 1002
+IDC_STC_FILENAME                equ 1003
+IDC_EDT_FILENAME                equ 1004
+IDC_STC_DIRPATH                 equ 1005
+IDC_EDT_DIRPATH                 equ 1006
+IDC_BTN_SEARCHDIR               equ 1007
+IDC_STC_DESC                    equ 1007
+IDC_EDT_DESC                    equ 1008
+IDC_CHK_CRASH                   equ 1009
+IDC_BTN_OK                      equ 1
+IDC_BTN_CANCEL                  equ 2
+
 
 ; ==================================================================================================
 ; ProjPropsDialog implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjPropsDialog.CtlsGet
 ; Purpose:    Read the setting of all controls.
@@ -45,6 +47,11 @@ Method ProjPropsDialog.CtlsGet, uses xbx xsi
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DESC, addr cBuffer, lengthof cBuffer
   invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjDescription, addr cBuffer
   BitSet [xbx].$Obj(ProjectManager).dFlags, PMF_DIRTY
+  mov xbx, [xsi].pOwner
+  mov xcx, [xbx].$Obj(Application).pClientWnd
+  invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+  OCall xbx::Application.ManageGuiCmds, xax
+
   mov eax, TRUE
 MethodEnd
 
@@ -86,8 +93,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method ProjPropsDialog.GetDirectoryName, uses xbx xdi xsi
-  local pIFODlg: POINTER
-  local pISIArr:POINTER, pIShellItem:POINTER, pDirName:PSTRING, cBuffer[MAX_PATH]:CHR
+  local pIFODlg: POINTER, pIShellItem:POINTER, pDirName:PSTRING
 
   SetObject xsi
   invoke CoCreateInstance, offset CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, \

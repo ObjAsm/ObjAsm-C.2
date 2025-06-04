@@ -10,6 +10,7 @@
 ; EditorSharedResources implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorSharedResources.Done
 ; Purpose:    Finalize the EditorSharedResources object.

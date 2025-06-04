@@ -10,6 +10,7 @@
 ; ClientWnd implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Deserialize
 ; Purpose:    Restore serialized members to its original values.
@@ -108,7 +109,7 @@ Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov edi, eax
     mov pFileName, $invoke(StrAllocW, eax)
     invoke DragQueryFileW, wParam, ebx, xax, edi
-    OCall [xsi].pOwner::Application.Launch, pFileName
+    OCall [xsi].pOwner::Application.LaunchEditor, pFileName
     invoke StrDispose, pFileName
   .endw
   invoke DragFinish, wParam

@@ -99,6 +99,7 @@ CStr szRevHorzMouseWheelRot,  "ReverseHorzMouseWheelRotation"
 CStr szRevVertMouseWheelRot,  "ReverseVertMouseWheelRotation"
 CStr szLineTermination,       "LineTermination"
 CStr szLanguage,              "Language"
+CStr szFileTypes,             "File Types"
 CStr szPercieved,             "Percieved"
 
 CStr szDefaultFontFace,       "Lucida Console"
@@ -125,25 +126,25 @@ CStr szLocalPath,             ".\"
 CStr szLoadFilter,            "Assembly files (*.asm, *.inc)", 0, "*.asm;*.inc", 0, \
                               "Text files (*.txt)", 0, "*.txt", 0, \
                               "Other files (*.*)", 0, "*.*", 0
-
+.const
 MultiFileSpec label COMDLG_FILTERSPEC
-  POINTER $OfsCStrW("All")
-  POINTER $OfsCStrW("*.*")
-  POINTER $OfsCStrW("Assembly")
-  POINTER $OfsCStrW("*.asm")
-  POINTER $OfsCStrW("Include")
-  POINTER $OfsCStrW("*.inc")
-  POINTER $OfsCStrW("Resource")
-  POINTER $OfsCStrW("*.rc")
-  POINTER $OfsCStrW("Text")
-  POINTER $OfsCStrW("*.txt")
+  POINTER $OfsTStrW("All")
+  POINTER $OfsTStrW("*.*")
+  POINTER $OfsTStrW("Assembly")
+  POINTER $OfsTStrW("*.asm")
+  POINTER $OfsTStrW("Include")
+  POINTER $OfsTStrW("*.inc")
+  POINTER $OfsTStrW("Resource")
+  POINTER $OfsTStrW("*.rc")
+  POINTER $OfsTStrW("Text")
+  POINTER $OfsTStrW("*.txt")
 MultiFileSpecCount = ($ - MultiFileSpec)/sizeof(COMDLG_FILTERSPEC)
 
 MultiProjSpec label COMDLG_FILTERSPEC
-  POINTER $OfsCStrW("All")
-  POINTER $OfsCStrW("*.*")
-  POINTER $OfsCStrW("Project")
-  POINTER $OfsCStrW("*.adep")
+  POINTER $OfsTStrW("All")
+  POINTER $OfsTStrW("*.*")
+  POINTER $OfsTStrW("Project")
+  POINTER $OfsTStrW("*.adep")
 MultiProjSpecCount = ($ - MultiProjSpec)/sizeof(COMDLG_FILTERSPEC)
 
 szDefaultEditorFontFace     textequ <szDefaultFontFace>

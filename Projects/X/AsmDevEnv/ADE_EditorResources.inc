@@ -13,17 +13,17 @@ ERF_TAB_2_SPACES              equ   BIT02
 ERF_SHOW_ALIGN_LINES          equ   BIT03
 ERF_TAB_TO_SPACE              equ   BIT04
 
-;Editor Content Type
-ECT_TXT                       equ   0
-ECT_ASM                       equ   1
-ECT_RES                       equ   2
-
 ;Editor File Format
 EFF_UNKNOWN                   equ   0
 EFF_ANSI                      equ   1
 EFF_UTF8                      equ   2         ;Without BOM
 EFF_UTF8BOM                   equ   3         ;With BOM
 EFF_UTF16BOM                  equ   4         ;With BOM
+
+;Editor Content Type
+ECT_TXT                       equ   0
+ECT_ASM                       equ   1
+ECT_RES                       equ   2
 
 ;Editor Line Termination
 ELT_CRLF                      equ   0         ;Windows
@@ -36,6 +36,7 @@ ELT_NULL                      equ   3         ;
 ; EditorResources implementation
 ; ==================================================================================================
 
+.code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.ConfigLoad
 ; Purpose:    Load configuration and create matching resources.
