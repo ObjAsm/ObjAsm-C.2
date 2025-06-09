@@ -16,7 +16,7 @@
 ;             second parameter.
 ; Arguments:  Arg1: -> Source string.
 ;             Arg2: Maximal character count.
-; Return:     rax -> New string copy.
+; Return:     eax -> New string copy.
 
 OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE
@@ -24,6 +24,8 @@ OPTION EPILOGUE:NONE
 .code
 align ALIGN_CODE
 ProcName proc pString:POINTER, dMaxChars:DWORD
+  ANNOTATION use: pString dMaxChars
+
   mov eax, [esp + 4]                                    ;eax -> String
   test eax, eax                                         ;is NULL => fail
   jz @F

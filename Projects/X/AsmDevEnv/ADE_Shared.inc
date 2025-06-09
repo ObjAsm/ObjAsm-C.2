@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       26
-BUILD_DATE_STR                textequ   <2025-06-03>
+BUILD_NUMBER                  equ       1
+BUILD_DATE_STR                textequ   <2025-06-08>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
@@ -77,9 +77,10 @@ IDM_EDIT_OUTDENT              equ       161
 IDM_EDIT_COMMENT              equ       162
 IDM_EDIT_UNCOMMENT            equ       163
 IDM_EDIT_INETSEARCH           equ       164
-IDM_EDIT_UPPERCASE            equ       165
-IDM_EDIT_LOWERCASE            equ       166
-IDM_EDIT_TRIMENDBLANKS        equ       167
+IDM_EDIT_DEEPLWRITE           equ       165
+IDM_EDIT_UPPERCASE            equ       166
+IDM_EDIT_LOWERCASE            equ       167
+IDM_EDIT_TRIMENDBLANKS        equ       168
 
 IDM_LANGUAGE                  equ       200
 IDM_LANGUAGE_ENGLISH          equ       201

@@ -517,15 +517,21 @@ Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWOR
 
     .if eax != 0
       ;If necessary get more memory
-      add eax, [xsi].dLength
+      mov ebx, [xsi].dLength
+      add eax, ebx
       .if eax >= [xsi].dCharCapacity
         OCall xsi.BufferResize, eax
         test xax, xax                                   ;Check pBuffer, if NULL, allocation failed
         jz @@EOM                                        ;Allocation failed
       .endif
+      
+      ;Sanity check, can be removed later
+      .if dInsIndex > ebx
+        mov dInsIndex, ebx
+      .endif
 
       ;Make room to insert the new chars
-      mov edx, [xsi].dLength
+      mov edx, ebx
       sub edx, dInsIndex
       lea edx, [sizeof(CHR)*edx + sizeof(CHR)]          ;Include the ZTC
       mov dMoveSize, edx
@@ -1259,6 +1265,36 @@ if TARGET_BITNESS eq 64
 endif
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.GetIndentation
+; Purpose:    Return the number of spaces heading the line buffer.
+; Arguments:  None.
+; Return:     eax = Number of spaces.
+
+Method EditorLine.GetIndentation, uses xbx xsi
+  SetObject xsi
+  mov xax, [xsi].pOwner                                 ;xax -> Editor
+  mov xdx, [xax].$Obj(Editor).pResources                ;xdx -> EditorResources
+  mov eax, [xdx].$Obj(EditorResources).dTabWidth
+
+  mov xdx, [xsi].pBuffer
+  xor ebx, ebx
+  .if xdx != NULL
+    .while TRUE
+      movzx ecx, CHR ptr [xdx]
+      .if ecx == SPC
+        inc ebx
+      .elseif ecx == TAB
+        add ebx, eax
+      .else
+        .break 
+      .endif
+      add xdx, sizeof(CHR)
+    .endw
+  .endif
+  mov eax, ebx
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.Init
 ; Purpose:    Initialize the EditorLine object.
 ; Arguments:  Arg1: -> Owner object (Editor).
@@ -1277,13 +1313,13 @@ MethodEnd
 ;             Arg2: Line index of this line.
 ;             Arg3: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     xax -> New inserted line or NULL if failed.
+;             ecx = Indentation.
 
 Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWORD, dActionGroup:DWORD
-  local pNewEditorLine:$ObjPtr(EditorLine)
+  local pNewEditorLine:$ObjPtr(EditorLine), dIndentation:DWORD
 
   SetObject xsi
   mov xbx, [xsi].pOwner                                 ;xbx -> Editor
-
   New EditorLine
   .if xax != NULL
     mov pNewEditorLine, xax
@@ -1307,6 +1343,8 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
       .endif
     .endif
 
+    mov dIndentation, $32($OCall(xsi.GetIndentation))   ;Get current indentation
+
     ;Copy broken off chars
     mov ecx, dBreakIndex
     mov xax, [xsi].pBuffer
@@ -1319,6 +1357,15 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
       OCall xsi.SetDirty                                ;Set dirty only if chars are moved
     .endif
 
+    ;If necessary, insert indentation
+    OCall pNewEditorLine::EditorLine.GetIndentation
+    .if eax == 0 
+      OCall pNewEditorLine::EditorLine.SpaceFill, dIndentation, dLineIndex, dActionGroup  ;Set dirty too
+    .else
+      mov dIndentation, 0
+    .endif
+
+
     ;Housekeeping
     OCall xbx::Editor.InformInsertionOf, dLineIndex
     .ifBitClr [xsi].dFlags, ELF_HIDDEN
@@ -1327,6 +1374,7 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineIndex:DWO
 
     mov xax, pNewEditorLine
     BitSet [xax].$Obj(EditorLine).dFlags, ELF_DIRTY_LINE_CURR
+    mov ecx, dIndentation
   .endif
 MethodEnd
 
@@ -1517,7 +1565,7 @@ Method EditorLine.SpaceFill, uses xbx xsi, dSpaceCount:DWORD, dLineIndex:DWORD, 
   local cChar:CHR
   
   SetObject xsi
-  mov CHR ptr cChar, ' '
+  mov CHR ptr cChar, SPC
   mov ebx, dSpaceCount
   test ebx, ebx
   .while !ZERO?

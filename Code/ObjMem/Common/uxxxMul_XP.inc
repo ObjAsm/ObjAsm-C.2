@@ -16,12 +16,14 @@
 ;             Arg3: Multiplier unsigned low word.
 ;             Arg4: Multiplier unsigned high word.
 ; Return:     xbx:xcx:xdx:xax = Unsigned product (128/256 bit).
+; Note:       Don't include xbx in the uses clause.
 
 .code
 align ALIGN_CODE
 ProcName proc xMultiplicandLo:XWORD, xMultiplicandHi:XWORD, \
               xMultiplierLo:XWORD, xMultiplierHi:XWORD
   local xTempLoLo:XWORD, xTempLoHi:XWORD, xTempHiLo:XWORD, xTempHiHi:XWORD
+  ANNOTATION prv:xbx
 
 ; Do the low order unsigned product
   mov xax, xMultiplicandLo

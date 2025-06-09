@@ -96,7 +96,7 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local pFileName:PSTRINGW, pEditor:$ObjPtr(Editor)
+  local pFileName:PSTRINGW
 
   ANNOTATION use:wParam lParam
 

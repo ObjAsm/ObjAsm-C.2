@@ -32,7 +32,7 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
 
   SetObject xsi
   mov xax, [xsi].pOwner
-  lea xbx, [xax].$Obj(Application).ProjMgr
+  lea xbx, [xax].$Obj(Application).PrjMgr
   m2m Item.hItem, [xsi].hItem, xax
   mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
   invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
@@ -79,7 +79,7 @@ Method FilePropsDialog.CtlsSet, uses xbx xdi xsi
 
   SetObject xsi
   mov xax, [xsi].pOwner
-  lea xbx, [xax].$Obj(Application).ProjMgr
+  lea xbx, [xax].$Obj(Application).PrjMgr
   m2m Item.hItem, [xsi].hItem, xax
   mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
   invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
@@ -141,7 +141,7 @@ Method FilePropsDialog.GetFileName, uses xbx xdi xsi
     ICall pIFODlg::IFileOpenDialog.SetFileNameLabel, $OfsCStrW("Selected file: ")
 
     mov xax, [xsi].pOwner
-    lea xcx, [xax].$Obj(Application).ProjMgr
+    lea xcx, [xax].$Obj(Application).PrjMgr
     invoke SHCreateItemFromParsingName, [xcx].$Obj(ProjectManager).pProjDirPath, NULL, \
                                         offset IID_IShellItem, addr pIShellItem
     .if pIShellItem != NULL

@@ -43,7 +43,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
 ;Note: don't use ANSI_STRING
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
@@ -70,11 +70,12 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % include &IncPath&Windows\commdlg.inc
 % include &IncPath&Windows\Richedit.inc
 % include &IncPath&Windows\IImgCtx.inc
+% include &IncPath&Windows\sGUID.inc
 % include &IncPath&Windows\ShellApi.inc
 % include &IncPath&Windows\ShObjIDL.inc
 % include &IncPath&Windows\ShTypes.inc
-% include &IncPath&Windows\sGUID.inc
 % include &IncPath&Windows\shlwapi.inc
+% include &IncPath&Windows\Shlobj.inc
 
 if TARGET_BITNESS eq 32
 % include &MacPath&Exception32.inc

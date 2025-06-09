@@ -17,13 +17,13 @@ externdef DbgColorError:DWORD
 ;             Arg3: Foreground RGB color value.
 ;             Arg4: Background RGB color value.
 ;             Arg5: Effect value (DBG_EFFECT_XXX).
-;             Arg6: -> Destination Window WIDE name.
+;             Arg6: -> WIDE Destination Window name.
 ; Return:     Nothing.
 
 .code
 align ALIGN_CODE
-ProcName proc pString:POINTER, dMaxLength:DWORD, dForeColor:DWORD, dBackColor:DWORD, \
-              dEffects:DWORD, pDest:POINTER
+ProcName proc uses xbx pString:POINTER, dMaxLength:DWORD, dForeColor:DWORD, dBackColor:DWORD, \
+                     dEffects:DWORD, pDest:POINTER
   local pBuffer:POINTER, dStrSize:DWORD
 
   .if pString == NULL

@@ -37,6 +37,7 @@ ProcName proc sxDividendLoLo:SXWORD, sxDividendHiLo:SXWORD, \
               sxDivisorLo:SXWORD, sxDivisorHi:SXWORD
   local dFlags:DWORD
 ;  local .LoLo: SXWORD, .HiLo: SXWORD, .LoHi: SXWORD, .HiHi: SXWORD, .Lo: SXWORD, .Hi: SXWORD
+  ANNOTATION prv:xbx
 
   mov dFlags, 0
 

@@ -123,6 +123,38 @@ Method Editor.CreateSelAction,, dActionGroup:DWORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     Editor.DeepLWrite
+; Purpose:    Open DeepL-Write web page for a correction of the line selection. 
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.DeepLWrite, uses xbx xdi xsi
+  local cSearchBuffer[4096]:CHR
+  
+  SetObject xsi
+  mov xbx, [xsi].SelectionRange.pBegSelInfo
+  mov xdx, [xsi].SelectionRange.pEndSelInfo
+  .if xbx != NULL && xdx != NULL
+    mov eax, [xbx].LOCATION.dLineIndex
+    .if eax == [xdx].LOCATION.dLineIndex                ;Same line?
+      .if eax < [xsi].Lines.dCount
+        OCall [xsi].Lines::Collection.ItemAt, eax
+        mov xdi, [xax].$Obj(EditorLine).pBuffer
+        mov ecx, [xbx].LOCATION.dCharIndex
+        lea xdi, [xdi + xcx*sizeof(CHR)]
+        mov xdx, [xsi].SelectionRange.pEndSelInfo
+        mov eax, [xdx].LOCATION.dCharIndex
+        sub eax, [xbx].LOCATION.dCharIndex
+        FillString cSearchBuffer, <https://www.deepl.com/en/write#en-GB/>
+        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax 
+        invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), addr cSearchBuffer, NULL, NULL, SW_SHOWNORMAL
+      .endif
+    .endif
+  .endif
+  xor eax, eax
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Done
 ; Purpose:    Finalize the Editor object.
 ; Arguments:  None.
@@ -406,7 +438,7 @@ MethodEnd
 ; Purpose:    Initialize the Editor object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> EditorResources.
-;             Arg2: -> WIDE FileName string.
+;             Arg2: -> WIDE full file name string.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 ; Note:       This method creates a hidden MDI window that needs to be shown using ShowWindow.
 
@@ -605,6 +637,7 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_INETSEARCH, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DEEPLWRITE, MF_BYCOMMAND or MF_GRAYED
   .else
     lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
@@ -627,6 +660,7 @@ Method Editor.ManageEditCmds, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_INETSEARCH, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DEEPLWRITE, MF_BYCOMMAND or MF_ENABLED
   .endif
 
   ;Paste command
@@ -1691,7 +1725,7 @@ Method Editor.SelectionIndent, uses xbx xdi xsi
     OCall xsi.CreateSelAction, dActionGroup
     mov xax, [xsi].pResources
     mrm dTabWidth, [xax].$Obj(EditorResources).dTabWidth, edx
-    invoke StrRepChr, ' ', edx
+    invoke StrRepChr, SPC, edx
     .if xax != NULL
       mov pTabBuffer, xax
       .while TRUE
@@ -1743,7 +1777,7 @@ Method Editor.SelectionOutdent, uses xbx xdi xsi
     OCall xsi.CreateSelAction, dActionGroup
     mov xax, [xsi].pResources
     m2m dTabWidth, [xax].$Obj(EditorResources).dTabWidth, ecx
-    invoke StrRepChr, ' ', dTabWidth
+    invoke StrRepChr, SPC, dTabWidth
     .if xax != NULL
       mov pTabBuffer, xax
 
@@ -2222,7 +2256,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   .else
     c2m pContentType, $OfsCStr("Text"), ecx
   .endif
-  WriteF xdi, "¦SU", pContentType
+  WriteF xdi, "¦ST", pContentType
   OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 3, addr cTextBuffer, SBT_SUNKEN
 
   lea xdi, cTextBuffer
@@ -2247,7 +2281,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   .else
     c2m pLineTermination, $OfsCStr("CR+LF"), ecx
   .endif
-  WriteF xdi, "¦SU  ¦SU", pFileFormat, pLineTermination
+  WriteF xdi, "¦ST  ¦ST", pFileFormat, pLineTermination
   OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 4, addr cTextBuffer, SBT_SUNKEN
 
 ;  .if dSelCount == 0

@@ -251,12 +251,12 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     EditorResources.ConfigSave
+; Method:     EditorResources.ProjectSave
 ; Purpose:    Save configuration values.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method EditorResources.ConfigSave
+Method EditorResources.ProjectSave
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

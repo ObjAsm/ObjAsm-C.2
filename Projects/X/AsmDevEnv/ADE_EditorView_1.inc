@@ -494,6 +494,10 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
   SetObject xsi
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
   mov dRetValue, FALSE
+  .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo == NULL && \
+      [xbx].$Obj(Editor).SelectionRange.pEndSelInfo == NULL
+    ExitMethod
+  .endif
   invoke OpenClipboard, [xsi].hWnd
   .if eax != 0
     ;Allocate memory to copy the the content passed to the clipboard
@@ -616,10 +620,10 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
         invoke GlobalLock, xax
         .if xax != NULL
           mov pGlobalMem, xax
-          
+
           mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
           OCall xbx::Editor.CreateSelAction, dActionGroup
-        
+
           .if [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
               [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
             OCall xsi.CaretLocationSave, addr RefLoc, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
@@ -630,7 +634,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
           .else
             OCall xbx::Editor.ManageEditCmds
           .endif
-          
+
           OCall xsi.ScrollCaretInViewTop
           .ifBitClr [xbx].$Obj(Editor).dFlags, EDF_BLOCK_MODE
             ;INS/OVR mode
@@ -864,7 +868,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method EditorView.DrawSelectionBar, uses xbx xdi xsi
-  local cLineMunberBuffer[SDWORD2DEC_MAX_CHARS]:CHR, hBrush:HBRUSH
+  local cLineNumberBuffer[SDWORD2DEC_MAX_CHARS]:CHR, hBrush:HBRUSH
   local LineNumberRect:RECT, dLineHeight:DWORD
   local PrevLineIndicatorRect:RECT, CurrLineIndicatorRect:RECT, NextLineIndicatorRect:RECT
   local LineFoldingRect:RECT, FoldHeadRect:RECT, dFoldHeadSize:DWORD
@@ -948,9 +952,9 @@ Method EditorView.DrawSelectionBar, uses xbx xdi xsi
     ;Draw line number
     lea edx, [ebx + 1]                                  ;edx = Line Number
     sub edx, [xsi].sdLineNumberOffset                   ;Relative zero
-    invoke sdword2dec, addr cLineMunberBuffer, edx
+    invoke sdword2dec, addr cLineNumberBuffer, edx
     invoke FillRect, [xsi].hViewDC, addr LineNumberRect, hBrush
-    invoke DrawText, [xsi].hViewDC, addr cLineMunberBuffer, -1, addr LineNumberRect, \
+    invoke DrawText, [xsi].hViewDC, addr cLineNumberBuffer, -1, addr LineNumberRect, \
                      DT_SINGLELINE or DT_VCENTER or DT_RIGHT
 
     ;Draw prev line indicator
@@ -1107,16 +1111,16 @@ MethodEnd
 ;  SetObject xsi
 ;  mov RetValue, FALSE
 ;  mov xbx, [xsi].pEditor
-;  
+;
 ;  mov edx, dLineIndex
 ;  .if edx < [xbx].$Obj(Editor).Lines.dCount
 ;    mov eax, [xbx].$Obj(Editor).dLineMaxFullVis
 ;    shr eax, 2
 ;    mov dLineOffset, eax
-;    
+;
 ;    m2m dPrvLineIndex, [xsi].FirstVisChar.dLineIndex, eax
 ;    m2m dPrvdFirstVisLineCount, [xsi].dFirstVisLineCount, eax
-;    
+;
 ;    mov [xsi].FirstVisChar.dLineIndex, edx
 ;    mov [xsi].FirstVisChar.dCharIndex, 0
 ;
@@ -1169,27 +1173,29 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local ClientPoint:POINT, SceenPoint:POINT, hContextMenu:HMENU 
+  local ClientPoint:POINT, SceenPoint:POINT, hContextMenu:HMENU
 
   ANNOTATION use:wParam
-  
+
 ;  DbgText "OnContextMenu.Init"
   SetObject xsi
   PntS2Pnt SceenPoint, lParam
   s2s ClientPoint, SceenPoint, xax, xdx
   invoke ScreenToClient, [xsi].hWnd, addr ClientPoint
-
-  mov xdx, [xsi].pOwner
-  mov xcx, [xdx].$Obj(EditorDisplay).pOwner
-  mov xdx, [xcx].$Obj(Editor).pOwner
-  mov xbx, [xdx].$Obj(ClientWnd).pOwner                 ;xbx -> Application
+  mov eax, [xsi].dSelBarWidth
+  .if ClientPoint.x >= eax                                ;In TextRect?
+    mov xdx, [xsi].pOwner
+    mov xcx, [xdx].$Obj(EditorDisplay).pOwner
+    mov xdx, [xcx].$Obj(Editor).pOwner
+    mov xbx, [xdx].$Obj(ClientWnd).pOwner                 ;xbx -> Application
   
-  mov hContextMenu, $invoke(GetSubMenu, [xbx].$Obj(Application).hMenuContextEditor, 0)
-
-  ;Get the Application.hWnd since the XMenu is acting as an interceptor on that window
-  invoke TrackPopupMenuEx, hContextMenu, TPM_LEFTALIGN or TPM_TOPALIGN or TPM_RIGHTBUTTON, \
-                           SceenPoint.x, SceenPoint.y, [xbx].$Obj(Application).hWnd, NULL
-  invoke PostMessage, [xbx].$Obj(Application).hWnd, WM_NULL, 0, 0     ;Fix: not popping up right
+    mov hContextMenu, $invoke(GetSubMenu, [xbx].$Obj(Application).hMenuContextEditor, 0)
+  
+    ;Get the Application.hWnd since the XMenu is acting as an interceptor on that window
+    invoke TrackPopupMenuEx, hContextMenu, TPM_LEFTALIGN or TPM_TOPALIGN or TPM_RIGHTBUTTON, \
+                             SceenPoint.x, SceenPoint.y, [xbx].$Obj(Application).hWnd, NULL
+    invoke PostMessage, [xbx].$Obj(Application).hWnd, WM_NULL, 0, 0     ;Fix: not popping up right
+  .endif
   xor eax, eax
 MethodEnd
 
@@ -1543,7 +1549,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .ifBitClr eax, BIT07
       ;<SHIFT> NOT pressed
       ;Make a full line selection
-      OCall xsi.VertIndex2EditorLine, Index.y 
+      OCall xsi.VertIndex2EditorLine, Index.y
       mov [xbx].$Obj(Editor).SelectionFst.dLineIndex, edx
       mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
       mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, 0
@@ -1551,7 +1557,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xbx::Editor.SelectionSet
     .else
       ;>SHIFT> pressed
-      OCall xsi.VertIndex2EditorLine, Index.y 
+      OCall xsi.VertIndex2EditorLine, Index.y
       .if [xbx].$Obj(Editor).SelectionFst.dLineIndex < edx
         ;After first selection
         mov [xbx].$Obj(Editor).SelectionLst.dLineIndex, edx
@@ -1861,7 +1867,7 @@ Method EditorView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .if xax == [xbx].$Obj(Editor).hWnd
     OCall xsi.CaretSet
   .endif
-    
+
   mov eax, 1
 MethodEnd
 
@@ -2466,27 +2472,28 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
   m2z [xsi].TextRect.top
 
   ;Calc the SelBar width
-  mov xax, [xsi].pResources
-  mov edi, [xax].$Obj(EditorResources).dLineHeight
-  mov dLineHeight, edi
-  add edi, [xsi].TextRect.top
-  ;Get the number of digits of first visible line number
+  ;1. Get the number of digits of first visible line number
   xor ecx, ecx
   mov eax, [xsi].FirstVisChar.dLineIndex
+  inc eax                                               ;To line number
   sub eax, [xsi].sdLineNumberOffset
   .if SIGN?
     neg eax
-    inc ecx                                           ;Add space for a sign character
+    inc ecx                                             ;Add space for a sign character
   .endif
   .while eax != 0
-    cdiv 10                                           ;Quotient in edx
+    cdiv 10                                             ;Quotient in edx
     inc ecx
     mov eax, edx
   .endw
   mov dLineNumWidth, ecx
 
-  ;Get the number of digits of last visible line number (ebx)
-  mrm dLastVisLineIndex, [xsi].FirstVisChar.dLineIndex, ebx
+  ;2. Get the number of digits of last visible line (ebx)
+  mov xax, [xsi].pResources
+  mov edi, [xax].$Obj(EditorResources).dLineHeight
+  mov dLineHeight, edi
+  add edi, [xsi].TextRect.top                           ;Calculated Bottom
+  mrm dLastVisLineIndex, [xsi].FirstVisChar.dLineIndex, ebx   ;Start here
   .while TRUE
     inc ebx
     mov xcx, [xsi].pEditor
@@ -2494,31 +2501,34 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
       mov ebx, dLastVisLineIndex
       .break
     .endif
-    .break .if ebx >= [xcx].$Obj(Editor).Lines.dCount
     OCall [xcx].$Obj(Editor).Lines::Collection.ItemAt, ebx
     .ifBitClr [xax].$Obj(EditorLine).dFlags, ELF_HIDDEN
+      mov dLastVisLineIndex, ebx
       add edi, dLineHeight
       .break .if edi >= [xsi].TextRect.bottom
     .endif
   .endw
-
   xor ecx, ecx
   mov eax, ebx
+  inc eax                                               ;To line number
   sub eax, [xsi].sdLineNumberOffset
   .if SIGN?
     neg eax
-    inc ecx                                           ;Add space for a sign character
+    inc ecx                                             ;Add space for a sign character
   .endif
   .while eax != 0
-    cdiv 10                                           ;Quotient in edx
+    cdiv 10                                             ;Quotient in edx
     inc ecx
     mov eax, edx
   .endw
+
+  ;3. Get the largest
   .if ecx < dLineNumWidth
     mov ecx, dLineNumWidth
   .endif
+  inc ecx                                               ;Add left side spacing = 1 char
 
-  inc ecx                                             ;Add left side spacing = 1 char
+  ;4. Calculate the width of the selbar
   mov xdi, [xsi].pResources
   ;Get the width in pixels
   mov eax, [xdi].$Obj(EditorResources).SelBarTextRegular.FontMetric.x

@@ -23,7 +23,7 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, [xsi].pEditor                                ;xbx -> Editor
 
   mov dNeedRedrawing, 0
-  .if wParam >= ' '                                     ;Ignore control characters
+  .if wParam >= SPC                                     ;Ignore control characters
     mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
     OCall xbx::Editor.CreateSelAction, dActionGroup
 
@@ -115,26 +115,16 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     OCall xsi.ClpBrdCopy
 
   .elseif dControlKeyPressed != FALSE && wParam == 'X'
-    OCall xsi.CaretLocationSave, addr RefLoc, NULL       ;Calculate a caret reference position before deletion
     OCall xsi.ClpBrdCut
     .if eax != FALSE
-      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
-      OCall xsi.CaretSet
       inc dNeedRedrawing
     .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'V'
-    OCall xsi.CaretLocationSave, addr RefLoc, NULL       ;Calculate a caret reference position before deletion
     OCall xsi.ClpBrdPaste
     .if eax != FALSE
-;      OCall xsi.CaretLocationLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
-      OCall xsi.CaretSet
     .endif
-
-  .elseif dControlKeyPressed != FALSE && wParam == 'U'
-;    OCall [xax].ACTION.pEditorLine::EditorLine.Undo, xax
-    inc dNeedRedrawing
 
   .elseif wParam == VK_INSERT
     BitToggle [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
@@ -380,6 +370,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_HOME
+    mov [xsi].dLockedCharIndex, -1
     .if dControlKeyPressed != FALSE                     ;Goto 0,0
       OCall xsi.ScrollVisPageUp, -1                     ;Use saturation
       OCall xsi.ScrollPageLeft, -1                      ;Use saturation
@@ -435,6 +426,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_END
+    mov [xsi].dLockedCharIndex, -1
     .if dControlKeyPressed != FALSE
       OCall xsi.ScrollVisPageDown, -1                   ;Use saturation
       OCall xsi.ScrollPageLeft, -1                      ;Use saturation
@@ -616,7 +608,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xsi.CaretSet
       OCall xdi::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex, dActionGroup
       .if xax != NULL
-        mov [xsi].CaretLocation.dCharIndex, 0
+        mov [xsi].CaretLocation.dCharIndex, ecx         ;Indentation returned by LineBreak
         inc [xsi].CaretLocation.dLineIndex
         OCall xsi.CaretSet
         OCall xbx::Editor.ManageEditCmds

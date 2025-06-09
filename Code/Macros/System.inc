@@ -1334,7 +1334,7 @@ endif
 ;             beginning with a trigger character), the additional arguments following format are
 ;             formatted & inserted in the resulting string replacing their respective specifiers.
 ;             Escape sequences are supported to overcome MASM limitations. Escape sequences begin
-;             with a \ character.
+;             with a '\' character.
 ; Arguments:  Arg1: Non-volatile register pointing to the beginning of the output buffer.
 ;                   It is used internally and its value is restored before return.
 ;             Arg2: Single or double Quoted format string. Only ANSI characters are allowed.

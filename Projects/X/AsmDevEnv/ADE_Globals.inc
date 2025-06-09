@@ -65,6 +65,7 @@ FOLDING_RULE struc
 FOLDING_RULE ends
 PFOLDING_RULE typedef ptr FOLDING_RULE
 
+CStr szConfigurationFile,     "ADE.ini"
 CStr szIdentification,        "Identification"
 CStr szVersion,               "Version"
 CStr szDescription,           "Description"
@@ -100,7 +101,10 @@ CStr szRevVertMouseWheelRot,  "ReverseVertMouseWheelRotation"
 CStr szLineTermination,       "LineTermination"
 CStr szLanguage,              "Language"
 CStr szFileTypes,             "File Types"
+CStr szNewFileTypeDefault,    "NewFileTypeDefault"
 CStr szPercieved,             "Percieved"
+CStr szPrjMgrColors,          "PrjMgrColors"
+CStr szPrjMgrWidth,           "PrjMgrWidth"
 
 CStr szDefaultFontFace,       "Lucida Console"
 CStr szMetricChar,            "X"
@@ -177,6 +181,11 @@ DefaultStatusTextPointSize  equ   8
 DefaultStatusPanelTextFG    equ   $RGB(255,255,255)
 DefaultStatusPanelTextBG    equ   $RGB(127,127,127)
 
+DefaultProjFG               equ   $RGB(000,000,000)
+DefaultProjBG               equ   $RGB(255,255,255)
+DefaultProjLN               equ   $RGB(000,000,000)
+
+
 DefaultLineSpace            equ   2
 DefaultTabWidth             equ   2
 
@@ -192,6 +201,8 @@ LINEINDICATOR_SPACE_TOP     equ   3
 LINEINDICATOR_SPACE_BOTTOM  equ   5
 LINEINDICATOR_SPACE_LEFT    equ   3
 
+ICON_INDEX_GROUP_CLOSE      equ   3
+ICON_INDEX_GROUP_OPEN       equ   4
 ICON_INDEX_FILE             equ   5
 ICON_INDEX_CMD              equ   6
 

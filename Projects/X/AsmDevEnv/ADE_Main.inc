@@ -267,7 +267,7 @@ ObjectEnd
 
 Object EditorResources, ADE_EditorResourcesID, Primer
   StaticMethod      ConfigLoad,           PSTRING, PSTRING, HDC
-  StaticMethod      ConfigSave
+  StaticMethod      ProjectSave
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorSharedResources)
   StaticMethod      Zoom,                 DWORD
@@ -340,6 +340,7 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      BufferResize,         DWORD
   RedefineMethod    Done
   StaticMethod      Draw,                 POINTER, PRECT, DWORD
+  StaticMethod      GetIndentation
   RedefineMethod    Init,                 POINTER
   StaticMethod      LineBreak,            DWORD, DWORD, DWORD
   StaticMethod      LineDelete,           DWORD, DWORD
@@ -648,6 +649,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticMethod      InformDeletionOf,     DWORD
   StaticMethod      InformInsertionOf,    DWORD
   StaticMethod      InternetSearch
+  StaticMethod      DeepLWrite
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
   StaticMethod      LineNew,              DWORD, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
@@ -732,16 +734,17 @@ ObjectEnd
 ; Purpose: Implement a project window used as a control container on some apps.
 
 Object ProjectManager, ADE_ProjectManagerID, Window
-  StaticMethod      ConfigLoadFrom,       PSTRING
-  StaticMethod      ConfigSave
-  StaticMethod      ConfigSaveTo,         PSTRING
-  StaticMethod      CreateNewProject
+  StaticMethod      ConfigLoad
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
   StaticMethod      IsFileAlreadyPresent, PSTRING
   StaticMethod      GetGroupByIndex,      DWORD
   StaticMethod      GroupsCollapse
   StaticMethod      GroupsExpandRestore,  HTREEITEM
+  StaticMethod      ProjectCreateNew
+  StaticMethod      ProjectLoadFrom,      PSTRING
+  StaticMethod      ProjectSave
+  StaticMethod      ProjectSaveTo,        PSTRING
   StaticMethod      ProjItemInsert,       HANDLE, HANDLE, PSTRING, PSTRING, DWORD, DWORD, HWND
 ;  RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
   StaticMethod      Startup
@@ -765,12 +768,17 @@ Object ProjectManager, ADE_ProjectManagerID, Window
   DefineVariable    dDragging,            DWORD,      FALSE
   DefineVariable    hDragSrcItem,         HTREEITEM,  0
   DefineVariable    hEdit,                HWND,       0         ;TreeView item Edit control
+  
+  DefineVariable    ForeColor,            COLORREF,   DefaultProjFG
+  DefineVariable    BackColor,            COLORREF,   DefaultProjBG
+  DefineVariable    LineColor,            COLORREF,   DefaultProjLN
+  DefineVariable    dInitialWidth,        DWORD,      200       ;Default
 
   Embed     TBar,               Toolbar
   Embed     TView,              TreeView
   Embed     IconImageList,      MaskedImageList
   Embed     DragDrop,           Component
-  Embed     DefaultGroups,      %StrCollection
+  Embed     DefaultGroups,      %StrCollection        ;New default Groups 
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -846,12 +854,13 @@ ObjectEnd
 
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
   StaticMethod      ChangeLanguage,       DWORD                 ;IDLANG_XXX
-  StaticMethod      ConfigLoad,           PSTRING
-  StaticMethod      ConfigSave
+  StaticMethod      ConfigLoad
+  StaticMethod      ProjectSave
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
   StaticMethod      Execute,              PSTRING
-  StaticMethod      GetActiveChildWnd
+  StaticMethod      FindEditorByFileName, PSTRING
+  StaticMethod      GetActiveChild
   StaticMethod      GetActiveEditor
   RedefineMethod    Init
   StaticMethod      LaunchEditor,         PSTRING
@@ -887,7 +896,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    hDevMode,             HGLOBAL,    0
   DefineVariable    hDevNames,            HGLOBAL,    0
 
-  DefineVariable    dNewDefault,          DWORD,      ECT_ASM
+  DefineVariable    dNewFileTypeDefault,          DWORD,      ECT_ASM
 
   ;UI elements
   Embed     IconImageList,      MaskedImageList
@@ -897,10 +906,10 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     TbEdit,             Toolbar
   Embed     TbWindow,           Toolbar
   Embed     Menu,               XMenu
-  Embed     ProjMgr,            ProjectManager
-  Embed     PropWnd,            PropertiesWnd
+  Embed     PrjMgr,            ProjectManager
+;  Embed     PropWnd,            PropertiesWnd
   Embed     SplitterVert,       Splitter
-  Embed     SplitterHorz,       Splitter
+;  Embed     SplitterHorz,       Splitter
   Embed     SharedResources,    EditorSharedResources
   Embed     AsmEditorResources, EditorResources
   Embed     ResEditorResources, EditorResources
@@ -1079,6 +1088,8 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 
+include PathSegmentsToEnvVars_TX.asm
+include RegisterFileType.asm
 include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectManager.inc

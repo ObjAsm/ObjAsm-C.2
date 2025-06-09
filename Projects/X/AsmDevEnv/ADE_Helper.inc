@@ -373,7 +373,7 @@ GetStringFromString proc uses xsi pString:PSTRING
   ;Search begin
   .while TRUE
     movzx eax, CHR ptr [xsi]
-    .break .if ax != ' '
+    .break .if ax != SPC
     .if ax == ','
       mov xcx, xsi
       jmp @Exit
@@ -402,7 +402,7 @@ GetStringFromString proc uses xsi pString:PSTRING
   ;From this point search back the first non blank char
   .while TRUE
     sub xdx, sizeof CHR
-    .break .if CHR ptr [xdx] != ' '
+    .break .if CHR ptr [xdx] != SPC
   .endw
   mov CHR ptr [xdx + sizeof CHR], 0
 
@@ -1171,3 +1171,34 @@ CenterWindowOnPrimaryDisplay proc pWndPos:PPOINT, pWndSize:PPOINT
 
   ret
 CenterWindowOnPrimaryDisplay endp
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  CloseEnumProc (Callback)
+; Purpose:    Close all open child windows.
+; Arguments:  Arg1: Child window handle.
+;             Arg2: Dummy parameter passed to the enumeration procedure.
+; Return:     eax = TRUE.
+
+CloseEnumProc proc hWnd:HWND, lParam:LPARAM
+  ANNOTATION use:lParam
+
+  invoke SendMessage, hWnd, WM_CLOSE, 0, 0
+  mov eax, TRUE                                         ;TRUE => next window
+  ret
+CloseEnumProc endp
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  CreateExpFullFileName
+; Purpose:    Create a new expandedn full file name.
+; Arguments:  Arg1: -> FileName
+; Return:     xax -> Expandend file name. Shuld be disposed using StrDispose.
+
+CreateExpFullFileName proc pFileName:PSTRING
+  local cExpBuffer[2048]:CHR, cFullFileName[2048]:CHR
+  
+  invoke ExpandEnvironmentStrings, pFileName, addr cExpBuffer, lengthof(cExpBuffer)
+  invoke GetFullPathName, addr cExpBuffer, lengthof(cFullFileName), addr cFullFileName, NULL
+  invoke StrNew, addr cFullFileName
+  ret
+CreateExpFullFileName endp
+

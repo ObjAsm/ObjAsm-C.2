@@ -15,14 +15,14 @@
 .code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     IDropTarget.DragEnter
-; Purpose:    Indicates whether a drop can be accepted, and, if so, the effect of the drop.
+; Purpose:    Indicate whether a drop can be accepted, and, if so, the effect of the drop.
 ; Arguments:  Arg1: -> IDataObject
 ;             Arg2: Key state MK_CONTROL, MK_SHIFT, MK_ALT, MK_BUTTON, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON
 ;             Arg3: POINTL structure containing the current cursor coordinates in screen coordinates.
 ;             Arg4: -> DWORD Effect (DROPEFFECT_NONE, DROPEFFECT_COPY, DROPEFFECT_MOVE, DROPEFFECT_LINK)
 ; Return:     Operation result.
 
-Method IDropTarget.DragEnter, uses xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt:POINTL, pEffect:POINTER
+Method IDropTarget.DragEnter, uses xbx xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt:POINTL, pEffect:POINTER
   local FormatEtc:FORMATETC, Medium:STGMEDIUM
   local dStrChars:DWORD, pFullFileName:PSTRING
 
@@ -72,7 +72,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     IDropTarget.DragOver
-; Purpose:    Provides target feedback to the user and communicates the drop's effect to the
+; Purpose:    Provide target feedback to the user and communicates the drop's effect to the
 ;             DoDragDrop function so it can communicate the effect of the drop back to the source.
 ; Arguments:  Arg1: Key state MK_CONTROL, MK_SHIFT, MK_ALT, MK_BUTTON, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON
 ;             Arg2: POINTL structure containing the current cursor coordinates in screen coordinates.
@@ -124,7 +124,7 @@ Method IDropTarget.DragOver, uses xbx xsi, dKeyState:DWORD, Pt:POINTL, pEffect:P
 MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     IDropTarget.DragLeave
-; Purpose:    Removes target feedback and releases the data object.
+; Purpose:    Remove target feedback and releases the data object.
 ; Arguments:  None.
 ; Return:     Operation result.
 
@@ -143,7 +143,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     IDropTarget.Drop
-; Purpose:    Incorporates the source data into the target window, removes target feedback, and
+; Purpose:    Incorporate the source data into the target window, removes target feedback, and
 ;             releases the data object.
 ; Arguments:  Arg1: -> IDataObject
 ;             Arg2: Key state MK_CONTROL, MK_SHIFT, MK_ALT, MK_BUTTON, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON
@@ -152,13 +152,14 @@ MethodEnd
 ; Return:     Operation result.
 
 Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD, Pt:POINTL, pEffect:POINTER
-  local FormatEtc:FORMATETC, Medium:STGMEDIUM, pFullFileName:PSTRING, pRelFileName:PSTRING
+  local FormatEtc:FORMATETC, Medium:STGMEDIUM
+  local pFullFileName:PSTRING, pRelFileName:PSTRING, pEnvVarFileName:PSTRING
   local dStrChars:DWORD, cBuffer[1024]:CHR, pFilePart:POINTER, dEffect:DWORD, pGroupName:PSTRING
   local hItem:HTREEITEM, hDropOnItem:HTREEITEM, DropOnItem:TVITEM, tvht:TVHITTESTINFO, TVIS:TV_INSERTSTRUCT
 
   ANNOTATION use:dKeyState
 
-  DbgText "IDropTarget.Drop"
+;  DbgText "IDropTarget.Drop"
   SetObject xsi
   mov dEffect, DROPEFFECT_NONE
 
@@ -186,7 +187,7 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
         DoesStringMatch? [xax], <.adep>
         .if ZERO?
           mov xax, [xsi].pOwner
-          OCall [xax].$Obj(Component).pOwner::ProjectManager.ConfigLoadFrom, pFullFileName
+          OCall [xax].$Obj(Component).pOwner::ProjectManager.ProjectLoadFrom, pFullFileName
           mov dEffect, DROPEFFECT_LINK
         .endif
       .endif
@@ -225,12 +226,19 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
             mov xdi, [xcx].$Obj(Component).pOwner
             invoke PathRelativePathTo, pRelFileName, [xdi].$Obj(ProjectManager).pProjDirPath, \
                                        FILE_ATTRIBUTE_DIRECTORY, pFullFileName, FILE_ATTRIBUTE_NORMAL
+            mov pEnvVarFileName, $invoke(PathSegmentsToEnvVars, pFullFileName)
             ;Check if the absolute or relative file path is already contained in the project
             OCall xdi::ProjectManager.IsFileAlreadyPresent, pFullFileName
             .if xax == 0
-              mov xcx, pRelFileName
-              .if CHR ptr [xcx] != 0
-                OCall xdi::ProjectManager.IsFileAlreadyPresent, pRelFileName
+              mov xdx, pRelFileName
+              .if CHR ptr [xdx] != 0
+                OCall xdi::ProjectManager.IsFileAlreadyPresent, xdx
+                .if xax == 0
+                  mov xdx, pEnvVarFileName
+                  .if CHR ptr [xdx] != 0
+                    OCall xdi::ProjectManager.IsFileAlreadyPresent, xdx
+                  .endif
+                .endif
               .endif
             .endif
             .if xax == 0
@@ -238,12 +246,24 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
               mov xdi, $MemAlloc(sizeof(PROJECTITEM))
               mov [xdi].PROJECTITEM.hEditor, 0
               mov [xdi].PROJECTITEM.dType, PIT_FILE
+
+              ;File name priority:
+              ;  1. Relative file names that start with ".\"
+              ;  2. EnvVar replaced file names
+              ;  3. Full file names
               mov xcx, pRelFileName
               .if CHR ptr [xcx] != 0
-                mov xcx, pRelFileName
-              .else
+                invoke StrStartsWith, pRelFileName, $OfsCStr(".\")
+                .if eax != FALSE
+                  mov xcx, pRelFileName
+                  jmp @F
+                .endif
+              .endif
+              mov xcx, pEnvVarFileName
+              .if CHR ptr [xcx] == 0
                 mov xcx, pFullFileName
               .endif
+            @@:
               invoke StrNew, xcx
               mov [xdi].PROJECTITEM.pFileName, xax
               invoke GetFullPathName, pFullFileName, lengthof cBuffer, addr cBuffer, addr pFilePart
@@ -283,7 +303,7 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
               mov xcx, [xax].PROJECTITEM.pDispName
               mov pGroupName, xcx
               lea xdi, cBuffer
-              WriteF xdi, "The file \`¦SU\` is already present in the group \`¦SU\`\:", pFullFileName, pGroupName
+              WriteF xdi, "The file \`¦SU\` is already present in the group \`¦ST\`\:", pFullFileName, pGroupName
               mov xdx, [xsi].pOwner
               mov xdi, [xdx].$Obj(Component).pOwner
               OCall xdi::ProjectManager.GroupsExpandRestore, hItem
@@ -294,6 +314,7 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
             .endif
             invoke StrDispose, pFullFileName
             invoke StrDispose, pRelFileName
+            invoke StrDispose, pEnvVarFileName
           .endw
           invoke SetFocus, [xsi].hTreeView
           mov dEffect, DROPEFFECT_LINK

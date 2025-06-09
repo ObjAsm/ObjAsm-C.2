@@ -297,6 +297,8 @@ align ALIGN_CODE
 MBX_HookProc proc private uses xbx xdi dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   local cTransferInfo[MBX_CAPTION_HEADER_CHARS + 2*sizeof(POINTER) + 1]:CHR
 
+  ANNOTATION use:wParam
+
   .if dCode == HC_ACTION                               ;Ignore the rest
     mov xbx, lParam
     ;The first recieved WM_NCCALCSIZE corresponds to the dialog window.

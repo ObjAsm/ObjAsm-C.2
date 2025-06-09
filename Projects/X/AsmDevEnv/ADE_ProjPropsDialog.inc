@@ -28,7 +28,7 @@ IDC_BTN_CANCEL                  equ 2
 .code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjPropsDialog.CtlsGet
-; Purpose:    Read the setting of all controls.
+; Purpose:    Read the settings for all the controls.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -37,7 +37,7 @@ Method ProjPropsDialog.CtlsGet, uses xbx xsi
 
   SetObject xsi
   mov xax, [xsi].pOwner
-  lea xbx, [xax].$Obj(Application).ProjMgr
+  lea xbx, [xax].$Obj(Application).PrjMgr
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_NAME, addr cBuffer, lengthof cBuffer
   invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjName, addr cBuffer
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_FILENAME, addr cBuffer, lengthof cBuffer
@@ -57,7 +57,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjPropsDialog.CtlsSet
-; Purpose:    Set the controls of the setup dialog.
+; Purpose:    Set the controls of the dialog.
 ; Arguments:  None.
 ; Return:     eax = this procedure should return TRUE to direct Windows to set the keyboard focus to
 ;                   the control specified by hwndFocus. Otherwise, it should return FALSE to prevent
@@ -66,7 +66,7 @@ MethodEnd
 Method ProjPropsDialog.CtlsSet, uses xbx xsi
   SetObject xsi
   mov xax, [xsi].pOwner
-  lea xbx, [xax].$Obj(Application).ProjMgr
+  lea xbx, [xax].$Obj(Application).PrjMgr
   invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_NAME, [xbx].$Obj(ProjectManager).pProjName
   invoke GetDlgItem, [xsi].hWnd, IDC_EDT_NAME
   invoke SendMessage, xax, EM_SETCUEBANNER, FALSE, $OfsCStrW("Enter a new project name")
@@ -120,7 +120,7 @@ Method ProjPropsDialog.GetDirectoryName, uses xbx xdi xsi
     ;Setup dialog functionality
     ICall pIFODlg::IFileOpenDialog.SetOptions, FOS_PICKFOLDERS or FOS_PATHMUSTEXIST or FOS_SHAREAWARE
     mov xax, [xsi].pOwner
-    lea xcx, [xax].$Obj(Application).ProjMgr
+    lea xcx, [xax].$Obj(Application).PrjMgr
     invoke SHCreateItemFromParsingName, [xcx].$Obj(ProjectManager).pProjDirPath, NULL, \
                                         offset IID_IShellItem, addr pIShellItem
     .if pIShellItem != NULL
@@ -147,7 +147,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjPropsDialog.Init
-; Purpose:    Initialaize a ProjPropsDialog object.
+; Purpose:    Initialaize the ProjPropsDialog object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> Parent window HANDLE.
 ; Return:     Nothing.

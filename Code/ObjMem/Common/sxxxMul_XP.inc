@@ -17,12 +17,13 @@
 ;             Arg3: Multiplier signed low word.
 ;             Arg4: Multiplier signed high word.
 ; Return:     xbx:xcx:xdx:xax = Signed product (256/128 bit).
-
+; Note:       Don't include xbx in the uses clause.
 .code
 align ALIGN_CODE
 ProcName proc sxMultiplicandLo:SXWORD, sxMultiplicandHi:SXWORD, \
               sxMultiplierLo:SXWORD, sxMultiplierHi:SXWORD
   local sxTempLoLo:SXWORD, sxTempLoHi:SXWORD, sxTempHiLo:SXWORD, sxTempHiHi:SXWORD
+  ANNOTATION prv:xbx
 
 ; Do the low order unsigned product
   mov xax, sxMultiplicandLo
