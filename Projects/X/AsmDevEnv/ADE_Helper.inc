@@ -8,7 +8,7 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      GetCharType
-; Purpose:    Return the type (CHR_XXX) from a given character. 
+; Purpose:    Return the type (CHR_XXX) from a given character.
 ; Arguments:  Arg1: Character in a 32 bit register.
 ;             Arg2: 32 bit register containing the character type.
 ; Return:     Arg2
@@ -172,7 +172,7 @@ MoveToNextVisEditorPage macro pEditorNoVolReg, CurrLineIndex, VisPageSize, VisLi
   .else
     mov edx, CurrLineIndex
 @@:
-    OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx 
+    OCall [pEditorNoVolReg].$Obj(Editor).Lines::Collection.ItemAt, edx
   .endif
 
 endm
@@ -212,7 +212,7 @@ endm
 MoveToNextEditorLine macro pEditorReg, CurrLineIndex
   inc CurrLineIndex
   mov edx, CurrLineIndex
-  .if edx >= [pEditorReg].$Obj(Editor).Lines.dCount 
+  .if edx >= [pEditorReg].$Obj(Editor).Lines.dCount
     xor eax, eax
   .else
     OCall [pEditorReg].$Obj(Editor).Lines::Collection.ItemAt, edx
@@ -398,7 +398,7 @@ GetStringFromString proc uses xsi pString:PSTRING
     .endif
     add xsi, sizeof(CHR)
   .endw
-  
+
   ;From this point search back the first non blank char
   .while TRUE
     sub xdx, sizeof CHR
@@ -461,7 +461,7 @@ GetFgBgAttrFromString proc uses xbx xdi pString:PSTRING, pFgBgAttr:PFGBG_ATTR, \
   mov [xbx].FGBG_ATTR.ForeColor, eax
   .if xdi != NULL
     invoke GetColorFromString, addr [xdi + sizeof CHR], DefBgColor
-    mov xdi, xcx 
+    mov xdi, xcx
     mov [xbx].FGBG_ATTR.Background.Color, eax
     mov [xbx].FGBG_ATTR.Background.hBrush, $invoke(CreateSolidBrush, eax)
   .else
@@ -563,17 +563,17 @@ GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRIN
   ;Update the font emphasis values
   .if xdi != NULL
     invoke GetStringFromString, addr [xdi + sizeof CHR]
-    mov xdi, xcx 
+    mov xdi, xcx
     .if CHR ptr [xax] != 0
       mov xsi, xax
       invoke StrPos, xsi, $OfsCStr("ITALIC")
       .if xax != NULL
         mov [xbx].DRAW_ATTR.LogFont.lfItalic, TRUE
-      .endif   
+      .endif
       invoke StrPos, xsi, $OfsCStr("UNDERLINE")
       .if xax != NULL
         mov [xbx].DRAW_ATTR.LogFont.lfUnderline, TRUE
-      .endif   
+      .endif
       invoke StrPos, xsi, $OfsCStr("BOLD")
       .if xax != NULL
         mov [xbx].DRAW_ATTR.LogFont.lfWeight, FW_BOLD
@@ -584,9 +584,9 @@ GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRIN
       mov [xbx].DRAW_ATTR.LogFont.lfWeight, FW_REGULAR
     .endif
   .endif
-  
+
   invoke CreateDrawAttrFont, xbx
-  
+
   mov xcx, xdi
   ret
 GetDrawAttrFromString endp
@@ -628,12 +628,12 @@ GetFontDefFromString proc uses xbx xdi xsi pFontDef:PFONT_DEF, pString:PSTRING, 
       mov xax, pDefFontFace
     .endif
   .endif
-  mov xdi, xcx 
+  mov xdi, xcx
   lea xcx, [xbx].FONT_DEF.LogFont.lfFaceName
   invoke StrCCopy, xcx, xax, LF_FACESIZE
   mov esi, eax
   .if xdi != NULL
-    invoke GetIntegerFromString, addr [xdi + sizeof CHR], dDefFontPointSize 
+    invoke GetIntegerFromString, addr [xdi + sizeof CHR], dDefFontPointSize
   .else
     mov eax, dDefFontPointSize
   .endif
@@ -934,7 +934,7 @@ StrCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
     lodsc
     repne scasc                                         ;Search for first character
     jne @@NotFound                                      ;Not found => Exit
-  
+
     mov pHaystackStr, xdi                               ;Temp storage
     mov ebx, ecx                                        ;Temp storage
     mov ecx, dNeedleLen
@@ -991,7 +991,7 @@ StrCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
     mov eax, esi
     mov ecx, ebx
   .endw
-  
+
   .if $SubReg(eax, sizeof(CHR)) >= 'A' && $SubReg(eax, sizeof(CHR)) <= 'Z'
     add $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to lowercase
     mov esi, eax
@@ -1033,7 +1033,7 @@ StrRCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
   sub ecx, dNeedleLen
   js @@NotFound
   mov xax, pHaystackStr
-  lea xdi, [xax + xcx*sizeof(CHR)] 
+  lea xdi, [xax + xcx*sizeof(CHR)]
   inc ecx                                               ;If strings are = long, test at least 1 char
 
   .repeat
@@ -1043,7 +1043,7 @@ StrRCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
     repne scasc                                         ;Search for first character
     cld
     jne @@NotFound                                      ;Not found => Exit
-  
+
     mov pHaystackStr, xdi                               ;Temp storage
     mov ebx, ecx                                        ;Temp storage
     mov ecx, dNeedleLen
@@ -1135,7 +1135,7 @@ StrRCCIPos endp
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  CenterWindowOnPrimaryDisplay
-; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the 
+; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the
 ;             primary monitor.
 ; Arguments:  Arg1: -> POINT containing on exit the position coordiantes of the window.
 ;             Arg2: -> POINT containing on entry the size of the window and on exit the updated size.
@@ -1195,10 +1195,164 @@ CloseEnumProc endp
 
 CreateExpFullFileName proc pFileName:PSTRING
   local cExpBuffer[2048]:CHR, cFullFileName[2048]:CHR
-  
+
   invoke ExpandEnvironmentStrings, pFileName, addr cExpBuffer, lengthof(cExpBuffer)
   invoke GetFullPathName, addr cExpBuffer, lengthof(cFullFileName), addr cFullFileName, NULL
   invoke StrNew, addr cFullFileName
   ret
 CreateExpFullFileName endp
 
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  GetExecAssociationOf
+; Purpose:    Retrieve the file extension associated executable.
+; Arguments:  Arg1: -> File extension (.xxx).
+; Return:     xax -> FullFileName of the associated executable or NULL if failed.
+;                    Should be disposed using StrDispose when no longer needed.
+
+CStr cOpen,   "open"
+
+GetExecAssociationOf proc pFileExtension:PSTRING
+  local pApplication:PSTRING, dCharsInBuffer:DWORD
+
+  mov dCharsInBuffer, 0
+  invoke AssocQueryString, ASSOCF_NOTRUNCATE, ASSOCSTR_EXECUTABLE, pFileExtension, \
+                           addr cOpen, NULL, addr dCharsInBuffer
+  .if eax == S_OK
+    invoke StrAlloc, dCharsInBuffer
+    .if xax != NULL
+      mov pApplication, xax
+      invoke AssocQueryString, ASSOCF_NOTRUNCATE, ASSOCSTR_EXECUTABLE, pFileExtension, \
+                               addr cOpen, pApplication, addr dCharsInBuffer
+      .if eax != S_OK
+        invoke StrDispose, pApplication
+        xor eax, eax
+      .endif
+    .else
+      xor eax, eax
+    .endif
+  .else
+    xor eax, eax
+  .endif
+  DbgStr xax
+  ret
+GetExecAssociationOf endp
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  SetFileTypeExecAssociation
+; Purpose:    Register a file extension on the OS with a application.
+; Arguments:  Arg1: -> File extension, inclusive '.'.
+;             Arg2: -> Programmatic application ID string.
+;             Arg3: -> Programmatic application ID description string. Can be NULL.
+;             Arg4: -> Application full file name.
+; Return:     eax = S_OK or error code.
+
+.code
+align ALIGN_CODE
+SetFileTypeExecAssociation proc uses xbx xdi pExtension:PSTRING, pProgID:PSTRING, pDescription:PSTRING, pAppPath:PSTRING
+  local hKey:HKEY, cBuffer[1024]:CHR
+
+  ;Step 1: Associate .myext with MyApp.File
+  invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, pExtension, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
+  .if eax == ERROR_SUCCESS
+    invoke StrLength, pProgID
+    lea edi, [eax*sizeof(CHR) + sizeof(CHR)]
+    invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, pProgID, edi
+    invoke RegCloseKey, hKey
+
+    ;Step 2: Define MyApp.File description
+    invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, pProgID, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
+    .if eax == ERROR_SUCCESS
+      invoke StrLength, pDescription
+      lea edi, [eax*sizeof(CHR) + sizeof(CHR)]
+      invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, pDescription, edi
+      invoke RegCloseKey, hKey
+
+      ;Step 3: Set command to open the file
+      lea xbx, cBuffer
+      WriteF xbx, "¦ST\shell\open\command", pProgID
+      invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, addr cBuffer, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
+      .if eax == ERROR_SUCCESS
+        lea xbx, cBuffer
+        WriteF xbx, "\`¦ST\` \`%1\`", pAppPath
+        lea xax, cBuffer
+        sub xbx, xax
+        invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, addr cBuffer, ebx
+        invoke RegCloseKey, hKey
+
+        ;Step 4: Notify the shell that file associations have changed
+        invoke SHChangeNotify, SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL
+        xor eax, eax
+      .endif
+    .endif
+  .endif
+
+  ret
+SetFileTypeExecAssociation endp
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  SetFileTypePerception
+; Purpose:
+; Arguments:  Arg1: -> File extension, inclusive '.'.
+;             Arg2: Perceived type.
+; Return:     eax = S_OK or error code.
+
+.code
+align ALIGN_CODE
+SetFileTypePerception proc pExtension:PSTRING, dPerceivedType:DWORD
+
+  ret
+SetFileTypePerception endp
+
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  RegisterApplicationPath
+; Purpose:    Register an Application path in the registry.
+; Arguments:  Arg1: -> Application file name, e.g. "filezilla.exe"
+;             Arg2: -> Application full path, e.g. "C:\Program Files\FileZilla FTP Client\"
+; Return:     eax = S_OK or error code.
+; Example:
+;   Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\filezilla.exe
+;   Standard = C:\Program Files\FileZilla FTP Client\filezilla.exe
+;   Path = C:\Program Files\FileZilla FTP Client
+
+.code
+align ALIGN_CODE
+RegisterApplicationPath proc uses xbx pApplication:PSTRING, pFullPath:PSTRING
+  local cBuffer[4096]:CHR, hKey:HKEY, hSubKey:HKEY, dResult:DWORD
+
+  lea xbx, cBuffer
+  WriteF xbx, "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\¦ST", pApplication
+  invoke RegCreateKeyEx, HKEY_LOCAL_MACHINE, addr cBuffer, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
+  mov dResult, eax
+  .if eax == ERROR_SUCCESS
+    invoke StrECopy, addr cBuffer, pFullPath
+    .if CHR ptr [xax - sizeof(CHR)] != '\'
+      mov CHR ptr [xax - sizeof(CHR)], '\'
+      add xax, sizeof(CHR)
+    .endif
+    invoke StrECopy, xax, pApplication
+    lea xbx, cBuffer
+    sub xax, xbx
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    shr eax, 1
+  endif
+    inc eax                                             ;Include the ZTC
+    invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, xbx, eax
+    mov dResult, eax
+    .if eax == ERROR_SUCCESS
+      invoke RegCreateKeyEx, hKey, $OfsCStr("Path"), 0, NULL, 0, KEY_WRITE, NULL, addr hSubKey, NULL
+      mov dResult, eax
+      .if eax == ERROR_SUCCESS
+        invoke StrLength, pFullPath
+        lea ebx, [eax + 1]
+        invoke RegSetValueEx, hSubKey, NULL, 0, REG_SZ, pFullPath, ebx
+        mov dResult, eax
+        invoke RegCloseKey, hSubKey
+      .endif
+    .endif
+    invoke RegCloseKey, hKey
+  .endif
+  mov eax, dResult
+  ret
+RegisterApplicationPath endp

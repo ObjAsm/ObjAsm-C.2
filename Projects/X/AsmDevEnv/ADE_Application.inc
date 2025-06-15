@@ -125,7 +125,7 @@ MethodEnd
 
 GetFileTypeArgs proc uses xsi pInput:PSTRING
   ANNOTATION prv: xbx xdi                             ;Return values
-  
+
   xor ebx, ebx                                        ;On exit ebx => File Format
   xor edi, edi                                        ;On exit edi => File Type
   xor esi, esi
@@ -342,7 +342,7 @@ MethodEnd
 
 Method Application.Execute, uses xbx xdi xsi, pCommand:PSTRING
   local dRetValue:DWORD, dErrCode:DWORD, SEI:SHELLEXECUTEINFO
-  
+
   SetObject xsi
   mov dRetValue, FALSE
   mov dErrCode, 0
@@ -357,7 +357,7 @@ Method Application.Execute, uses xbx xdi xsi, pCommand:PSTRING
     mov SEI.cbSize, sizeof(SEI)
     mov SEI.fMask, SEE_MASK_DEFAULT
     m2m SEI.hwnd, [xsi].hWnd, xax
-    c2m SEI.lpVerb, $OfsCStr("open"), xax 
+    c2m SEI.lpVerb, $OfsCStr("open"), xax
     mov SEI.lpFile, xbx
     mov SEI.lpParameters, NULL
     mov SEI.lpDirectory, NULL
@@ -387,7 +387,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FindEditorByFileName
-; Purpose:    Search in all editor windows for a matching file name. 
+; Purpose:    Search in all editor windows for a matching file name.
 ; Arguments:  Arg1 -> FileName.
 ; Return:     xax -> Editor.
 ;             xcx = Editor Window HANDLE.
@@ -423,13 +423,13 @@ FindEditor endp
 
 Method Application.FindEditorByFileName, uses xsi, pFullFileName:PSTRING
   local FEI:FindEditorInfo
-  
+
   SetObject xsi
   m2m FEI.pFileName, pFullFileName, xax
   mov FEI.pEditor, NULL
   mov FEI.hEditor, 0
   mov xcx, [xsi].pClientWnd
-  invoke EnumChildWindows, [xcx].$Obj(ClientWnd).hWnd, offset FindEditor, addr FEI 
+  invoke EnumChildWindows, [xcx].$Obj(ClientWnd).hWnd, offset FindEditor, addr FEI
   mov xax, FEI.pEditor
   mov xcx, FEI.hEditor
 MethodEnd
@@ -621,13 +621,13 @@ Method Application.Init, uses xbx xdi xsi
       .if eax != FALSE
         OCall [xsi].PrjMgr::ProjectManager.ProjectLoadFrom, PSTRINGW ptr [xdi]
       .else
-        OCall xsi.LaunchEditor, PSTRINGW ptr [xdi]
+        OCall xsi.LaunchEditor, PSTRINGW ptr [xdi], SW_SHOW
       .endif
     .endif
     add xdi, sizeof(PSTRINGW)
     inc ebx
   .endw
-  MemFree pAppArgsW 
+  MemFree pAppArgsW
 
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
@@ -636,9 +636,11 @@ MethodEnd
 ; Method:     Application.LaunchEditor
 ; Purpose:    Check if the editor already exist. It not, try opening a new editor instance.
 ; Arguments:  Arg1: -> File name.
+;             Arg2: Show command (SW_SHOW, SW_HIDE, etc.)
 ; Return:     xax -> New Editor or NULL if failed.
+;             ecx = TRUE if the editor was previously open, otherwise FALSE.
 
-Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING
+Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING, dShowCmd:DWORD
   local cMessage[1024]:CHR, pExpFullFileName:PSTRING
 
   SetObject xsi
@@ -650,7 +652,8 @@ Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING
     mov xbx, xcx
     mov xax, [xsi].pClientWnd
     invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_MDIACTIVATE, xbx, 0
-    
+    mov ebx, TRUE
+
   .else
     OCall [xsi].FileTypes::FileTypeCollection.GetFileTypeInfo, pFileName
     .if xax != NULL
@@ -668,7 +671,7 @@ Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING
         .endif
         OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pExpFullFileName
         .if eax != FALSE
-          invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
+          invoke ShowWindow, [xdi].$Obj(Editor).hWnd, dShowCmd
         .else
           Kill xdi
           lea xdi, cMessage
@@ -677,16 +680,20 @@ Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING
           xor edi, edi
         .endif
       .endif
-      ExitMethod
+      xor ebx, ebx
+      jmp @@Exit
     .endif
     lea xdi, cMessage
     WriteF xdi, "The file type from \´¦ST\´ is unknown.", pFileName
     invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+    xor ebx, ebx
     xor edi, edi
   .endif
 
+@@Exit:
   invoke StrDispose, pExpFullFileName
   mov xax, xdi
+  mov ecx, ebx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1131,7 +1138,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .while ebx < dCount
           ICall pISIArr::IShellItemArray.GetItemAt, ebx, addr pIShellItem
           ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-          OCall xsi.LaunchEditor, pDisplayName
+          OCall xsi.LaunchEditor, pDisplayName, SW_SHOW
           invoke CoTaskMemFree, pDisplayName
           ICall pIShellItem::IShellItem.Release
           inc ebx
@@ -1450,7 +1457,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xax, Item.lParam
-    OCall xsi.LaunchEditor, [xax].PROJECTITEM.pFileName
+    OCall xsi.LaunchEditor, [xax].PROJECTITEM.pFileName, SW_SHOW
     xor eax, eax
   .elseif ax == IDM_PROJ_FILE_REMOVE
     lea xbx, [xsi].PrjMgr

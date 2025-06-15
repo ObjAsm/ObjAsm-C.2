@@ -1188,9 +1188,9 @@ Method EditorView.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     mov xcx, [xdx].$Obj(EditorDisplay).pOwner
     mov xdx, [xcx].$Obj(Editor).pOwner
     mov xbx, [xdx].$Obj(ClientWnd).pOwner                 ;xbx -> Application
-  
+
     mov hContextMenu, $invoke(GetSubMenu, [xbx].$Obj(Application).hMenuContextEditor, 0)
-  
+
     ;Get the Application.hWnd since the XMenu is acting as an interceptor on that window
     invoke TrackPopupMenuEx, hContextMenu, TPM_LEFTALIGN or TPM_TOPALIGN or TPM_RIGHTBUTTON, \
                              SceenPoint.x, SceenPoint.y, [xbx].$Obj(Application).hWnd, NULL
@@ -1895,7 +1895,7 @@ Method EditorView.OnMouseHWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   shr eax, 16                                         ;Get high word
   movsx ecx, ax
   mov xax, [xsi].pResources
-  .ifBitClr [xax].$Obj(EditorResources).dFlags, ERF_REVERSE_MOUSE_WHEEL_HORZ
+  .ifBitSet [xax].$Obj(EditorResources).dFlags, ERF_REVERSE_MOUSE_WHEEL_HORZ
     neg ecx                                           ;This is to recreate the standard behaviour
   .endif
 

@@ -233,14 +233,15 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
               mov xdx, pRelFileName
               .if CHR ptr [xdx] != 0
                 OCall xdi::ProjectManager.IsFileAlreadyPresent, xdx
-                .if xax == 0
-                  mov xdx, pEnvVarFileName
-                  .if CHR ptr [xdx] != 0
-                    OCall xdi::ProjectManager.IsFileAlreadyPresent, xdx
-                  .endif
-                .endif
+                cmp xax, 0
+                jnz @F
+              .endif
+              mov xdx, pEnvVarFileName
+              .if CHR ptr [xdx] != 0
+                OCall xdi::ProjectManager.IsFileAlreadyPresent, xdx
               .endif
             .endif
+          @@:
             .if xax == 0
               ;Not present => insert
               mov xdi, $MemAlloc(sizeof(PROJECTITEM))

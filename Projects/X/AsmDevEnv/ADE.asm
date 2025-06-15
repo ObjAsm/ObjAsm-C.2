@@ -43,7 +43,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
 ;Note: don't use ANSI_STRING
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
@@ -119,7 +119,6 @@ MakeObjects WinApp, MdiApp
 MakeObjects COM_Primers
 
 include ADE_Globals.inc                                 ;Application globals
-include ADE_PropertiesWnd.inc
 include ADE_Main.inc                                    ;Application objects
 
 start proc SEH_FRAME                                    ;Program entry point

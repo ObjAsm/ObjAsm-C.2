@@ -517,7 +517,7 @@ MethodEnd
 
 Method Editor.InternetSearch, uses xbx xdi xsi
   local cSearchBuffer[4096]:CHR
-  
+
   SetObject xsi
   mov xbx, [xsi].SelectionRange.pBegSelInfo
   mov xdx, [xsi].SelectionRange.pEndSelInfo

@@ -170,6 +170,70 @@ Method ProjectManager.GetGroupByIndex, uses xbx xsi, dIndex:DWORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     ProjectManager.GetNextFileItem
+; Purpose:    Retrieve the next project file item from the TreeView.
+; Arguments:  Arg1: Last HTREEITEM.
+; Return:     xax = Next HTREEITEM corresponding to a file.
+;             xcx -> PROJECTITEM if xax != 0.
+
+;   Proj
+;    |
+;    +--Group
+;    |    |
+;    |    +--File 
+;    |    +--Command 
+;    |    +--Group             (this is not implemented in the ProjMgr yet)
+;    |    |    |
+;    |    |    '--File 
+;    |    '--File 
+;    '--Group
+;         |
+;         +--File 
+;         +--File 
+;         '--File
+;     
+
+Method ProjectManager.GetNextFileItem, uses xbx xsi, hLastItem:HTREEITEM
+  local Item:TVITEM
+
+  SetObject xsi
+  
+  ;Get the next leaf item
+  mov xax, hLastItem
+  .while TRUE
+    .while TRUE
+      @@:
+      mov xbx, xax
+      invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CHILD, xax
+      cmp xax, 0
+      jnz @B
+      mov xax, xbx
+      .break .if xax != hLastItem
+  
+      invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, xbx
+      .continue .if xax != 0
+  
+      @@:
+      invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, xbx
+      .break .if xax == 0
+      invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, xax
+      cmp xax, 0
+      jz @B
+    .endw
+
+    .break .if xax == 0
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.hItem
+    mov hLastItem, xax
+    mov xcx, Item.lParam
+    .break .if [xcx].PROJECTITEM.dType == PIT_FILE
+  .endw
+MethodEnd
+
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectManager.GroupsCollapse
 ; Purpose:    Collapse the TreeView so that only the groups are visible.
 ; Arguments:  None.
@@ -398,11 +462,16 @@ Method ProjectManager.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
                                   [xbx].PROJECTITEM.dType, \
                                   DragSrcItem.iImage, \
                                   [xbx].PROJECTITEM.hEditor
+        ;Set Cursor at new item
+        invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_CARET, xax
+        invoke SetFocus, [xsi].TView.hWnd
+
         ;Delete old item
         invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, [xsi].hDragSrcItem
 
         ;Expand parent
         invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, hDropOnItem
+
       .endif
       invoke ImageList_EndDrag
       invoke SendMessage, [xsi].TView.hWnd, TVM_SELECTITEM, TVGN_DROPHILITE, 0    ;Remove Hilite
@@ -531,7 +600,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
                 ExitMethod
               .endif
             .endif
-            OCall xdi::Application.LaunchEditor, [xbx].PROJECTITEM.pFileName
+            OCall xdi::Application.LaunchEditor, [xbx].PROJECTITEM.pFileName, SW_SHOW
 
           .elseif [xbx].PROJECTITEM.dType == PIT_GROUP
             invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_TOGGLE, Item.hItem

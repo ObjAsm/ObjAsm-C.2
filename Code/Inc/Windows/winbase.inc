@@ -606,7 +606,7 @@ ifndef _WINBASE_
     endm
     MAXINTATOM equ 0C000h
     MAKEINTATOM macro i
-      exitm <(LPTSTR) (((i)))>
+      exitm <i>
     endm
     INVALID_ATOM equ (0)
   endif

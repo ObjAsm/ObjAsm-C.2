@@ -27,7 +27,7 @@
     },
     {
       "Name":"Macros",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Include",
@@ -336,12 +336,6 @@
       "Group":7
     },
     {
-      "DispName":"ADE_EditorTextLine_UTF8.inc",
-      "FileName":".\\ADE_EditorTextLine_UTF8.inc",
-      "Type":2,
-      "Group":7
-    },
-    {
       "DispName":"ADE_EditorView_1.inc",
       "FileName":".\\ADE_EditorView_1.inc",
       "Type":2,
@@ -350,12 +344,6 @@
     {
       "DispName":"ADE_EditorView_2.inc",
       "FileName":".\\ADE_EditorView_2.inc",
-      "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"ADE_FeatureList.txt",
-      "FileName":".\\ADE_FeatureList.txt",
       "Type":2,
       "Group":7
     },
@@ -380,6 +368,12 @@
     {
       "DispName":"ADE_Globals.inc",
       "FileName":".\\ADE_Globals.inc",
+      "Type":2,
+      "Group":7
+    },
+    {
+      "DispName":"ADE_Globals.inc",
+      "FileName":"%OBJASM_PATH%\\Projects\\X\\AsmDevEnv\\ADE_Globals.inc",
       "Type":2,
       "Group":7
     },
@@ -464,12 +458,6 @@
     {
       "DispName":"ADE_UndoRedo.inc",
       "FileName":".\\ADE_UndoRedo.inc",
-      "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"DbgOutMsg_X.inc",
-      "FileName":"%OBJASM_PATH%\\Code\\ObjMem\\Common\\DbgOutMsg_X.inc",
       "Type":2,
       "Group":7
     },

@@ -52,7 +52,7 @@ Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSect
   local cSectionName[50]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
 
   SetObject xsi
-  
+
   invoke GetPrivateProfileString, addr szIdentification, addr szVersion, NULL, \
                       addr cItemBuffer, lengthof cItemBuffer, pIniFullFileName
 
@@ -352,7 +352,7 @@ Method EditorResources.Zoom, uses xbx xdi xsi, dZoomFactor:DWORD
   xor eax, eax
   .if SDWORD ptr edi >= ZOOM_FACTOR_MIN && SDWORD ptr edi <= ZOOM_FACTOR_MAX ;Check bounds
     mov [xsi].dZoomFactor, edi
-    
+
     ;Update the fonts
     ZoomFont [xsi].EditorTextRegular
     ZoomFont [xsi].EditorTextSelect
@@ -367,7 +367,7 @@ Method EditorResources.Zoom, uses xbx xdi xsi, dZoomFactor:DWORD
       lea xbx, [xax].KEYWORDGROUP
       ZoomFont [xbx]
     .ColNext
-  
+
     ;Compute the new line height
     mov eax, [xsi].dCodeLineSpace
     add eax, [xsi].EditorTextRegular.FontMetric.y

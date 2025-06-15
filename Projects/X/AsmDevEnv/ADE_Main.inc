@@ -120,23 +120,23 @@ PIT_GROUP           equ     1
 PIT_FILE            equ     2
 PIT_COMMAND         equ     3
 
-PIF_EXPANDED        equ     BIT00 
+PIF_EXPANDED        equ     BIT00
 
 PROJECTITEM struct
   dType             DWORD     ?
   pDispName         PSTRINGW  ?
-  union             
-    struct                                ;Files
+  union
+    struct                                  ;Files
       pFileName     PSTRINGW  ?
-      hEditor       HANDLE    ?           ;Associated Editor window handle
-    ends            
-    struct                                ;Commands
+      hEditor       HANDLE    ?             ;Associated Editor window handle
+    ends
+    struct                                  ;Commands
       pCommand      PSTRINGW  ?
-    ends            
-    struct          
-      union                               ;Groups
-        hVisible    HTREEITEM ?           ;Root => First visible node after restoration
-        dFlags      DWORD     ?           ;For regular Groups only: PIF_XXX
+    ends
+    struct
+      union                                 ;Groups
+        hVisible    HTREEITEM ?             ;Root => First visible node after restoration
+        dFlags      DWORD     ?             ;For regular Groups only: PIF_XXX
       ends
     ends
   ends
@@ -181,8 +181,8 @@ Object IDropTarget, ADE_IDropTargetID, IUnknown
 
   RedefineVariable  pIID,           offset IID_IDropTarget
 
-  DefineVariable    dEffect,        DWORD,      DROPEFFECT_NONE
-  DefineVariable    hTreeView,      HWND,       0
+  DefineVariable    dEffect,        DWORD,              DROPEFFECT_NONE
+  DefineVariable    hTreeView,      HWND,               0
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -231,8 +231,8 @@ Object FileTypeCollection, ADE_FileTypeCollectionID, SortedDataCollection
   StaticMethod      GetFileTypeInfo,      PSTRINGW
   RedefineMethod    Insert,               PSTRING, DWORD, DWORD
   RedefineMethod    KeyOf,                PFILETYPEINFOEX
-  
-  DefineVariable    PerceivedTextType,    FILETYPEINFOEX,   {}
+
+  DefineVariable    PerceivedTextType,    FILETYPEINFOEX, {}
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -244,20 +244,20 @@ Object EditorSharedResources, ADE_EditorSharedResourcesID, Primer
   RedefineMethod    Init,                 POINTER
 
   ;Cursors:
-  DefineVariable    hCursorArrow,         HCURSOR,    0
-  DefineVariable    hCursorIBeam,         HCURSOR,    0
-  DefineVariable    hCursorSelect,        HCURSOR,    0
-  DefineVariable    hCursorHand,          HCURSOR,    0
+  DefineVariable    hCursorArrow,         HCURSOR,      0
+  DefineVariable    hCursorIBeam,         HCURSOR,      0
+  DefineVariable    hCursorSelect,        HCURSOR,      0
+  DefineVariable    hCursorHand,          HCURSOR,      0
 
   ;Bitmaps:
-  DefineVariable    hBmpStatusIndRed,     HBITMAP,    0
-  DefineVariable    hBmpStatusIndYellow,  HBITMAP,    0
-  DefineVariable    hBmpStatusIndGreen,   HBITMAP,    0
+  DefineVariable    hBmpStatusIndRed,     HBITMAP,      0
+  DefineVariable    hBmpStatusIndYellow,  HBITMAP,      0
+  DefineVariable    hBmpStatusIndGreen,   HBITMAP,      0
 
   ;Brushes
-  DefineVariable    hBrushLineIndRed,     HBRUSH,     0
-  DefineVariable    hBrushLineIndYellow,  HBRUSH,     0
-  DefineVariable    hBrushLineIndGreen,   HBRUSH,     0
+  DefineVariable    hBrushLineIndRed,     HBRUSH,       0
+  DefineVariable    hBrushLineIndYellow,  HBRUSH,       0
+  DefineVariable    hBrushLineIndGreen,   HBRUSH,       0
 
 ObjectEnd
 
@@ -272,37 +272,37 @@ Object EditorResources, ADE_EditorResourcesID, Primer
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorSharedResources)
   StaticMethod      Zoom,                 DWORD
 
-  DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dFlags,               DWORD,        0
 
   ;Colors:
-  DefineVariable    EditorBG,             COLORSET,   {DefaultEditorBG}
+  DefineVariable    EditorBG,             COLORSET,     {DefaultEditorBG}
 
   ;Code Text Draw attributes:
-  DefineVariable    EditorTextRegular,    DRAW_ATTR,  {{DefaultEditorTextRegularFG,  {DefaultEditorTextRegularBG}}}
-  DefineVariable    EditorTextSelect,     DRAW_ATTR,  {{DefaultEditorTextSelectFG,   {DefaultEditorTextSelectBG}}}
-  DefineVariable    EditorTextHighlight,  DRAW_ATTR,  {{DefaultEditorTextHilightFG,  {DefaultEditorTextHilightBG}}}
-  DefineVariable    EditorTextQuote,      DRAW_ATTR,  {{DefaultEditorTextQuoteFG,    {DefaultEditorTextQuoteBG}}}
-  DefineVariable    EditorTextComment,    DRAW_ATTR,  {{DefaultEditorTextCommentFG,  {DefaultEditorTextCommentBG}}}
-  DefineVariable    EditorTextNumber,     DRAW_ATTR,  {{DefaultEditorTextNumberFG,   {DefaultEditorTextNumberBG}}}
-  DefineVariable    EditorTextOperator,   DRAW_ATTR,  {{DefaultEditorTextOperatorFG, {DefaultEditorTextOperatorBG}}}
+  DefineVariable    EditorTextRegular,    DRAW_ATTR,    {{DefaultEditorTextRegularFG,  {DefaultEditorTextRegularBG}}}
+  DefineVariable    EditorTextSelect,     DRAW_ATTR,    {{DefaultEditorTextSelectFG,   {DefaultEditorTextSelectBG}}}
+  DefineVariable    EditorTextHighlight,  DRAW_ATTR,    {{DefaultEditorTextHilightFG,  {DefaultEditorTextHilightBG}}}
+  DefineVariable    EditorTextQuote,      DRAW_ATTR,    {{DefaultEditorTextQuoteFG,    {DefaultEditorTextQuoteBG}}}
+  DefineVariable    EditorTextComment,    DRAW_ATTR,    {{DefaultEditorTextCommentFG,  {DefaultEditorTextCommentBG}}}
+  DefineVariable    EditorTextNumber,     DRAW_ATTR,    {{DefaultEditorTextNumberFG,   {DefaultEditorTextNumberBG}}}
+  DefineVariable    EditorTextOperator,   DRAW_ATTR,    {{DefaultEditorTextOperatorFG, {DefaultEditorTextOperatorBG}}}
 
   ;Control Draw attributes:
-  DefineVariable    SelBarTextRegular,    DRAW_ATTR,  {{DefaultSelBarTextRegFG,      {DefaultSelBarTextRegBG}}}
-  DefineVariable    SelBarTextSelect,     DRAW_ATTR,  {{DefaultSelBarTextSelFG,      {DefaultSelBarTextSelBG}}}
-  DefineVariable    StatusPanelText,      DRAW_ATTR,  {{DefaultStatusPanelTextFG,    {DefaultStatusPanelTextBG}}}
+  DefineVariable    SelBarTextRegular,    DRAW_ATTR,    {{DefaultSelBarTextRegFG,      {DefaultSelBarTextRegBG}}}
+  DefineVariable    SelBarTextSelect,     DRAW_ATTR,    {{DefaultSelBarTextSelFG,      {DefaultSelBarTextSelBG}}}
+  DefineVariable    StatusPanelText,      DRAW_ATTR,    {{DefaultStatusPanelTextFG,    {DefaultStatusPanelTextBG}}}
 
   ;Metrics:
-  DefineVariable    dCodeLineSpace,       DWORD,      DefaultLineSpace  ;Vertical separation between lines
-  DefineVariable    dLineHeight,          DWORD,      12                ;CodeFontMetric.Y + Linespacing
-  DefineVariable    dTabWidth,            DWORD,      DefaultTabWidth   ;TAB in spaces
-  DefineVariable    dLineFoldingWidth,    DWORD,      35                ;Width reserved for line folding management
-  DefineVariable    dLineIndicatorWidth,  DWORD,      3                 ;Width reserved for line indication
-  DefineVariable    dSelBarWidthMin,      DWORD,      60
-  DefineVariable    ScrollBarMetric,      POINT,      {17,17}
-  DefineVariable    CaretBmpOffset,       POINT,      {0,0} ;Offset to the logical caret, set by CaretNew
-  DefineVariable    dZoomFactor,          DWORD,      ZOOM_FACTOR_INIT
-  DefineVariable    dInitZoomFactor,      DWORD,      ZOOM_FACTOR_INIT  ;Temp storage
-  DefineVariable    dLineTermination,     DWORD,      ELT_CRLF
+  DefineVariable    dCodeLineSpace,       DWORD,        DefaultLineSpace  ;Vertical separation between lines
+  DefineVariable    dLineHeight,          DWORD,        12                ;CodeFontMetric.Y + Linespacing
+  DefineVariable    dTabWidth,            DWORD,        DefaultTabWidth   ;TAB in spaces
+  DefineVariable    dLineFoldingWidth,    DWORD,        35                ;Width reserved for line folding management
+  DefineVariable    dLineIndicatorWidth,  DWORD,        3                 ;Width reserved for line indication
+  DefineVariable    dSelBarWidthMin,      DWORD,        60
+  DefineVariable    ScrollBarMetric,      POINT,        {17,17}
+  DefineVariable    CaretBmpOffset,       POINT,        {0,0} ;Offset to the logical caret, set by CaretNew
+  DefineVariable    dZoomFactor,          DWORD,        ZOOM_FACTOR_INIT
+  DefineVariable    dInitZoomFactor,      DWORD,        ZOOM_FACTOR_INIT  ;Temp storage
+  DefineVariable    dLineTermination,     DWORD,        ELT_CRLF
 
   Embed     KeywordGroups,      KeywordGroupCollection
   Embed     Keywords,           KeywordCollection
@@ -312,20 +312,20 @@ Object EditorResources, ADE_EditorResourcesID, Primer
 
   ;Shared resources: these resources are managed by EditorSharedResources
   ;Cursors:
-  DefineVariable    hCursorArrow,         HCURSOR,    0
-  DefineVariable    hCursorIBeam,         HCURSOR,    0
-  DefineVariable    hCursorSelect,        HCURSOR,    0
-  DefineVariable    hCursorHand,          HCURSOR,    0
+  DefineVariable    hCursorArrow,         HCURSOR,      0
+  DefineVariable    hCursorIBeam,         HCURSOR,      0
+  DefineVariable    hCursorSelect,        HCURSOR,      0
+  DefineVariable    hCursorHand,          HCURSOR,      0
 
   ;Bitmaps:
-  DefineVariable    hBmpStatusIndRed,     HBITMAP,    0
-  DefineVariable    hBmpStatusIndYellow,  HBITMAP,    0
-  DefineVariable    hBmpStatusIndGreen,   HBITMAP,    0
+  DefineVariable    hBmpStatusIndRed,     HBITMAP,      0
+  DefineVariable    hBmpStatusIndYellow,  HBITMAP,      0
+  DefineVariable    hBmpStatusIndGreen,   HBITMAP,      0
 
   ;Brushes
-  DefineVariable    hBrushLineIndRed,     HBRUSH,     0
-  DefineVariable    hBrushLineIndYellow,  HBRUSH,     0
-  DefineVariable    hBrushLineIndGreen,   HBRUSH,     0
+  DefineVariable    hBrushLineIndRed,     HBRUSH,       0
+  DefineVariable    hBrushLineIndYellow,  HBRUSH,       0
+  DefineVariable    hBrushLineIndGreen,   HBRUSH,       0
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -353,13 +353,13 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      SpaceFill,            DWORD, DWORD, DWORD
   StaticMethod      Undo,                 POINTER               ;PACTION
 
-  DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
-  DefineVariable    dCharCapacity,        DWORD,      0         ;In characters not including the ZTC
-  DefineVariable    dLength,              DWORD,      0         ;In characters not including the ZTC
+  DefineVariable    pBuffer,              POINTER,      NULL      ;Memory holding wide chars and an ending ZTC
+  DefineVariable    dCharCapacity,        DWORD,        0         ;In characters not including the ZTC
+  DefineVariable    dLength,              DWORD,        0         ;In characters not including the ZTC
   ;Selection: [0..dLength] 0 means before the 1st & dLength includes the ZTC
-  DefineVariable    Selection,            RANGE,      {0,0}     ;In characters
-  DefineVariable    dBookmark,            DWORD,      0
-  DefineVariable    dFlags,               DWORD,      0         ;ELF_xxx
+  DefineVariable    Selection,            RANGE,        {0,0}     ;In characters
+  DefineVariable    dBookmark,            DWORD,        0
+  DefineVariable    dFlags,               DWORD,        0         ;ELF_xxx
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -469,35 +469,35 @@ Object EditorView, ADE_EditorViewID, Window
   StaticEvent       OnSetFocus,           WM_SETFOCUS
 
   ;Management
-  DefineVariable    dFlags,               DWORD,      0
-  DefineVariable    FirstVisChar,         LOCATION,   {0, 0}  ;First visisble char in View
-  DefineVariable    dFirstVisLineCount,   DWORD,      0       ;Count of visible lines up to FirstVisChar
-  DefineVariable    CaretLocation,        LOCATION,   {0, 0}  ;LineIndex, CharIndex
-  DefineVariable    sdLineNumberOffset,   SDWORD,     0       ;SelBar left-Click
-  DefineVariable    dLockedCharIndex,     DWORD,      -1      ;Persistant char index when moving the Caret vertically
+  DefineVariable    dFlags,               DWORD,        0
+  DefineVariable    FirstVisChar,         LOCATION,     {0, 0}  ;First visisble char in View
+  DefineVariable    dFirstVisLineCount,   DWORD,        0       ;Count of visible lines up to FirstVisChar
+  DefineVariable    CaretLocation,        LOCATION,     {0, 0}  ;LineIndex, CharIndex
+  DefineVariable    sdLineNumberOffset,   SDWORD,       0       ;SelBar left-Click
+  DefineVariable    dLockedCharIndex,     DWORD,        -1      ;Persistant char index when moving the Caret vertically
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
-  DefineVariable    pEditor,              POINTER,    NULL
+  DefineVariable    pEditor,              POINTER,      NULL
 
   ;Backbuffering => flickerfree display
-  DefineVariable    hViewDC,              HDC,        0       ;Memory DC for back buffer drawing
-  DefineVariable    hViewBmp,             HBITMAP,    0       ;Back buffer bitmap
-  DefineVariable    hPrvViewBmp,          HBITMAP,    0       ;Original MemDC bitmap
+  DefineVariable    hViewDC,              HDC,          0       ;Memory DC for back buffer drawing
+  DefineVariable    hViewBmp,             HBITMAP,      0       ;Back buffer bitmap
+  DefineVariable    hPrvViewBmp,          HBITMAP,      0       ;Original MemDC bitmap
 
   ;Metrics
-  DefineVariable    dSelBarWidth,         DWORD,      0
+  DefineVariable    dSelBarWidth,         DWORD,        0
 
   ;UI elements
-  DefineVariable    SelBarRect,           RECT,       {0,0,0,0} ;Selectionbar
-  DefineVariable    TextRect,             RECT,       {0,0,0,0} ;RECT containing all visible Lines
-  DefineVariable    dCharMaxFullVis,      DWORD,      0       ;Number of horiz. fully shown characters
-  DefineVariable    dCharMaxPartVis,      DWORD,      0       ;Number of horiz. partially shown characters
-  DefineVariable    dLineMaxFullVis,      DWORD,      0       ;Number of vert. fully shown lines
-  DefineVariable    dLineMaxPartVis,      DWORD,      0       ;Number of vert. partially shown lines
+  DefineVariable    SelBarRect,           RECT,         {0,0,0,0} ;Selectionbar
+  DefineVariable    TextRect,             RECT,         {0,0,0,0} ;RECT containing all visible Lines
+  DefineVariable    dCharMaxFullVis,      DWORD,        0       ;Number of horiz. fully shown characters
+  DefineVariable    dCharMaxPartVis,      DWORD,        0       ;Number of horiz. partially shown characters
+  DefineVariable    dLineMaxFullVis,      DWORD,        0       ;Number of vert. fully shown lines
+  DefineVariable    dLineMaxPartVis,      DWORD,        0       ;Number of vert. partially shown lines
 
   ;Touch support
-  DefineVariable    dGestureZoomFirst,    DWORD,      0
-  DefineVariable    dGestureZoomLast,     DWORD,      0
-  DefineVariable    GesturePanPos,        POINT,      {}
+  DefineVariable    dGestureZoomFirst,    DWORD,        0
+  DefineVariable    dGestureZoomLast,     DWORD,        0
+  DefineVariable    GesturePanPos,        POINT,        {}
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -551,17 +551,17 @@ Object EditorDisplay, ADE_EditorDisplayID, Window
   Embed             ScrollBarVert,        ScrollBar
   Embed             ScrollBarHorz,        ScrollBar
 
-  DefineVariable    PosIndDirty,          POINT,      {04,3}
-  DefineVariable    PosInd2,              POINT,      {24,3}
-  DefineVariable    PosInd3,              POINT,      {44,3}
-  DefineVariable    StatusPanelRect,      RECT,       {0,0,0,0}
-  DefineVariable    SplitterRect,         RECT,       {0,0,0,0}
-  DefineVariable    ScrollPage,           POINT,      {10,10} ;CharPage and LinePage to scroll
+  DefineVariable    PosIndDirty,          POINT,          {04,3}
+  DefineVariable    PosInd2,              POINT,          {24,3}
+  DefineVariable    PosInd3,              POINT,          {44,3}
+  DefineVariable    StatusPanelRect,      RECT,           {0,0,0,0}
+  DefineVariable    SplitterRect,         RECT,           {0,0,0,0}
+  DefineVariable    ScrollPage,           POINT,          {10,10} ;CharPage and LinePage to scroll
 
   ;Backbuffering => flickerfree display
-  DefineVariable    hPanelDC,             HDC,        0       ;Memory DC for back buffer drawing
-  DefineVariable    hPanelBmp,            HBITMAP,    0       ;Back buffer bitmap
-  DefineVariable    hPrvPanelBmp,         HBITMAP,    0       ;Original MemDC bitmap
+  DefineVariable    hPanelDC,             HDC,            0   ;Memory DC for back buffer drawing
+  DefineVariable    hPanelBmp,            HBITMAP,        0   ;Back buffer bitmap
+  DefineVariable    hPrvPanelBmp,         HBITMAP,        0   ;Original MemDC bitmap
 
 ObjectEnd
 
@@ -581,7 +581,7 @@ Object ChildWnd, ADE_ChildWndID, MdiChildWnd            ;MDI child window.
 
   VirtualEvent      OnMdiActivate,        WM_MDIACTIVATE
 
-  DefineVariable    pFullFileName,        PSTRING,    NULL
+  DefineVariable    pFullFileName,        PSTRING,      NULL
   DefineVariable    FileTypeInfo,         FILETYPEINFO, {EFF_UNKNOWN, ECT_TXT}
 
   Embed   Snapper,  Magnetism
@@ -628,8 +628,8 @@ Object ActionCollection, ADE_ActionCollectionID, DataCollection
   StaticMethod      GetNewActionGroup
   StaticMethod      ShowActions
 
-  DefineVariable    dActionIndex,         DWORD,    0   ;Sort of stack pointer
-  DefineVariable    dActionGroup,         DWORD,    0   ;Grouping ID
+  DefineVariable    dActionIndex,         DWORD,        0   ;Sort of stack pointer
+  DefineVariable    dActionGroup,         DWORD,        0   ;Grouping ID
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -679,18 +679,18 @@ Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    UpdateStatusbar
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
-  DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dFlags,               DWORD,        0
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
-  DefineVariable    dVisLineCount,        DWORD,      0
-  DefineVariable    dMaxLineCharCount,    DWORD,      0
-  DefineVariable    pHilitedWord,         PSTRING,    NULL
-  DefineVariable    dHilitedLen,          DWORD,      0
+  DefineVariable    dVisLineCount,        DWORD,        0
+  DefineVariable    dMaxLineCharCount,    DWORD,        0
+  DefineVariable    pHilitedWord,         PSTRING,      NULL
+  DefineVariable    dHilitedLen,          DWORD,        0
 
   ;Selection variables
-  DefineVariable    SelectionFst,         LOCATION,   {0, 0}  ;First selected location
-  DefineVariable    SelectionLst,         LOCATION,   {0, 0}  ;Last selected location
-  DefineVariable    SelectionRange,       SELRANGE,   {NULL, NULL}  ;-> LOCATION; Set by SelectionSet
-  DefineVariable    dSelectionVisLineCnt, DWORD,      0             ;Set by SelectionSet
+  DefineVariable    SelectionFst,         LOCATION,     {0, 0}  ;First selected location
+  DefineVariable    SelectionLst,         LOCATION,     {0, 0}  ;Last selected location
+  DefineVariable    SelectionRange,       SELRANGE,     {NULL, NULL}  ;-> LOCATION; Set by SelectionSet
+  DefineVariable    dSelectionVisLineCnt, DWORD,        0             ;Set by SelectionSet
 
   DefineVariable    pFocusedView,         $ObjPtr(EditorView), NULL
 
@@ -720,12 +720,12 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
   StaticEvent       OnPaint,              WM_PAINT
 
-  DefineVariable    hBackgroundBrush,     HBRUSH,     0         ;Background brush
-  DefineVariable    dChildCount,          DWORD,      0
-  DefineVariable    dUnnamedCount,        DWORD,      0         ;Incremental ID for unnamed ChildWnds
+  DefineVariable    hBackgroundBrush,     HBRUSH,       0         ;Background brush
+  DefineVariable    dChildCount,          DWORD,        0
+  DefineVariable    dUnnamedCount,        DWORD,        0         ;Incremental ID for unnamed ChildWnds
 
   ;Management
-  DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dFlags,               DWORD,        0
 
 ObjectEnd
 
@@ -739,6 +739,7 @@ Object ProjectManager, ADE_ProjectManagerID, Window
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
   StaticMethod      IsFileAlreadyPresent, PSTRING
   StaticMethod      GetGroupByIndex,      DWORD
+  StaticMethod      GetNextFileItem,      HTREEITEM
   StaticMethod      GroupsCollapse
   StaticMethod      GroupsExpandRestore,  HTREEITEM
   StaticMethod      ProjectCreateNew
@@ -756,29 +757,29 @@ Object ProjectManager, ADE_ProjectManagerID, Window
   VirtualEvent      OnNotify,             WM_NOTIFY
   VirtualEvent      OnPaint,              WM_PAINT
 
-  DefineVariable    pProjName,            PSTRING,    NULL
-  DefineVariable    pProjFileName,        PSTRING,    NULL
-  DefineVariable    pProjDirPath,         PSTRING,    NULL
-  DefineVariable    pProjDescription,     PSTRING,    NULL
-  DefineVariable    dReqMainVersion,      DWORD,      1
-  DefineVariable    dMinSubVersion,       DWORD,      0
+  DefineVariable    pProjName,            PSTRING,      NULL
+  DefineVariable    pProjFileName,        PSTRING,      NULL
+  DefineVariable    pProjDirPath,         PSTRING,      NULL
+  DefineVariable    pProjDescription,     PSTRING,      NULL
+  DefineVariable    dReqMainVersion,      DWORD,        1
+  DefineVariable    dMinSubVersion,       DWORD,        0
 
-  DefineVariable    dFlags,               DWORD,      0
-  DefineVariable    dToolbarHeight,       DWORD,      0
-  DefineVariable    dDragging,            DWORD,      FALSE
-  DefineVariable    hDragSrcItem,         HTREEITEM,  0
-  DefineVariable    hEdit,                HWND,       0         ;TreeView item Edit control
-  
-  DefineVariable    ForeColor,            COLORREF,   DefaultProjFG
-  DefineVariable    BackColor,            COLORREF,   DefaultProjBG
-  DefineVariable    LineColor,            COLORREF,   DefaultProjLN
-  DefineVariable    dInitialWidth,        DWORD,      200       ;Default
+  DefineVariable    dFlags,               DWORD,        0
+  DefineVariable    dToolbarHeight,       DWORD,        0
+  DefineVariable    dDragging,            DWORD,        FALSE
+  DefineVariable    hDragSrcItem,         HTREEITEM,    0
+  DefineVariable    hEdit,                HWND,         0         ;TreeView item Edit control
+
+  DefineVariable    ForeColor,            COLORREF,     DefaultProjFG
+  DefineVariable    BackColor,            COLORREF,     DefaultProjBG
+  DefineVariable    LineColor,            COLORREF,     DefaultProjLN
+  DefineVariable    dInitialWidth,        DWORD,        200       ;Default
 
   Embed     TBar,               Toolbar
   Embed     TView,              TreeView
   Embed     IconImageList,      MaskedImageList
   Embed     DragDrop,           Component
-  Embed     DefaultGroups,      %StrCollection        ;New default Groups 
+  Embed     DefaultGroups,      %StrCollection          ;New default Groups
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -826,8 +827,9 @@ Object FindDialog, , DialogModeless
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   StaticMethod      Find
-  StaticMethod      FindFirst,            $ObjPtr(Editor), PSTRING
-  StaticMethod      FindNext,             $ObjPtr(Editor), PSTRING
+  StaticMethod      FindFirstMatch,       $ObjPtr(Editor), PSTRING
+  StaticMethod      FindNextMatch,        $ObjPtr(Editor), PSTRING
+  StaticMethod      GetNextProjFile,      HWND, HTREEITEM
   StaticMethod      Replace
   StaticMethod      ReplaceAll
   StaticMethod      Help
@@ -842,12 +844,13 @@ Object FindDialog, , DialogModeless
   Embed     EditorWndHandles,   XWCollection
 
   DefineVariable    Choices,              FINDDLGCHOICES,  {FDS_CURRENT_FILE, 0, FDD_DOWN}
-  DefineVariable    hEditor,              HWND,     0
+  DefineVariable    hEditor,              HWND,         0
+  DefineVariable    hFileItem,            HTREEITEM,    0
 
-  DefineVariable    SrchBeg,              LOCATION, {}
-  DefineVariable    SrchEnd,              LOCATION, {}
-  DefineVariable    dContinue,            DWORD,    FALSE
-  DefineVariable    dContinueSameEditor,  DWORD,    FALSE
+  DefineVariable    SrchBeg,              LOCATION,     {}
+  DefineVariable    SrchEnd,              LOCATION,     {}
+  DefineVariable    dContinue,            DWORD,        FALSE
+  DefineVariable    dContinueSameEditor,  DWORD,        FALSE
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -863,7 +866,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticMethod      GetActiveChild
   StaticMethod      GetActiveEditor
   RedefineMethod    Init
-  StaticMethod      LaunchEditor,         PSTRING
+  StaticMethod      LaunchEditor,         PSTRING, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   StaticMethod      LoadContext,          PSTRING
   StaticMethod      ManageGuiCmds,        HWND
@@ -882,21 +885,21 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
   StaticEvent       OnNotify,             WM_NOTIFY
 
-  DefineVariable    dReqMainVersion,      DWORD,      1
-  DefineVariable    dMinSubVersion,       DWORD,      0
-  DefineVariable    dLangID,              DWORD,      IDLANG_ENGLISH
-  DefineVariable    hMenuInit,            HMENU,      0
-  DefineVariable    hMenuChild,           HMENU,      0
-  DefineVariable    hMenuChildWnd,        HMENU,      0
-  DefineVariable    hMenuContextEditor,   HMENU,      0
-  DefineVariable    hMenuContextProject,  HMENU,      0
-  DefineVariable    dFlags,               DWORD,      0
+  DefineVariable    dReqMainVersion,      DWORD,        1
+  DefineVariable    dMinSubVersion,       DWORD,        0
+  DefineVariable    dLangID,              DWORD,        IDLANG_ENGLISH
+  DefineVariable    hMenuInit,            HMENU,        0
+  DefineVariable    hMenuChild,           HMENU,        0
+  DefineVariable    hMenuChildWnd,        HMENU,        0
+  DefineVariable    hMenuContextEditor,   HMENU,        0
+  DefineVariable    hMenuContextProject,  HMENU,        0
+  DefineVariable    dFlags,               DWORD,        0
 
-  DefineVariable    PrintMargin,          RECT,       {}
-  DefineVariable    hDevMode,             HGLOBAL,    0
-  DefineVariable    hDevNames,            HGLOBAL,    0
+  DefineVariable    PrintMargin,          RECT,         {}
+  DefineVariable    hDevMode,             HGLOBAL,      0
+  DefineVariable    hDevNames,            HGLOBAL,      0
 
-  DefineVariable    dNewFileTypeDefault,          DWORD,      ECT_ASM
+  DefineVariable    dNewFileTypeDefault,  DWORD,        ECT_ASM
 
   ;UI elements
   Embed     IconImageList,      MaskedImageList
@@ -906,10 +909,8 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     TbEdit,             Toolbar
   Embed     TbWindow,           Toolbar
   Embed     Menu,               XMenu
-  Embed     PrjMgr,            ProjectManager
-;  Embed     PropWnd,            PropertiesWnd
+  Embed     PrjMgr,             ProjectManager
   Embed     SplitterVert,       Splitter
-;  Embed     SplitterHorz,       Splitter
   Embed     SharedResources,    EditorSharedResources
   Embed     AsmEditorResources, EditorResources
   Embed     ResEditorResources, EditorResources

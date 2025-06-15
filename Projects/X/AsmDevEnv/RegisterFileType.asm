@@ -12,7 +12,7 @@
 ; Purpose:    Register a file extension on the OS with a application.
 ; Arguments:  Arg1: -> File extension, inclusive '.'.
 ;             Arg2: -> Programmatic application ID string.
-;             Arg3: -> Description string.
+;             Arg3: -> Programmatic application ID description string. Can be NULL.
 ;             Arg4: -> Application full file name.
 ; Return:     Nothing.
 
@@ -20,7 +20,7 @@
 align ALIGN_CODE
 RegisterFileType proc uses xbx xdi pExtension:PSTRING, pProgID:PSTRING, pDescription:PSTRING, pAppPath:PSTRING
   local hKey:HKEY, cBuffer[1024]:CHR
-  
+
   ;Step 1: Associate .myext with MyApp.File
   invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, pExtension, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
   .if eax == ERROR_SUCCESS
@@ -29,7 +29,7 @@ RegisterFileType proc uses xbx xdi pExtension:PSTRING, pProgID:PSTRING, pDescrip
     invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, pProgID, edi
     invoke RegCloseKey, hKey
   .endif
-  
+
   ;Step 2: Define MyApp.File description
   invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, pProgID, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
   .if eax == ERROR_SUCCESS
