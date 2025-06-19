@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       5
-BUILD_DATE_STR                textequ   <2025-06-15>
+BUILD_NUMBER                  equ       11
+BUILD_DATE_STR                textequ   <18.06.2025>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
@@ -42,6 +42,7 @@ IDM_FILE_EXIT                 equ       066
 IDM_FILE_SAVE_CTX             equ       067
 IDM_FILE_LOAD_CTX             equ       068
 IDM_FILE_BREAK                equ       069
+IDM_FILE_TEST                 equ       070
 
 IDM_PROJECT                   equ       100
 IDM_PROJ_EDIT                 equ       101

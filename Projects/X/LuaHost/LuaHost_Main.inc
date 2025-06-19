@@ -257,7 +257,7 @@ MethodEnd
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local AbtDlg:$Obj(DialogAbout), hIcon:HICON
   local OpenFileName:OPENFILENAME, cFileName[MAX_PATH*sizeof CHR]:CHR
-  local hDC:HDC, pScript:PSTRINGW
+  local hDC:HDC, pScript:PSTRINGA
 
   SetObject xsi
   mov xax, wParam
@@ -432,8 +432,8 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnFinished
 ; Purpose:    Event procedure for LHM_SCRIPT_FINISHED message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
+; Arguments:  Arg1: First message parameter (Lua result).
+;             Arg2: Second message parameter (pScript).
 ; Return:     Nothing.
 
 Method Application.OnFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
@@ -461,6 +461,7 @@ Method Application.OnFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     invoke MessageBox, [xsi].hWnd, xdx, offset szError, MB_OK or MB_ICONERROR
   .endif
+  MemFree lParam
   invoke SetFocus, [xsi].hWnd
 MethodEnd
 

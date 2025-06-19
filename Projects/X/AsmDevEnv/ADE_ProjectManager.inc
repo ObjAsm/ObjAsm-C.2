@@ -216,6 +216,7 @@ Method ProjectManager.GetNextFileItem, uses xbx xsi, hLastItem:HTREEITEM
       @@:
       invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, xbx
       .break .if xax == 0
+      mov xbx, xax
       invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, xax
       cmp xax, 0
       jz @B

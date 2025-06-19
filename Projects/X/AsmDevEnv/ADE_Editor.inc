@@ -445,6 +445,8 @@ MethodEnd
 Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorResources), pFileName:PSTRINGW
   local cBuffer[MAX_PATH]:CHR, dStyle:DWORD
 
+;  DbgText "Editor.Init"
+;  DbgStr pFileName
   SetObject xsi
   ACall xsi.Init, pOwner                                ;hWnd is set in WndProc
   m2m [xsi].pResources, pResources, xax

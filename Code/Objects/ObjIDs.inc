@@ -446,6 +446,7 @@ ADE_ProjPropsDialogID             equ     0000012215
 ADE_FilePropsDialogID             equ     0000012216
 ADE_ScrollBarVertID               equ     0000012217
 ADE_DialogAboutID                 equ     0000012218
+ADE_ScriptEngineID                equ     0000012219
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

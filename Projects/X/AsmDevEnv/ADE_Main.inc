@@ -730,6 +730,17 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Object:  ScriptEngine
+; Purpose: 
+
+Object ScriptEngine, ADE_ScriptEngineID, LuaHost
+  RedefineMethod    ScriptInit,           Plua_State
+  
+
+ObjectEnd
+
+
+; --------------------------------------------------------------------------------------------------
 ; Object:  ProjectManager
 ; Purpose: Implement a project window used as a control container on some apps.
 
@@ -790,8 +801,8 @@ Object ProjPropsDialog, ADE_ProjPropsDialogID, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   StaticMethod      GetDirectoryName
-  RedefineMethod    Init,               POINTER, HWND
-  RedefineMethod    OnCommand,          WPARAM, LPARAM
+  RedefineMethod    Init,                 POINTER, HWND
+  RedefineMethod    OnCommand,            WPARAM, LPARAM
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -802,10 +813,10 @@ Object FilePropsDialog, ADE_FilePropsDialogID, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   StaticMethod      GetFileName
-  RedefineMethod    Init,               POINTER, HWND, HTREEITEM
-  RedefineMethod    OnCommand,          WPARAM, LPARAM
+  RedefineMethod    Init,                 POINTER, HWND, HTREEITEM
+  RedefineMethod    OnCommand,            WPARAM, LPARAM
 
-  DefineVariable    hItem,      HTREEITEM
+  DefineVariable    hItem,                HTREEITEM
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -838,10 +849,7 @@ Object FindDialog, , DialogModeless
   RedefineMethod    OnActivate,           WPARAM, LPARAM
   RedefineMethod    OnCommand,            WPARAM, LPARAM
   RedefineMethod    OnDestroy,            WPARAM, LPARAM
-
-  Embed     FindStrings,        %StrCollection
-  Embed     ReplStrings,        %StrCollection
-  Embed     EditorWndHandles,   XWCollection
+  RedefineMethod    OnInitDialog,         WPARAM, LPARAM
 
   DefineVariable    Choices,              FINDDLGCHOICES,  {FDS_CURRENT_FILE, 0, FDD_DOWN}
   DefineVariable    hEditor,              HWND,         0
@@ -851,6 +859,10 @@ Object FindDialog, , DialogModeless
   DefineVariable    SrchEnd,              LOCATION,     {}
   DefineVariable    dContinue,            DWORD,        FALSE
   DefineVariable    dContinueSameEditor,  DWORD,        FALSE
+
+  Embed     FindStrings,        %StrCollection
+  Embed     ReplStrings,        %StrCollection
+  Embed     EditorWndHandles,   XWCollection
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -858,7 +870,6 @@ ObjectEnd
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
   StaticMethod      ChangeLanguage,       DWORD                 ;IDLANG_XXX
   StaticMethod      ConfigLoad
-  StaticMethod      ProjectSave
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
   StaticMethod      Execute,              PSTRING
@@ -872,7 +883,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticMethod      ManageGuiCmds,        HWND
   RedefineMethod    OnSize,               WPARAM, LPARAM
   StaticMethod      ProjectOpen,          PSTRING
-;  StaticMethod      ProjectSave
+  StaticMethod      ProjectSave
   StaticMethod      SaveContext,          PSTRING
   StaticMethod      Startup
   StaticMethod      StatusbarHelp,        PSTRING               ;-> Help string
@@ -883,7 +894,9 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticEvent       OnCreate,             WM_CREATE
   StaticEvent       OnDestroy,            WM_DESTROY
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
+  StaticEvent       OnLuaFinished,        LHM_SCRIPT_FINISHED
   StaticEvent       OnNotify,             WM_NOTIFY
+
 
   DefineVariable    dReqMainVersion,      DWORD,        1
   DefineVariable    dMinSubVersion,       DWORD,        0
@@ -918,6 +931,8 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     FindDlg,            FindDialog
 
   Embed     FileTypes,          FileTypeCollection
+
+  Embed     ScriptHost,         ScriptEngine
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1113,3 +1128,4 @@ include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc
 include ADE_EditorLine.inc
 include ADE_FindDialog.inc
+include ADE_ScriptEngine.inc

@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      LuaHost.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm support of Lua Host objects.
 ; Notes:      Version C.1.0, November 2023
 ;               - First release.
+;             Version C.1.1 June 2025
+;               - Caller has to dispose the script string.
 ; ==================================================================================================
 
 
@@ -54,7 +56,7 @@ lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
 ;  ?mov edx, plua_Debug
 ;  DbgDec [xdx].lua_Debug.currentline
 
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
+  invoke lua_getglobal, pLuaState, $OfsCStrA("pScriptHost")  ;Retrieve -> LuaHost
   invoke lua_tointegerx, pLuaState, -1, NULL
   .ifBitSet [xax].$Obj(LuaHost).dFlags, LHF_SCRIPT_STOP
     invoke lua_pushstring, pLuaState, $OfsCStrA("STOP")
@@ -104,7 +106,7 @@ Method LuaHost.Run, uses xbx xsi
 
   ;Store a pointer to the LuaHost as a global variable
   invoke lua_pushinteger, xbx, xsi
-  invoke lua_setglobal, xbx, $OfsCStrA("pLuaHost")
+  invoke lua_setglobal, xbx, $OfsCStrA("pScriptHost")
 
   ;Set the call hook
   invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0
@@ -124,15 +126,12 @@ Method LuaHost.Run, uses xbx xsi
 @@Error:
   mov dRetVal, eax
 
-  ;Housekeeping
-  invoke lua_close, xbx                                 ;Run the garbage collector one last time
-  MemFree [xsi].pScript
-  m2z [xsi].pScript
-
   ;Inform the main Application that the script has finished and pass an result value 
   mov xax, [xsi].pOwner
-  invoke PostMessage, [xax].$Obj(WinPrimer).hWnd, LHM_SCRIPT_FINISHED, dRetVal, 0
-  invoke CloseHandle, [xsi].hThread                     ;Decrement HANDLE count to release hThrend
+  invoke PostMessage, [xax].$Obj(WinPrimer).hWnd, LHM_SCRIPT_FINISHED, dRetVal, [xsi].pScript
+  .if [xsi].hThread != 0
+    invoke CloseHandle, [xsi].hThread                   ;Decrement HANDLE count to release hThread
+  .endif
   mov eax, dRetVal                                      ; when terminated
 MethodEnd
 
@@ -149,7 +148,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Start
-; Purpose:    Start script execution.
+; Purpose:    Start asynchronious script execution.
 ; Arguments:  Arg1: -> ANSI string containing the script to execute.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 

@@ -1850,7 +1850,8 @@ Override macro DstExpression:req, SrcExpression:req
               endif
               mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
             endif
-            mrm ($$Txo ptr [xdx]).??MtdExpr, $$OffsetText, xcx
+            mov xcx, $$OffsetText
+            mov ($$Txo ptr [xdx]).??MtdExpr, xcx
           elseif ??MtdType eq ??MTDTYPE_VIRTUAL
             $$Txo textequ @CatStr(<??>, %??ObjExpr, <_VMT>)
             if type(??InsExpr) eq @WordSize
@@ -1870,14 +1871,17 @@ Override macro DstExpression:req, SrcExpression:req
               endif
               mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
             endif
-            mrm ($$Txo ptr [xdx - sizeof($$Txo) - sizeof(POINTER)]).??MtdExpr, $$OffsetText, xcx
+            mov xcx, $$OffsetText
+            mov ($$Txo ptr [xdx - sizeof($$Txo) - sizeof(POINTER)]).??MtdExpr, xcx
           elseif ??MtdType eq ??MTDTYPE_DYNAMIC
             if type(??InsExpr) eq @WordSize
               if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?
-                mrm (??ObjExpr ptr [??InsExpr]).??MtdExpr, $$OffsetText, xdx
+                mov xdx, $$OffsetText
+                mov (??ObjExpr ptr [??InsExpr]).??MtdExpr, xdx
               else
                 mov xdx, ??InsExpr
-                mrm (??ObjExpr ptr [xdx]).??MtdExpr, $$OffsetText, xcx
+                mov xcx, $$OffsetText
+                mov (??ObjExpr ptr [xdx]).??MtdExpr, xcx
               endif
             else
               $$Attributes = opattr(??InsExpr)
@@ -1887,7 +1891,8 @@ Override macro DstExpression:req, SrcExpression:req
               else
                 mov xdx, offset(??InsExpr)
               endif
-              mrm (??ObjExpr ptr [xdx]).??MtdExpr, $$OffsetText, xcx
+              mov xcx, $$OffsetText
+              mov (??ObjExpr ptr [xdx]).??MtdExpr, xcx
             endif
           elseif ??MtdType eq ??MTDTYPE_STATIC or ??MtdType eq ??MTDTYPE_INLINE
             @Err <Override Error: invalid method type DstExpression>

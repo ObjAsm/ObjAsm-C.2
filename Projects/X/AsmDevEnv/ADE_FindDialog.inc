@@ -212,7 +212,7 @@ MethodEnd
 ; Method:     FindDialog.Find
 ; Purpose:    Do the search operation.
 ; Arguments:  Arg1: -> Active child window object.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Return:     eax = TRUE if a match was found, otherwise FALSE.
 
 CaptureEditorWndHandle proc uses xdi xsi hChildWnd:HWND, pSelf:POINTER
   ANNOTATION use:pSelf
@@ -249,6 +249,7 @@ Method FindDialog.Find, uses xbx xdi xsi
 
 
   .if [xsi].Choices.dScope == FDS_CURRENT_FILE
+    xor edi, edi
     .if [xsi].dContinue == FALSE
       mov [xsi].hEditor, 0
       mov xax, [xsi].pOwner
@@ -345,10 +346,11 @@ Method FindDialog.Find, uses xbx xdi xsi
   .elseif [xsi].Choices.dScope == FDS_PROJECT_FILES
     ;Loop through all files in the TreeView
     mov xbx, [xsi].pOwner                               ;xbx -> Application
+    invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_SETREDRAW, FALSE, 0
     .if [xsi].dContinue == FALSE
       mov [xsi].dContinueSameEditor, FALSE
       invoke SendMessage, [xbx].$Obj(Application).PrjMgr.TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0
-      OCall [xbx].$Obj(Application).PrjMgr::ProjectManager.GetNextFileItem, xax
+      OCall [xbx].$Obj(Application).PrjMgr::ProjectManager.GetNextFileItem, xax ;Returns xax & xcx
       mov [xsi].hFileItem, xax
       mov [xsi].dContinue, TRUE
 
@@ -357,25 +359,27 @@ Method FindDialog.Find, uses xbx xdi xsi
 @@:
         OCall [xbx].$Obj(Application).PrjMgr::ProjectManager.GetNextFileItem, [xsi].hFileItem ;Returns xax & xcx
         .if xax == 0
-          ExitMethod
+          mov [xsi].dContinue, FALSE
+          mov dRetValue, FALSE
+          jmp @@ExitProjFiles
         .endif
         mov [xsi].hFileItem, xax
       .else
         m2m Item.hItem, [xsi].hFileItem, xax
         mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
         invoke SendMessage, [xbx].$Obj(Application).PrjMgr.TView.hWnd, TVM_GETITEM, 0, addr Item
-        .if xax != 0
-          mov xcx, Item.lParam 
+        .if eax != FALSE
+          mov xax, Item.hItem
+          mov xcx, Item.lParam
         .else
-          xor eax, eax
+          mov dRetValue, FALSE
+          jmp @@ExitProjFiles
         .endif
       .endif
     .endif
 
-    .if xax != NULL
+    .if xax != 0
       mov xdi, [xcx].PROJECTITEM.pFileName
-      mov xax, [xbx].$Obj(Application).pClientWnd
-      invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_SETREDRAW, FALSE, 0
       OCall xbx::Application.LaunchEditor, xdi, SW_HIDE
       .if xax != NULL
         mov dWasOpen, ecx                               ;ecx = TRUE if the Editor was previously open
@@ -393,11 +397,9 @@ Method FindDialog.Find, uses xbx xdi xsi
         .endif
 
         mov [xsi].dContinueSameEditor, eax
-        mov xax, [xbx].$Obj(Application).pClientWnd
-        invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_SETREDRAW, TRUE, 0
-
         cmp [xsi].dContinueSameEditor, FALSE
         jz @B
+        invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_SETREDRAW, TRUE, 0
         invoke ShowWindow, [xdi].$Obj(Editor).hWnd, SW_SHOW
         invoke SetFocus, [xdi].$Obj(Editor).hWnd
 
@@ -413,6 +415,8 @@ Method FindDialog.Find, uses xbx xdi xsi
       .endif
       mov dRetValue, TRUE
     .endif
+@@ExitProjFiles:    
+    invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_SETREDRAW, TRUE, 0
 
 
   .elseif [xsi].Choices.dScope == FDS_ALL_FILES
@@ -420,6 +424,7 @@ Method FindDialog.Find, uses xbx xdi xsi
 
   .endif
   
+@@Exit:
   mov eax, dRetValue
 MethodEnd
 
@@ -680,19 +685,19 @@ Method FindDialog.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if ax == IDOK                                    ;Find Button
         OCall xsi.Find
         .if eax == FALSE
-          invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Find"), MB_OK or MB_ICONINFORMATION
+          invoke MessageBox, [xsi].hWnd, $OfsCStr("No further matches found."), $OfsCStr("Find"), MB_OK or MB_ICONINFORMATION
         .endif
 
       .elseif ax == IDC_BTN_REPLACE
         OCall xsi.Replace
         .if eax == FALSE
-          invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
+          invoke MessageBox, [xsi].hWnd, $OfsCStr("No further matches replaced."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
         .endif
 
       .elseif ax == IDC_BTN_REPLACEALL
         OCall xsi.ReplaceAll
         .if eax == 0
-          invoke MessageBox, [xsi].hWnd, $OfsCStr("No matches found."), $OfsCStr("Replace all"), MB_OK or MB_ICONINFORMATION
+          invoke MessageBox, [xsi].hWnd, $OfsCStr("No further matches replaced."), $OfsCStr("Replace all"), MB_OK or MB_ICONINFORMATION
         .else
           lea xbx, cMessage
           WriteF xbx, "¦UD matches replaced.", eax
@@ -715,6 +720,23 @@ Method FindDialog.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     FindDialog.OnInitDialog
+; Purpose:    Event procedure for WM_INITDIALOG message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = TRUE to direct the system to set the keyboard focus to the control specified by
+;             wParam. Otherwise, it should return FALSE to prevent the system from setting the
+;             default keyboard focus.
+
+Method FindDialog.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
+;  DbgText "FindDialog.OnInitDialog"
+  SetObject xsi
+  OCall xsi.InitWindow
+  OCall xsi.CtlsSet
+  mov eax, TRUE
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

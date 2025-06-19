@@ -443,6 +443,17 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+BStrFillChr textequ <StrFillChrW>
+StrFillChrA proto :POINTER, :DWORD, :CHRA
+StrFillChrW proto :POINTER, :DWORD, :CHRW
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  StrFillChr textequ <StrFillChrA> 
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  StrFillChr textequ <StrFillChrW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 BStrFilter textequ <StrFilterW>
 StrFilterA proto :POINTER, :POINTER
 StrFilterW proto :POINTER, :POINTER

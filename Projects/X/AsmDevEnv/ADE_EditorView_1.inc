@@ -1952,6 +1952,13 @@ Method EditorView.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  DbgText "EditorView.OnPaint"
   SetObject xsi
   mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)     ;Hides the caret automatically
+  
+;  DbgHex [xsi].hWnd
+;  DbgDec PS.PAINTSTRUCT.rcPaint.left
+;  DbgDec PS.PAINTSTRUCT.rcPaint.top
+;  DbgDec PS.PAINTSTRUCT.rcPaint.right
+;  DbgDec PS.PAINTSTRUCT.rcPaint.bottom
+;  DbgLine
 
   OCall xsi.DrawEditorLines
   ;The selection bar must be drawn AFTER the EditorLines to avoid clipping of the TextRect

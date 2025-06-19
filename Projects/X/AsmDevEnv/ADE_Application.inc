@@ -328,6 +328,8 @@ Method Application.Done, uses xsi
 
   OCall [xsi].FindDlg::DialogModeless.Done
 
+  OCall [xsi].ScriptHost::ScriptEngine.Done
+
   Destroy [xsi].pClientWnd
 
   ACall xsi.Done
@@ -487,6 +489,9 @@ Method Application.Init, uses xbx xdi xsi
   invoke ParseCmdLineArgs, [xsi].pCommandLine
   mov pAppArgsW, xax
   mov dArgCount, ecx
+
+  ;Lua setup
+  OCall [xsi].ScriptHost::ScriptEngine.Init, xsi
 
   ;Rebar + Statusbar + ListView + TabControl + ComboBoxEx
   invoke LoadCommonControls, ICC_COOL_CLASSES or ICC_BAR_CLASSES or \
@@ -1055,6 +1060,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER
   local ProjPropsDlg:$Obj(ProjPropsDialog), FilePropsDlg:$Obj(FilePropsDialog)
   local PageSetup:PAGESETUPDLG, Item:TVITEM
+  local pScript:PSTRINGW
 
   ANNOTATION use:lParam
 
@@ -1238,6 +1244,14 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
   .elseif ax == IDM_FILE_BREAK
     int 3
+  .elseif ax == IDM_FILE_TEST
+    ;Start script execution
+    mov xbx, $MemAlloc(1000)
+    invoke StrCopyA, xbx, $OfsCStrA('EditorLine.Write("Hallo from Lua")')
+    OCall [xsi].ScriptHost::ScriptEngine.Start, xbx
+    .if eax == FALSE
+      DbgWarning "Failed to start the script"
+    .endif
     xor eax, eax
 
   .elseif ax == SC_RESTORE                              ;Restore the active window
@@ -1664,6 +1678,47 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
 
   mov eax, -1
 MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.OnLuaFinished
+; Purpose:    Event procedure for LHM_SCRIPT_FINISHED message.
+; Arguments:  Arg1: First message parameter (Lua result).
+;             Arg2: Second message parameter (pScript).
+; Return:     Nothing.
+
+Method Application.OnLuaFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
+  DbgText "Application.OnLuaFinished"
+  SetObject xsi
+  .if wParam != LUA_OK
+    .if wParam == LUA_ERRRUN
+      .ifBitSet [xsi].ScriptHost.dFlags, LHF_SCRIPT_STOP
+        mov xdx, $OfsCStr("The user has stopped the running script")
+        invoke MessageBox, [xsi].hWnd, xdx, $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION
+        ExitMethod
+      .else
+        mov xdx, $OfsCStr("Fatal error while running the script")
+      .endif
+    .elseif wParam == LUA_ERRSYNTAX
+      mov xdx, $OfsCStr("Script fatal syntax error")
+    .elseif wParam == LUA_ERRMEM
+      mov xdx, $OfsCStr("Script fatal memory allocation error")
+    .elseif wParam == LUA_ERRERR
+      mov xdx, $OfsCStr("Script fatal error-handler error")
+    .else
+      mov xdx, $OfsCStr("Script fatal unknown Error")
+    .endif
+    invoke MessageBox, [xsi].hWnd, xdx, offset szError, MB_OK or MB_ICONERROR
+  .endif
+
+  ;Housekeeping
+  MemFree lParam                                        ;Dispose Script
+  OCall xsi.GetActiveEditor
+  .if xax != NULL
+    ;Redraw all children (EditorDisplays)
+    invoke RedrawWindow, [xax].$Obj(Editor).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+  .endif
+MethodEnd
+
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify

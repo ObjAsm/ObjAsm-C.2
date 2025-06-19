@@ -52,6 +52,8 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % include &MacPath&LDLL.inc
 % include &COMPath&COM.inc
 
+DEFINE LUA_DLL_IMPORT
+
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\Comctl32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -62,6 +64,7 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % includelib &LibPath&Windows\OleAut32.lib
 % includelib &LibPath&Windows\Msimg32.lib
 % includelib &LibPath&Windows\shlwapi.lib
+% includelib &LibPath&Lua\release\lua547.lib
 
 % include &IncPath&Windows\CommCtrl.inc
 % include &IncPath&Windows\UxTheme.inc
@@ -76,6 +79,12 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files 
 % include &IncPath&Windows\ShTypes.inc
 % include &IncPath&Windows\shlwapi.inc
 % include &IncPath&Windows\Shlobj.inc
+
+;LUA support
+% include &IncPath&Lua\luaconf546.inc
+% include &IncPath&Lua\lua546.inc
+% include &IncPath&Lua\lualib546.inc
+% include &IncPath&Lua\lauxlib546.inc
 
 if TARGET_BITNESS eq 32
 % include &MacPath&Exception32.inc
@@ -116,7 +125,7 @@ MakeObjects WinControl, Toolbar, Rebar, Statusbar, ComboBox, TreeView, ListView,
 MakeObjects XWCollection, TextView
 MakeObjects FlipBox, Splitter
 MakeObjects WinApp, MdiApp
-MakeObjects COM_Primers
+MakeObjects COM_Primers, LuaHost
 
 include ADE_Globals.inc                                 ;Application globals
 include ADE_Main.inc                                    ;Application objects
