@@ -7,6 +7,7 @@
 ;               - First release.
 ;             Version C.1.1 June 2025
 ;               - Caller has to dispose the script string.
+;               - Run/Execute changed.
 ; ==================================================================================================
 
 
@@ -22,7 +23,8 @@ LHM_SCRIPT_FINISHED equ WM_USER + 10
 
 Object LuaHost, LuaHostID, Streamable
   RedefineMethod    Done
-  VirtualMethod     Run
+  VirtualMethod     Execute
+  VirtualMethod     Run,              PSTRINGA
   VirtualMethod     Start,            PSTRINGA
   VirtualMethod     Stop
   DynamicMethod     ScriptInit,       Plua_State
@@ -73,7 +75,7 @@ lua_HookProc endp
 ; Return:     Nothing.
 
 Method LuaHost.Done, uses xsi
-  DbgText "LuaHost.Done"
+;  DbgText "LuaHost.Done"
   SetObject xsi
   .if [xsi].hThread != 0
     invoke WaitForSingleObject, [xsi].hThread, 4000     ;Wait max 4 secs
@@ -87,16 +89,15 @@ Method LuaHost.Done, uses xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     LuaHost.Run
-; Purpose:    Message Handler for LHM_SCRIPT_EXECUTE.
+; Method:     LuaHost.Execute
+; Purpose:    Script worker (sync/async).
 ; Arguments:  None.
 ; Return:     eax = return value (Lua error code).
 
-Method LuaHost.Run, uses xbx xsi
+Method LuaHost.Execute, uses xbx xsi
   local pLuaState:ptr lua_State, dRetVal:DWORD
 
-  DbgText "LuaHost.Run"
-
+;  DbgText "LuaHost.Execute"
   SetObject xsi
   mov dRetVal, LUA_OK
 
@@ -136,6 +137,19 @@ Method LuaHost.Run, uses xbx xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     LuaHost.Run
+; Purpose:    Start synchronious script execution.
+; Arguments:  Arg1: -> UTF8 stream containing the script to execute.
+; Return:     eax = return value (Lua error code).
+
+Method LuaHost.Run, uses xbx xsi, pScript:PSTRINGA
+;  DbgText "LuaHost.Run"
+  SetObject xsi
+  m2m [xsi].pScript, pScript, xax
+  OCall xsi.Execute
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.ScriptInit
 ; Purpose:    Script custom initialization.
 ; Arguments:  Arg1: -> lua_State.
@@ -149,19 +163,19 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Start
 ; Purpose:    Start asynchronious script execution.
-; Arguments:  Arg1: -> ANSI string containing the script to execute.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Arguments:  Arg1: -> UTF8 stream containing the script to execute.
+; Return:     eax = LUA_OK if succeeded, otherwise an LUA error code.
 
 Method LuaHost.Start, uses xsi, pScript:PSTRINGA
   DbgText "LuaHost.Start"
   SetObject xsi
   m2m [xsi].pScript, pScript, xax
-  invoke CreateThread, NULL, 0, $MethodAddr(xsi::LuaHost.Run), xsi, CREATE_SUSPENDED, NULL
+  invoke CreateThread, NULL, 0, $MethodAddr(xsi::LuaHost.Execute), xsi, CREATE_SUSPENDED, NULL
   .if xax != 0
     mov [xsi].hThread, xax
     mov [xsi].dFlags, 0                                 ;Reset all other flags
     invoke ResumeThread, xax
-    mov eax, TRUE
+    mov eax, LUA_OK
   .endif
 MethodEnd
 

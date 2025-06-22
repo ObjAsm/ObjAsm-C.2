@@ -19,11 +19,12 @@ DbgWndMsgTable \
   DOM {WM_CREATE,                         $OfsTStrA("WM_CREATE")}                         ;0001
   DOM {WM_DESTROY,                        $OfsTStrA("WM_DESTROY")}                        ;0002
   DOM {WM_MOVE,                           $OfsTStrA("WM_MOVE")}                           ;0003
+  DOM {WM_SIZEWAIT,                       $OfsTStrA("WM_SIZEWAIT")}                       ;0004
   DOM {WM_SIZE,                           $OfsTStrA("WM_SIZE")}                           ;0005
   DOM {WM_ACTIVATE,                       $OfsTStrA("WM_ACTIVATE")}                       ;0006
   DOM {WM_SETFOCUS,                       $OfsTStrA("WM_SETFOCUS")}                       ;0007
   DOM {WM_KILLFOCUS,                      $OfsTStrA("WM_KILLFOCUS")}                      ;0008
-
+  DOM {WM_SETVISIBLE,                     $OfsTStrA("WM_SETVISIBLE")}                     ;0009
   DOM {WM_ENABLE,                         $OfsTStrA("WM_ENABLE")}                         ;000A
   DOM {WM_SETREDRAW,                      $OfsTStrA("WM_SETREDRAW")}                      ;000B
   DOM {WM_SETTEXT,                        $OfsTStrA("WM_SETTEXT")}                        ;000C
@@ -37,7 +38,7 @@ DbgWndMsgTable \
   DOM {WM_ERASEBKGND,                     $OfsTStrA("WM_ERASEBKGND")}                     ;0014
   DOM {WM_SYSCOLORCHANGE,                 $OfsTStrA("WM_SYSCOLORCHANGE")}                 ;0015
   DOM {WM_ENDSESSION,                     $OfsTStrA("WM_ENDSESSION")}                     ;0016
-
+  DOM {WM_SYSTEMERROR,                    $OfsTStrA("WM_SYSTEMERROR")}                    ;0017
   DOM {WM_SHOWWINDOW,                     $OfsTStrA("WM_SHOWWINDOW")}                     ;0018
 
   DOM {WM_WININICHANGE,                   $OfsTStrA("WM_WININICHANGE")}                   ;001A
@@ -55,7 +56,7 @@ DbgWndMsgTable \
   DOM {WM_PAINTICON,                      $OfsTStrA("WM_PAINTICON")}                      ;0026
   DOM {WM_ICONERASEBKGND,                 $OfsTStrA("WM_ICONERASEBKGND")}                 ;0027
   DOM {WM_NEXTDLGCTL,                     $OfsTStrA("WM_NEXTDLGCTL")}                     ;0028
-
+  DOM {WM_ALTTABACTIVE,                   $OfsTStrA("WM_ALTTABACTIVE")}                   ;0029
   DOM {WM_SPOOLERSTATUS,                  $OfsTStrA("WM_SPOOLERSTATUS")}                  ;002A
   DOM {WM_DRAWITEM,                       $OfsTStrA("WM_DRAWITEM")}                       ;002B
   DOM {WM_MEASUREITEM,                    $OfsTStrA("WM_MEASUREITEM")}                    ;002C
@@ -66,23 +67,24 @@ DbgWndMsgTable \
   DOM {WM_GETFONT,                        $OfsTStrA("WM_GETFONT")}                        ;0031
   DOM {WM_SETHOTKEY,                      $OfsTStrA("WM_SETHOTKEY")}                      ;0032
   DOM {WM_GETHOTKEY,                      $OfsTStrA("WM_GETHOTKEY")}                      ;0033
-
+  DOM {WM_FILESYSCHANGE,                  $OfsTStrA("WM_FILESYSCHANGE")}                  ;0034
+  DOM {WM_ISACTIVEICON,                   $OfsTStrA("WM_ISACTIVEICON")}                   ;0035
+  DOM {WM_QUERYPARKICON,                  $OfsTStrA("WM_QUERYPARKICON")}                  ;0036
   DOM {WM_QUERYDRAGICON,                  $OfsTStrA("WM_QUERYDRAGICON")}                  ;0037
-
+  DOM {WM_QUERYSAVESTATE,                 $OfsTStrA("WM_QUERYSAVESTATE")}                 ;0038
   DOM {WM_COMPAREITEM,                    $OfsTStrA("WM_COMPAREITEM")}                    ;0039
-
   DOM {03Ah,                              $OfsTStrA("WM_FULLSCREEN")}                     ;003A
   DOM {03Bh,                              $OfsTStrA("WM_CLIENTSHUTDOWN")}                 ;003B
   DOM {03Ch,                              $OfsTStrA("WM_DDEMLEVENT")}                     ;003C
   DOM {WM_GETOBJECT,                      $OfsTStrA("WM_GETOBJECT")}                      ;003D
 
   DOM {03Fh,                              $OfsTStrA("WM_CALCSCROLL")}                     ;003F
-
+  DOM {WM_TESTING,                        $OfsTStrA("WM_TESTING")}                        ;0040
   DOM {WM_COMPACTING,                     $OfsTStrA("WM_COMPACTING")}                     ;0041
   DOM {42h,                               $OfsTStrA("WM_OTHERWINDOWCREATED")}             ;0042
   DOM {43h,                               $OfsTStrA("WM_OTHERWINDOWDESTROYED")}           ;0043
   DOM {WM_COMMNOTIFY,                     $OfsTStrA("WM_COMMNOTIFY")}                     ;0044
-
+  DOM {45h,                               $OfsTStrA("WM_HOTKEYEVENT")}                    ;0045
   DOM {WM_WINDOWPOSCHANGING,              $OfsTStrA("WM_WINDOWPOSCHANGING")}              ;0046
   DOM {WM_WINDOWPOSCHANGED,               $OfsTStrA("WM_WINDOWPOSCHANGED")}               ;0047
   DOM {WM_POWER,                          $OfsTStrA("WM_POWER")}                          ;0048
@@ -113,7 +115,7 @@ DbgWndMsgTable \
   DOM {WM_NCACTIVATE,                     $OfsTStrA("WM_NCACTIVATE")}                     ;0086
   DOM {WM_GETDLGCODE,                     $OfsTStrA("WM_GETDLGCODE")}                     ;0087
   DOM {WM_SYNCPAINT,                      $OfsTStrA("WM_SYNCPAINT")}                      ;0088
-
+  DOM {WM_SYNCTASK,                       $OfsTStrA("WM_SYNCTASK")}                       ;0089
   DOM {90h,                               $OfsTStrA("WM_UAHDESTROYWINDOW")}               ;0090
   DOM {91h,                               $OfsTStrA("WM_UAHDRAWMENU")}                    ;0091
   DOM {92h,                               $OfsTStrA("WM_UAHDRAWMENUITEM")}                ;0092
@@ -195,7 +197,9 @@ DbgWndMsgTable \
   DOM {WM_SYSDEADCHAR,                    $OfsTStrA("WM_SYSDEADCHAR")}                    ;0107
   DOM {WM_KEYLAST,                        $OfsTStrA("WM_KEYLAST or WM_CONVERTREQUESTEX")} ;0108
   DOM {WM_UNICHAR,                        $OfsTStrA("WM_UNICHAR")}                        ;0109
-
+  DOM {WM_CONVERTREQUEST,                 $OfsTStrA("WM_CONVERTREQUEST")}                 ;010A
+  DOM {WM_CONVERTRESULT ,                 $OfsTStrA("WM_CONVERTRESULT")}                  ;010B
+  DOM {WM_INTERIM,                        $OfsTStrA("WM_INTERIM")}                        ;010C
   DOM {WM_IME_STARTCOMPOSITION,           $OfsTStrA("WM_IME_STARTCOMPOSITION")}           ;010D
   DOM {WM_IME_ENDCOMPOSITION,             $OfsTStrA("WM_IME_ENDCOMPOSITION")}             ;010E
   DOM {WM_IME_COMPOSITION,                $OfsTStrA("WM_IME_COMPOSITION")}                ;010F
@@ -224,6 +228,7 @@ DbgWndMsgTable \
   DOM {WM_UPDATEUISTATE,                  $OfsTStrA("WM_UPDATEUISTATE")}                  ;0128
   DOM {WM_QUERYUISTATE,                   $OfsTStrA("WM_QUERYUISTATE")}                   ;0129
 
+  DOM {WM_LBTRACKPOINT,                   $OfsTStrA("WM_LBTRACKPOINT")}                   ;0131
   DOM {WM_CTLCOLORMSGBOX,                 $OfsTStrA("WM_CTLCOLORMSGBOX")}                 ;0132
   DOM {WM_CTLCOLOREDIT,                   $OfsTStrA("WM_CTLCOLOREDIT")}                   ;0133
   DOM {WM_CTLCOLORLISTBOX,                $OfsTStrA("WM_CTLCOLORLISTBOX")}                ;0134
@@ -268,7 +273,12 @@ DbgWndMsgTable \
   DOM {WM_MDICASCADE,                     $OfsTStrA("WM_MDICASCADE")}                     ;0227
   DOM {WM_MDIICONARRANGE,                 $OfsTStrA("WM_MDIICONARRANGE")}                 ;0228
   DOM {WM_MDIGETACTIVE,                   $OfsTStrA("WM_MDIGETACTIVE")}                   ;0229
-
+  DOM {WM_DROPOBJECT,                     $OfsTStrA("WM_DROPOBJECT")}                     ;022A
+  DOM {WM_QUERYDROPOBJECT,                $OfsTStrA("WM_QUERYDROPOBJECT")}                ;022B
+  DOM {WM_BEGINDRAG,                      $OfsTStrA("WM_BEGINDRAG")}                      ;022C
+  DOM {WM_DRAGLOOP,                       $OfsTStrA("WM_DRAGLOOP")}                       ;022D
+  DOM {WM_DRAGSELECT,                     $OfsTStrA("WM_DRAGSELECT")}                     ;022E
+  DOM {WM_DRAGMOVE,                       $OfsTStrA("WM_DRAGMOVE")}                       ;022F
   DOM {WM_MDISETMENU,                     $OfsTStrA("WM_MDISETMENU")}                     ;0230
   DOM {WM_ENTERSIZEMOVE,                  $OfsTStrA("WM_ENTERSIZEMOVE")}                  ;0231
   DOM {WM_EXITSIZEMOVE,                   $OfsTStrA("WM_EXITSIZEMOVE")}                   ;0232
@@ -296,6 +306,7 @@ DbgWndMsgTable \
   DOM {WM_POINTERROUTEDAWAY,              $OfsTStrA("WM_POINTERROUTEDAWAY")}              ;0252
   DOM {WM_POINTERROUTEDRELEASED,          $OfsTStrA("WM_POINTERROUTEDRELEASED")}          ;0253
 
+  DOM {280h,                              $OfsTStrA("WM_KANJIFIRST")}                     ;0280
   DOM {WM_IME_SETCONTEXT,                 $OfsTStrA("WM_IME_SETCONTEXT")}                 ;0281
   DOM {WM_IME_NOTIFY,                     $OfsTStrA("WM_IME_NOTIFY")}                     ;0282
   DOM {WM_IME_CONTROL,                    $OfsTStrA("WM_IME_CONTROL")}                    ;0283
@@ -306,6 +317,7 @@ DbgWndMsgTable \
   DOM {WM_IME_KEYDOWN,                    $OfsTStrA("WM_IME_KEYDOWN")}                    ;0290
   DOM {WM_IME_KEYUP,                      $OfsTStrA("WM_IME_KEYUP")}                      ;0291
 
+  DOM {29Fh,                              $OfsTStrA("WM_KANJILAST")}                      ;029F
   DOM {WM_NCMOUSEHOVER,                   $OfsTStrA("WM_NCMOUSEHOVER")}                   ;02A0
   DOM {WM_MOUSEHOVER,                     $OfsTStrA("WM_MOUSEHOVER")}                     ;02A1
   DOM {WM_NCMOUSELEAVE,                   $OfsTStrA("WM_NCMOUSELEAVE")}                   ;02A2
@@ -314,7 +326,6 @@ DbgWndMsgTable \
   DOM {WM_WTSSESSION_CHANGE,              $OfsTStrA("WM_WTSSESSION_CHANGE")}              ;02B1
   DOM {WM_TABLET_FIRST,                   $OfsTStrA("WM_TABLET_FIRST")}                   ;02C0
   DOM {WM_TABLET_LAST,                    $OfsTStrA("WM_TABLET_LAST")}                    ;02DF
-
   DOM {WM_DPICHANGED,                     $OfsTStrA("WM_DPICHANGED")}                     ;02E0
   DOM {WM_DPICHANGED_BEFOREPARENT,        $OfsTStrA("WM_DPICHANGED_BEFOREPARENT")}        ;02E2
   DOM {WM_DPICHANGED_AFTERPARENT,         $OfsTStrA("WM_DPICHANGED_AFTERPARENT")}         ;02E3
@@ -362,6 +373,23 @@ DbgWndMsgTable \
   DOM {WM_PENWINFIRST,                    $OfsTStrA("WM_PENWINFIRST")}                    ;0380
   DOM {WM_PENWINLAST,                     $OfsTStrA("WM_PENWINLAST")}                     ;038F
 
+  DOM {390h,                              $OfsTStrA("WM_INTERNAL_COALESCE_390")}          ;0390
+  DOM {391h,                              $OfsTStrA("WM_INTERNAL_COALESCE_391")}          ;0391
+  DOM {392h,                              $OfsTStrA("WM_INTERNAL_COALESCE_392")}          ;0392
+  DOM {393h,                              $OfsTStrA("WM_INTERNAL_COALESCE_393")}          ;0393
+  DOM {394h,                              $OfsTStrA("WM_INTERNAL_COALESCE_394")}          ;0394
+  DOM {395h,                              $OfsTStrA("WM_INTERNAL_COALESCE_395")}          ;0395
+  DOM {396h,                              $OfsTStrA("WM_INTERNAL_COALESCE_396")}          ;0396
+  DOM {397h,                              $OfsTStrA("WM_INTERNAL_COALESCE_397")}          ;0397
+  DOM {398h,                              $OfsTStrA("WM_INTERNAL_COALESCE_398")}          ;0398
+  DOM {399h,                              $OfsTStrA("WM_INTERNAL_COALESCE_399")}          ;0399
+  DOM {39Ah,                              $OfsTStrA("WM_INTERNAL_COALESCE_39A")}          ;039A
+  DOM {39Bh,                              $OfsTStrA("WM_INTERNAL_COALESCE_39B")}          ;039B
+  DOM {39Ch,                              $OfsTStrA("WM_INTERNAL_COALESCE_39C")}          ;039C
+  DOM {39Dh,                              $OfsTStrA("WM_INTERNAL_COALESCE_39D")}          ;039D
+  DOM {39Eh,                              $OfsTStrA("WM_INTERNAL_COALESCE_39E")}          ;039E
+  DOM {39Fh,                              $OfsTStrA("WM_INTERNAL_COALESCE_39F")}          ;039F
+
   DOM {WM_DDE_INITIATE,                   $OfsTStrA("WM_DDE_INITIATE")}                   ;03E0
   DOM {WM_DDE_TERMINATE,                  $OfsTStrA("WM_DDE_TERMINATE")}                  ;03E1
   DOM {WM_DDE_ADVISE,                     $OfsTStrA("WM_DDE_ADVISE")}                     ;03E2
@@ -371,6 +399,23 @@ DbgWndMsgTable \
   DOM {WM_DDE_REQUEST,                    $OfsTStrA("WM_DDE_REQUEST")}                    ;03E6
   DOM {WM_DDE_POKE,                       $OfsTStrA("WM_DDE_POKE")}                       ;03E7
   DOM {WM_DDE_EXECUTE,                    $OfsTStrA("WM_DDE_EXECUTE")}                    ;03E8
+
+  DOM {3F0h,                              $OfsTStrA("WM_CBT_RESERVED_3F0")}               ;03F0
+  DOM {3F1h,                              $OfsTStrA("WM_CBT_RESERVED_3F1")}               ;03F1
+  DOM {3F2h,                              $OfsTStrA("WM_CBT_RESERVED_3F2")}               ;03F2
+  DOM {3F3h,                              $OfsTStrA("WM_CBT_RESERVED_3F3")}               ;03F3
+  DOM {3F4h,                              $OfsTStrA("WM_CBT_RESERVED_3F4")}               ;03F4
+  DOM {3F5h,                              $OfsTStrA("WM_CBT_RESERVED_3F5")}               ;03F5
+  DOM {3F6h,                              $OfsTStrA("WM_CBT_RESERVED_3F6")}               ;03F6
+  DOM {3F7h,                              $OfsTStrA("WM_CBT_RESERVED_3F7")}               ;03F7
+  DOM {3F8h,                              $OfsTStrA("WM_CBT_RESERVED_3F8")}               ;03F8
+  DOM {3F9h,                              $OfsTStrA("WM_CBT_RESERVED_3F9")}               ;03F9
+  DOM {3FAh,                              $OfsTStrA("WM_CBT_RESERVED_3FA")}               ;03FA
+  DOM {3FBh,                              $OfsTStrA("WM_CBT_RESERVED_3FB")}               ;03FB
+  DOM {3FCh,                              $OfsTStrA("WM_CBT_RESERVED_3FC")}               ;03FC
+  DOM {3FDh,                              $OfsTStrA("WM_CBT_RESERVED_3FD")}               ;03FD
+  DOM {3FEh,                              $OfsTStrA("WM_CBT_RESERVED_3FE")}               ;03FE
+  DOM {3FFh,                              $OfsTStrA("WM_CBT_RESERVED_3FF")}               ;03FF
 
 DbgWndMsgTableCount equ ($ - DbgWndMsgTable)/sizeof(DOM)
 

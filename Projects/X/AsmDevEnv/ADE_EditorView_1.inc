@@ -728,7 +728,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   .endif
                 .endif
 
-                ;Move to next line link
+                ;Move to next line
                 mov xax, [xsi].pEditor
                 MoveToNextEditorLine xax, dLineIndex
 

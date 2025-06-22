@@ -11,11 +11,11 @@
   "Groups":[
     {
       "Name":"Tools",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Make",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Added",

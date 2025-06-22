@@ -1246,12 +1246,19 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     int 3
   .elseif ax == IDM_FILE_TEST
     ;Start script execution
-    mov xbx, $MemAlloc(1000)
-    invoke StrCopyA, xbx, $OfsCStrA('EditorLine.Write("Hallo from Lua")')
-    OCall [xsi].ScriptHost::ScriptEngine.Start, xbx
-    .if eax == FALSE
-      DbgWarning "Failed to start the script"
+    OCall [xsi].ScriptHost::ScriptEngine.FileLoad, $OfsCStr("TrimEnd.lua")
+    .if xax != NULL
+      OCall [xsi].ScriptHost::ScriptEngine.Run, xax
+      .if eax != LUA_OK
+        DbgWarning "Failed to run the script"
+      .endif
+    .else
+      DbgWarning "Failed to load the script"
     .endif
+    invoke SendMessage, [xsi].hWnd, WM_SETREDRAW, TRUE, 0   ;Reactivate the UI if it was forgotten
+    ;Redraw all child windows
+    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, \
+                         RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
     xor eax, eax
 
   .elseif ax == SC_RESTORE                              ;Restore the active window
@@ -1687,7 +1694,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Application.OnLuaFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
-  DbgText "Application.OnLuaFinished"
+;  DbgText "Application.OnLuaFinished"
   SetObject xsi
   .if wParam != LUA_OK
     .if wParam == LUA_ERRRUN
@@ -1712,11 +1719,6 @@ Method Application.OnLuaFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Housekeeping
   MemFree lParam                                        ;Dispose Script
-  OCall xsi.GetActiveEditor
-  .if xax != NULL
-    ;Redraw all children (EditorDisplays)
-    invoke RedrawWindow, [xax].$Obj(Editor).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
-  .endif
 MethodEnd
 
 

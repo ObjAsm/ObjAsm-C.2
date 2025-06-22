@@ -443,6 +443,17 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+BStrFillChr proto :POINTER, :DWORD, :CHRA
+StrFillChrA proto :POINTER, :DWORD, :CHRA
+StrFillChrW proto :POINTER, :DWORD, :CHRW
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  StrFillChr textequ <StrFillChrA> 
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  StrFillChr textequ <StrFillChrW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 BStrFilter textequ <StrFilterW>
 StrFilterA proto :POINTER, :POINTER
 StrFilterW proto :POINTER, :POINTER
@@ -1732,7 +1743,9 @@ IsGUIDEqual proto :POINTER, :POINTER
 IsHardwareFeaturePresent proto :BYTE
 NewObjInst proto :DWORD
 UTF8ToWide proto :POINTER, :POINTER, :DWORD
+UTF8ToWideSize proto :POINTER
 WideToUTF8 proto :POINTER, :POINTER, :DWORD
+WideToUTF8Size proto :POINTER
 Real4ToHalf proto :REAL4
 
 

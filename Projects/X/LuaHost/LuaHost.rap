@@ -165,7 +165,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=19
+MilestoneOnDateDate=21
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -200,7 +200,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,16651
+2=0,0,0,0,6029
 1=0,0,1403,897,518
 6=0,0,0,0,71457
 4=0,0,0,0,1448
@@ -223,7 +223,7 @@ ProductVer4Range=0
 30=0,0,0,0
 15=0,0,0,0,3546
 14=0,0,0,0,16530
-32=0,0,0,0,5117
+32=0,0,0,0,1164
 24=0,0,0,0,48
 33=0,0,0,0,89
 23=0,0,0,0,257
@@ -233,7 +233,7 @@ ProductVer4Range=0
 35=0,0,0,0,11474
 20=0,0,0,0,650
 21=0,0,1706,628,974
-16=0,0,0,0,4533
+16=0,0,1669,627,4533
 37=
 41=
 42=
@@ -377,18 +377,18 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="pScript"
-2="pLuaHost"
-3="OutputWriteLn"
-4="WriteLn"
-5="Write"
-6="ScriptInit"
-7="LuaHost.Init"
-8="EnableControls"
-9="OnInitDialog"
-10="IDC_BTN_LOAD"
+1="FileLoad"
+2="pScript"
+3="pLuaHost"
+4="OutputWriteLn"
+5="WriteLn"
+6="Write"
+7="ScriptInit"
+8="LuaHost.Init"
+9="EnableControls"
+10="OnInitDialog"
 [AutoLoad]
-AutoLoad=1,2,3,16,32,25,24,33
+AutoLoad=1,2,3,32
 [RADebugBP]
 36=
 1=
@@ -414,6 +414,6 @@ AutoLoad=1,2,3,16,32,25,24,33
 19=
 14=
 [PTimer]
-PTimer=892696201
+PTimer=894871294
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,1,0,0

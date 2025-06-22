@@ -1585,13 +1585,9 @@ Method EditorLine.Undo, uses xbx xsi, pAction:POINTER
   mov xbx, pAction
   .if [xbx].ACTION.dAction == AAT_DELETECHARS
     OCall xsi.CharInsert, [xbx].ACTION.dPosIndex, [xbx].ACTION.dChrCount, [xbx].ACTION.pChars, [xbx].ACTION.dLineIndex, 0
-;    mov [xsi].Selection.dBegIndex, 0
-;    mov [xsi].Selection.dEndIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_INSERTCHARS
     OCall xsi.CharDelete, [xbx].ACTION.dPosIndex, [xbx].ACTION.dChrCount, [xbx].ACTION.dLineIndex, 0
-;    mov [xsi].Selection.dBegIndex, 0
-;    mov [xsi].Selection.dEndIndex, 0
 
   .elseif [xbx].ACTION.dAction == AAT_DELETELINE
     OCall xsi.LineReinsert, [xbx].ACTION.dLineIndex

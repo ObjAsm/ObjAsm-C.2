@@ -12,8 +12,8 @@
 ; Procedure:  StrFillChrA / StrFillChrW
 ; Purpose:    Fill a preallocated String with a character.
 ; Arguments:  Arg1: -> String.
-;             Arg2: Character.
-;             Arg3: Character Count.
+;             Arg2: Character Count.
+;             Arg3: Character.
 ; Return:     Nothing.
 
 .code

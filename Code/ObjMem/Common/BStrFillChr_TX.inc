@@ -12,8 +12,8 @@
 ; Procedure:  BStrFillChr
 ; Purpose:    Fill a preallocated BSTR with a character.
 ; Arguments:  Arg1: -> String.
-;             Arg2: Character.
-;             Arg3: Character Count.
+;             Arg2: Character Count.
+;             Arg3: Character.
 ; Return:     Nothing
 
 .code

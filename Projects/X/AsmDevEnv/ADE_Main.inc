@@ -660,7 +660,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticMethod      Redo
   RedefineMethod    Save
   StaticMethod      SaveAs
-  StaticMethod      SaveTo,               PSTRING
+  StaticMethod      SaveTo,               PSTRINGW
   StaticMethod      SelectAll
   StaticMethod      SelectionComment
   StaticMethod      SelectionDelete,      DWORD
@@ -735,8 +735,7 @@ ObjectEnd
 
 Object ScriptEngine, ADE_ScriptEngineID, LuaHost
   RedefineMethod    ScriptInit,           Plua_State
-  
-
+  StaticMethod      FileLoad,             PSTRING
 ObjectEnd
 
 

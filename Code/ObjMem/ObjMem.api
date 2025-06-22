@@ -534,7 +534,9 @@ DecompressMem, pCompressedData, dCompressedDataSize, dDecompressionAlgorithm
 DecompressFileFromRes, hInst, xFileResID
 DecompressFileInMem, pCompressedBuffer, dCompressedBufferSize
 UTF8ToWide, pDestination, pSource, dDestBufferSize
+UTF8ToWideSize, pSource
 WideToUTF8, pDestination, pSource, dDestBufferSize
+WideToUTF8Size, pSource
 Real4ToHalf, real4
 FindModuleByAddr, pAddress, pModuleName
 FindModuleByAddrA, pAddress, pModuleNameA
