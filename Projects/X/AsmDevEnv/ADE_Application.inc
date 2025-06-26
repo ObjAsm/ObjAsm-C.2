@@ -1060,7 +1060,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER
   local ProjPropsDlg:$Obj(ProjPropsDialog), FilePropsDlg:$Obj(FilePropsDialog)
   local PageSetup:PAGESETUPDLG, Item:TVITEM
-  local pScript:PSTRINGW
+  local pScript:PSTRINGW, SW:$Obj(StopWatch), cBuffer[32]:CHR
 
   ANNOTATION use:lParam
 
@@ -1246,16 +1246,25 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     int 3
   .elseif ax == IDM_FILE_TEST
     ;Start script execution
-    OCall [xsi].ScriptHost::ScriptEngine.FileLoad, $OfsCStr("TrimEnd.lua")
+    New SW::StopWatch
+    OCall SW::StopWatch.Init, xsi
+    OCall [xsi].ScriptHost::ScriptEngine.FileLoad, $OfsCStrW("ADE_Test.lua")
     .if xax != NULL
-      OCall [xsi].ScriptHost::ScriptEngine.Run, xax
-      .if eax != LUA_OK
+      mov xbx, xax
+      OCall SW::StopWatch.Start
+      OCall [xsi].ScriptHost::ScriptEngine.Run, xbx
+      mov xbx, xax
+      OCall SW::StopWatch.Stop
+      .if ebx != LUA_OK
         DbgWarning "Failed to run the script"
       .endif
     .else
       DbgWarning "Failed to load the script"
     .endif
-    invoke SendMessage, [xsi].hWnd, WM_SETREDRAW, TRUE, 0   ;Reactivate the UI if it was forgotten
+    lea xbx, cBuffer
+    %OCall SW::StopWatch.GetTimeStr, xbx
+    DbgWriteF,, "Script execution time: ¦ST µs", xbx
+    invoke SendMessage, [xsi].hWnd, WM_SETREDRAW, TRUE, 0 ;Reactivate the UI if it was forgotten
     ;Redraw all child windows
     invoke RedrawWindow, [xsi].hWnd, NULL, NULL, \
                          RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
@@ -1688,7 +1697,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnLuaFinished
-; Purpose:    Event procedure for LHM_SCRIPT_FINISHED message.
+; Purpose:    Event procedure for SEM_SCRIPT_FINISHED message.
 ; Arguments:  Arg1: First message parameter (Lua result).
 ;             Arg2: Second message parameter (pScript).
 ; Return:     Nothing.
@@ -1698,7 +1707,7 @@ Method Application.OnLuaFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   .if wParam != LUA_OK
     .if wParam == LUA_ERRRUN
-      .ifBitSet [xsi].ScriptHost.dFlags, LHF_SCRIPT_STOP
+      .ifBitSet [xsi].ScriptHost.dFlags, SEF_SCRIPT_STOP
         mov xdx, $OfsCStr("The user has stopped the running script")
         invoke MessageBox, [xsi].hWnd, xdx, $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION
         ExitMethod

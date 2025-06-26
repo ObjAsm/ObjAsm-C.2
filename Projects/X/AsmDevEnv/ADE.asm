@@ -125,7 +125,7 @@ MakeObjects WinControl, Toolbar, Rebar, Statusbar, ComboBox, TreeView, ListView,
 MakeObjects XWCollection, TextView
 MakeObjects FlipBox, Splitter
 MakeObjects WinApp, MdiApp
-MakeObjects COM_Primers, LuaHost
+MakeObjects COM_Primers, StopWatch
 
 include ADE_Globals.inc                                 ;Application globals
 include ADE_Main.inc                                    ;Application objects

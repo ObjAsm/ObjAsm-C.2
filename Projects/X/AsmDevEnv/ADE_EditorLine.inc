@@ -325,7 +325,7 @@ Method EditorLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
 
   mov ebx, dNewCapacity
   .if ebx > [xcx].$Obj(Editor).dMaxLineCharCount
-    mov [xcx].$Obj(Editor).dMaxLineCharCount, ebx    ;Keep tack of the max line length
+    mov [xcx].$Obj(Editor).dMaxLineCharCount, ebx       ;Keep tack of the max line length
   .endif
 
   .if ebx != [xsi].dCharCapacity || [xsi].pBuffer == NULL

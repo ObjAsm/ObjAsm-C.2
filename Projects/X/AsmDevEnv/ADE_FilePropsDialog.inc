@@ -62,8 +62,6 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
   mov xcx, [xbx].$Obj(Application).pClientWnd
   invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
   OCall xbx::Application.ManageGuiCmds, xax
-  
-  mov eax, TRUE
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

@@ -55,8 +55,8 @@ LHF_SCRIPT_STOP     equ BIT00
 ; Return:     eax = Number of arguments passed on the lua stack.
 
 lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
-;  ?mov edx, plua_Debug
-;  DbgDec [xdx].lua_Debug.currentline
+  ?mov edx, plua_Debug
+  DbgDec [xdx].lua_Debug.currentline
 
   invoke lua_getglobal, pLuaState, $OfsCStrA("pScriptHost")  ;Retrieve -> LuaHost
   invoke lua_tointegerx, pLuaState, -1, NULL
@@ -102,22 +102,22 @@ Method LuaHost.Execute, uses xbx xsi
   mov dRetVal, LUA_OK
 
   ;Initialize Lua & load libraries
-  mov xbx, $invoke(luaL_newstate)
-  invoke luaL_openlibs, xbx
+  mov xbx, $invoke(luaL_newstate)                       ;Create a new interpreter instance
+  invoke luaL_openlibs, xbx                             ;Load standrd libraries
 
   ;Store a pointer to the LuaHost as a global variable
-  invoke lua_pushinteger, xbx, xsi
-  invoke lua_setglobal, xbx, $OfsCStrA("pScriptHost")
+  invoke lua_pushinteger, xbx, xsi                      ;Push LuaHost instance on the stack
+  invoke lua_setglobal, xbx, $OfsCStrA("pScriptHost")   ;Give it a name (Value on top of the stack)
 
   ;Set the call hook
-  invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0
+  invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0  ;Call lua_HookProc on each line
   
-  OCall xsi.ScriptInit, xbx
-  cmp eax, LUA_OK
+  OCall xsi.ScriptInit, xbx                             ;Initialize the script environment
+  cmp eax, LUA_OK                                       ;Check for errors
   jnz @@Error
 
   ;Load the script
-  invoke luaL_loadstring, xbx, [xsi].pScript
+  invoke luaL_loadstring, xbx, [xsi].pScript            ;Load the script chunk
   cmp eax, LUA_OK
   jnz @@Error
 

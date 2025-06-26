@@ -456,7 +456,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
   .if pFileName == NULL
     BitSet [xsi].dFlags, EDF_NEW_FILE or EDF_DIRTY
     ;Insert an empty line
-    OCall xsi.LineNew, 0, 0
+    OCall xsi.LineNew, 0, -1, 0
     mov [xsi].dMaxLineCharCount, 0
     inc [xsi].dVisLineCount
 
@@ -547,10 +547,11 @@ MethodEnd
 ; Method:     Editor.LineNew
 ; Purpose:    Create a new EditorLine and adds it to the end.
 ; Arguments:  Arg1: Character buffer size not including the ZTC.
+;             Arg2: Line index where to insert. -1 to insert at the end.
 ;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     xax -> EditorLine or NULL if failed.
 
-Method Editor.LineNew, uses xdi xsi, dCharCapacity:DWORD, dActionGroup:DWORD
+Method Editor.LineNew, uses xdi xsi, dCharCapacity:DWORD, dLineIndex:DWORD, dActionGroup:DWORD
   SetObject xsi
   New EditorLine
   .if xax != NULL
@@ -562,17 +563,21 @@ Method Editor.LineNew, uses xdi xsi, dCharCapacity:DWORD, dActionGroup:DWORD
       xor eax, eax
     .else
       ;Keep track of the change
+      mov eax, [xsi].Lines.dCount
+      .if dLineIndex > eax
+        mov dLineIndex, eax
+      .endif
       .if dActionGroup != 0
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov [xax].ACTION.dAction, AAT_INSERTLINE
           m2m [xax].ACTION.dGroup, dActionGroup, ecx
           mov [xax].ACTION.pEditorLine, xdi
-          m2m [xax].ACTION.dLineIndex, [xsi].Lines.dCount, edx
+          m2m [xax].ACTION.dLineIndex, dLineIndex, edx
           OCall [xsi].Actions::ActionCollection.Insert, xax
         .endif
       .endif
-      OCall [xsi].Lines::Collection.Insert, xdi
+      OCall [xsi].Lines::Collection.InsertAt, dLineIndex, xdi
     .endif
   .endif
 MethodEnd
@@ -1019,7 +1024,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .endif
           mov dFileLineLength, eax                      ;Pessimistic value since UTF-8 chars are larger
 
-          OCall xsi.LineNew, dFileLineLength, 0         ;Not including the ZTC.
+          OCall xsi.LineNew, dFileLineLength, -1, 0     ;Not including the ZTC.
           .if xax == NULL
             DbgText "Failed to allocate a new EditorLine"
             .break
@@ -1667,7 +1672,7 @@ Method Editor.SelectionDelete, uses xbx xdi xsi, dActionGroup:DWORD
 
       .if [xsi].Lines.dCount == 0
         ;Insert a blank line
-        OCall xsi.LineNew, 0, 0
+        OCall xsi.LineNew, 0, -1, 0
         mov [xsi].dMaxLineCharCount, 0
         mov [xsi].dVisLineCount, 1
       .endif

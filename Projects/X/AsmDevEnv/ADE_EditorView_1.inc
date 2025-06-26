@@ -711,7 +711,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   mov edx, dCharIndex
                   add edx, ebx
                   mov xax, [xsi].pEditor
-                  OCall xax::Editor.LineNew, edx, dActionGroup
+                  OCall xax::Editor.LineNew, edx, -1, dActionGroup
                   .if xax == NULL
                     ret
                   .endif

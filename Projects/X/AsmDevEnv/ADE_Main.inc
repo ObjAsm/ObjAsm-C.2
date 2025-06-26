@@ -347,11 +347,11 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      LineJoinNext,         DWORD, DWORD
   StaticMethod      LineJoinPrev,         DWORD, DWORD
   StaticMethod      LineReinsert,         DWORD
-  StaticMethod      Redo,                 POINTER               ;PACTION
+  StaticMethod      Redo,                 POINTER                 ;PACTION
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
   StaticMethod      SpaceFill,            DWORD, DWORD, DWORD
-  StaticMethod      Undo,                 POINTER               ;PACTION
+  StaticMethod      Undo,                 POINTER                 ;PACTION
 
   DefineVariable    pBuffer,              POINTER,      NULL      ;Memory holding wide chars and an ending ZTC
   DefineVariable    dCharCapacity,        DWORD,        0         ;In characters not including the ZTC
@@ -427,7 +427,6 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      DrawSelectionBar
   RedefineMethod    Done
   StaticMethod      GetCodeData,          DWORD
-;  StaticMethod      GoToLineIndex,        DWORD
   RedefineMethod    Init,                 POINTER, PRECT, $ObjPtr(EditorResources)
   RedefineMethod    OnSize,               WPARAM, LPARAM
   StaticMethod      ScrollCaretInViewBottom
@@ -651,7 +650,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticMethod      InternetSearch
   StaticMethod      DeepLWrite
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
-  StaticMethod      LineNew,              DWORD, DWORD
+  StaticMethod      LineNew,              DWORD, DWORD, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   RedefineMethod    ManageEditCmds
   StaticMethod      Open,                 PSTRINGW
@@ -733,9 +732,17 @@ ObjectEnd
 ; Object:  ScriptEngine
 ; Purpose: 
 
-Object ScriptEngine, ADE_ScriptEngineID, LuaHost
-  RedefineMethod    ScriptInit,           Plua_State
-  StaticMethod      FileLoad,             PSTRING
+Object ScriptEngine, ADE_ScriptEngineID, Streamable
+  RedefineMethod    Done
+  VirtualMethod     Execute
+  StaticMethod      FileLoad,             PSTRINGW
+  VirtualMethod     Run,                  PSTRINGA
+  VirtualMethod     Start,                PSTRINGA
+  VirtualMethod     Stop
+
+  DefineVariable    hThread,              HANDLE,       0
+  DefineVariable    dFlags,               DWORD,        0
+  DefineVariable    pScript,              PSTRINGA,     NULL
 ObjectEnd
 
 
@@ -865,6 +872,21 @@ Object FindDialog, , DialogModeless
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Object:  SimpleInputDialog
+; Purpose: Implement a SimpleInput dialog.
+
+Object SimpleInputDialog, ADE_SimpleInputDialogID, DialogModal
+  RedefineMethod    Done
+  RedefineMethod    CtlsGet
+  RedefineMethod    CtlsSet
+  RedefineMethod    Init,                 POINTER, HWND, PSTRINGA, PSTRINGA
+
+  DefineVariable    pResult,              PSTRINGA,     NULL
+  DefineVariable    pMessage,             PSTRINGA,     NULL
+  DefineVariable    pCaption,             PSTRINGA,     NULL
+ObjectEnd
+
+; --------------------------------------------------------------------------------------------------
 
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
   StaticMethod      ChangeLanguage,       DWORD                 ;IDLANG_XXX
@@ -893,7 +915,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticEvent       OnCreate,             WM_CREATE
   StaticEvent       OnDestroy,            WM_DESTROY
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
-  StaticEvent       OnLuaFinished,        LHM_SCRIPT_FINISHED
+  StaticEvent       OnLuaFinished,        SEM_SCRIPT_FINISHED
   StaticEvent       OnNotify,             WM_NOTIFY
 
 
@@ -1127,4 +1149,6 @@ include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc
 include ADE_EditorLine.inc
 include ADE_FindDialog.inc
+include ADE_SimpleInputDialog.inc
+include ADE_ScriptProcs.inc
 include ADE_ScriptEngine.inc
