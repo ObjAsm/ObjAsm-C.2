@@ -1,0 +1,18 @@
+; ==================================================================================================
+; Title:      WndPosMgr.rc
+; Author:     G. Friedrich
+; Version:    See WndPosMgr.asm
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "WndPosMgr_Shared.rc"      //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Icons ------------------------------------------------------------------------------------------
+ICON_APP  ICON DISCARDABLE "ICO\OA.ico"
+
+

@@ -10,6 +10,11 @@
 ; ScriptEngine implementation
 ; ==================================================================================================
 
+CStrA szLuaScriptError,     "Lua Script Error"
+CStrA szLuaErrorNoMsg,      "(error with no message)"
+CStrA szLuaScriptLoadError, "Failed to load the script"
+
+
 ;Lua Host Messages we use to communicate with the main application
 SEM_SCRIPT_FINISHED equ WM_USER + 10
 
@@ -27,7 +32,7 @@ SEF_SCRIPT_STOP     equ BIT00
 SEP_GlobalErrorHandler proc pLuaState:ptr lua_State
   invoke lua_tolstring, pLuaState, 1, NULL
   .if xax == NULL
-    mov xax, $OfsCStr("(error with no message)")
+    lea xax, szLuaErrorNoMsg
   .endif
   invoke luaL_traceback, pLuaState, pLuaState, xax, 1
   mov eax, 1
@@ -119,7 +124,7 @@ Method ScriptEngine.Execute, uses xbx xsi
 
 ;  DbgText "ScriptEngine.Execute"
   SetObject xsi
-  mov dRetVal, LUA_OK
+  mov dRetVal, EXIT_SUCCESS
 
   ;Initialize Lua & load libraries
   mov xbx, $invoke(luaL_newstate)                       ;Create a new interpreter instance
@@ -130,6 +135,7 @@ Method ScriptEngine.Execute, uses xbx xsi
   LuaAddToTable Application, DbgPrint
   LuaAddToTable Application, DbgPrintLn
   LuaAddToTable Application, FreezeUI
+  LuaAddToTable Application, GetActiveEditor
   LuaAddToTable Application, InpBox
   LuaAddToTable Application, MsgBox
   LuaAddToTable Application, NewEditor
@@ -139,24 +145,31 @@ Method ScriptEngine.Execute, uses xbx xsi
   invoke lua_createtable, xbx, 0, 0
   LuaAddToTable Editor, Close
   LuaAddToTable Editor, DelLine
-;  LuaAddToTable Editor, GetCaretPos
+  LuaAddToTable Editor, GetCaretPos
+  LuaAddToTable Editor, GetDisplayCount
   LuaAddToTable Editor, GetLineAttr
   LuaAddToTable Editor, GetLineCount
   LuaAddToTable Editor, GetLineText
+  LuaAddToTable Editor, GetLineSelRange
+  LuaAddToTable Editor, GetSelLineRange
+  LuaAddToTable Editor, GetViewLocation
   LuaAddToTable Editor, Hide
-;  LuaAddToTable Editor, HideCaret
+  LuaAddToTable Editor, HideCaret
   LuaAddToTable Editor, Maximize
   LuaAddToTable Editor, Minimize
   LuaAddToTable Editor, NewLine
+  LuaAddToTable Editor, Restore
   LuaAddToTable Editor, Save
   LuaAddToTable Editor, SaveAs
   LuaAddToTable Editor, SaveTo
-;  LuaAddToTable Editor, SetCaretPos
+  LuaAddToTable Editor, SelReset
+  LuaAddToTable Editor, SelSet
+  LuaAddToTable Editor, SetCaretPos
   LuaAddToTable Editor, SetLineAttr
-  LuaAddToTable Editor, Restore
   LuaAddToTable Editor, SetLineText
+  LuaAddToTable Editor, SetViewLocation
   LuaAddToTable Editor, Show
-;  LuaAddToTable Editor, ShowCaret
+  LuaAddToTable Editor, ShowCaret
   invoke lua_setglobal, xbx, $OfsCStrA("Editor")
   
   ;Setup the error handler
@@ -168,30 +181,32 @@ Method ScriptEngine.Execute, uses xbx xsi
   invoke lua_sethook, xbx, addr SEP_HookProc, LUA_MASKLINE, 0
   
   ;Load the script
-  invoke luaL_loadstring, xbx, [xsi].pScript
+  invoke luaL_loadbufferx, xbx, [xsi].pScriptBuffer, [xsi].dScriptLen, [xsi].pScriptName, NULL
   cmp eax, LUA_OK
   jnz @@Error
 
   ;Execute the script
-  invoke lua_pcallk, xbx, 0, LUA_MULTRET, 0, 0, NULL
-  cmp eax, LUA_OK
-  jz @F
+  invoke lua_pcallk, xbx, 0, LUA_MULTRET, 0, 0, NULL    ;Protected call
+  .if eax == LUA_OK
+    mov dRetVal, EXIT_SUCCESS
+    jmp @F
+  .endif
 
 @@Error:
   invoke lua_tolstring, xbx, -1, NULL
-  invoke MessageBoxA, $ObjTmpl(Application).hWnd, xax, $OfsCStrA("Lua Error"), MB_OK or MB_ICONSTOP
+  invoke MessageBoxA, $ObjTmpl(Application).hWnd, xax, addr szLuaScriptError, MB_OK or MB_ICONSTOP
   invoke lua_settop, xbx, -2                            ;invoke lua_pop, xbx, 1 = Remove error message
-  mov dRetVal, EXIT_FAILURE                             ;EXIT_FAILURE/EXIT_SUCCESS
+  mov dRetVal, EXIT_FAILURE 
 
 @@:
   ;Inform the main Application that the script has finished and pass an result value 
   mov xax, [xsi].pOwner
-  invoke PostMessage, [xax].$Obj(WinPrimer).hWnd, SEM_SCRIPT_FINISHED, dRetVal, [xsi].pScript
+  invoke PostMessage, [xax].$Obj(WinPrimer).hWnd, SEM_SCRIPT_FINISHED, dRetVal, [xsi].pScriptBuffer
   .if [xsi].hThread != 0
     invoke CloseHandle, [xsi].hThread                   ;Decrement HANDLE count to release hThread
   .endif                                                ; when terminated
   invoke lua_close, xbx                                 ;Shutdown
-  mov eax, dRetVal                                      ;Exit
+  mov eax, dRetVal                                      ;EXIT_FAILURE/EXIT_SUCCESS
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -200,11 +215,27 @@ MethodEnd
 ; Arguments:  Arg1: -> WIDE FileName.
 ; Return:     xax -> MemBuffer or NULL if failed.
 
-Method ScriptEngine.FileLoad, uses xbx xdi, pFileName:PSTRINGW
+Method ScriptEngine.FileLoad, uses xbx xdi xsi, pFileName:PSTRINGW
   local hFile:HANDLE, dBytesRead:DWORD
 
+  SetObject xsi
+
+  ;Free previous script buffer
+  mov xbx, [xsi].pScriptBuffer
+  .if xbx != NULL
+    MemFree xbx
+    xor ebx, ebx
+  .endif
+
+  ;Store new file name (UTF-8)
+  invoke WideToUTF8Size, pFileName
+  invoke StrAllocA, eax
+  mov xdi, xax
+  invoke WideToUTF8, xax, pFileName, -1
+  invoke StrReplaceA, addr [xsi].pScriptName, xdi
+
   ;Open the file
-  xor ebx, ebx
+  xor edi, edi
   invoke CreateFileW, pFileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, \
                       FILE_ATTRIBUTE_NORMAL, 0
   .if xax != INVALID_HANDLE_VALUE
@@ -228,32 +259,21 @@ Method ScriptEngine.FileLoad, uses xbx xdi, pFileName:PSTRINGW
     .endif
     invoke CloseHandle, hFile
   .endif
-  mov xax, xbx
-MethodEnd
 
-; --------------------------------------------------------------------------------------------------
-; Method:     ScriptEngine.Run
-; Purpose:    Start synchronious script execution.
-; Arguments:  Arg1: -> UTF8 stream containing the script to execute.
-; Return:     eax = return value (Lua error code).
-
-Method ScriptEngine.Run, uses xbx xsi, pScript:PSTRINGA
-;  DbgText "ScriptEngine.Run"
-  SetObject xsi
-  m2m [xsi].pScript, pScript, xax
-  OCall xsi.Execute
+  mov [xsi].pScriptBuffer, xbx                          ;Store -> script buffer
+  mov [xsi].dScriptLen, edi
+  mov xax, xbx                                          ;Set return value
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptEngine.Start
 ; Purpose:    Start asynchronious script execution.
-; Arguments:  Arg1: -> UTF8 stream containing the script to execute.
+; Arguments:  Arg1: None
 ; Return:     eax = LUA_OK if succeeded, otherwise an LUA error code.
 
-Method ScriptEngine.Start, uses xsi, pScript:PSTRINGA
+Method ScriptEngine.Start, uses xsi
   DbgText "ScriptEngine.Start"
   SetObject xsi
-  m2m [xsi].pScript, pScript, xax
   invoke CreateThread, NULL, 0, $MethodAddr(xsi::ScriptEngine.Execute), xsi, CREATE_SUSPENDED, NULL
   .if xax != 0
     mov [xsi].hThread, xax

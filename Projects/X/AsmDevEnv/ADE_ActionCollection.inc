@@ -7,7 +7,7 @@
 
 
 ; ==================================================================================================
-; ActionCollection implementation 
+; ActionCollection implementation
 ; ==================================================================================================
 
 .code
@@ -41,7 +41,7 @@ Method ActionCollection.DestroyItem, uses xdi xsi, pItem:PACTION
         Destroy [xdi].ACTION.pEditorLine::EditorLine.Done
       .endif
     .endif
-    .if [xdi].ACTION.dAction == AAT_DELETECHARS || [xdi].ACTION.dAction == AAT_INSERTCHARS 
+    .if [xdi].ACTION.dAction == AAT_DELETECHARS || [xdi].ACTION.dAction == AAT_INSERTCHARS
       invoke StrDispose, [xdi].ACTION.pChars
     .endif
     MemFree xdi                                         ;Free data
@@ -60,7 +60,7 @@ Method ActionCollection.GetUndoAction, uses xsi, dActionGroup:DWORD
   .if eax != 0
     dec eax
     OCall xsi.ItemAt, eax
-    mov ecx, dActionGroup 
+    mov ecx, dActionGroup
     .if ecx == 0
       dec [xsi].dActionIndex
     .else
@@ -84,7 +84,7 @@ Method ActionCollection.GetRedoAction, uses xsi, dActionGroup:DWORD
   mov eax, [xsi].dActionIndex
   .if eax != [xsi].dCount
     OCall xsi.ItemAt, eax
-    mov ecx, dActionGroup 
+    mov ecx, dActionGroup
     .if ecx == 0
       inc [xsi].dActionIndex
     .else
@@ -122,7 +122,7 @@ Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
   SetObject xsi
   mov ebx, [xsi].dCount
   .if ebx > [xsi].dActionIndex
-    ;Dispose all now invalid redo actions 
+    ;Dispose all now invalid redo actions
     .while TRUE
       dec ebx
       OCall xsi.DisposeAt, ebx
@@ -133,7 +133,7 @@ Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
   mov edi, [xsi].dCount
   .if edi > 1
     sub edi, 2                                ;Get last ACTION skipping the selection ACTION
-    OCall xsi.ItemAt, edi                 
+    OCall xsi.ItemAt, edi
     mov xcx, pItem
     .if [xax].ACTION.dAction == AAT_INSERTCHARS && [xcx].ACTION.dAction == AAT_INSERTCHARS
       mov xdx, [xax].ACTION.pEditorLine
@@ -145,7 +145,7 @@ Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
           ;Include the last ACTION in the previous group
           mov ebx, [xax].ACTION.dGroup
           mov [xcx].ACTION.dGroup, ebx
-          
+
           ;Dispose the last selection ACTION
           inc edi
           OCall xsi.DisposeAt, edi

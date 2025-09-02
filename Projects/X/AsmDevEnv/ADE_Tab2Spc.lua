@@ -1,5 +1,5 @@
--- Title: ADE_TrimEnd.lua
--- Purpose: Trim spaces at the end of each line.
+-- Title: ADE_Tab2Spc.lua
+-- Purpose: Replace tabs with spaces in each line.
 -- Author: G. Friedrich
 -- Version 1.0, July 2025
 
@@ -10,16 +10,11 @@ if hEdit ~= nil then
   for i = 1, Editor.GetLineCount(hEdit), 1
   do
     LineContent = Editor.GetLineText(hEdit, i)
-    j = string.len(LineContent)
-    k = j
-    while (j > 0)
-    do
-      if string.sub(LineContent, j, j) ~= " " then break end
-      j = j - 1
-    end
-    if k ~= j then Editor.SetLineText(hEdit, i, string.sub(LineContent, 1, j)) end
+    LineContent, j = string.gsub(LineContent, string.char(9), string.rep(" ", 2))
+    if j ~= 0 then Editor.SetLineText(hEdit, i, LineContent) end
   end
 else
   Application.MsgBox("There is no active window", "Error", 16)
 end
 Application.UnfreezeUI()
+

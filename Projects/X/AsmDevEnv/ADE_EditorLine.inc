@@ -7,7 +7,7 @@
 
 
 ;Don't use DT_NOCLIP, since the text must be confined into a given RECT
-ELN_DRAW_TEXT_FLAGS         equ   DT_NOPREFIX or DT_SINGLELINE or DT_EXPANDTABS or DT_VCENTER
+ELN_DRAW_TEXT_FLAGS         equ   DT_NOPREFIX or DT_SINGLELINE or DT_TABSTOP or DT_EXPANDTABS or DT_VCENTER
 ELN_GRANULARITY             equ   32        ;Must be a power of 2, in characters
 
 ;EditorLine Error
@@ -705,7 +705,7 @@ Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, 
   local dInWord:DWORD, dQuoteChar:DWORD, dInComment:DWORD, dInMultilineComment:DWORD
   local CharWidth:DWORD, KW:KEYWORD, pDrawAttr:PDRAW_ATTR, dDontDraw:DWORD
   local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelEndIndex:DWORD
-  local pEditorResources:$ObjPtr(EditorResources)
+  local pEditorResources:$ObjPtr(EditorResources), DTP:DRAWTEXTPARAMS
 
   SetObject xsi
   ?mov xdx, pEditorView
@@ -746,6 +746,13 @@ Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, 
   .if dMultilineCommentExitChar != 0                    ;A previous line triggered the ML c_omment
     mov dInMultilineComment, TRUE
   .endif
+  
+  ;Setup DRAWTEXTPARAMS
+  mov DTP.cbSize, sizeof DRAWTEXTPARAMS
+  mov DTP.iTabLength, 2
+  mov DTP.iLeftMargin, 0
+  mov DTP.iRightMargin, 0
+  mov DTP.uiLengthDrawn, 0
 
   ;Adjust dSelEndIndex to show an EOL selection marker
   mov xcx, [xsi].pOwner
@@ -1038,13 +1045,13 @@ Subroutine DrawString
     m2z CalcRect.bottom
     mov xdi, pDrawAttr
     invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-    invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+    invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
     mov eax, CalcRect.right
     add DrawRect.right, eax
     .if dDontDraw == FALSE
       invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
       invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-      invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+      invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
     .endif
 
   .else
@@ -1057,13 +1064,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
 
       .else
@@ -1076,13 +1083,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1096,13 +1103,13 @@ Subroutine DrawString
         sub ebx, dSelEndIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
 
       .endif
@@ -1116,13 +1123,13 @@ Subroutine DrawString
         sub ebx, dFirstCharIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1137,13 +1144,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
 
       .else
@@ -1155,13 +1162,13 @@ Subroutine DrawString
         sub ebx, dFirstCharIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1176,13 +1183,13 @@ Subroutine DrawString
         mov xax, pEditorResources
         lea xdi, [xax].$Obj(EditorResources).EditorTextSelect
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
         m2m DrawRect.left, DrawRect.right, eax
         mov xdi, pWord
@@ -1196,13 +1203,13 @@ Subroutine DrawString
         sub ebx, dSelEndIndex
         mov xdi, pDrawAttr
         invoke SelectObject, hDC, [xdi].DRAW_ATTR.hFont
-        invoke DrawText, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT
+        invoke DrawTextEx, hDC, pWord, ebx, addr CalcRect, ELN_DRAW_TEXT_FLAGS or DT_CALCRECT, addr DTP
         mov eax, CalcRect.right
         add DrawRect.right, eax
         .if dDontDraw == FALSE
           invoke SetTextColor, hDC, [xdi].DRAW_ATTR.ForeColor
           invoke FillRect, hDC, addr DrawRect, [xdi].DRAW_ATTR.Background.hBrush
-          invoke DrawText, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS
+          invoke DrawTextEx, hDC, pWord, ebx, addr DrawRect, ELN_DRAW_TEXT_FLAGS, addr DTP
         .endif
       .endif
     .endif

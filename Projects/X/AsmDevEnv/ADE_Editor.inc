@@ -124,13 +124,13 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.DeepLWrite
-; Purpose:    Open DeepL-Write web page for a correction of the line selection. 
+; Purpose:    Open DeepL-Write web page for a correction of the line selection.
 ; Arguments:  None.
 ; Return:     Nothing.
 
 Method Editor.DeepLWrite, uses xbx xdi xsi
   local cSearchBuffer[4096]:CHR
-  
+
   SetObject xsi
   mov xbx, [xsi].SelectionRange.pBegSelInfo
   mov xdx, [xsi].SelectionRange.pEndSelInfo
@@ -146,7 +146,7 @@ Method Editor.DeepLWrite, uses xbx xdi xsi
         mov eax, [xdx].LOCATION.dCharIndex
         sub eax, [xbx].LOCATION.dCharIndex
         FillString cSearchBuffer, <https://www.deepl.com/en/write#en-GB/>
-        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax 
+        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax
         invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), addr cSearchBuffer, NULL, NULL, SW_SHOWNORMAL
       .endif
     .endif
@@ -172,7 +172,7 @@ Method Editor.Done, uses xbx xdi xsi
   mov xbx, [xdi].$Obj(ClientWnd).pOwner
   OCall [xsi].Actions::ActionCollection.Done
   OCall [xsi].Snapper::Magnetism.Done
-  OCall [xsi].EditorDisplays::Collection.Done
+  OCall [xsi].Displays::Collection.Done
   ACall xsi.Done
 
   ;Main menu update
@@ -415,7 +415,7 @@ MethodEnd
 
 Method Editor.InformDeletionOf, uses xbx xsi, dLineIndex:DWORD
   SetObject xsi
-  .ColForEach [xsi].EditorDisplays, ebx
+  .ColForEach [xsi].Displays, ebx
     OCall xax::EditorDisplay.InformDeletionOf, dLineIndex
   .ColNext
 MethodEnd
@@ -428,7 +428,7 @@ MethodEnd
 
 Method Editor.InformInsertionOf, uses xbx xsi, dLineIndex:DWORD
   SetObject xsi
-  .ColForEach [xsi].EditorDisplays, ebx
+  .ColForEach [xsi].Displays, ebx
     OCall xax::EditorDisplay.InformInsertionOf, dLineIndex
   .ColNext
 MethodEnd
@@ -472,7 +472,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     mov xcx, pFileName
   .endif
   mov [xsi].pFullFileName, $invoke(StrNewW, xcx)
-  
+
   ;Check if the avtive window is maximized
   mov xcx, pOwner                                       ;-> ClientWnd
   mov dStyle, 0
@@ -500,7 +500,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     .endif
     OCall xsi.ManageEditCmds
 
-    OCall [xsi].EditorDisplays::Collection.ItemAt, 0
+    OCall [xsi].Displays::Collection.ItemAt, 0
     invoke SetFocus, [xax].$Obj(EditorDisplay).View.hWnd
     mov eax, TRUE
   .else
@@ -513,7 +513,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.InternetSearch
-; Purpose:    Open Google web page for a search of the line selection. 
+; Purpose:    Open Google web page for a search of the line selection.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -535,7 +535,7 @@ Method Editor.InternetSearch, uses xbx xdi xsi
         mov eax, [xdx].LOCATION.dCharIndex
         sub eax, [xbx].LOCATION.dCharIndex
         FillString cSearchBuffer, <https://www.google.com/search?q=>
-        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax 
+        invoke StrCCopy, addr [cSearchBuffer + sizeof(CHR)*??StrLen], xdi, eax
         invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), addr cSearchBuffer, NULL, NULL, SW_SHOWNORMAL
       .endif
     .endif
@@ -757,14 +757,14 @@ Method Editor.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 ;  DbgText "Editor.OnCreate"
 
-  OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 2, COL_MAX_CAPACITY
+  OCall [xsi].Displays::Collection.Init, xsi, 2, 2, COL_MAX_CAPACITY
   invoke GetClientRect, [xsi].hWnd, addr ClientRect
 
   ;Create a EditorDisplay instance
   New EditorDisplay
   .if xax != NULL
     mov xbx, xax
-    OCall [xsi].EditorDisplays::Collection.Insert, xbx
+    OCall [xsi].Displays::Collection.Insert, xbx
     OCall xbx::EditorDisplay.Init, xsi, addr ClientRect, [xsi].pResources
   .endif
 
@@ -788,7 +788,7 @@ Method Editor.OnEnterSizeMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "Editor.OnEnterSizeMove"
   SetObject xsi
-  .ColForEach [xsi].EditorDisplays, ebx
+  .ColForEach [xsi].Displays, ebx
     OCall [xax].$Obj(EditorDisplay).View::EditorView.CaretHide
   .ColNext
   xor eax, eax
@@ -806,7 +806,7 @@ Method Editor.OnExitSizeMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "Editor.OnExitSizeMove"
   SetObject xsi
-  .ColForEach [xsi].EditorDisplays, ebx
+  .ColForEach [xsi].Displays, ebx
     OCall [xax].$Obj(EditorDisplay).View::EditorView.CaretShow
   .ColNext
   xor eax, eax
@@ -846,11 +846,11 @@ Method Editor.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  DbgText "Editor.OnSize"
   SetObject xsi
   .if wParam != SIZE_MINIMIZED && lParam != 0           ;x = 0 & y = 0
-    .if [xsi].EditorDisplays.dCount != 0
+    .if [xsi].Displays.dCount != 0
       PntS2Regs lParam
       mov ClientSize.x, eax
       mov ClientSize.y, ecx
-      OCall [xsi].EditorDisplays::Collection.ItemAt, 0
+      OCall [xsi].Displays::Collection.ItemAt, 0
       invoke MoveWindow, [xax].$Obj(EditorDisplay).hWnd, \
                          0, 0, ClientSize.x, ClientSize.y, FALSE
     .endif
@@ -1543,7 +1543,7 @@ Method Editor.SelectAll, uses xsi
     mov edx, [xsi].Lines.dCount
     dec edx
     mov [xsi].SelectionLst.dLineIndex, edx
-    OCall [xsi].Lines::Collection.ItemAt, edx       ;Get the last line
+    OCall [xsi].Lines::Collection.ItemAt, edx           ;Get the last line
     mov edx, [xax].$Obj(EditorLine).dLength
     mov [xsi].SelectionLst.dCharIndex, edx
 
@@ -1933,21 +1933,21 @@ Method Editor.SelectionSet, uses xdi xbx xsi
 
   ;Arrange the selection by topology (Begin/End)
   mov eax, [xcx].LOCATION.dLineIndex
-  .if eax == [xdx].LOCATION.dLineIndex                ;Same LineIndex?
+  .if eax == [xdx].LOCATION.dLineIndex                  ;Same LineIndex?
     ;Same EditorLine
     mov eax, [xcx].LOCATION.dCharIndex
-    .if eax == [xdx].LOCATION.dCharIndex              ;Same CharIndex?
+    .if eax == [xdx].LOCATION.dCharIndex                ;Same CharIndex?
       OCall xsi.SelectionResetInfo
-      jmp @@Exit                                      ;Nothing selected => Exit
+      jmp @@Exit                                        ;Nothing selected => Exit
     .endif
     .if eax > [xdx].LOCATION.dCharIndex
-      xchg xcx, xdx                                   ;Switch POINTERs
+      xchg xcx, xdx                                     ;Switch POINTERs
     .endif
   .elseif eax > [xdx].LOCATION.dLineIndex
-    xchg xcx, xdx                                     ;Switch POINTERs
+    xchg xcx, xdx                                       ;Switch POINTERs
   .endif
-  mov [xsi].SelectionRange.pBegSelInfo, xcx           ;Set selection begin
-  mov [xsi].SelectionRange.pEndSelInfo, xdx           ;Set selection end
+  mov [xsi].SelectionRange.pBegSelInfo, xcx             ;Set selection begin
+  mov [xsi].SelectionRange.pEndSelInfo, xdx             ;Set selection end
 
   ;Set selection indices on all target EditorLines
   .ifBitSet [xsi].dFlags, EDF_BLOCK_MODE
@@ -1981,7 +1981,7 @@ Method Editor.SelectionSet, uses xdi xbx xsi
       m2m [xax].$Obj(EditorLine).Selection.dBegIndex, dBegCharIndex, ecx
       m2m [xax].$Obj(EditorLine).Selection.dEndIndex, dEndCharIndex, ecx
 
-      .break .if ebx == dLastLineIndex                ;Last selected line reached
+      .break .if ebx == dLastLineIndex                  ;Last selected line reached
       inc ebx
     .endw
 
@@ -2296,27 +2296,27 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
 ;  .else
 ;    lea xdi, cTextBuffer
 ;    mov edx, [xbx].$Obj(Application).dLangID
-;    add edx, 142                                      ;"Selection"
+;    add edx, 142                                       ;"Selection"
 ;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
 ;    WriteF xdi, "¦SU: ", addr wResText
 ;    mov edx, [xbx].$Obj(Application).dLangID
 ;    .if dSelCount == 1
-;      add edx, 143                                    ;"character"
+;      add edx, 143                                     ;"character"
 ;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
 ;      WriteF xdi, "1 ¦SU", addr wResText
 ;    .else
-;      add edx, 144                                    ;"characters"
+;      add edx, 144                                     ;"characters"
 ;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
 ;      WriteF xdi, "¦UD ¦SU", dSelCount, addr wResText
 ;    .endif
 ;    WriteF xdi, ", "
 ;    mov edx, [xbx].$Obj(Application).dLangID
 ;    .if dLineCount == 1
-;      add edx, 145                                    ;"line"
+;      add edx, 145                                     ;"line"
 ;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
 ;      WriteF xdi, "1 ¦SU", addr wResText
 ;    .else
-;      add edx, 146                                    ;"lines"
+;      add edx, 146                                     ;"lines"
 ;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
 ;      WriteF xdi, "¦UD ¦SU", dLineCount, addr wResText
 ;    .endif
@@ -2332,9 +2332,9 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
 ;  sub ecx, eax
 ;  mov dLineCharPos, ecx
 ;  mov edx, [xbx].$Obj(Application).dLanguage
-;  add edx, 140                                        ;"Caret at line"
+;  add edx, 140                                         ;"Caret at line"
 ;  invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-;  inc dLineNumberFirst                                ;First line index is 0 => 1
+;  inc dLineNumberFirst                                 ;First line index is 0 => 1
 ;  WriteF xdi, ": ¦SU ¦UD, ", addr wResText, dLineNumberFirst
 ;  mov edx, [xbx].$Obj(Application).dLanguage
 ;  add edx, 141                                        ;"position"

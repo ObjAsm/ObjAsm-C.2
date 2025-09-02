@@ -205,6 +205,7 @@ ICON_INDEX_GROUP_CLOSE      equ   3
 ICON_INDEX_GROUP_OPEN       equ   4
 ICON_INDEX_FILE             equ   5
 ICON_INDEX_CMD              equ   6
+ICON_INDEX_SCP              equ   7
 
 
 .data

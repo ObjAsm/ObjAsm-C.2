@@ -64,7 +64,7 @@ DEFINE LUA_DLL_IMPORT
 % includelib &LibPath&Windows\OleAut32.lib
 % includelib &LibPath&Windows\Msimg32.lib
 % includelib &LibPath&Windows\shlwapi.lib
-% includelib &LibPath&Lua\release\lua547.lib
+% includelib &LibPath&Lua\release\lua546.lib
 
 % include &IncPath&Windows\CommCtrl.inc
 % include &IncPath&Windows\UxTheme.inc
@@ -132,9 +132,9 @@ include ADE_Main.inc                                    ;Application objects
 
 start proc SEH_FRAME                                    ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
-  DbgClearAll
+;  DbgClearAll
 
-  ResGuard_Start
+;  ResGuard_Start
   invoke InitCommonControls
   invoke OleInitialize, NULL                            ;Calls CoInitializeEx(COINIT_APARTMENTTHREADED)
   ;invoke SetExceptionMessage, NULL, NULL, NULL
@@ -144,11 +144,11 @@ start proc SEH_FRAME                                    ;Program entry point
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   invoke OleUninitialize
-  ResGuard_Show
-  ResGuard_Stop
+;  ResGuard_Show
+;  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  invoke ExitProcess, EXIT_SUCCESS                      ;Exit program returning EXIT_SUCCESS to the OS
 start endp
 
 end

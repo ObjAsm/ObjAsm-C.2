@@ -180,24 +180,24 @@ MethodEnd
 ;    |
 ;    +--Group
 ;    |    |
-;    |    +--File 
-;    |    +--Command 
+;    |    +--File
+;    |    +--Command
 ;    |    +--Group             (this is not implemented in the ProjMgr yet)
 ;    |    |    |
-;    |    |    '--File 
-;    |    '--File 
+;    |    |    '--File
+;    |    '--File
 ;    '--Group
 ;         |
-;         +--File 
-;         +--File 
+;         +--File
+;         +--File
 ;         '--File
-;     
+;
 
 Method ProjectManager.GetNextFileItem, uses xbx xsi, hLastItem:HTREEITEM
   local Item:TVITEM
 
   SetObject xsi
-  
+
   ;Get the next leaf item
   mov xax, hLastItem
   .while TRUE
@@ -209,10 +209,10 @@ Method ProjectManager.GetNextFileItem, uses xbx xsi, hLastItem:HTREEITEM
       jnz @B
       mov xax, xbx
       .break .if xax != hLastItem
-  
+
       invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_NEXT, xbx
       .continue .if xax != 0
-  
+
       @@:
       invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, xbx
       .break .if xax == 0
@@ -244,16 +244,16 @@ Method ProjectManager.GroupsCollapse, uses xbx xdi xsi
   local Item:TVITEM
 
   SetObject xsi
-  
-  ;Store the first visible item in the root item 
+
+  ;Store the first visible item in the root item
   mov xdi, $invoke(SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_ROOT, 0)
   mov Item.hItem, xax
   mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
   invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
   invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_FIRSTVISIBLE, 0
   mov xcx, Item.lParam
-  mov [xcx].PROJECTITEM.hVisible, xax  
-  
+  mov [xcx].PROJECTITEM.hVisible, xax
+
   ;Store expansion information amd collapse groups
   invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_CHILD, xdi
   .while xax != 0
@@ -276,7 +276,7 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectManager.GroupsExpandRestore
 ; Purpose:    Restore each group to its original state prior to invoking GroupsCollapse.
-; Arguments:  Arg1: HTREEITEM of the item we want to show. If zero, the original item before the 
+; Arguments:  Arg1: HTREEITEM of the item we want to show. If zero, the original item before the
 ;             GroupsCollapse invocation is retored.
 ; Return:     Nothing.
 
@@ -300,7 +300,7 @@ Method ProjectManager.GroupsExpandRestore, uses xbx xsi, hFirstVisible:HTREEITEM
   .endw
 
   ;Restore first visible item
-  mov xax, hFirstVisible 
+  mov xax, hFirstVisible
   .if xax != 0
     ;Expand the parent
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETNEXTITEM, TVGN_PARENT, hFirstVisible
@@ -362,7 +362,7 @@ Method ProjectManager.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     invoke TrackPopupMenuEx, hContextMenu, TPM_LEFTALIGN or TPM_TOPALIGN or TPM_RIGHTBUTTON, \
                              SceenPoint.x, SceenPoint.y, [xbx].$Obj(Application).hWnd, NULL
     invoke PostMessage, [xbx].$Obj(Application).hWnd, WM_NULL, 0, 0  ;Fix: menu not popping up right
-  
+
   .else
     ;Find out if the cursor is on an item
     s2s tvht.pt, SceenPoint, xax, xdx
@@ -381,6 +381,8 @@ Method ProjectManager.OnContextMenu, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
         mov edx, 2
       .elseif ecx == PIT_COMMAND
         mov edx, 3
+      .elseif ecx == PIT_SCRIPT
+        mov edx, 4
       .else
         xor edx, edx
       .endif
@@ -411,10 +413,11 @@ Method ProjectManager.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FOLDER_OPEN")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CODE")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CMD")
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SCP")
 
   lea xdi, [xsi].TView
   OCall xdi::TreeView.Init, xsi, [xsi].hWnd, xbx, offset ProjTreeView
-  
+
   invoke SendMessage, [xsi].TView.hWnd, TVM_SETTEXTCOLOR, 0, [xsi].ForeColor
   invoke SendMessage, [xsi].TView.hWnd, TVM_SETBKCOLOR,   0, [xsi].BackColor
   invoke SendMessage, [xsi].TView.hWnd, TVM_SETLINECOLOR, 0, [xsi].LineColor
@@ -555,7 +558,8 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xsi].TView.hWnd, TVM_GETITEM, 0, addr Item
     .if eax != FALSE
       mov xcx, Item.lParam
-      .if [xcx].PROJECTITEM.dType == PIT_FILE || [xcx].PROJECTITEM.dType == PIT_COMMAND
+      .if [xcx].PROJECTITEM.dType == PIT_FILE || [xcx].PROJECTITEM.dType == PIT_COMMAND || \
+          [xcx].PROJECTITEM.dType == PIT_SCRIPT
         ;Tell the tree-view control to create an image to use for dragging.
         mrm [xsi].hDragSrcItem, [xbx].NMTREEVIEW.itemNew.hItem, xax
         invoke SendMessage, [xsi].TView.hWnd, TVM_CREATEDRAGIMAGE, 0, xax
@@ -574,7 +578,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif [xbx].NMHDR.code == TVN_DELETEITEM
     mov xbx, [xbx].NMTREEVIEW.itemOld.lParam
     mov ecx, [xbx].PROJECTITEM.dType
-    .if ecx == PIT_FILE || ecx == PIT_COMMAND 
+    .if ecx == PIT_FILE || ecx == PIT_COMMAND || ecx == PIT_SCRIPT
       invoke StrDispose, [xbx].PROJECTITEM.pDispName
       invoke StrDispose, [xbx].PROJECTITEM.pFileName
     .endif
@@ -610,6 +614,10 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             mov xcx, [xsi].pOwner
             invoke SendMessage, [xcx].$Obj(Application).hWnd, WM_COMMAND, IDM_PROJ_CMD_EXECUTE, 0
 
+          .elseif [xbx].PROJECTITEM.dType == PIT_SCRIPT
+            mov xcx, [xsi].pOwner
+            invoke SendMessage, [xcx].$Obj(Application).hWnd, WM_COMMAND, IDM_PROJ_SCP_EXECUTE, 0
+
           .endif
         .endif
       .endif
@@ -633,8 +641,8 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             .if xax != 0
               lea xbx, cBuffer
               mov xax, Item.lParam
-              WriteF xbx, "Are you sure that you want to delete the \´¦ST\´ group and all of its files?", [xax].PROJECTITEM.pDispName  
-              invoke MessageBox, [xsi].hWnd, addr cBuffer, $OfsCStr("Warning"), MB_OKCANCEL or MB_ICONWARNING 
+              WriteF xbx, "Are you sure that you want to delete the \´¦ST\´ group and all of its files?", [xax].PROJECTITEM.pDispName
+              invoke MessageBox, [xsi].hWnd, addr cBuffer, $OfsCStr("Warning"), MB_OKCANCEL or MB_ICONWARNING
               .if eax == IDCANCEL
                 xor eax, eax
                 ExitMethod
@@ -680,7 +688,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     m2m Item.hItem, [xbx].NMTREEVIEW.itemNew.hItem, xax
     mov Item.mask_, TVIF_HANDLE or TVIF_IMAGE or TVIF_SELECTEDIMAGE
     invoke SendMessage, [xsi].TView.hWnd, TVM_SETITEM, 0, addr Item
-  
+
     ;Manage the GUI commands
     BitSet [xsi].dFlags, PMF_DIRTY
     mov xbx, [xsi].pOwner
@@ -965,6 +973,9 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
     .if [xdi].PROJECTITEM.dType == PIT_COMMAND
       mov TVI.item.iImage, ICON_INDEX_CMD
       mov TVI.item.iSelectedImage, ICON_INDEX_CMD
+    .elseif [xdi].PROJECTITEM.dType == PIT_SCRIPT
+      mov TVI.item.iImage, ICON_INDEX_SCP
+      mov TVI.item.iSelectedImage, ICON_INDEX_SCP
     .endif
     mov TVI.item.lParam, xdi
     invoke SendMessage, [xsi].TView.hWnd, TVM_INSERTITEM, 0, addr TVI
@@ -1003,7 +1014,7 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   mov xcx, [xbx].$Obj(Application).pClientWnd
   invoke SendMessage, [xcx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
   OCall xbx::Application.ManageGuiCmds, xax
-  
+
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

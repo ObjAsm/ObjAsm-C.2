@@ -193,7 +193,7 @@ UpdateEditor proc uses xbx xdi xsi hWnd:HWND, hMdiActiveWnd:HWND
     mov xbx, xax
     invoke GetObjectID, xax
     .if eax == ADE_EditorID
-      .ColForEach [xbx].$Obj(Editor).EditorDisplays, esi
+      .ColForEach [xbx].$Obj(Editor).Displays, esi
         mov pDisplay, xax
         lea xdi, [xax].$Obj(EditorDisplay).View
         OCall xdi::EditorView.SetGuiLayout

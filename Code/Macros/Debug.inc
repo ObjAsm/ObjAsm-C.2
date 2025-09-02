@@ -1383,7 +1383,7 @@ endm
 ; Macro:      DbgStrCA
 ; Purpose:    Output a limited ANSI string on the debug device.
 ; Arguments:  Arg1: ANSI string.
-;             Arg2: Character count (fix number, like 8 or a varaible but not a register).
+;             Arg2: Character count (fix number, like 8 or a variable but not a register).
 ;             Arg3: Additional information.
 ;             Arg4: Optional destination Window name.
 
@@ -1417,7 +1417,7 @@ endm
 ; Macro:      DbgStrCW
 ; Purpose:    Output a limited WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
-;             Arg2: Character count (fix number, like 8 or a varaible but not a register).
+;             Arg2: Character count (fix number, like 8 or a variable but not a register).
 ;             Arg3: Additional information.
 ;             Arg4: Optional destination Window name.
 

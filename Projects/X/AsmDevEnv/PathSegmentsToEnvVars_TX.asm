@@ -30,7 +30,8 @@ MethodEnd
 ;             their environment variable names.
 ; Arguments:  Arg1: -> Source string.
 ; Return:     xax -> New replaced string. Should be disposed using StrDispose when no longer needed.
-; Note:       Only EnvVar values containing a '\' are taken. 
+; Note:       Only EnvVar values containing a '\' are taken.
+;             Replacement goes from larget to shortes EnvVar value.
 
 .code
 align ALIGN_CODE

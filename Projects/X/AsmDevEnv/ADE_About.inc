@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
-
+  
 ; --------------------------------------------------------------------------------------------------
 ; Object:     DialogAbout
 ; Purpose:    Generic modal about dialog. It shows a single text on a static control.

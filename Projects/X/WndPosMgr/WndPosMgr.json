@@ -1,0 +1,17 @@
+{
+  "Profiles":[
+    {
+      "Name":"Profile1",
+      "Apps":[
+        {
+          "Name":"Rechner",
+          "X":10,
+          "Y":10,
+          "W":200,
+          "H":300,
+          "Flags":0
+        }
+      ]
+    }
+  ]
+}

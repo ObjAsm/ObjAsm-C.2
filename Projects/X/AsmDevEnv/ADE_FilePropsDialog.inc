@@ -12,7 +12,8 @@ IDC_EDT_DISPNAME                equ 1002
 IDC_STC_FILENAME                equ 1003
 IDC_EDT_FILENAME                equ 1004
 IDC_BTN_SEARCHFILE              equ 1005
-IDC_CHK_CMD                     equ 1006
+IDC_STC_ACTION									equ 1006
+IDC_CBO_ACTION									equ 1007
 IDC_BTN_OK                      equ 1
 IDC_BTN_CANCEL                  equ 2
 
@@ -40,6 +41,7 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
 
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DISPNAME, addr cBuffer, lengthof cBuffer
   invoke StrReplace, addr [xdi].PROJECTITEM.pDispName, addr cBuffer
+
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_FILENAME, addr cBuffer, lengthof cBuffer
   invoke StrReplace, addr [xdi].PROJECTITEM.pFileName, addr cBuffer
 
@@ -47,15 +49,22 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
   invoke StrLength, [xdi].PROJECTITEM.pDispName
   mov Item.cchTextMax, eax
   m2m Item.pszText, [xdi].PROJECTITEM.pDispName, xdx
-  mov Item.iImage, ICON_INDEX_FILE
-  mov Item.iSelectedImage, ICON_INDEX_FILE
-  mov [xdi].PROJECTITEM.dType, PIT_FILE
-  invoke IsDlgButtonChecked, [xsi].hWnd, IDC_CHK_CMD
-  .if eax == BST_CHECKED
+  invoke GetDlgItem, [xsi].hWnd, IDC_CBO_ACTION
+  invoke SendMessage, xax, CB_GETCURSEL, 0, 0
+  .if eax == 1
+    mov [xdi].PROJECTITEM.dType, PIT_COMMAND
     mov Item.iImage, ICON_INDEX_CMD
     mov Item.iSelectedImage, ICON_INDEX_CMD
-    mov [xdi].PROJECTITEM.dType, PIT_COMMAND
+  .elseif eax == 2
+    mov [xdi].PROJECTITEM.dType, PIT_SCRIPT
+    mov Item.iImage, ICON_INDEX_SCP
+    mov Item.iSelectedImage, ICON_INDEX_SCP
+  .else
+    mov [xdi].PROJECTITEM.dType, PIT_FILE
+    mov Item.iImage, ICON_INDEX_FILE
+    mov Item.iSelectedImage, ICON_INDEX_FILE
   .endif
+
   invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_SETITEM, 0, addr Item
   BitSet [xbx].$Obj(ProjectManager).dFlags, PMF_DIRTY
   mov xbx, [xsi].pOwner
@@ -73,7 +82,7 @@ MethodEnd
 ;                   Windows from setting the default keyboard focus.
 
 Method FilePropsDialog.CtlsSet, uses xbx xdi xsi
-  local Item:TVITEM
+  local Item:TVITEM, hComboBox:HWND
 
   SetObject xsi
   mov xax, [xsi].pOwner
@@ -91,12 +100,21 @@ Method FilePropsDialog.CtlsSet, uses xbx xdi xsi
   invoke GetDlgItem, [xsi].hWnd, IDC_EDT_FILENAME
   invoke SendMessage, xax, EM_SETCUEBANNER, FALSE, $OfsCStrW("Enter a file name or use the button on the right")
 
-  mov eax, BST_UNCHECKED
-  .if [xdi].PROJECTITEM.dType == PIT_COMMAND
-    mov eax, BST_CHECKED
+  mov hComboBox, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_ACTION)
+  invoke SendMessage, hComboBox, CB_RESETCONTENT, 0, 0
+  invoke SendMessage, hComboBox, CB_ADDSTRING, 0, $OfsCStr("Open file in Editor")
+  invoke SendMessage, hComboBox, CB_ADDSTRING, 0, $OfsCStr("Shell execute")
+  invoke SendMessage, hComboBox, CB_ADDSTRING, 0, $OfsCStr("Execute script")
+  .if [xdi].PROJECTITEM.dType == PIT_FILE
+    xor eax, eax
+  .elseif [xdi].PROJECTITEM.dType == PIT_COMMAND
+    mov eax, 1
+  .elseif [xdi].PROJECTITEM.dType == PIT_SCRIPT
+    mov eax, 2
+  .else
+    mov eax, -1
   .endif
-  invoke CheckDlgButton, [xsi].hWnd, IDC_CHK_CMD, eax
-
+  invoke SendMessage, hComboBox, CB_SETCURSEL, eax, 0
   mov eax, TRUE
 MethodEnd
 
@@ -184,7 +202,8 @@ DL_CHILD_INFO {{000, 000, 100, 000}}      ;Disp name Edit
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;File name Label
 DL_CHILD_INFO {{000, 000, 100, 000}}      ;File name Edit
 DL_CHILD_INFO {{100, 000, 000, 000}}      ;File Search Button
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;CheckBox Command
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Action Label
+DL_CHILD_INFO {{000, 000, 100, 000}}      ;Action ComboBox
 DL_CHILD_INFO {{100, 000, 000, 000}}      ;Cancel Button
 
 Method FilePropsDialog.Init, uses xsi, pOwner:POINTER, hParent:HWND, hItem:HTREEITEM

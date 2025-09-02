@@ -14,9 +14,9 @@ IDC_EDT_FILENAME                equ 1004
 IDC_STC_DIRPATH                 equ 1005
 IDC_EDT_DIRPATH                 equ 1006
 IDC_BTN_SEARCHDIR               equ 1007
-IDC_STC_DESC                    equ 1007
-IDC_EDT_DESC                    equ 1008
-IDC_CHK_CRASH                   equ 1009
+IDC_STC_DESC                    equ 1008
+IDC_EDT_DESC                    equ 1009
+IDC_CHK_CRASH                   equ 1010
 IDC_BTN_OK                      equ 1
 IDC_BTN_CANCEL                  equ 2
 

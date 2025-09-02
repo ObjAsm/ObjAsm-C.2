@@ -119,6 +119,7 @@ PIT_PROJECT         equ     0
 PIT_GROUP           equ     1
 PIT_FILE            equ     2
 PIT_COMMAND         equ     3
+PIT_SCRIPT          equ     4
 
 PIF_EXPANDED        equ     BIT00
 
@@ -129,9 +130,6 @@ PROJECTITEM struct
     struct                                  ;Files
       pFileName     PSTRINGW  ?
       hEditor       HANDLE    ?             ;Associated Editor window handle
-    ends
-    struct                                  ;Commands
-      pCommand      PSTRINGW  ?
     ends
     struct
       union                                 ;Groups
@@ -507,22 +505,21 @@ ObjectEnd
 ; EditorDisplay Layout:
 ; --------------------
 ;
-;       -------------------------------------------
-;      |                                        |V |
-;      |                                        |e |
-;      |   EditorView                           |r |
-;      |                                        |t |
-;      |                                        |. |
-;      |                                        |  |
-;      |                                        |S |
-;      |                                        |B |
-;      |                                        |a |
-;      |                                        |r |
-;      |-------------------------------------------|
-;      |StatusPanel| Horizontal Scrollbar       |# | Splitter
-;       -------------------------------------------
-;      |                                           |
-;      |<----------- EditorDisplay width---------->|
+;       ---------------------------------------
+;      |                                    |V |
+;      |                                    |e |
+;      |   EditorView                       |r |
+;      |                                    |t |
+;      |                                    |. |
+;      |                                    |S |
+;      |                                    |B |
+;      |                                    |a |
+;      |                                    |r |
+;      |---------------------------------------|
+;      |StatusPanel| Horizontal Scrollbar   |# | Splitter
+;       ---------------------------------------
+;      |                                       |
+;      |<--------- EditorDisplay width ------->|
 
 
 Object EditorDisplay, ADE_EditorDisplayID, Window
@@ -700,7 +697,7 @@ Object Editor, ADE_EditorID, ChildWnd
   StaticEvent       OnSetFocus,           WM_SETFOCUS
 
   Embed     Lines,              Collection
-  Embed     EditorDisplays,     Collection
+  Embed     Displays,           Collection
   Embed     Actions,            ActionCollection
 ObjectEnd
 
@@ -730,21 +727,21 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:  ScriptEngine
-; Purpose: 
+; Purpose:
 
 Object ScriptEngine, ADE_ScriptEngineID, Streamable
   RedefineMethod    Done
   VirtualMethod     Execute
   StaticMethod      FileLoad,             PSTRINGW
-  VirtualMethod     Run,                  PSTRINGA
-  VirtualMethod     Start,                PSTRINGA
+  VirtualMethod     Start
   VirtualMethod     Stop
 
   DefineVariable    hThread,              HANDLE,       0
   DefineVariable    dFlags,               DWORD,        0
-  DefineVariable    pScript,              PSTRINGA,     NULL
+  DefineVariable    pScriptBuffer,        PSTRINGA,     NULL
+  DefineVariable    pScriptName,          PSTRINGA,     NULL
+  DefineVariable    dScriptLen,           DWORD,        0
 ObjectEnd
-
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:  ProjectManager

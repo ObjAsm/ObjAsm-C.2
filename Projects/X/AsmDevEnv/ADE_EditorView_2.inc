@@ -127,12 +127,14 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_INSERT
-    BitToggle [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
-    OCall xsi.CaretDestroy
-    OCall xsi.CaretNew
-    OCall xsi.CaretSet
-    OCall xsi.CaretShow
-    OCall xsi.UpdateStatusPanel
+    .if dShiftKeyPressed == FALSE
+      BitToggle [xbx].$Obj(Editor).dFlags, EDF_OVERWRITE_MODE
+      OCall xsi.CaretDestroy
+      OCall xsi.CaretNew
+      OCall xsi.CaretSet
+      OCall xsi.CaretShow
+      OCall xsi.UpdateStatusPanel
+    .endif
     xor eax, eax
     jmp @@EOM
 
@@ -146,10 +148,10 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
         [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
       mov xcx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
-      mrm [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax 
+      mrm [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax
       mov [xsi].dLockedCharIndex, eax
       m2m [xsi].CaretLocation.dLineIndex, [xcx].LOCATION.dLineIndex, eax
-    .endif 
+    .endif
     OCall xsi.CaretMoveUp, 1
     mov dNeedRedrawing, eax
 
@@ -168,10 +170,10 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
         [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
       mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-      mrm [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax 
+      mrm [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax
       mov [xsi].dLockedCharIndex, eax
       m2m [xsi].CaretLocation.dLineIndex, [xcx].LOCATION.dLineIndex, eax
-    .endif 
+    .endif
     OCall xsi.CaretMoveDown, 1
     mov dNeedRedrawing, eax
 
@@ -187,12 +189,12 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
   .elseif wParam == VK_LEFT
     OCall xbx::Editor.HilitedWordReset
-    ;If we are leaving a selection on the left, move caret to the selection begin   
+    ;If we are leaving a selection on the left, move caret to the selection begin
     .if dShiftKeyPressed == FALSE && \
         [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
       mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
-      m2m [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax 
+      m2m [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax
       m2m [xsi].CaretLocation.dLineIndex, [xcx].LOCATION.dLineIndex, eax
     .endif
 
@@ -263,14 +265,14 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
   .elseif wParam == VK_RIGHT
     OCall xbx::Editor.HilitedWordReset
-    ;If we are leaving a selection, move caret to the selection end   
+    ;If we are leaving a selection, move caret to the selection end
     .if dShiftKeyPressed == FALSE && \
         [xbx].$Obj(Editor).SelectionRange.pBegSelInfo != NULL && \
         [xbx].$Obj(Editor).SelectionRange.pEndSelInfo != NULL
       mov xcx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
-      m2m [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax 
+      m2m [xsi].CaretLocation.dCharIndex, [xcx].LOCATION.dCharIndex, eax
       m2m [xsi].CaretLocation.dLineIndex, [xcx].LOCATION.dLineIndex, eax
-    .endif 
+    .endif
 
     .if dControlKeyPressed == FALSE
       ;<RIGHT> pressed

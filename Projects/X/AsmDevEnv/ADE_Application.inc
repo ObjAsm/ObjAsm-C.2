@@ -1244,31 +1244,6 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
   .elseif ax == IDM_FILE_BREAK
     int 3
-  .elseif ax == IDM_FILE_TEST
-    ;Start script execution
-    New SW::StopWatch
-    OCall SW::StopWatch.Init, xsi
-    OCall [xsi].ScriptHost::ScriptEngine.FileLoad, $OfsCStrW("ADE_Test.lua")
-    .if xax != NULL
-      mov xbx, xax
-      OCall SW::StopWatch.Start
-      OCall [xsi].ScriptHost::ScriptEngine.Run, xbx
-      mov xbx, xax
-      OCall SW::StopWatch.Stop
-      .if ebx != LUA_OK
-        DbgWarning "Failed to run the script"
-      .endif
-    .else
-      DbgWarning "Failed to load the script"
-    .endif
-    lea xbx, cBuffer
-    %OCall SW::StopWatch.GetTimeStr, xbx
-    DbgWriteF,, "Script execution time: ¦ST µs", xbx
-    invoke SendMessage, [xsi].hWnd, WM_SETREDRAW, TRUE, 0 ;Reactivate the UI if it was forgotten
-    ;Redraw all child windows
-    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, \
-                         RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
-    xor eax, eax
 
   .elseif ax == SC_RESTORE                              ;Restore the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
@@ -1468,11 +1443,12 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_EDITLABEL, 0, xax
     xor eax, eax
-  .elseif ax == IDM_PROJ_GROUP_ADDFILE
+  .elseif ax == IDM_PROJ_GROUP_ADDEXISTING
+    xor eax, eax
+  .elseif ax == IDM_PROJ_GROUP_ADDACTIVE
     xor eax, eax
 
-
-  .elseif ax == IDM_PROJ_FILE_EDIT
+  .elseif ax == IDM_PROJ_FILE_PROPERTIES || ax == IDM_PROJ_CMD_PROPERTIES || ax == IDM_PROJ_SCP_PROPERTIES
     New FilePropsDlg::FilePropsDialog
     lea xbx, [xsi].PrjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
@@ -1480,7 +1456,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall FilePropsDlg::FilePropsDialog.Show
     OCall FilePropsDlg::FilePropsDialog.Done
     xor eax, eax
-  .elseif ax == IDM_PROJ_FILE_OPEN
+  .elseif ax == IDM_PROJ_FILE_OPEN || ax == IDM_PROJ_SCP_OPEN
     lea xbx, [xsi].PrjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     mov Item.hItem, xax
@@ -1503,19 +1479,41 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
     mov xax, Item.lParam
-    OCall xsi.Execute, [xax].PROJECTITEM.pCommand
-  .elseif ax == IDM_PROJ_CMD_REMOVE
+    OCall xsi.Execute, [xax].PROJECTITEM.pFileName
+  .elseif ax == IDM_PROJ_CMD_REMOVE || ax == IDM_PROJ_SCP_REMOVE
     lea xbx, [xsi].PrjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_DELETEITEM, 0, xax
     xor eax, eax
-  .elseif ax == IDM_PROJ_CMD_EDIT
-    New FilePropsDlg::FilePropsDialog
+  .elseif ax == IDM_PROJ_SCP_EXECUTE
+    ;Start script execution
     lea xbx, [xsi].PrjMgr
     invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0
-    OCall FilePropsDlg::FilePropsDialog.Init, xsi, [xsi].hWnd, xax
-    OCall FilePropsDlg::FilePropsDialog.Show
-    OCall FilePropsDlg::FilePropsDialog.Done
+    mov Item.hItem, xax
+    mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
+    New SW::StopWatch
+    OCall SW::StopWatch.Init, xsi
+    invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
+    mov xax, Item.lParam
+    OCall [xsi].ScriptHost::ScriptEngine.FileLoad, [xax].PROJECTITEM.pFileName
+    .if xax != NULL
+      OCall SW::StopWatch.Start
+      OCall [xsi].ScriptHost::ScriptEngine.Execute
+      mov ebx, eax
+      OCall SW::StopWatch.Stop
+      .if ebx != EXIT_SUCCESS
+        DbgWarning "Failed to run the script"
+      .endif
+    .else
+      invoke MessageBoxA, [xsi].hWnd, addr szLuaScriptLoadError, addr szLuaScriptError, MB_OK or MB_ICONERROR
+    .endif
+    lea xbx, cBuffer
+    %OCall SW::StopWatch.GetTimeStr, xbx
+    DbgWriteF,, "Script execution time: ¦ST µs", xbx
+    invoke SendMessage, [xsi].hWnd, WM_SETREDRAW, TRUE, 0 ;Reactivate the UI if it was forgotten
+    ;Redraw all child windows
+    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, \
+                         RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
     xor eax, eax
 
 
@@ -1691,45 +1689,25 @@ MethodEnd
 
 Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam lParam
-
   mov eax, -1
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnLuaFinished
 ; Purpose:    Event procedure for SEM_SCRIPT_FINISHED message.
-; Arguments:  Arg1: First message parameter (Lua result).
+; Arguments:  Arg1: First message parameter (EXIT_FAILURE/EXIT_SUCCESS).
 ;             Arg2: Second message parameter (pScript).
 ; Return:     Nothing.
 
 Method Application.OnLuaFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
 ;  DbgText "Application.OnLuaFinished"
-  SetObject xsi
-  .if wParam != LUA_OK
-    .if wParam == LUA_ERRRUN
-      .ifBitSet [xsi].ScriptHost.dFlags, SEF_SCRIPT_STOP
-        mov xdx, $OfsCStr("The user has stopped the running script")
-        invoke MessageBox, [xsi].hWnd, xdx, $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION
-        ExitMethod
-      .else
-        mov xdx, $OfsCStr("Fatal error while running the script")
-      .endif
-    .elseif wParam == LUA_ERRSYNTAX
-      mov xdx, $OfsCStr("Script fatal syntax error")
-    .elseif wParam == LUA_ERRMEM
-      mov xdx, $OfsCStr("Script fatal memory allocation error")
-    .elseif wParam == LUA_ERRERR
-      mov xdx, $OfsCStr("Script fatal error-handler error")
-    .else
-      mov xdx, $OfsCStr("Script fatal unknown Error")
-    .endif
-    invoke MessageBox, [xsi].hWnd, xdx, offset szError, MB_OK or MB_ICONERROR
-  .endif
-
   ;Housekeeping
-  MemFree lParam                                        ;Dispose Script
+  SetObject xsi
+  MemFree [xsi].ScriptHost.pScriptBuffer                ;Dispose Script
+  mov [xsi].ScriptHost.pScriptBuffer, NULL
 MethodEnd
-
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify

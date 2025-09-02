@@ -352,8 +352,40 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 ; Note:       The caret is only displayed if it is in the TextRect.
 
+HorzIndex2Pos proc uses xbx xdi pEditor:$ObjPtr(Editor), dCharIndex:DWORD, dLineIndex:DWORD
+  local dTabWidth:DWORD
+
+  mov xbx, pEditor                                      ;xbx -> Editor
+  mov xdx, [xbx].$Obj(Editor).pResources                ;xdx -> EditorResources
+  mov eax, [xdx].$Obj(EditorResources).dTabWidth
+  mov dTabWidth, eax
+  mov edx, dLineIndex
+  .if edx < [xbx].$Obj(Editor).Lines.dCount
+    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+    mov xcx, [xax].$Obj(EditorLine).pBuffer
+    .if xcx != NULL
+      xor edi, edi
+      xor eax, eax
+      .while edi < dCharIndex
+        .if CHRW ptr [xcx] == TAB
+          add eax, dTabWidth
+        .else
+          inc eax
+        .endif
+        add xcx, sizeof(CHRW)
+        inc edi
+      .endw
+    .else
+      xor eax, eax
+    .endif
+  .else
+    xor eax, eax
+  .endif
+  ret
+HorzIndex2Pos endp
+
 Method EditorView.CaretSet, uses xbx xdi xsi
-  local CaretPosition:POINT, dRetValue:DWORD
+  local CaretPosition:POINT, dFistVisHorzPos:DWORD, dRetValue:DWORD
 
 ;  DbgText "EditorView.CaretSet"
   SetObject xsi
@@ -366,6 +398,10 @@ Method EditorView.CaretSet, uses xbx xdi xsi
   .if SIGN? || eax > [xsi].dCharMaxPartVis              ;Off view horizontally?
     invoke SetCaretPos, -10, -10                        ;Park the caret
   .else
+    invoke HorzIndex2Pos, xbx, [xsi].FirstVisChar.dCharIndex, [xsi].CaretLocation.dLineIndex
+    mov dFistVisHorzPos, eax
+    invoke HorzIndex2Pos, xbx, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex
+    sub eax, dFistVisHorzPos
     mul [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.x  ;Convert to pixels
     add eax, [xsi].TextRect.left                        ;Offset by Selectionbar width
     mov CaretPosition.x, eax                            ;Store it
@@ -391,6 +427,123 @@ Method EditorView.CaretSet, uses xbx xdi xsi
 @@:
   mov eax, dRetValue
 MethodEnd
+
+
+;HorzIndex2Pos proc uses xbx xdi pEditor:$ObjPtr(Editor), dCharIndex:DWORD, dLineIndex:DWORD
+;  local dTabWidth:DWORD
+;
+;  mov xbx, pEditor                                      ;xbx -> Editor
+;  mov xdx, [xbx].$Obj(Editor).pResources                ;xdx -> EditorResources
+;  mov eax, [xdx].$Obj(EditorResources).dTabWidth
+;  mov dTabWidth, eax
+;  mov edx, dLineIndex
+;  .if edx < [xbx].$Obj(Editor).Lines.dCount
+;    OCall [xbx].$Obj(Editor).Lines::Collection.ItemAt, edx
+;    mov xcx, [xax].$Obj(EditorLine).pBuffer
+;    .if xcx != NULL
+;      xor edi, edi
+;      xor eax, eax
+;      .while edi < dCharIndex
+;        .if CHRW ptr [xcx] == TAB
+;          add eax, dTabWidth
+;        .else
+;          inc eax
+;        .endif
+;        add xcx, sizeof(CHRW)
+;        inc edi
+;      .endw
+;    .else
+;      xor eax, eax
+;    .endif
+;  .else
+;    xor eax, eax
+;  .endif
+;  ret
+;HorzIndex2Pos endp
+;
+;Method EditorView.CaretSet, uses xbx xdi xsi
+;  local CaretPosition:POINT, dFistVisHorzPos:DWORD, dRetValue:DWORD
+;
+;;  DbgText "EditorView.CaretSet"
+;  SetObject xsi
+;  mov xdi, [xsi].pResources
+;  mov xbx, [xsi].pEditor
+;  mov dRetValue, FALSE
+;  ;Calc caret horiontal position
+;  mov eax, [xsi].CaretLocation.dCharIndex
+;  sub eax, [xsi].FirstVisChar.dCharIndex
+;  .if SIGN? || eax > [xsi].dCharMaxPartVis              ;Off view horizontally?
+;    invoke SetCaretPos, -10, -10                        ;Park the caret
+;  .else
+;    invoke HorzIndex2Pos, xbx, [xsi].FirstVisChar.dCharIndex, [xsi].CaretLocation.dLineIndex
+;    mov dFistVisHorzPos, eax
+;    invoke HorzIndex2Pos, xbx, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineIndex
+;    sub eax, dFistVisHorzPos
+;    mul [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.x  ;Convert to pixels
+;    add eax, [xsi].TextRect.left                        ;Offset by Selectionbar width
+;    mov CaretPosition.x, eax                            ;Store it
+;
+;    ;Calc caret vertical position using the CaretLocation.dLineIndex
+;    OCall xsi.CaretVertIndex
+;    .if eax == -1                                       ;Off view vertically?
+;      invoke SetCaretPos, -10, -10                      ;Park the caret
+;    .else
+;      mul [xdi].$Obj(EditorResources).dLineHeight
+;      add eax, [xsi].TextRect.top
+;      mov CaretPosition.y, eax
+;
+;      ;Add offset to the caret position
+;      mov ecx, CaretPosition.x
+;      mov edx, CaretPosition.y
+;      add ecx, [xdi].$Obj(EditorResources).CaretBmpOffset.x
+;      add edx, [xdi].$Obj(EditorResources).CaretBmpOffset.y
+;      invoke SetCaretPos, ecx, edx
+;      mov dRetValue, TRUE
+;    .endif
+;  .endif
+;@@:
+;  mov eax, dRetValue
+;MethodEnd
+;
+;Method EditorView.CaretSet, uses xbx xdi xsi
+;  local CaretPosition:POINT, dRetValue:DWORD
+;
+;;  DbgText "EditorView.CaretSet"
+;  SetObject xsi
+;  mov xdi, [xsi].pResources
+;  mov xbx, [xsi].pEditor
+;  mov dRetValue, FALSE
+;  ;Calc caret horiontal position
+;  mov eax, [xsi].CaretLocation.dCharIndex
+;  sub eax, [xsi].FirstVisChar.dCharIndex
+;  .if SIGN? || eax > [xsi].dCharMaxPartVis              ;Off view horizontally?
+;    invoke SetCaretPos, -10, -10                        ;Park the caret
+;  .else
+;    mul [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.x  ;Convert to pixels
+;    add eax, [xsi].TextRect.left                        ;Offset by Selectionbar width
+;    mov CaretPosition.x, eax                            ;Store it
+;
+;    ;Calc caret vertical position using the CaretLocation.dLineIndex
+;    OCall xsi.CaretVertIndex
+;    .if eax == -1                                       ;Off view vertically?
+;      invoke SetCaretPos, -10, -10                      ;Park the caret
+;    .else
+;      mul [xdi].$Obj(EditorResources).dLineHeight
+;      add eax, [xsi].TextRect.top
+;      mov CaretPosition.y, eax
+;
+;      ;Add offset to the caret position
+;      mov ecx, CaretPosition.x
+;      mov edx, CaretPosition.y
+;      add ecx, [xdi].$Obj(EditorResources).CaretBmpOffset.x
+;      add edx, [xdi].$Obj(EditorResources).CaretBmpOffset.y
+;      invoke SetCaretPos, ecx, edx
+;      mov dRetValue, TRUE
+;    .endif
+;  .endif
+;@@:
+;  mov eax, dRetValue
+;MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretShow
@@ -1952,7 +2105,7 @@ Method EditorView.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  DbgText "EditorView.OnPaint"
   SetObject xsi
   mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)     ;Hides the caret automatically
-  
+
 ;  DbgHex [xsi].hWnd
 ;  DbgDec PS.PAINTSTRUCT.rcPaint.left
 ;  DbgDec PS.PAINTSTRUCT.rcPaint.top

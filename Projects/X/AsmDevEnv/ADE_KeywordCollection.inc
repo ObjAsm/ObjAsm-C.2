@@ -23,7 +23,7 @@
 Method KeywordCollection.Compare,, pCollKey:PKEYWORD, pTestKey:PKEYWORD
 ;  ?mov xdx, pCollKey                                    ; -> KEYWORD structure (Items)
 ;  mov xcx, pTestKey                                     ; -> KEYWORD structure (Target)
-;  
+;
 ;  invoke StrCIComp, [xcx].KEYWORD.pString, $OfsCStr("endif"), 5
 ;  .if eax == 0
 ;    int 3
@@ -35,7 +35,7 @@ Method KeywordCollection.Compare,, pCollKey:PKEYWORD, pTestKey:PKEYWORD
 ;  sub eax, [xdx].KEYWORD.dLength
 ;  .if ZERO?
 ;    mov eax, [xdx].KEYWORD.dLength
-;    .ifAnyBitSet [xdx].KEYWORD.dFlags, KWF_CASE_SENSITIVE or KWF_CASE_CONVERT 
+;    .ifAnyBitSet [xdx].KEYWORD.dFlags, KWF_CASE_SENSITIVE or KWF_CASE_CONVERT
 ;      invoke StrCComp, [xcx].KEYWORD.pString, [xdx].KEYWORD.pString, eax
 ;    .else
 ;      invoke StrCIComp, [xcx].KEYWORD.pString, [xdx].KEYWORD.pString, eax
@@ -46,7 +46,7 @@ Method KeywordCollection.Compare,, pCollKey:PKEYWORD, pTestKey:PKEYWORD
   mov eax, [xdx].KEYWORD.dLength                        ;Get the string length
   mov xcx, pTestKey                                     ; -> KEYWORD structure (Target)
   .if eax == [xcx].KEYWORD.dLength                      ;Compare lengths
-    .ifAnyBitSet [xdx].KEYWORD.dFlags, KWF_CASE_SENSITIVE or KWF_CASE_CONVERT 
+    .ifAnyBitSet [xdx].KEYWORD.dFlags, KWF_CASE_SENSITIVE or KWF_CASE_CONVERT
       invoke StrCIComp, [xcx].KEYWORD.pString, [xdx].KEYWORD.pString, eax           ;§§§§§§§§§§§§§§§§§§§§§§§§§§§
     .else
       invoke StrCIComp, [xcx].KEYWORD.pString, [xdx].KEYWORD.pString, eax
@@ -94,11 +94,11 @@ Method KeywordCollection.Insert, uses xbx xsi, pGroup:PKEYWORDGROUP, dFlags:DWOR
   SetObject xsi
   MemAlloc sizeof(KEYWORD)
   .if xax != NULL
-    mov xbx, xax                                          ;xbx -> KEYWORD 
+    mov xbx, xax                                          ;xbx -> KEYWORD
     m2m [xbx].KEYWORD.pGroup, pGroup, xdx
     m2m [xbx].KEYWORD.dFlags, dFlags, ecx
-    m2m [xbx].KEYWORD.dLength, dLength, eax  
-    m2m [xbx].KEYWORD.pString, pString, xdx   
+    m2m [xbx].KEYWORD.dLength, dLength, eax
+    m2m [xbx].KEYWORD.pString, pString, xdx
     OCall xsi.KeyOf, xbx
     OCall xsi.Search, xax                                 ;eax = Found (TRUE/FALSE), ecx = Index
     .if eax == FALSE                                      ;Found?

@@ -52,7 +52,7 @@ Method FileTypeCollection.GetFileTypeInfo, uses xbx xsi, pFileName:PSTRINGW
   .if xax != NULL
     mov xbx, xax
     lea xdx, [xax + sizeof(CHRW)]
-    OCall xsi::FileTypeCollection.Search, xdx 
+    OCall xsi::FileTypeCollection.Search, xdx
     .if eax != FALSE
       mov edx, ecx
       OCall xsi::FileTypeCollection.ItemAt, edx

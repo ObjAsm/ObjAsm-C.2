@@ -268,7 +268,7 @@ Method FindDialog.Find, uses xbx xdi xsi
       invoke SendMessage, [xsi].hEditor, WM_GETOBJECTINSTANCE, 0, 0
       mov xdi, xax
     .endif
-    
+
     .if xdi != NULL
       .if [xsi].dContinue == FALSE
         OCall xsi.FindFirstMatch, xdi, addr cFindStr
@@ -383,7 +383,7 @@ Method FindDialog.Find, uses xbx xdi xsi
       OCall xbx::Application.LaunchEditor, xdi, SW_HIDE
       .if xax != NULL
         mov dWasOpen, ecx                               ;ecx = TRUE if the Editor was previously open
-        mov xdi, xax                                    ;xdi -> Editor        
+        mov xdi, xax                                    ;xdi -> Editor
         .if [xsi].dContinueSameEditor == FALSE
           OCall xsi.FindFirstMatch, xdi, addr cFindStr
           .if eax == FALSE
@@ -415,7 +415,7 @@ Method FindDialog.Find, uses xbx xdi xsi
       .endif
       mov dRetValue, TRUE
     .endif
-@@ExitProjFiles:    
+@@ExitProjFiles:
     invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_SETREDRAW, TRUE, 0
 
 
@@ -423,7 +423,7 @@ Method FindDialog.Find, uses xbx xdi xsi
 
 
   .endif
-  
+
 @@Exit:
   mov eax, dRetValue
 MethodEnd
@@ -670,7 +670,7 @@ Method FindDialog.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       invoke CheckRadioButton, [xsi].hWnd, IDC_RBN_DOWN, IDC_RBN_ALL, IDC_RBN_ALL
     .endif
 
-    mov [xsi].dContinue, FALSE                          ;Set initial condition           
+    mov [xsi].dContinue, FALSE                          ;Set initial condition
     invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
     invoke EnableWindow, xax, FALSE
 
@@ -891,7 +891,7 @@ Method FindDialog.ReplaceAll, uses xbx xsi
     .endw
     invoke GetDlgItem, [xsi].hWnd, IDC_BTN_REPLACE
     invoke EnableWindow, xax, FALSE
-        
+
 
   .elseif [xsi].Choices.dScope == FDS_PROJECT_FILES
 

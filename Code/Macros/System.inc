@@ -4670,7 +4670,7 @@ endm
 Subroutine macro SubName:req
   %SubName:
   if TARGET_BITNESS eq 64
-    sub rsp, 28h
+    sub rsp, 38h                 ;Shadow space + ret address and keep aligned to 16
   endif
 endm
 
@@ -4681,7 +4681,7 @@ endm
 
 ExitSub macro
   if TARGET_BITNESS eq 64
-    add rsp, 28h
+    add rsp, 38h
   endif
   retn
 endm

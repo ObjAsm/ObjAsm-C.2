@@ -2,20 +2,9 @@
  
 --Application.FreezeUI()
 hEdit = Application.NewEditor("Test_Big_1.txt")
-for x=5,15,1
-do
-  Attr = Editor.GetLineAttr(hEdit, x)
-  Attr = Attr & 64
-  Editor.SetLineAttr(hEdit, x, Attr)
-end
-
-for x=5,15,1
-do
-  Attr = Editor.GetLineAttr(hEdit, x)
-  Attr = Attr & (-64-1)
-  Application.DbgPrintLn("",Attr)
-  Editor.SetLineAttr(hEdit, x, Attr)
-end
-  
 Editor.Show(hEdit)
+Editor.SelSet(hEdit, 10,3,-1,11)
+CharIndex, LineNumber = Editor.GetViewLocation(hEdit, 0)
+Application.DbgPrintLn("", CharIndex..","..LineNumber)
+Editor.SetViewLocation(hEdit, 0, 10, 10)
 --Application.UnfreezeUI()

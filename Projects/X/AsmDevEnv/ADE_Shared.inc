@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       14
-BUILD_DATE_STR                textequ   <23.06.2025>
+BUILD_NUMBER                  equ       34
+BUILD_DATE_STR                textequ   <2025-07-12>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
@@ -54,14 +54,19 @@ IDM_PROJ_NEWGROUP             equ       106
 IDM_PROJ_GROUP                equ       107
 IDM_PROJ_GROUP_EDIT           equ       108
 IDM_PROJ_GROUP_NEW            equ       109
-IDM_PROJ_GROUP_ADDFILE        equ       110
-IDM_PROJ_GROUP_DELETE         equ       111
-IDM_PROJ_FILE_EDIT            equ       112
-IDM_PROJ_FILE_OPEN            equ       113
-IDM_PROJ_FILE_REMOVE          equ       114
-IDM_PROJ_CMD_EDIT             equ       115
+IDM_PROJ_GROUP_ADDEXISTING    equ       110
+IDM_PROJ_GROUP_ADDACTIVE      equ       111
+IDM_PROJ_GROUP_DELETE         equ       112
+IDM_PROJ_FILE_PROPERTIES      equ       113
+IDM_PROJ_FILE_OPEN            equ       114
+IDM_PROJ_FILE_REMOVE          equ       115
 IDM_PROJ_CMD_EXECUTE          equ       116
-IDM_PROJ_CMD_REMOVE           equ       117
+IDM_PROJ_CMD_PROPERTIES       equ       117
+IDM_PROJ_CMD_REMOVE           equ       118
+IDM_PROJ_SCP_EXECUTE          equ       119
+IDM_PROJ_SCP_PROPERTIES       equ       120
+IDM_PROJ_SCP_OPEN             equ       121
+IDM_PROJ_SCP_REMOVE           equ       122
 
 IDM_EDIT                      equ       150
 IDM_EDIT_UNDO                 equ       151
@@ -110,6 +115,7 @@ IDM_CONTEXT_PROJECT           equ       600
 IDM_CONTEXT_GROUP             equ       601
 IDM_CONTEXT_FILE              equ       602
 IDM_CONTEXT_COMMAND           equ       603
+IDM_CONTEXT_SCRIPT            equ       604
 
 
 ;Dialog IDs 

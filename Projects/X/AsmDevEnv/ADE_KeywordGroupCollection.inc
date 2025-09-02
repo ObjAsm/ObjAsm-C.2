@@ -22,7 +22,7 @@ Method KeywordGroupCollection.DestroyItem, uses xdi, pItem:PKEYWORDGROUP
   .if xdi != NULL
     invoke DeleteDrawAttrResources, xdi
     invoke StrDispose, [xdi].KEYWORDGROUP.pDescription  ;Dispose description string
-    invoke StrDispose, [xdi].KEYWORDGROUP.pKeyWords     ;Dispose keyword list 
+    invoke StrDispose, [xdi].KEYWORDGROUP.pKeyWords     ;Dispose keyword list
     MemFree xdi                                         ;Free data
   .endif
 MethodEnd

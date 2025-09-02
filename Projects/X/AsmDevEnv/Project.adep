@@ -11,19 +11,23 @@
   "Groups":[
     {
       "Name":"Tools",
-      "Expanded":false
+      "Expanded":true
+    },
+    {
+      "Name":"Scripts",
+      "Expanded":true
     },
     {
       "Name":"Make",
-      "Expanded":false
+      "Expanded":true
     },
     {
       "Name":"Added",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Assembly",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Macros",
@@ -66,412 +70,436 @@
       "Group":1
     },
     {
+      "DispName":"OA_Tools.exe",
+      "FileName":"%OBJASM_PATH%\\Projects\\X\\OA_Tools\\OA_Tools.exe",
+      "Type":3,
+      "Group":1
+    },
+    {
+      "DispName":"Align Comments",
+      "FileName":".\\ADE_AlignComments.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Convert Tabs to Spaces",
+      "FileName":".\\ADE_Tab2Spc.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Covert Spaces to Tabs",
+      "FileName":".\\ADE_Spc2Tab.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Selection to LowerCase",
+      "FileName":".\\ADE_LowerCase.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Selection to Uppercase",
+      "FileName":".\\ADE_UpperCase.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Test Script",
+      "FileName":"D:\\ObjAsm\\Projects\\X\\AsmDevEnv\\ADE_Test.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
+      "DispName":"Trim Ending Spaces",
+      "FileName":".\\ADE_TrimEnd.lua",
+      "Type":4,
+      "Group":2
+    },
+    {
       "DispName":"Assemble",
       "FileName":"%OBJASM_PATH%\\Build\\RA_ASM.cmd",
       "Type":3,
-      "Group":2
+      "Group":3
     },
     {
       "DispName":"Build All",
       "FileName":".\\Make.cmd",
       "Type":3,
-      "Group":2
+      "Group":3
     },
     {
       "DispName":"Build Resource File",
       "FileName":"%OBJASM_PATH%\\Build\\RA_RC.cmd",
       "Type":3,
-      "Group":2
+      "Group":3
     },
     {
       "DispName":"Link",
       "FileName":"%OBJASM_PATH%\\Build\\RA_LINK.cmd",
       "Type":3,
-      "Group":2
+      "Group":3
     },
     {
       "DispName":"ADE.ini",
       "FileName":".\\ADE.ini",
       "Type":2,
-      "Group":3
+      "Group":4
     },
     {
       "DispName":"PathSegmentsToEnvVars_TX.asm",
       "FileName":".\\PathSegmentsToEnvVars_TX.asm",
       "Type":2,
-      "Group":4
+      "Group":5
     },
     {
       "DispName":"RegisterFileType.asm",
       "FileName":".\\RegisterFileType.asm",
       "Type":2,
-      "Group":4
+      "Group":5
     },
     {
       "DispName":"uxxxMul_XP.inc",
       "FileName":"%OBJASM_PATH%\\Code\\ObjMem\\Common\\uxxxMul_XP.inc",
       "Type":2,
-      "Group":4
+      "Group":5
     },
     {
       "DispName":"AStrings.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\AStrings.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"BStrings.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\BStrings.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"CDLL.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\CDLL.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"ConstDiv.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\ConstDiv.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Debug.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Debug.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"DebugShare.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\DebugShare.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"DlgTmpl.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\DlgTmpl.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Exception32.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Exception32.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Exception64.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Exception64.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"fMath.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\fMath.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"LDLL.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\LDLL.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"LSLL.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\LSLL.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"MemBlock.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\MemBlock.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Memory.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Memory.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Model.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Model.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Objects.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Objects.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"qMath.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\qMath.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"qMathData.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\qMathData.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"QuadWord.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\QuadWord.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"SDLL.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\SDLL.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"SIMD_Math.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\SIMD_Math.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"Strings.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\Strings.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"System.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\System.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"UefiMac.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\UefiMac.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"WinHelpers.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\WinHelpers.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"WStrings.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\WStrings.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"xLSLL.inc",
       "FileName":"%OBJASM_PATH%\\Code\\Macros\\xLSLL.inc",
       "Type":2,
-      "Group":5
+      "Group":6
     },
     {
       "DispName":"ADE_About.inc",
       "FileName":".\\ADE_About.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ActionCollection.inc",
       "FileName":".\\ADE_ActionCollection.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Application.inc",
       "FileName":".\\ADE_Application.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ChildWnd.inc",
       "FileName":".\\ADE_ChildWnd.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ClientWnd.inc",
       "FileName":".\\ADE_ClientWnd.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Editor.inc",
       "FileName":".\\ADE_Editor.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorDisplay.inc",
       "FileName":".\\ADE_EditorDisplay.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorLine.inc",
       "FileName":".\\ADE_EditorLine.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorResources.inc",
       "FileName":".\\ADE_EditorResources.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorSharedResources.inc",
       "FileName":".\\ADE_EditorSharedResources.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorView_1.inc",
       "FileName":".\\ADE_EditorView_1.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_EditorView_2.inc",
       "FileName":".\\ADE_EditorView_2.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_FilePropsDialog.inc",
       "FileName":".\\ADE_FilePropsDialog.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_FileTypeCollection.inc",
       "FileName":".\\ADE_FileTypeCollection.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_FindDialog.inc",
       "FileName":".\\ADE_FindDialog.inc",
       "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"ADE_Globals.inc",
-      "FileName":".\\ADE_Globals.inc",
-      "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Globals.inc",
       "FileName":"%OBJASM_PATH%\\Projects\\X\\AsmDevEnv\\ADE_Globals.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Helper.inc",
       "FileName":".\\ADE_Helper.inc",
       "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"ADE_IniFileReader.inc",
-      "FileName":".\\ADE_IniFileReader.inc",
-      "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_KeywordCollection.inc",
       "FileName":".\\ADE_KeywordCollection.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_KeywordGroupCollection.inc",
       "FileName":".\\ADE_KeywordGroupCollection.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Main.inc",
       "FileName":".\\ADE_Main.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Manual.pdf",
       "FileName":".\\ADE_Manual.pdf",
       "Type":3,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ProjectManager.inc",
       "FileName":".\\ADE_ProjectManager.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ProjectManager_IDropTarget.inc",
       "FileName":".\\ADE_ProjectManager_IDropTarget.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_ProjPropsDialog.inc",
       "FileName":".\\ADE_ProjPropsDialog.inc",
       "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"ADE_PropertiesWnd.inc",
-      "FileName":".\\ADE_PropertiesWnd.inc",
-      "Type":2,
-      "Group":7
-    },
-    {
-      "DispName":"ADE_ScrollbarVert.inc",
-      "FileName":".\\ADE_ScrollbarVert.inc",
-      "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_SetupDialog.inc",
       "FileName":".\\ADE_SetupDialog.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_Shared.inc",
       "FileName":".\\ADE_Shared.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE_UndoRedo.inc",
       "FileName":".\\ADE_UndoRedo.inc",
       "Type":2,
-      "Group":7
+      "Group":8
     },
     {
       "DispName":"ADE.rc",
       "FileName":".\\ADE.rc",
       "Type":2,
-      "Group":9
+      "Group":10
     },
     {
       "DispName":"Project.css",
       "FileName":"%OBJASM_PATH%\\Projects\\X\\AsmDevEnv\\Project.css",
       "Type":2,
-      "Group":9
+      "Group":10
     }
   ]
 }
