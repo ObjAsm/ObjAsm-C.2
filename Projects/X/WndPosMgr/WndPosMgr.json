@@ -5,10 +5,20 @@
       "Apps":[
         {
           "Name":"Rechner",
-          "X":10,
-          "Y":10,
-          "W":200,
+          "Class":"ApplicationFrameWindow",          
+          "X":0,
+          "Y":0,
+          "W":100,
           "H":300,
+          "Flags":0
+        },
+        {
+          "Name":"Unbenannt - Editor",
+          "Class":"Notepad",
+          "X":100,
+          "Y":100,
+          "W":500,
+          "H":500,
           "Flags":0
         }
       ]

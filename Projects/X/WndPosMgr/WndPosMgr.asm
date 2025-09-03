@@ -44,6 +44,7 @@ Example:
       "Apps":[
         {
           "Name":"Rechner",
+          "Class":"ApplicationFrameWindow",          
           "X":0,
           "Y":0,
           "W":100,
@@ -52,6 +53,7 @@ Example:
         },
         {
           "Name":"Unbenannt - Editor",
+          "Class":"Notepad",
           "X":100,
           "Y":100,
           "W":500,

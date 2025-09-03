@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.2.5
+; Version:    C.2.6
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -30,6 +30,8 @@
 ;               - JSON_TYPE_NULL leak corrected.
 ;             Version C.2.5, April 2025.
 ;               - Quotes removed from JSON_TYPE_BOOLEAN and JSON_TYPE_NULL.
+;             Version C.2.6, September 2025.
+;               - JsonEscEncode & JsonEscDecode bugs corrected.
 ; ==================================================================================================
 
 
@@ -249,7 +251,7 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharC
     shl edx, 4
     add ax, dx
     stosw
-    dec ebx
+    sub ebx, 6
   .endw
 
   mov xax, xdi
@@ -316,7 +318,7 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRING, pBuffer:PSTRINGW, dCharCo
       movzx xax, dl
       mov eax, [xcx + sizeof(DCHRW)*xax]
       stosd
-      sub ebx, 6
+      dec ebx
       .continue
     .endif
     if TARGET_BITNESS eq 32
@@ -697,7 +699,7 @@ JsonGetObject proc pParent:PJSON_PROPERTY
       mov xax, xsi
       sub xax, pBegin
       shr eax, $Log2(CHRW)
-      dec eax
+      dec eax                                           ;Go back 1 char
       if TARGET_STR_TYPE eq STR_TYPE_ANSI
         mov dSize, eax
         mov xdi, $invoke(StrAllocA, eax)
@@ -881,7 +883,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
 
   mov ax, [xsi]
   .if ax == '"'
-    add xsi, sizeof(CHRW)
+    add xsi, sizeof(CHRW)                               ;Skip this char
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_STRING
     mov pBegin, xsi
     invoke JsonGetStringEnd                             ;Pass xbx & xsi implicitly
@@ -890,7 +892,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     mov xax, xsi
     sub xax, pBegin
     shr eax, 1
-    dec eax
+    dec eax                                             ;Go back 1 char
     invoke JsonEscDecode, pBegin, pBegin, eax
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
       mov dLen, eax
@@ -1076,7 +1078,7 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
     OCall pStream::Stream.BinWrite8, '"'
     invoke StrSize, [xbx].JSON_PROPERTY.pName
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-      shl eax, 1                                        ;Each UTF8 char can have at max 4 bytes
+      invoke WideToUTF8Size, [xbx].JSON_PROPERTY.pName
       mov xsi, $MemAlloc(eax)
       invoke WideToUTF8, xsi, [xbx].JSON_PROPERTY.pName, -1
       dec eax                                           ;Discard ZTC
@@ -1138,16 +1140,18 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       invoke StrSize, [xbx].JSON_PROPERTY.pValue
       mov edi, eax
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
-        shl eax, 1                                      ;Each char can have max 2 escape chars
+        add eax, eax
+        lea eax, [2*eax + eax]                          ;Each char can have max 6 escape chars
       else
-        shl eax, 2                                      ;ANSI => WIDE + each char can have max 2 escape chars
+        shl eax, 2
+        lea eax, [2*eax + eax]                          ;ANSI => WIDE + each char can have max 6 escape chars
       endif
       mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
         shr edi, 1                                      ;Chars, incl ZTC
       endif
       invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
-      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes
+      invoke WideToUTF8Size, pEncBuffer
       mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
       invoke WideToUTF8, xsi, pEncBuffer, -1
       dec eax                                           ;Discard ZTC

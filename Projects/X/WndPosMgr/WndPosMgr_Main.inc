@@ -51,9 +51,9 @@ Method Application.Init, uses xbx xdi xsi
 
   SetObject xsi
   ACall xsi.Init, NULL
-  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe Profile1')
+;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe Profile1')
 ;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe -c Profile1')
-;  invoke ParseCmdLineArgs, $invoke(GetCommandLine)
+  invoke ParseCmdLineArgs, $invoke(GetCommandLine)
 
   .if xax != NULL
     mov [xsi].pArgList, xax                             ;List of PSTRINGW arguments
@@ -192,7 +192,7 @@ Method Application.ProfileApply, uses xbx xdi xsi
             test xax, xax
             jz @@NextApp
             mov dFlags, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
-
+            
             invoke FindWindow, pClsName, pAppName
             .if xax != 0
               mov hAppWnd, xax
@@ -259,9 +259,7 @@ GetWndInfo proc uses xbx hWnd:HWND, pInfo:EnumInfo
   OCall [xbx].EnumInfo.pJson::Json.AddObject, [xbx].EnumInfo.pApps, NULL
   mov pApp, xax
   OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Name"), JSON_TYPE_STRING, pCaption
-;  DbgStr pCaption
   invoke GetClassName, hWnd, addr cClassName, lengthof(cClassName)
-;  DbgStr cClassName
   OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Class"), JSON_TYPE_STRING, addr cClassName
 
   invoke sdword2dec, addr cBuffer, WRect.left
