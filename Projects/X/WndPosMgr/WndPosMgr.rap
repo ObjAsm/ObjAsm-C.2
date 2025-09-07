@@ -118,7 +118,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=7
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -153,25 +153,25 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,471
+2=0,0,0,0,2133
 3=0,0,0,0,21595
 1=0,0,0,0,367
-4=0,0,562,490,13453
+4=0,0,562,490,28643
 5=0,0,694,587,12924
 6=0,0,0,0,885
 8=0,0,0,0,19422
 7=0,0,0,0,1563
 9=0,0,0,0,42721
-10=0,0,1934,628,909
+10=0,0,1934,628,679
 11=0,0,1934,628,132
 12=
-16=0,0,0,0,6539
-15=0,0,977,578,154
+16=0,0,0,0,9258
+15=0,0,977,578,170
 14=
 13=
 18=0,0,0,0,13403
-19=0,0,0,0,25823
-21=0,0,0,0,1222
+19=0,0,0,0,19043
+21=0,0,0,0,1413
 
 [BookMark]
 0=
@@ -190,16 +190,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="JsonGetStringEnd"
-2="int 3"
-3="JsonEscDecode"
-4="JsonGetValue"
-5="sub ebx, 6"
-6="JsonEscEncode"
-7="\u"
-8="ProfileSet"
-9="ProfileGet"
-10="pAppName"
+1="pWndName"
+2="szName"
+3="szH"
+4="szW"
+5="szY"
+6="szX"
+7="pAppName"
+8="pApp"
+9="szProfiles"
+10="DelProperty"
 [Collapse]
 1=
 4=
@@ -212,7 +212,7 @@ ProductVer4Range=0
 11=
 10=
 9=,,,,
-16=
+16=27262976,4
 15=
 14=
 13=
@@ -221,9 +221,9 @@ ProductVer4Range=0
 19=,,,
 21=
 [AutoLoad]
-AutoLoad=2,16,21,10,15,19
+AutoLoad=2,16,21,10,15,1
 [PTimer]
-PTimer=823422480
+PTimer=848865292
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

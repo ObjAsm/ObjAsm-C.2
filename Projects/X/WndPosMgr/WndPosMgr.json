@@ -2,23 +2,23 @@
   "Profiles":[
     {
       "Name":"Profile1",
-      "Apps":[
+      "Windows":[
         {
-          "Name":"Rechner",
-          "Class":"ApplicationFrameWindow",          
-          "X":0,
-          "Y":0,
-          "W":100,
-          "H":300,
+          "Caption":"Rechner",
+          "Class":"ApplicationFrameWindow",
+          "Left":0,
+          "Top":0,
+          "Width":100,
+          "Height":300,
           "Flags":0
         },
         {
-          "Name":"Unbenannt - Editor",
+          "Caption":"Unbenannt - Editor",
           "Class":"Notepad",
-          "X":100,
-          "Y":100,
-          "W":500,
-          "H":500,
+          "Left":100,
+          "Top":100,
+          "Width":500,
+          "Height":500,
           "Flags":0
         }
       ]

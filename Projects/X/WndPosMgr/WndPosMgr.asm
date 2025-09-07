@@ -3,8 +3,11 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm WndPosMgr.
-; Notes:      Version C.1.0, August 2025
+; Notes:      Version 1.0.0, August 2025
 ;               - First release.
+;             Version 1.1.0, September 2025
+;               - When data is captured, any existing profile with the same name is replaced. 
+;                 The remaining profiles are left untouched. 
 ; ==================================================================================================
 
 
@@ -29,56 +32,61 @@ start proc
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone
-  movzx eax, $ObjTmpl(Application).bTerminate
+  xor eax, eax
+  test $ObjTmpl(Application).dFlags, WPM_TERMINATE
+  setz al
   invoke ExitProcess, eax
 start endp
 
 end
 
 
-Example:
+Example using german and english Windows:
+
 {
   "Profiles":[
     {
       "Name":"Profile1",
-      "Apps":[
+      "Windows":[
         {
-          "Name":"Rechner",
+          "Caption":"Rechner",
           "Class":"ApplicationFrameWindow",          
-          "X":0,
-          "Y":0,
-          "W":100,
-          "H":300,
+          "Left":0,
+          "Top":0,
+          "Width":100,
+          "Height":300,
           "Flags":0
         },
         {
-          "Name":"Unbenannt - Editor",
+          "Caption":"Unbenannt - Editor",
           "Class":"Notepad",
-          "X":100,
-          "Y":100,
-          "W":500,
-          "H":500,
+          "Left":100,
+          "Top":100,
+          "Width":500,
+          "Height":500,
           "Flags":0
         }
       ]
     },
     {
       "Name":"Profile2",
-      "Apps":[
+      "Windows":[
         {
-          "Name":"Notepad",
-          "X":0,
-          "Y":0,
-          "W":100,
-          "H":100,
+          "Caption":"Calculator",
+          "Class":"ApplicationFrameWindow",          
+          "Left":0,
+          "Top":0,
+          "Width":100,
+          "Height":300,
           "Flags":0
         },
         {
-          "Name":"Calculator",
-          "X":100,
-          "Y":100,
-          "W":100,
-          "H":100,
+          "Caption":"Untitled - Notepad",
+          "Class":"Notepad",
+          "Left":100,
+          "Top":100,
+          "Width":500,
+          "Height":500,
           "Flags":0
         }
       ]

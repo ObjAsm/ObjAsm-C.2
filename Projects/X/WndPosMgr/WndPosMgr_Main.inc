@@ -5,20 +5,27 @@
 ; ==================================================================================================
 
 
+;WndPosMgr flags
+WPM_TERMINATE   equ   BIT00
+WPM_SHOW_USAGE  equ   BIT01
+WPM_CAPTURE     equ   BIT02
+WPM_DELETE      equ   BIT03
+
 Object Application, ApplicationID, ConsoleApp
+  StaticMethod      Apply
+  StaticMethod      Capture
+  StaticMethod      Delete
   RedefineMethod    Done
   RedefineMethod    Init
   RedefineMethod    Run
 
-  StaticMethod      ProfileApply
-  StaticMethod      ProfileCapture
   StaticMethod      ShowUsage
 
   DefineVariable    pProfileName,   PSTRING,  NULL
   DefineVariable    pArgList,       POINTER,  NULL
-  DefineVariable    bCapture,       BYTE,     FALSE
-  DefineVariable    bShowUsage,     BYTE,     FALSE
-  DefineVariable    bTerminate,     BYTE,     FALSE
+  DefineVariable    dFlags,         DWORD,    0
+  
+  Embed   Data,     Json
 ObjectEnd
 
 
@@ -28,117 +35,28 @@ ObjectEnd
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     Application.Done
-; Purpose:    Finalize the application object.
+; Method:     Application.Apply
+; Purpose:    Get a profile and apply this information to exiting windows.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Application.Done, uses xbx xsi
-  SetObject xsi
-  MemFree [xsi].pArgList
-  ACall xsi.Done
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     Application.Init
-; Purpose:    Initialize the application object.
-; Arguments:  None.
-; Return:     Nothing.
-; CommandLine options:
-
-Method Application.Init, uses xbx xdi xsi
-  local dArgCount:DWORD
-
-  SetObject xsi
-  ACall xsi.Init, NULL
-;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe Profile1')
-;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe -c Profile1')
-  invoke ParseCmdLineArgs, $invoke(GetCommandLine)
-
-  .if xax != NULL
-    mov [xsi].pArgList, xax                             ;List of PSTRINGW arguments
-    mov dArgCount, ecx
-
-    mov xdi, [xsi].pArgList                   
-    add xdi, sizeof(PSTRING)                            ;Skip the application filespec
-    mov ebx, 2                                          ;Scan up to the second-to-last argument
-
-    .while ebx < dArgCount
-      .break .if PSTRING ptr [xdi] == NULL
-      invoke StrComp, [xdi], $OfsCStr("-c")
-      .if eax == 0
-        mov [xsi].bCapture, TRUE
-      .endif
-
-      invoke StrComp, [xdi], $OfsCStr("-h")
-      .if eax == 0
-        mov [xsi].bShowUsage, TRUE
-      .endif
-      invoke StrComp, [xdi], $OfsCStr("-?")
-      .if eax == 0
-        mov [xsi].bShowUsage, TRUE
-      .endif
-
-      inc ebx
-      add xdi, sizeof(PSTRING)
-    .endw
-
-    m2m [xsi].pProfileName, PSTRING ptr [xdi], xax
-  .endif
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     Application.Run
-; Purpose:    Execute the application object.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method Application.Run, uses xbx xsi
-  SetObject xsi
-  .if [xsi].bShowUsage != FALSE
-    OCall xsi.ShowUsage
-  .endif
-
-  .if [xsi].bTerminate == FALSE
-    .if [xsi].bCapture == FALSE
-      OCall xsi.ProfileApply
-    .else
-      OCall xsi.ProfileCapture
-    .endif
-  .endif
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     Application.ProfileApply
-; Purpose:    Read a profile and apply this information to exiting windows.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method Application.ProfileApply, uses xbx xdi xsi
-  local DskStream:$Obj(DiskStream)
-  local pProfiles:PJSON_PROPERTY, pProfile:PJSON_PROPERTY, pApps:PJSON_PROPERTY, pApp:PJSON_PROPERTY
-  local pAppName:PSTRING, pClsName:PSTRING
+Method Application.Apply, uses xdi xsi
+  local pProfiles:PJSON_PROPERTY, pProfile:PJSON_PROPERTY
+  local pWindows:PJSON_PROPERTY, pWindow:PJSON_PROPERTY
+  local pCaption:PSTRING, pClsName:PSTRING
   local sdX:SDWORD, sdY:SDWORD, dWidth:SDWORD, dHeight:SDWORD, dFlags:DWORD
   local hAppWnd:HWND, hLastWnd:HWND
 
   SetObject xsi
-
-  New DskStream::DiskStream
-  OCall DskStream::DiskStream.Init, xsi, $OfsCStr("WndPosMgr.json"), GENERIC_READ or GENERIC_WRITE, \
-                                    0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-  mov xbx, $New(Json)
-  OCall xbx::Json.Init, xsi
-  OCall xbx::Json.Read, addr DskStream
-
-  OCall xbx::Json.GetProperty, addr [xbx].$Obj(Json).RootProperty, $OfsCStr("Profiles")
+  OCall [xsi].Data::Json.GetProperty, addr [xsi].Data.RootProperty, offset szProfiles
   .if xax != NULL
     mov pProfiles, xax
     xor edi, edi                                        ;edi = Index
     .while TRUE
-      OCall xbx::Json.GetArrayItem, pProfiles, edi
+      OCall [xsi].Data::Json.GetArrayItem, pProfiles, edi
       .break .if xax == NULL
       mov pProfile, xax
-      OCall xbx::Json.GetProperty, pProfile, $OfsCStr("Name")
+      OCall [xsi].Data::Json.GetProperty, pProfile, offset szName
       .if [xsi].pProfileName == NULL
         xor eax, eax                                    ;Take the first profile
       .else
@@ -146,54 +64,54 @@ Method Application.ProfileApply, uses xbx xdi xsi
       .endif
       .if eax == 0
         mov hLastWnd, 0
-        OCall xbx::Json.GetProperty, pProfile, $OfsCStr("Apps")
+        OCall [xsi].Data::Json.GetProperty, pProfile, offset szWindows
         .if xax != NULL
-          mov pApps, xax
+          mov pWindows, xax
           xor edi, edi                                  ;edi = Index
           .while TRUE
-            mov pAppName, NULL
+            mov pCaption, NULL
             mov pClsName, NULL
           
-            OCall xbx::Json.GetArrayItem, pApps, edi
+            OCall [xsi].Data::Json.GetArrayItem, pWindows, edi
             .break .if xax == NULL
-            mov pApp, xax
+            mov pWindow, xax
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("Name")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szCaption
             test xax, xax
             jz @@NextApp
-            m2m pAppName, [xax].JSON_PROPERTY.pValue, xcx
+            m2m pCaption, [xax].JSON_PROPERTY.pValue, xcx
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("Class")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szClass
             .if xax != NULL
               m2m pClsName, [xax].JSON_PROPERTY.pValue, xcx
             .endif
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("X")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szLeft
             test xax, xax
             jz @@NextApp
             mov sdX, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("Y")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szTop
             test xax, xax
             jz @@NextApp
             mov sdY, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("W")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szWidth
             test xax, xax
             jz @@NextApp
             mov dWidth, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("H")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szHeight
             test xax, xax
             jz @@NextApp
             mov dHeight, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
 
-            OCall xbx::Json.GetProperty, pApp, $OfsCStr("Flags")
+            OCall [xsi].Data::Json.GetProperty, pWindow, offset szFlags
             test xax, xax
             jz @@NextApp
             mov dFlags, $32($invoke(dec2dword, [xax].JSON_PROPERTY.pValue))
             
-            invoke FindWindow, pClsName, pAppName
+            invoke FindWindow, pClsName, pCaption
             .if xax != 0
               mov hAppWnd, xax
               invoke SetWindowPos, hAppWnd, hLastWnd, sdX, sdY, dWidth, dHeight, SWP_SHOWWINDOW
@@ -211,24 +129,22 @@ Method Application.ProfileApply, uses xbx xdi xsi
     .endw
   .endif
 
-  Destroy xbx
-  OCall DskStream::DiskStream.Done
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     Application.ProfileCapture
+; Method:     Application.Capture
 ; Purpose:    Capture the data from visible windows and write it to a profile.
 ; Arguments:  None.
 ; Return:     Nothing.
 
 EnumInfo struct
-  pJson   POINTER   ?
-  pApps   PJSON_PROPERTY  ?
+  pJson     POINTER         ?
+  pWindows  PJSON_PROPERTY  ?
 EnumInfo ends
 
 GetWndInfo proc uses xbx hWnd:HWND, pInfo:EnumInfo
-  local dLen:DWORD, pCaption:PSTRING, WRect:RECT, cBuffer[40]:CHR, pApp:PJSON_PROPERTY
-  local cClassName[256 + 1]:CHR     ;Class names are limited to 256 chars
+  local dLen:DWORD, pCaption:PSTRING, WRect:RECT, cBuffer[40]:CHR, pWindow:PJSON_PROPERTY
+  local cClassName[256]:CHR       ;Class names are limited to 256 chars (including the ZTC)
 
   mov pCaption, NULL
 
@@ -256,29 +172,29 @@ GetWndInfo proc uses xbx hWnd:HWND, pInfo:EnumInfo
     jz @@NextWindow
   .endif
 
-  OCall [xbx].EnumInfo.pJson::Json.AddObject, [xbx].EnumInfo.pApps, NULL
-  mov pApp, xax
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Name"), JSON_TYPE_STRING, pCaption
+  OCall [xbx].EnumInfo.pJson::Json.AddObject, [xbx].EnumInfo.pWindows, NULL
+  mov pWindow, xax
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szCaption, JSON_TYPE_STRING, pCaption
   invoke GetClassName, hWnd, addr cClassName, lengthof(cClassName)
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Class"), JSON_TYPE_STRING, addr cClassName
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szClass, JSON_TYPE_STRING, addr cClassName
 
   invoke sdword2dec, addr cBuffer, WRect.left
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("X"), JSON_TYPE_NUMBER, addr cBuffer
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szLeft, JSON_TYPE_NUMBER, addr cBuffer
 
   invoke sdword2dec, addr cBuffer, WRect.top
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Y"), JSON_TYPE_NUMBER, addr cBuffer
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szTop, JSON_TYPE_NUMBER, addr cBuffer
 
   mov edx, WRect.right
   sub edx, WRect.left
   invoke dword2dec, addr cBuffer, edx
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("W"), JSON_TYPE_NUMBER, addr cBuffer
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szWidth, JSON_TYPE_NUMBER, addr cBuffer
 
   mov edx, WRect.bottom
   sub edx, WRect.top
   invoke dword2dec, addr cBuffer, edx
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("H"), JSON_TYPE_NUMBER, addr cBuffer
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szHeight, JSON_TYPE_NUMBER, addr cBuffer
 
-  OCall [xbx].EnumInfo.pJson::Json.AddData, pApp, $OfsCStr("Flags"), JSON_TYPE_NUMBER, $OfsCStr("0")
+  OCall [xbx].EnumInfo.pJson::Json.AddData, pWindow, offset szFlags, JSON_TYPE_NUMBER, $OfsCStr("0")
 
 @@NextWindow:
   invoke StrDispose, pCaption
@@ -286,34 +202,178 @@ GetWndInfo proc uses xbx hWnd:HWND, pInfo:EnumInfo
   ret
 GetWndInfo endp
 
-Method Application.ProfileCapture, uses xbx xdi xsi
-  local DskStream:$Obj(DiskStream)
+Method Application.Capture, uses xsi
   local pProfiles:PJSON_PROPERTY, pProfile:PJSON_PROPERTY
   local Info:EnumInfo
 
   SetObject xsi
 
-  New DskStream::DiskStream
-  OCall DskStream::DiskStream.Init, xsi, $OfsCStr("WndPosMgr.json"), GENERIC_READ or GENERIC_WRITE, \
-                                    0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-  mov xbx, $New(Json)
-  OCall xbx::Json.Init, xsi
+  mov [xsi].Data.RootProperty.dType, JSON_TYPE_OBJECT
+  OCall [xsi].Data::Json.GetProperty, addr [xsi].Data.RootProperty, offset szProfiles
+  .if xax == NULL
+    OCall [xsi].Data::Json.AddArray, addr [xsi].Data.RootProperty, offset szProfiles
+    mov pProfiles, xax
+  .else
+    mov pProfiles, xax
+    ;Delete exiting profile with the same name
+    OCall xsi.Delete
+  .endif
 
-  mov [xbx].$Obj(Json).RootProperty.dType, JSON_TYPE_OBJECT
-  OCall xbx::Json.AddArray, addr [xbx].$Obj(Json).RootProperty, $OfsCStr("Profiles")
-  mov pProfiles, xax
-
-  OCall xbx::Json.AddObject, pProfiles, NULL
+  ;Create new profile
+  OCall [xsi].Data::Json.AddObject, pProfiles, NULL
   mov pProfile, xax
-  OCall xbx::Json.AddData, pProfile, $OfsCStr("Name"), JSON_TYPE_STRING, [xsi].pProfileName
-  OCall xbx::Json.AddArray, pProfile, $OfsCStr("Apps")
-  mov Info.pJson, xbx
-  mov Info.pApps, xax
-  invoke EnumWindows, addr GetWndInfo, addr Info
+  OCall [xsi].Data::Json.AddData, pProfile, offset szName, JSON_TYPE_STRING, [xsi].pProfileName
 
-  OCall xbx::Json.Write, addr DskStream
-  Destroy xbx
-  OCall DskStream::DiskStream.Done
+  ;Add windows information to this profile
+  OCall [xsi].Data::Json.AddArray, pProfile, offset szWindows
+  lea xcx, [xsi].Data
+  mov Info.pJson, xcx
+  mov Info.pWindows, xax
+  invoke EnumWindows, addr GetWndInfo, addr Info
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Delete
+; Purpose:    Delete a profile.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Application.Delete, uses xdi xsi
+  local pProfiles:PJSON_PROPERTY, pProfile:PJSON_PROPERTY
+
+  SetObject xsi
+  .if [xsi].pProfileName != NULL
+    OCall [xsi].Data::Json.GetProperty, addr [xsi].Data.RootProperty, offset szProfiles
+    .if xax != NULL
+      mov pProfiles, xax
+      xor edi, edi                                        ;edi = Index
+      .while TRUE
+        OCall [xsi].Data::Json.GetArrayItem, pProfiles, edi
+        .break .if xax == NULL                            ;No more profiles
+        mov pProfile, xax
+        OCall [xsi].Data::Json.GetProperty, xax, offset szName
+        .if xax != NULL                                   ;Name found
+          invoke StrComp, [xax].JSON_PROPERTY.pValue, [xsi].pProfileName
+          .if eax == 0
+            OCall [xsi].Data::Json.DelProperty, pProfile  ;Children are deleted recursively
+            .break                                        ;Done
+          .endif
+        .endif
+        inc edi
+      .endw
+    .endif
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Done
+; Purpose:    Finalize the application object.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Application.Done, uses xsi
+  local DskStream:$Obj(DiskStream)
+
+  SetObject xsi
+
+  .ifBitSet [xsi].dFlags, WPM_CAPTURE or WPM_DELETE 
+    New DskStream::DiskStream
+    OCall DskStream::DiskStream.Init, xsi, offset szFileName, GENERIC_READ or GENERIC_WRITE, \
+                                      0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+    OCall [xsi].Data::Json.Write, addr DskStream
+    OCall DskStream::DiskStream.Done
+  .endif
+
+  OCall [xsi].Data::Json.Done
+  MemFree [xsi].pArgList
+  ACall xsi.Done
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Init
+; Purpose:    Initialize the application object.
+; Arguments:  None.
+; Return:     Nothing.
+; CommandLine options:
+
+Method Application.Init, uses xbx xdi xsi
+  local dArgCount:DWORD
+  local DskStream:$Obj(DiskStream)
+
+  SetObject xsi
+  ACall xsi.Init, NULL
+  OCall [xsi].Data::Json.Init, xsi
+
+  ;Get commandline arguments and analyse them
+;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe Profile1')
+;  invoke ParseCmdLineArgs, $OfsDStrW('WndPosMgr.exe -c Profile1')
+  invoke ParseCmdLineArgs, $invoke(GetCommandLine)
+
+  .if xax != NULL
+    mov [xsi].pArgList, xax                             ;List of PSTRINGW arguments
+    mov dArgCount, ecx
+
+    mov xdi, [xsi].pArgList                   
+    add xdi, sizeof(PSTRING)                            ;Skip the application filespec
+    mov ebx, 2                                          ;Scan up to the second-to-last argument
+
+    .while ebx < dArgCount
+      .break .if PSTRING ptr [xdi] == NULL
+      invoke StrComp, [xdi], $OfsCStr("-c")
+      .if eax == 0
+        BitSet [xsi].dFlags, WPM_CAPTURE
+      .endif
+
+      invoke StrComp, [xdi], $OfsCStr("-d")
+      .if eax == 0
+        BitSet [xsi].dFlags, WPM_DELETE
+      .endif
+
+      invoke StrComp, [xdi], $OfsCStr("-h")
+      .if eax == 0
+        BitSet [xsi].dFlags, WPM_SHOW_USAGE
+      .endif
+
+      invoke StrComp, [xdi], $OfsCStr("-?")
+      .if eax == 0
+        BitSet [xsi].dFlags, WPM_SHOW_USAGE
+      .endif
+
+      inc ebx
+      add xdi, sizeof(PSTRING)
+    .endw
+
+    m2m [xsi].pProfileName, PSTRING ptr [xdi], xax
+
+    New DskStream::DiskStream
+    OCall DskStream::DiskStream.Init, xsi, offset szFileName, GENERIC_READ or GENERIC_WRITE, \
+                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+    OCall [xsi].Data::Json.Read, addr DskStream
+    OCall DskStream::DiskStream.Done
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Application.Run
+; Purpose:    Execute the application object.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Application.Run, uses xsi
+  SetObject xsi
+  .ifBitSet [xsi].dFlags, WPM_SHOW_USAGE
+    OCall xsi.ShowUsage
+  .endif
+
+  .ifBitClr [xsi].dFlags, WPM_TERMINATE
+    .ifBitSet [xsi].dFlags, WPM_CAPTURE
+      OCall xsi.Capture
+    .elseIfBitSet [xsi].dFlags, WPM_DELETE
+      OCall xsi.Delete
+    .else
+      OCall xsi.Apply
+    .endif
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -322,10 +382,10 @@ MethodEnd
 ; Arguments:  Nome.
 ; Return:     Nothing.
 
-Method Application.ShowUsage, uses xbx xdi xsi
+Method Application.ShowUsage, uses xsi
   SetObject xsi
   OCall xsi.SetColor, COLOR_HEADER
-  OCall xsi.Print, addr cUsageHeader
+  OCall xsi.Print, addr szUsageHeader
   OCall xsi.SetColor, COLOR_REGULAR
-  OCall xsi.Print, addr cUsageText
+  OCall xsi.Print, addr szUsageText
 MethodEnd
