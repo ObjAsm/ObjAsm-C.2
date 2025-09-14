@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=14
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -320,16 +320,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="DIALOG_SETUP"
-2="OAT_App"
-3="szANNOTATION"
-4="CheckRegInSentence"
-5="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
-6="pExternalEditor"
-7="ReadStr"
-8="szOAT_App"
-9="OnSetColor"
-10="hLinkPen"
+1="GdiplusStartup"
+2="DIALOG_SETUP"
+3="OAT_App"
+4="szANNOTATION"
+5="CheckRegInSentence"
+6="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
+7="pExternalEditor"
+8="ReadStr"
+9="szOAT_App"
+10="OnSetColor"
 [Collapse]
 4=
 2=2128137,1413558528,2092959915,513
@@ -391,9 +391,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=48,7,13,61,38
+AutoLoad=1,2
 [PTimer]
-PTimer=2066536893
+PTimer=2066675674
 [GroupExpand]
 GroupExpand=1,1,0,1,1,1,1,0
 [RADebugBP]

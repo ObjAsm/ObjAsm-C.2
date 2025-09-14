@@ -1122,8 +1122,8 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 
-include PathSegmentsToEnvVars_TX.asm
-include RegisterFileType.asm
+include PathSegmentsToEnvVars_TX.inc
+include RegisterFileType_TX.inc
 include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectManager.inc

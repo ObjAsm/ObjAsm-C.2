@@ -1722,12 +1722,12 @@ DbgBmp macro hBmp:req, Dest
     .else
     ifidn DBG_DEVICE, <WND>
       invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
-      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
-                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+;      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
+;                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     elseifidn DBG_DEVICE, <NET>
       invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
-      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
-                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+;      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
+;                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
       invoke DbgOutTextA, $OfsCStrA("Bitmap can not be shown on this device"), \
                           DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd

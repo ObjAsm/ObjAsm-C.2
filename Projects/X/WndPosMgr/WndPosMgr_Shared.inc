@@ -10,7 +10,7 @@ APP_TITLE                     textequ   <WndPosMgr>
 ABOUT_TEXT                    textequ   <WndPosMgr>
 COPYRIGHT                     textequ   <G. Friedrich   August 2025> 
 VER_FILEVERSION               equ       1,1,0,0
-VER_FILEVERSION_STR           textequ   <1.0>
+VER_FILEVERSION_STR           textequ   <1.1>
 VER_PRODUCTVERSION            equ       1,1,0,0
 VER_PRODUCTVERSION_STR        equ       <1.1>
 
