@@ -19,7 +19,7 @@
     },
     {
       "Name":"Added",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Assembly",
@@ -27,7 +27,7 @@
     },
     {
       "Name":"Macros",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Include",
@@ -35,7 +35,7 @@
     },
     {
       "Name":"Objects",
-      "Expanded":true
+      "Expanded":false
     },
     {
       "Name":"Miscellaneous",
@@ -43,7 +43,7 @@
     },
     {
       "Name":"Resources",
-      "Expanded":true
+      "Expanded":false
     }
   ],
   "Files":[
@@ -84,8 +84,8 @@
       "Group":2
     },
     {
-      "DispName":"PathSegmentsToEnvVars_TX.asm",
-      "FileName":".\\PathSegmentsToEnvVars_TX.asm",
+      "DispName":"PathSegmentsToEnvVars_TX.inc",
+      "FileName":".\\PathSegmentsToEnvVars_TX.inc",
       "Type":2,
       "Group":4
     }
