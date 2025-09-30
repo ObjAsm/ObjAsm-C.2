@@ -37,6 +37,15 @@ StringA macro StrName, QuotedText:vararg
   ??StrLength = ??StrSize - 1                           ;;??StrLength = character count without ZTC
 endm
 
+ExtendStringA macro QuotedText:vararg                   ;;Extends a Str definition overcomming the line length limit
+  org $ - sizeof(CHR)                                   ;;Overwrite last ZTC
+  ??LastStrSize = ??StrSize - sizeof(CHR)               ;;Remember previous values
+  ??LastStrLength = ??StrLength - 1                     
+  StringA, QuotedText                                   ;;Define string continuation
+  ??StrSize = ??StrSize + ??LastStrSize                 ;;??StrSize includes the ZTC
+  ??StrLength = ??StrLength + ??LastStrLength           ;;??StrLength = character count without ZTC
+endm
+
 CStrA macro TextReference:req, QuotedText:vararg
   public TextReference
   .SegConst

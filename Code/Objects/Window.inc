@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Window.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    C.2.1
 ; Purpose:    ObjAsm support of Window objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -14,6 +14,8 @@
 ;             Version C.2.0, January 2022
 ;               - Flags modified and functionality extended.
 ;               - Width and height calculation corrected in GetChildInfo. 
+;             Version C.2.1, September 2025
+;               - MoveChildWnd rewritten using MulDiv to avoid on overflow.
 ; ==================================================================================================
 
 
@@ -299,34 +301,28 @@ MoveChildWnd proc uses xbx xsi hWnd:HWND, pMoveChildWndInfo:PMoveChildWndInfo
     invoke GetParent, hWnd
     .if xax == [xbx].MoveChildWndInfo.hParent
       ;Calculate the new child window position according to the passed parameters.
-      mov ecx, 100
-      mov eax, [xbx].MoveChildWndInfo.dDeltaX
-      imul [xsi].DL_CHILD_INFO.ChangeInfo.left
-      idiv ecx
+      invoke MulDiv, [xbx].MoveChildWndInfo.dDeltaX, [xsi].DL_CHILD_INFO.ChangeInfo.left, 100
       add eax, [xsi].DL_CHILD_INFO.PositionInfo.left
       mov WRect.left, eax
-      mov eax, [xbx].MoveChildWndInfo.dDeltaY
-      imul [xsi].DL_CHILD_INFO.ChangeInfo.top
-      idiv ecx
+
+      invoke MulDiv, [xbx].MoveChildWndInfo.dDeltaY, [xsi].DL_CHILD_INFO.ChangeInfo.top, 100
       add eax, [xsi].DL_CHILD_INFO.PositionInfo.top
       mov WRect.top, eax
-      mov eax, [xbx].MoveChildWndInfo.dDeltaX
-      imul [xsi].DL_CHILD_INFO.ChangeInfo.right
-      idiv ecx
+
+      invoke MulDiv, [xbx].MoveChildWndInfo.dDeltaX, [xsi].DL_CHILD_INFO.ChangeInfo.right, 100
       add eax, [xsi].DL_CHILD_INFO.PositionInfo.right
       mov WRect.right, eax
-      mov eax, [xbx].MoveChildWndInfo.dDeltaY
-      imul [xsi].DL_CHILD_INFO.ChangeInfo.bottom
-      idiv ecx
+
+      invoke MulDiv, [xbx].MoveChildWndInfo.dDeltaY, [xsi].DL_CHILD_INFO.ChangeInfo.bottom, 100
       add eax, [xsi].DL_CHILD_INFO.PositionInfo.bottom
       mov WRect.bottom, eax
 
-      mov ecx, WRect.bottom
       invoke DeferWindowPos, [xbx].MoveChildWndInfo.hDWP, hWnd, 0, \
                              WRect.left, WRect.top, WRect.right, WRect.bottom, \
                              SWP_NOOWNERZORDER or SWP_NOZORDER
       ;In case Windows had to allocate a new memory block, update the DeferWindowPos HANDLE.
       mov [xbx].MoveChildWndInfo.hDWP, xax
+
       ;Move to next DL_CHILD_INFO.
       mov xcx, sizeof(DL_CHILD_INFO)
       add [xbx].MoveChildWndInfo.pInfo, xcx

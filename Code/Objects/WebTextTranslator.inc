@@ -44,7 +44,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-RCV_BUFFER_SIZE equ 4*PAGESIZE         ;Reserve 4 pages, should be enought
+RCV_BUFFER_SIZE equ 4*PAGESIZE         ;Reserve 4 pages, should be enough
 
 WTT_DELIMITERS struct
   dBegSize      DWORD     ?

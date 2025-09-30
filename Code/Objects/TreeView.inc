@@ -107,15 +107,15 @@ Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRIN
                              dImgIndex:DWORD, dImgSelIndex:DWORD
   local TVI:TV_INSERTSTRUCT
 
-  SetObject xcx
+  invoke StrLength, pText
   m2m TVI.hParent, hNodeParent, xax
   m2m TVI.hInsertAfter, hNodeAfter, xdx
   mov TVI.item.mask_, TVIF_HANDLE or TVIF_TEXT or TVIF_IMAGE or TVIF_SELECTEDIMAGE
-  invoke StrLength, pText
   mov TVI.item.cchTextMax, eax
-  m2m TVI.item.pszText, pText, xax
+  m2m TVI.item.pszText, pText, xcx
   m2m TVI.item.iImage, dImgIndex, edx
   m2m TVI.item.iSelectedImage, dImgSelIndex, eax
+  SetObject xcx
   invoke SendMessage, [xcx].hWnd, TVM_INSERTITEM, 0, addr TVI
 MethodEnd
 

@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      SdiApp.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of Windows SDI application objects.
-; Notes:      Version C.1.1, January 2020
-;               - SdiApp.OnNCDestroy moved to WinApp.
-;             Version C.1.0, October 2017
+; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, January 2020
+;               - SdiApp.OnNCDestroy moved to WinApp.
+;             Version C.1.2, September 2025
+;               - SdiApp.Run corrected
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
@@ -78,10 +80,12 @@ Method SdiApp.Run, uses xbx xdi xsi
       .else
         .break .if Msg.message == WM_QUIT
         .if [xsi].hActiveMlsDlg != 0
-          .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != NULL
+          .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != 0
+            xor edi, edi                                ;Reset idle counter
+            .continue 
+          .endif
         .endif
-        invoke TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx
-        .if eax == 0                                    ;No accelerator translated
+        .if $invoke(TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx) == 0
           invoke TranslateMessage, xbx                  ;Translate the message
           invoke DispatchMessage, xbx                   ;Send the message
         .endif

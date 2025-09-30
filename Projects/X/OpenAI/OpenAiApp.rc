@@ -1,0 +1,118 @@
+; ==================================================================================================
+; Title:      OpenAiApp.rc
+; Author:     G. Friedrich
+; Purpose:    ObjAsm OpenAI Application.
+; Notes:      See OpenAIApp.asm
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "OpenAiApp_Shared.rc"      //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+
+// Icons ------------------------------------------------------------------------------------------
+ICON_APP  ICON DISCARDABLE "Res\OpenAI.ico"
+
+// Bitmaps ----------------------------------------------------------------------------------------
+BMP_BACKGROUND  BITMAP "BMP\WndBkgnd.bmp"
+
+// PNGs -------------------------------------------------------------------------------------------
+THROBBER0000 PNG "PNG\BlackSphere\96X96\BlackSphere_00_96x96.png"
+THROBBER0001 PNG "PNG\BlackSphere\96X96\BlackSphere_01_96x96.png"
+THROBBER0002 PNG "PNG\BlackSphere\96X96\BlackSphere_02_96x96.png"
+THROBBER0003 PNG "PNG\BlackSphere\96X96\BlackSphere_03_96x96.png"
+THROBBER0004 PNG "PNG\BlackSphere\96X96\BlackSphere_04_96x96.png"
+THROBBER0005 PNG "PNG\BlackSphere\96X96\BlackSphere_05_96x96.png"
+THROBBER0006 PNG "PNG\BlackSphere\96X96\BlackSphere_06_96x96.png"
+THROBBER0007 PNG "PNG\BlackSphere\96X96\BlackSphere_07_96x96.png"
+THROBBER0008 PNG "PNG\BlackSphere\96X96\BlackSphere_08_96x96.png"
+THROBBER0009 PNG "PNG\BlackSphere\96X96\BlackSphere_09_96x96.png"
+THROBBER0010 PNG "PNG\BlackSphere\96X96\BlackSphere_10_96x96.png"
+THROBBER0011 PNG "PNG\BlackSphere\96x96\BlackSphere_11_96x96.png"
+THROBBER0012 PNG "PNG\BlackSphere\96x96\BlackSphere_12_96x96.png"
+THROBBER0013 PNG "PNG\BlackSphere\96x96\BlackSphere_13_96x96.png"
+THROBBER0014 PNG "PNG\BlackSphere\96x96\BlackSphere_14_96x96.png"
+THROBBER0015 PNG "PNG\BlackSphere\96x96\BlackSphere_15_96x96.png"
+THROBBER0016 PNG "PNG\BlackSphere\96x96\BlackSphere_16_96x96.png"
+THROBBER0017 PNG "PNG\BlackSphere\96x96\BlackSphere_17_96x96.png"
+THROBBER0018 PNG "PNG\BlackSphere\96x96\BlackSphere_18_96x96.png"
+THROBBER0019 PNG "PNG\BlackSphere\96x96\BlackSphere_19_96x96.png"
+THROBBER0020 PNG "PNG\BlackSphere\96x96\BlackSphere_20_96x96.png"
+THROBBER0021 PNG "PNG\BlackSphere\96x96\BlackSphere_21_96x96.png"
+THROBBER0022 PNG "PNG\BlackSphere\96x96\BlackSphere_22_96x96.png"
+THROBBER0023 PNG "PNG\BlackSphere\96x96\BlackSphere_23_96x96.png"
+THROBBER0024 PNG "PNG\BlackSphere\96x96\BlackSphere_24_96x96.png"
+THROBBER0025 PNG "PNG\BlackSphere\96x96\BlackSphere_25_96x96.png"
+THROBBER0026 PNG "PNG\BlackSphere\96x96\BlackSphere_26_96x96.png"
+THROBBER0027 PNG "PNG\BlackSphere\96x96\BlackSphere_27_96x96.png"
+THROBBER0028 PNG "PNG\BlackSphere\96x96\BlackSphere_28_96x96.png"
+THROBBER0029 PNG "PNG\BlackSphere\96x96\BlackSphere_29_96x96.png"
+THROBBER0030 PNG "PNG\BlackSphere\96x96\BlackSphere_30_96x96.png"
+THROBBER0031 PNG "PNG\BlackSphere\96x96\BlackSphere_31_96x96.png"
+THROBBER0032 PNG "PNG\BlackSphere\96x96\BlackSphere_32_96x96.png"
+THROBBER0033 PNG "PNG\BlackSphere\96x96\BlackSphere_33_96x96.png"
+THROBBER0034 PNG "PNG\BlackSphere\96x96\BlackSphere_34_96x96.png"
+THROBBER0035 PNG "PNG\BlackSphere\96x96\BlackSphere_35_96x96.png"
+THROBBER0036 PNG "PNG\BlackSphere\96x96\BlackSphere_36_96x96.png"
+THROBBER0037 PNG "PNG\BlackSphere\96x96\BlackSphere_37_96x96.png"
+THROBBER0038 PNG "PNG\BlackSphere\96x96\BlackSphere_38_96x96.png"
+THROBBER0039 PNG "PNG\BlackSphere\96x96\BlackSphere_39_96x96.png"
+THROBBER0040 PNG "PNG\BlackSphere\96x96\BlackSphere_40_96x96.png"
+THROBBER0041 PNG "PNG\BlackSphere\96x96\BlackSphere_41_96x96.png"
+THROBBER0042 PNG "PNG\BlackSphere\96x96\BlackSphere_42_96x96.png"
+THROBBER0043 PNG "PNG\BlackSphere\96x96\BlackSphere_43_96x96.png"
+THROBBER0044 PNG "PNG\BlackSphere\96x96\BlackSphere_44_96x96.png"
+THROBBER0045 PNG "PNG\BlackSphere\96x96\BlackSphere_45_96x96.png"
+THROBBER0046 PNG "PNG\BlackSphere\96x96\BlackSphere_46_96x96.png"
+THROBBER0047 PNG "PNG\BlackSphere\96x96\BlackSphere_47_96x96.png"
+THROBBER0048 PNG "PNG\BlackSphere\96x96\BlackSphere_48_96x96.png"
+THROBBER0049 PNG "PNG\BlackSphere\96x96\BlackSphere_49_96x96.png"
+THROBBER0050 PNG "PNG\BlackSphere\96x96\BlackSphere_50_96x96.png"
+THROBBER0051 PNG "PNG\BlackSphere\96x96\BlackSphere_51_96x96.png"
+THROBBER0052 PNG "PNG\BlackSphere\96x96\BlackSphere_52_96x96.png"
+THROBBER0053 PNG "PNG\BlackSphere\96x96\BlackSphere_53_96x96.png"
+THROBBER0054 PNG "PNG\BlackSphere\96x96\BlackSphere_54_96x96.png"
+THROBBER0055 PNG "PNG\BlackSphere\96x96\BlackSphere_55_96x96.png"
+THROBBER0056 PNG "PNG\BlackSphere\96x96\BlackSphere_56_96x96.png"
+THROBBER0057 PNG "PNG\BlackSphere\96x96\BlackSphere_57_96x96.png"
+THROBBER0058 PNG "PNG\BlackSphere\96x96\BlackSphere_58_96x96.png"
+THROBBER0059 PNG "PNG\BlackSphere\96x96\BlackSphere_59_96x96.png"
+THROBBER0060 PNG "PNG\BlackSphere\96x96\BlackSphere_60_96x96.png"
+THROBBER0061 PNG "PNG\BlackSphere\96x96\BlackSphere_61_96x96.png"
+THROBBER0062 PNG "PNG\BlackSphere\96x96\BlackSphere_62_96x96.png"
+THROBBER0063 PNG "PNG\BlackSphere\96x96\BlackSphere_63_96x96.png"
+THROBBER0064 PNG "PNG\BlackSphere\96x96\BlackSphere_64_96x96.png"
+THROBBER0065 PNG "PNG\BlackSphere\96x96\BlackSphere_65_96x96.png"
+THROBBER0066 PNG "PNG\BlackSphere\96x96\BlackSphere_66_96x96.png"
+THROBBER0067 PNG "PNG\BlackSphere\96x96\BlackSphere_67_96x96.png"
+THROBBER0068 PNG "PNG\BlackSphere\96x96\BlackSphere_68_96x96.png"
+THROBBER0069 PNG "PNG\BlackSphere\96x96\BlackSphere_69_96x96.png"
+THROBBER0070 PNG "PNG\BlackSphere\96x96\BlackSphere_70_96x96.png"
+THROBBER0071 PNG "PNG\BlackSphere\96x96\BlackSphere_71_96x96.png"
+THROBBER0072 PNG "PNG\BlackSphere\96x96\BlackSphere_72_96x96.png"
+THROBBER0073 PNG "PNG\BlackSphere\96x96\BlackSphere_73_96x96.png"
+THROBBER0074 PNG "PNG\BlackSphere\96x96\BlackSphere_74_96x96.png"
+THROBBER0075 PNG "PNG\BlackSphere\96x96\BlackSphere_75_96x96.png"
+THROBBER0076 PNG "PNG\BlackSphere\96x96\BlackSphere_76_96x96.png"
+THROBBER0077 PNG "PNG\BlackSphere\96x96\BlackSphere_77_96x96.png"
+THROBBER0078 PNG "PNG\BlackSphere\96x96\BlackSphere_78_96x96.png"
+THROBBER0079 PNG "PNG\BlackSphere\96x96\BlackSphere_79_96x96.png"
+THROBBER0080 PNG "PNG\BlackSphere\96x96\BlackSphere_80_96x96.png"
+THROBBER0081 PNG "PNG\BlackSphere\96x96\BlackSphere_81_96x96.png"
+THROBBER0082 PNG "PNG\BlackSphere\96x96\BlackSphere_82_96x96.png"
+THROBBER0083 PNG "PNG\BlackSphere\96x96\BlackSphere_83_96x96.png"
+THROBBER0084 PNG "PNG\BlackSphere\96x96\BlackSphere_84_96x96.png"
+THROBBER0085 PNG "PNG\BlackSphere\96x96\BlackSphere_85_96x96.png"
+THROBBER0086 PNG "PNG\BlackSphere\96x96\BlackSphere_86_96x96.png"
+THROBBER0087 PNG "PNG\BlackSphere\96x96\BlackSphere_87_96x96.png"
+THROBBER0088 PNG "PNG\BlackSphere\96x96\BlackSphere_88_96x96.png"
+THROBBER0089 PNG "PNG\BlackSphere\96x96\BlackSphere_89_96x96.png"
+
+// Dialogs ----------------------------------------------------------------------------------------
+#include "Res\ApplicationDlg.rc"
+#include "DLG\DialogAbout.rc"
+

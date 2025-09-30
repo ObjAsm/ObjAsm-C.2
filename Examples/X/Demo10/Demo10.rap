@@ -154,7 +154,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=4
+MilestoneOnDateDate=24
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -203,7 +203,7 @@ ProductVer4Range=0
 13=0,0,1909,599,10658
 14=0,0,0,0,790
 15=0,0,0,0,1063
-10=0,0,0,0,4415
+10=0,0,0,0,4527
 12=0,0,0,0,597
 16=0,0,1909,599,12309
 17=0,0,799,609,69560
@@ -290,7 +290,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1
 [PTimer]
-PTimer=1174231161
+PTimer=1177574365
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -322,13 +322,13 @@ GroupExpand=1,1,1,0,0,1,1,0
 35=
 33=
 [Find]
-1="Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM"
-2="DeleteObject"
-3="SetMenuBarBkColor"
-4="XMenu.SetMenuBarBkColor"
-5="szChildClassName"
-6="szDemoChild10"
-7="szAppClassName"
-8="szDemoApp10"
-9="TCSTYLE"
-10="SBSTYLE"
+1="Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRING"
+2="Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM"
+3="DeleteObject"
+4="SetMenuBarBkColor"
+5="XMenu.SetMenuBarBkColor"
+6="szChildClassName"
+7="szDemoChild10"
+8="szAppClassName"
+9="szDemoApp10"
+10="TCSTYLE"

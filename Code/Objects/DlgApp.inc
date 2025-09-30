@@ -1,14 +1,16 @@
 ; ==================================================================================================
 ; Title:      DlgApp.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.1.3
 ; Purpose:    ObjAsm support of Dialog based Application objects.
-; Notes:      Version C.1.2, May 2024
-;               - DlgApp.WndProc corrected to support child dialogs.
+; Notes:      Version C.1.0, October 2017
+;               - First release.
 ;             Version C.1.1, January 2020
 ;               - DlgApp.OnNCDestroy moved to WinApp.
-;             Version C.1.0, October 2017
-;               - First release.
+;             Version C.1.2, May 2024
+;               - DlgApp.WndProc corrected to support child dialogs.
+;             Version C.1.3, September 2025
+;               - DlgApp.Run corrected.
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
@@ -18,7 +20,7 @@
 Object DlgApp, DlgAppID, WinApp                         ;Dialog based Application.
   VirtualMethod     CtlsGet
   VirtualMethod     CtlsSet
-  
+
   VirtualEvent      OnInitDialog,   WM_INITDIALOG
 
   RedefineMethod    Run
@@ -57,10 +59,8 @@ MethodEnd
 ;; Return:     Nothing.
 ;
 ;Method DlgApp.Init, uses xsi
-;
 ;  SetObject xsi
 ;  ACall xsi.Init
-;
 ;  invoke CreateDialogParam, hInstance, offset szDlgName, 0, $MethodAddr(DlgApp.WndProc), xsi
 ;MethodEnd
 
@@ -90,6 +90,7 @@ MethodEnd
 Method DlgApp.Run, uses xbx xdi xsi
   local Msg:MSG
 
+;  DbgText "DlgApp.Run"
   SetObject xsi
   lea xbx, Msg
   xor edi, edi
@@ -106,12 +107,19 @@ Method DlgApp.Run, uses xbx xdi xsi
       .else
         .break .if Msg.message == WM_QUIT
         .if [xsi].hActiveMlsDlg != 0
-          .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != NULL
-        .endif
-        invoke TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx
-        .if !eax
-          invoke TranslateMessage, xbx
-          invoke DispatchMessage, xbx
+          .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) == 0
+            .if $invoke(TranslateAccelerator, [xsi].hActiveMlsDlg, [xsi].hAccelerators, xbx) == 0
+              invoke TranslateMessage, xbx
+              invoke DispatchMessage, xbx
+            .endif
+          .endif
+        .else
+          .if $invoke(IsDialogMessage, [xsi].hWnd, xbx) == 0
+            .if $invoke(TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx) == 0
+              invoke TranslateMessage, xbx
+              invoke DispatchMessage, xbx
+            .endif
+          .endif
         .endif
         xor edi, edi
       .endif

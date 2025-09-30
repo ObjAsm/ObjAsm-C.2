@@ -436,6 +436,9 @@ Method MemoryStream.Done, uses xsi
   SetObject xsi
   .if [xsi].pBuffer != NULL
     MemFree [xsi].pBuffer
+    mov [xsi].pBuffer, NULL
+    mov [xsi].dCurrSize, 0
+    mov [xsi].dPosition, 0
   .endif
   ACall xsi.Done
 MethodEnd
@@ -574,6 +577,9 @@ MethodEnd
 Method MemoryStream.Init, uses xsi, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dMaxSize:DWORD
   SetObject xsi
   ACall xsi.Init, pOwner
+  mov [xsi].pBuffer, NULL
+  mov [xsi].dCurrSize, 0
+  mov [xsi].dPosition, 0
   m2m [xsi].dDelta, dDelta, edx
   m2m [xsi].dMaxSize, dMaxSize, edx
   mov eax, dLimit

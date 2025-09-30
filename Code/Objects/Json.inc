@@ -32,6 +32,7 @@
 ;               - Quotes removed from JSON_TYPE_BOOLEAN and JSON_TYPE_NULL.
 ;             Version C.2.6, September 2025.
 ;               - JsonEscEncode & JsonEscDecode bugs corrected.
+;               - GetFirstProperty and GetLastProperty methods added.
 ; ==================================================================================================
 
 
@@ -42,6 +43,7 @@ JSON_TYPE_BOOLEAN   equ 3
 JSON_TYPE_ARRAY     equ 4
 JSON_TYPE_OBJECT    equ 5
 JSON_TYPE_ERROR     equ -1
+JSON_TYPE_ROOT      equ -2
 
 INDENTATION_STEP    equ 2
 
@@ -115,8 +117,10 @@ Object Json, JsonID, Streamable
   VirtualMethod     DelProperty,      PJSON_PROPERTY
   RedefineMethod    Done
   VirtualMethod     GetArrayItem,     PJSON_PROPERTY, DWORD
-  VirtualMethod     GetPrevProperty,  PJSON_PROPERTY
+  VirtualMethod     GetFirstProperty, PJSON_PROPERTY
+  VirtualMethod     GetLastProperty,  PJSON_PROPERTY
   VirtualMethod     GetNextProperty,  PJSON_PROPERTY
+  VirtualMethod     GetPrevProperty,  PJSON_PROPERTY
   VirtualMethod     GetProperty,      PJSON_PROPERTY, PSTRING
   VirtualMethod     Read,             $ObjPtr(Stream)
   VirtualMethod     Write,            $ObjPtr(Stream)
@@ -585,18 +589,30 @@ Method Json.GetArrayItem,, pParent:PJSON_PROPERTY, dIndex:DWORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     Json.GetPrevProperty
-; Purpose:    Get the previous JSON_PROPERTY from a specific JSON_PROPERTY.
-; Arguments:  Arg1: -> Starting JSON_PROPERTY.
+; Method:     Json.GetFirstProperty
+; Purpose:    Get the first JSON_PROPERTY from a parent JSON_PROPERTY.
+; Arguments:  Arg1: -> Owner JSON_PROPERTY.
 ; Return:     xax -> JSON_PROPERTY or NULL if not found.
 
-Method Json.GetPrevProperty,, pProperty:PJSON_PROPERTY
-  mov xax, pProperty
+Method Json.GetFirstProperty,, pParent:PJSON_PROPERTY
+  mov xax, pParent
   .if xax != NULL
-    mov xax, [xax].JSON_PROPERTY.Siblings.pLinkBack
-    .if xax != NULL
-      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
-    .endif
+    mov xcx, [xax].JSON_PROPERTY.Children.pFirstMember
+    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Json.GetLastProperty
+; Purpose:    Get the last JSON_PROPERTY from a parent JSON_PROPERTY.
+; Arguments:  Arg1: -> Owner JSON_PROPERTY.
+; Return:     xax -> JSON_PROPERTY or NULL if not found.
+
+Method Json.GetLastProperty,, pParent:PJSON_PROPERTY
+  mov xax, pParent
+  .if xax != NULL
+    mov xcx, [xax].JSON_PROPERTY.Children.pLastMember
+    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
   .endif
 MethodEnd
 
@@ -610,6 +626,22 @@ Method Json.GetNextProperty,, pProperty:PJSON_PROPERTY
   mov xax, pProperty
   .if xax != NULL
     mov xax, [xax].JSON_PROPERTY.Siblings.pLinkFwrd
+    .if xax != NULL
+      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+    .endif
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Json.GetPrevProperty
+; Purpose:    Get the previous JSON_PROPERTY from a specific JSON_PROPERTY.
+; Arguments:  Arg1: -> Starting JSON_PROPERTY.
+; Return:     xax -> JSON_PROPERTY or NULL if not found.
+
+Method Json.GetPrevProperty,, pProperty:PJSON_PROPERTY
+  mov xax, pProperty
+  .if xax != NULL
+    mov xax, [xax].JSON_PROPERTY.Siblings.pLinkBack
     .if xax != NULL
       lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
     .endif
@@ -651,13 +683,13 @@ MethodEnd
 ;        xsi -> current char.
 ;        xdi -> Json instance when called from Json.Read, otherwise used as volatile register.
 
-JsonSkipBlanks    proto
-JsonGetObject     proto :PJSON_PROPERTY
-JsonGetStringEnd  proto
-JsonGetNumberEnd  proto
-JsonGetObject     proto :PJSON_PROPERTY
-JsonGetArray      proto :PJSON_PROPERTY
-JsonGetValue      proto :PJSON_PROPERTY, :PSTRING
+JsonSkipBlanks        proto
+JsonCreateProperty    proto :PJSON_PROPERTY, :PSTRING
+JsonGetStringEnd      proto
+JsonGetNumberEnd      proto
+JsonGetArrayContent   proto :PJSON_PROPERTY
+JsonGetObjectContent  proto :PJSON_PROPERTY
+JsonGetValue          proto :PJSON_PROPERTY
 
 JsonSkipBlanks proc
   ANNOTATION prv:xbx xsi
@@ -671,107 +703,6 @@ JsonSkipBlanks proc
   .endw
   ret
 JsonSkipBlanks endp
-
-JsonGetObject proc pParent:PJSON_PROPERTY
-  ANNOTATION prv:xbx xdi xsi
-  local pBegin:POINTER, dSize:DWORD
-
-  .while TRUE
-    .if xsi == xbx
-      xor eax, eax
-      ret
-    .endif
-
-    invoke JsonSkipBlanks
-
-    mov ax, [xsi]
-    .if ax == "}"
-      add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
-      ret
-    .endif
-
-    .if ax == '"'                                       ;Get the name
-      add xsi, sizeof(CHRW)
-      mov pBegin, xsi
-      invoke JsonGetStringEnd
-      .break .if eax == FALSE
-      mov xax, xsi
-      sub xax, pBegin
-      shr eax, $Log2(CHRW)
-      dec eax                                           ;Go back 1 char
-      if TARGET_STR_TYPE eq STR_TYPE_ANSI
-        mov dSize, eax
-        mov xdi, $invoke(StrAllocA, eax)
-        invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dSize, xdi, dSize, NULL, NULL
-        mov CHRA ptr [xdi + xax], 0                     ;Set the ZTC
-      else
-        mov xdi, $invoke(StrCNewW, pBegin, eax)         ;xdi -> Name
-      endif
-      ;DbgStr xdi
-
-      invoke JsonSkipBlanks
-      .if xsi == xbx || CHRW ptr [xsi] != ":"
-        xor eax, eax
-        .break
-      .endif
-      add xsi, sizeof(CHRW)
-      invoke JsonGetValue, pParent, xdi                 ;Pass xbx & xsi implicitly
-      .break .if eax == FALSE
-
-      .if CHRW ptr [xsi] == ","
-        add xsi, sizeof(CHRW)
-        .continue
-      .endif
-
-      .if CHRW ptr [xsi] == "}"
-        add xsi, sizeof(CHRW)
-        mov eax, TRUE                                   ;Return success = TRUE
-        ret
-      .endif
-
-    .endif
-    xor eax, eax                                        ;Error
-    .break
-  .endw
-  ret
-JsonGetObject endp
-
-JsonGetArray proc pParent:PJSON_PROPERTY
-  ANNOTATION prv:xbx xsi
-  .while TRUE
-    .if xsi == xbx
-      xor eax, eax
-      ret
-    .endif
-
-    invoke JsonSkipBlanks
-
-    .if CHRW ptr [xsi] == "]"
-      add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
-      .break
-    .endif
-
-    invoke JsonGetValue, pParent, NULL                  ;Pass xbx & xsi implicitly
-    .break .if eax == FALSE
-
-    .if CHRW ptr [xsi] == ","
-      add xsi, sizeof(CHRW)
-      .continue
-    .endif
-
-    .if CHRW ptr [xsi] == "]"
-      add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
-      .break
-    .endif
-
-    xor eax, eax                                        ;Error
-    .break
-  .endw
-  ret
-JsonGetArray endp
 
 JsonGetStringEnd proc                                   ;On entry, xsi -> first char after "
   ANNOTATION prv:xbx xsi
@@ -859,28 +790,153 @@ JsonGetNumberEnd proc                                   ;On entry, xsi -> first 
   ret
 JsonGetNumberEnd endp
 
-JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
+JsonGetArrayContent proc pParent:PJSON_PROPERTY
+  ANNOTATION prv:xbx xsi
+
+;  DbgText "JsonGetArrayContent"
+;  DbgHex pParent
+  .while TRUE
+    .if xsi == xbx
+      xor eax, eax
+      ret
+    .endif
+
+    invoke JsonSkipBlanks
+
+    .if CHRW ptr [xsi] == "]"
+      add xsi, sizeof(CHRW)
+      mov eax, TRUE                                     ;Return success = TRUE
+      .break
+    .endif
+
+    invoke JsonCreateProperty, pParent, NULL            ;Pass xbx & xsi implicitly
+    invoke JsonGetValue, xax                            ;Pass xbx & xsi implicitly
+    .break .if eax == FALSE
+
+    .if CHRW ptr [xsi] == ","
+      add xsi, sizeof(CHRW)
+      .continue
+    .endif
+
+    .if CHRW ptr [xsi] == "]"
+      add xsi, sizeof(CHRW)
+      mov eax, TRUE                                     ;Return success = TRUE
+      .break
+    .endif
+
+    xor eax, eax                                        ;Error
+    .break
+  .endw
+;  DbgLine
+  ret
+JsonGetArrayContent endp
+
+JsonGetObjectContent proc pParent:PJSON_PROPERTY
+  ANNOTATION prv:xbx xdi xsi
+  local pBegin:POINTER, dSize:DWORD
+
+;  DbgText "JsonGetObjectContent"
+;  DbgHex pParent
+  .while TRUE
+    .if xsi == xbx
+      xor eax, eax
+      ret
+    .endif
+
+    invoke JsonSkipBlanks
+
+    mov ax, [xsi]
+    .if ax == "}"
+      add xsi, sizeof(CHRW)
+      mov eax, TRUE                                     ;Return success = TRUE
+      ret
+    .endif
+
+    .if ax == '"'                                       ;Get the name
+      add xsi, sizeof(CHRW)
+      mov pBegin, xsi
+      invoke JsonGetStringEnd
+      .break .if eax == FALSE
+      mov xax, xsi
+      sub xax, pBegin
+      shr eax, $Log2(CHRW)
+      dec eax                                           ;Go back 1 char
+      if TARGET_STR_TYPE eq STR_TYPE_ANSI
+        mov dSize, eax
+        mov xdi, $invoke(StrAllocA, eax)
+        invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dSize, xdi, dSize, NULL, NULL
+        mov CHRA ptr [xdi + xax], 0                     ;Set the ZTC
+      else
+        mov xdi, $invoke(StrCNewW, pBegin, eax)         ;xdi -> Name
+      endif
+      ;DbgStr xdi
+
+      invoke JsonSkipBlanks
+      .if xsi == xbx || CHRW ptr [xsi] != ":"
+        xor eax, eax
+        .break
+      .endif
+      add xsi, sizeof(CHRW)
+      invoke JsonCreateProperty, pParent, xdi           ;Pass xbx & xsi implicitly
+      invoke JsonGetValue, xax                          ;Pass xbx & xsi implicitly
+      .break .if eax == FALSE
+
+      .if CHRW ptr [xsi] == ","
+        add xsi, sizeof(CHRW)
+        .continue
+      .endif
+
+      .if CHRW ptr [xsi] == "}"
+        add xsi, sizeof(CHRW)
+        mov eax, TRUE                                   ;Return success = TRUE
+        ret
+      .endif
+
+    .endif
+    xor eax, eax                                        ;Error
+    .break
+  .endw
+;  DbgLine
+  ret
+JsonGetObjectContent endp
+
+JsonCreateProperty proc pParent:PJSON_PROPERTY, pName:PSTRING
+  ANNOTATION prv:xdi
+
+;  DbgText "JsonCreateProperty"
+;  DbgStr pName
+;  DbgHex pParent
+  
+  MemAlloc sizeof(JSON_PROPERTY), MEM_INIT_ZERO         ;Create a new property
+  .if xax != NULL
+    mrm [xax].JSON_PROPERTY.pParent, pParent, xdx
+    lea xdi, [xdx].JSON_PROPERTY.Children               ;xdi -> PLDLL_CONTROL
+    lea xcx, [xax].JSON_PROPERTY.Siblings               ;xcx -> new LDLL_MEMBER to insert
+    LDLL_Append xdi, xcx, xdx                           ;xdx = aux. register
+    m2m [xax].JSON_PROPERTY.pName, pName, xdx
+  .else
+    invoke StrDispose, pName                            ;Dispose the string if it can not be managed
+    xor eax, eax
+  .endif
+;  DbgHex xax
+;  DbgLine
+  ret
+JsonCreateProperty endp
+
+JsonGetValue proc pProperty:PJSON_PROPERTY
   ANNOTATION prv:xbx xdi xsi                            ;xbx -> last byte, xsi -> cur. byte in Buff
   local pBegin:POINTER, pValue:POINTER, dLen:DWORD
 
+;  DbgText "JsonGetValue"
+;  DbgHex pProperty
+  mov xdi, pProperty
+
   invoke JsonSkipBlanks
   .if xsi == xbx
-    invoke StrDispose, pName                            ;In case of failure, dispose the string
     xor eax, eax
     ret
   .endif
-
-  .if pParent != NULL
-    mov xdi, $MemAlloc(sizeof(JSON_PROPERTY), MEM_INIT_ZERO)  ;Create a property
-    mrm [xdi].JSON_PROPERTY.pParent, pParent, xdx
-    lea xax, [xdx].JSON_PROPERTY.Children               ;xax -> PLDLL_CONTROL
-    lea xcx, [xdi].JSON_PROPERTY.Siblings
-    LDLL_Append xax, xcx, xdx
-  .else
-    lea xdi, [xdi].$Obj(Json).RootProperty              ;Only valid when called from Json.read
-  .endif
-  m2m [xdi].JSON_PROPERTY.pName, pName, xdx
-
+  
   mov ax, [xsi]
   .if ax == '"'
     add xsi, sizeof(CHRW)                               ;Skip this char
@@ -904,7 +960,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     else
       mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
     endif
-    ;DbgStr [xdi].JSON_PROPERTY.pValue
+;    DbgStr [xdi].JSON_PROPERTY.pValue
     invoke JsonSkipBlanks
     jmp @@Exit
   .endif
@@ -928,7 +984,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     else
       mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
     endif
-    ;DbgStr [xdi].JSON_PROPERTY.pValue
+;    DbgStr [xdi].JSON_PROPERTY.pValue
     invoke JsonSkipBlanks
     jmp @@Exit
   .endif
@@ -936,7 +992,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   .if ax == "{"
     add xsi, sizeof(CHRW)
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_OBJECT
-    invoke JsonGetObject, addr [xdi].JSON_PROPERTY
+    invoke JsonGetObjectContent, xdi
     .if eax != FALSE
       invoke JsonSkipBlanks
     .endif
@@ -946,7 +1002,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   .if ax == "["
     add xsi, sizeof(CHRW)
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_ARRAY
-    invoke JsonGetArray, addr [xdi].JSON_PROPERTY
+    invoke JsonGetArrayContent, xdi
     .if eax != FALSE
       invoke JsonSkipBlanks
     .endif
@@ -957,7 +1013,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_BOOLEAN
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_TRUE)
-    ;DbgStr [xdi].JSON_PROPERTY.pValue
+;    DbgStr [xdi].JSON_PROPERTY.pValue
     add xsi, 4*sizeof(CHRW)
     invoke JsonSkipBlanks
     mov eax, TRUE
@@ -968,7 +1024,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_BOOLEAN
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_FALSE)
-    ;DbgStr [xdi].JSON_PROPERTY.pValue
+;    DbgStr [xdi].JSON_PROPERTY.pValue
     add xsi, 5*sizeof(CHRW)
     invoke JsonSkipBlanks
     mov eax, TRUE
@@ -979,7 +1035,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_NULL
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_NULL)
-    ;DbgStr [xdi].JSON_PROPERTY.pValue
+;    DbgStr [xdi].JSON_PROPERTY.pValue
     add xsi, 4*sizeof(CHRW)
     invoke JsonSkipBlanks
     mov eax, TRUE
@@ -990,6 +1046,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   xor eax, eax
 
 @@Exit:
+;  DbgLine
   ret
 JsonGetValue endp
 
@@ -1017,14 +1074,14 @@ Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
             add xsi, sizeof(DCHRW)
           .endif
 
-          mov [xdi].RootProperty.JSON_PROPERTY.Siblings.pLinkFwrd, NULL
-          mov [xdi].RootProperty.JSON_PROPERTY.Siblings.pLinkBack, NULL
-          mov [xdi].RootProperty.JSON_PROPERTY.dType, JSON_TYPE_ERROR
-          mov [xdi].RootProperty.JSON_PROPERTY.Children.pFirstMember, NULL
-          mov [xdi].RootProperty.JSON_PROPERTY.Children.pLastMember, NULL
+          mov [xdi].RootProperty.Siblings.pLinkFwrd, NULL
+          mov [xdi].RootProperty.Siblings.pLinkBack, NULL
+          mov [xdi].RootProperty.dType, JSON_TYPE_ROOT
+          mov [xdi].RootProperty.Children.pFirstMember, NULL
+          mov [xdi].RootProperty.Children.pLastMember, NULL
 
-          ;Read in all values contained in the wide memory block
-          invoke JsonGetValue, NULL, NULL               ;Pass xbx, xdi & xsi implicitly
+          ;Read in all values contained in the memory block
+          invoke JsonGetValue, addr [xdi].RootProperty
 
           MemFree pMemBlockWide
         .endif

@@ -159,6 +159,15 @@ StringW macro StrName, QuotedText:vararg
   ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character count without ZTC
 endm
 
+ExtendStringW macro QuotedText:vararg                   ;;Extends a Str definition overcomming the line length limit
+  org $ - sizeof(CHR)                                   ;;Overwrite last ZTC
+  ??LastStrSize = ??StrSize - sizeof(CHR)               ;;Remember previous values
+  ??LastStrLength = ??StrLength - 1                     
+  StringW, QuotedText                                   ;;Define string continuation
+  ??StrSize = ??StrSize + ??LastStrSize                 ;;??StrSize includes the ZTC
+  ??StrLength = ??StrLength + ??LastStrLength           ;;??StrLength = character count without ZTC
+endm
+
 CStrW macro TextReference:req, QuotedText:vararg
   public TextReference
   .SegConst

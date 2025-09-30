@@ -268,9 +268,12 @@ String macro StrName, QuotedText:vararg
   endif
 endm
 
-ExtendString macro QuotedText:vararg        ;Extends a Str definition overcomming the line len limit
-  org $ - sizeof(CHR)                       ;Ignore last ZTC
-  String, QuotedText                        ;Define string continuation
+ExtendString macro QuotedText:vararg          ;;Extends a Str definition overcomming the line length limit
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    ExtendStringW <QuotedText>
+  else
+    ExtendStringA <QuotedText>
+  endif
 endm
 
 CStr macro TextReference:req, QuotedText:vararg

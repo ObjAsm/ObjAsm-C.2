@@ -13,8 +13,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 CStr szApplicationClass, "OAC_Application"              ;Creates szApplicationClass string in .const
 
 
-Object Application, ApplicationID, SdiApp                  ;Single Document Interface App.
-  RedefineMethod    Done
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup
 
@@ -33,18 +32,6 @@ ObjectEnd                                               ;Ends object definition
 ; ==================================================================================================
 ;    Application implementation
 ; ==================================================================================================
-
-; --------------------------------------------------------------------------------------------------
-; Method:     Application.Done
-; Purpose:    Finalize the SDI application object.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method Application.Done, uses xsi
-  SetObject xsi
-
-  ACall xsi.Done
-MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init

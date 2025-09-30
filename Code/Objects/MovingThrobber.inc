@@ -565,7 +565,7 @@ Method MovingThrobber.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStru
   mov xbx, pDefStruc
   assume xbx:PDEF_MTHROBBER
   mov ecx, [xbx].dExStyle
-  or ecx, WS_EX_LAYERED
+  or ecx, WS_EX_LAYERED or WS_EX_NOACTIVATE
   invoke CreateWindowEx, ecx, offset(szMovingThrobberClass), [xbx].pTitle, \
                          [xbx].dStyle, [xbx].sdPosX, [xbx].sdPosY, 1, 1, \
                          hParent, [xbx].xCtlID, hInstance, xsi
