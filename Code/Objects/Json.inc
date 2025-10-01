@@ -267,7 +267,7 @@ JsonEscDecode endp
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  JsonEscEncode
-; Purpose:    Translate a plain wide string to a wide string containig JSON escape sequences.
+; Purpose:    Translate a plain string to a WIDE string containig JSON escape sequences.
 ; Arguments:  Arg1: -> Input ANSI/WIDE string accoring to TARGET_STR_TYPE.
 ;             Arg2: -> Output WIDE buffer.
 ;             Arg3: Input chars.

@@ -22,7 +22,7 @@ Debug=0
 11=OpenAiApp_Shared.inc
 12=..\..\..\Code\Objects\WinApp.inc
 13=..\..\..\Code\Objects\Stream.inc
-14=..\..\..\Code\Objects\SdiApp.inc
+14=Res\ApplicationDlg.rc
 15=..\..\..\Code\Objects\Primer.inc
 16=..\..\..\Code\Objects\ObjIDs.inc
 17=..\..\..\Code\Macros\WinHelpers.inc
@@ -105,7 +105,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 11=2
 12=6
 13=6
-14=6
+14=3
 15=6
 16=1
 17=7
@@ -162,7 +162,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -197,20 +197,20 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,2486
-1=0,0,0,0,521
+2=0,0,0,0,2196
+1=0,0,0,0,525
 6=0,0,1456,414,59484
 4=0,0,0,0,786
 31=0,0,1213,691,1768
-8=0,0,777,591,6278
+8=0,0,777,591,7946
 7=0,0,0,0,151
-9=0,0,0,0,46210
+9=0,0,0,0,74115
 10=0,0,0,0,8243
 5=0,0,0,0,4185
 3=0,0,0,0,3946
 11=0,0,1783,588,830
 15=0,0,0,0,6542
-14=0,0,0,0,491
+14=
 13=0,0,0,0,7167
 12=0,0,0,0,310
 16=
@@ -225,14 +225,14 @@ ProductVer4Range=0
 22=0,0,0,0,941
 26=
 27=0,0,0,0,0
-33=0,0,0,0,18789
+33=0,0,0,0,1974
 32=0,0,0,0,11491
 30=0,0,0,0,6051
-34=0,0,0,0,30320
-29=0,0,0,0,731
+34=0,0,0,0,9483
+29=0,0,0,0,5274
 35=0,0,0,0,8460
 28=0,0,0,0,0
-36=0,0,0,0,1066
+36=0,0,0,0,2547
 37=0,0,0,0
 38=0,0,0,0,1740
 39=0,0,0,0,19439
@@ -255,16 +255,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="DlgApp.Run"
-2="WM_CLOSE"
-3=".if xax == [xbx].MoveChildWndInfo.hParent"
-4="DefDlgProc"
-5="DL_CHILD_INFO"
-6="szIcoName"
-7="hIcon"
-8="OnCommand"
-9="THROBBER_SIZE"
-10="Init"
+1="dPromptLength"
+2="pResponse"
+3="TARGETSTRTYPE"
+4="int 3"
+5="GetResponse"
+6="DlgApp.Run"
+7="WM_CLOSE"
+8=".if xax == [xbx].MoveChildWndInfo.hParent"
+9="DefDlgProc"
+10="DL_CHILD_INFO"
 [Collapse]
 1=
 2=
@@ -380,9 +380,9 @@ ProductVer4Range=0
 37=
 38=
 [AutoLoad]
-AutoLoad=1,2,36,3,25
+AutoLoad=1,2,36,29,40,21
 [PTimer]
-PTimer=1040189853
+PTimer=1066385134
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -413,3 +413,4 @@ GroupExpand=1,1,1,0,0,1,1,0
 34=
 39=
 33=
+36=

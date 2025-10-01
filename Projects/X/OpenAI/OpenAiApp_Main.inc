@@ -54,6 +54,7 @@ Method Application.CtlsGet, uses xbx xdi xsi
   mov xbx, $invoke(GetDlgItem, [xsi].hWnd, IDC_EDT_PROMPT)
   mov edi, $32($invoke(GetWindowTextLength, xbx))
   mov [xsi].pPrompt, $invoke(StrAlloc, edi)
+  inc edi                                               ;Total chars, incl. ZTC
   invoke GetWindowText, xbx, xax, edi
 MethodEnd
 
@@ -139,23 +140,33 @@ Method Application.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall [xsi].Throbber::MovingThrobber.Start
 
     ;Send the prompt to the AI
-    ;DbgStr [xsi].pPrompt
+
     if 1
-    OCall [xsi].AI::OpenAI.SendPrompt, [xsi].pPrompt
-    mov xdi, $OCall([xsi].AI::OpenAI.GetResponse)       ;xdi -> Answer
-    .if xdi == NULL
-      invoke MessageBox, [xsi].hWnd, $OfsCStr("Ups, something went wrong."), \
-                         $OfsCStr("Error"), MB_OK or MB_ICONERROR
+    OCall [xsi].AI::OpenAI.SendPrompt, [xsi].pPrompt        ;returns a hRequest
+    .if xax != 0
+      OCall [xsi].AI::OpenAI.GetResponse, xax
+;      DbgStrA [xsi].AI.MemStream.pBuffer
+      .if eax != FALSE
+        OCall [xsi].AI::OpenAI.ExtractAnswer
+        .if xax != NULL
+          mov xdi, xax
+          invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_ANSWER, xdi
+          invoke StrDispose, xdi
+          OCall [xsi].Throbber::MovingThrobber.Stop
+          jmp @@EOM
+        .endif
+      .endif
     .endif
+    DbgApiError
+    OCall [xsi].Throbber::MovingThrobber.Stop
+    invoke MessageBox, [xsi].hWnd, $OfsCStr("Ups, something went wrong."), \
+                       $OfsCStr("Error"), MB_OK or MB_ICONERROR
+
     else
     invoke Sleep, 2500
-    xor edi, edi
-    endif
-
-    ;Hide the throbber and show the AI answer
     OCall [xsi].Throbber::MovingThrobber.Stop
-    invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_ANSWER, xdi
-    invoke StrDispose, xdi
+
+    endif
 
   .else
     invoke DefWindowProc, [xsi].hWnd, WM_COMMAND, wParam, lParam

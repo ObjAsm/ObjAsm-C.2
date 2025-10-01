@@ -16,7 +16,8 @@
 
 Object OpenAI,, CloudAI
   RedefineMethod    Init,             POINTER, PSTRING  ;-> Owner object, -> AiModel
-  RedefineMethod    GetResponse
+  RedefineMethod    ExtractAnswer
+  RedefineMethod    GetResponse,      HINTERNET
   RedefineMethod    SendPrompt,       PSTRING
 
   DefineVariable    pAiModel,         PSTRING,      NULL
@@ -106,6 +107,81 @@ String cOpenAiUrlPath,  "/v1/responses"
 ;ExtendStringA       '}'
 ;$$ResponseLen = ??StrLength
 
+
+;StringA cResponse,  '{', CRLF
+;ExtendStringA       '  "id": "resp_01413fda88a53e130068dd5cd11ae081978770b77b8ab798e6",', CRLF
+;ExtendStringA       '  "object": "response",', CRLF
+;ExtendStringA       '  "created_at": 1759337681,', CRLF
+;ExtendStringA       '  "status": "completed",', CRLF
+;ExtendStringA       '  "background": false,', CRLF
+;ExtendStringA       '  "billing": {', CRLF
+;ExtendStringA       '    "payer": "developer"', CRLF
+;ExtendStringA       '  },', CRLF
+;ExtendStringA       '  "error": null,', CRLF
+;ExtendStringA       '  "incomplete_details": null,', CRLF
+;ExtendStringA       '  "instructions": null,', CRLF
+;ExtendStringA       '  "max_output_tokens": null,', CRLF
+;ExtendStringA       '  "max_tool_calls": null,', CRLF
+;ExtendStringA       '  "model": "gpt-5-2025-08-07",', CRLF
+;ExtendStringA       '  "output": [', CRLF
+;ExtendStringA       '    {', CRLF
+;ExtendStringA       '      "id": "rs_01413fda88a53e130068dd5cd1f438819794276cc02a4101e9",', CRLF
+;ExtendStringA       '      "type": "reasoning",', CRLF
+;ExtendStringA       '      "summary": []', CRLF
+;ExtendStringA       '    },', CRLF
+;ExtendStringA       '    {', CRLF
+;ExtendStringA       '      "id": "msg_01413fda88a53e130068dd5ce04b6c819797539abb487fff6b",', CRLF
+;ExtendStringA       '      "type": "message",', CRLF
+;ExtendStringA       '      "status": "completed",', CRLF
+;ExtendStringA       '      "content": [', CRLF
+;ExtendStringA       '        {', CRLF
+;ExtendStringA       '          "type": "output_text",', CRLF
+;ExtendStringA       '          "annotations": [],', CRLF
+;ExtendStringA       '          "logprobs": [],', CRLF
+;ExtendStringA       '          "text": "On Tuesday, the sun didn\u2019t rise, so we lit candles and took turns being dawn. By Friday, the sun returned, humbled; we kept the candles anyway, just in case it forgot us again."', CRLF
+;ExtendStringA       '        }', CRLF
+;ExtendStringA       '      ],', CRLF
+;ExtendStringA       '      "role": "assistant"', CRLF
+;ExtendStringA       '    }', CRLF
+;ExtendStringA       '  ],', CRLF
+;ExtendStringA       '  "parallel_tool_calls": true,', CRLF
+;ExtendStringA       '  "previous_response_id": null,', CRLF
+;ExtendStringA       '  "prompt_cache_key": null,', CRLF
+;ExtendStringA       '  "reasoning": {', CRLF
+;ExtendStringA       '    "effort": "medium",', CRLF
+;ExtendStringA       '    "summary": null', CRLF
+;ExtendStringA       '  },', CRLF
+;ExtendStringA       '  "safety_identifier": null,', CRLF
+;ExtendStringA       '  "service_tier": "default",', CRLF
+;ExtendStringA       '  "store": true,', CRLF
+;ExtendStringA       '  "temperature": 1.0,', CRLF
+;ExtendStringA       '  "text": {', CRLF
+;ExtendStringA       '    "format": {', CRLF
+;ExtendStringA       '      "type": "text"', CRLF
+;ExtendStringA       '    },', CRLF
+;ExtendStringA       '    "verbosity": "medium"', CRLF
+;ExtendStringA       '  },', CRLF
+;ExtendStringA       '  "tool_choice": "auto",', CRLF
+;ExtendStringA       '  "tools": [],', CRLF
+;ExtendStringA       '  "top_logprobs": 0,', CRLF
+;ExtendStringA       '  "top_p": 1.0,', CRLF
+;ExtendStringA       '  "truncation": "disabled",', CRLF
+;ExtendStringA       '  "usage": {', CRLF
+;ExtendStringA       '    "input_tokens": 12,', CRLF
+;ExtendStringA       '    "input_tokens_details": {', CRLF
+;ExtendStringA       '      "cached_tokens": 0', CRLF
+;ExtendStringA       '    },', CRLF
+;ExtendStringA       '    "output_tokens": 816,', CRLF
+;ExtendStringA       '    "output_tokens_details": {', CRLF
+;ExtendStringA       '      "reasoning_tokens": 768', CRLF
+;ExtendStringA       '    },', CRLF
+;ExtendStringA       '    "total_tokens": 828', CRLF
+;ExtendStringA       '  },', CRLF
+;ExtendStringA       '  "user": null,', CRLF
+;ExtendStringA       '  "metadata": {}', CRLF
+;ExtendStringA       '}'
+;$$ResponseLen = ??StrLength
+
 .code
 ; ==================================================================================================
 ;    OpenAI implementation
@@ -126,18 +202,19 @@ Method OpenAI.Init,, pOwner:POINTER, pAiModel:PSTRING
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     OpenAI.GetResponse
-; Purpose:    Retrieve AI response.
+; Method:     OpenAI.ExtractAnswer
+; Purpose:    Extract AI answer from the returned response.
 ; Arguments:  None.
 ; Return:     xax -> Response string. Must be disposed using StrDispose when no longer needed.
 
-Method OpenAI.GetResponse, uses xbx xdi xsi
-  local Response:$Obj(Json), pResponse:PSTRING
+Method OpenAI.ExtractAnswer, uses xbx xdi xsi
+  local Response:$Obj(Json), pAnswer:PSTRING
   local pOutput:PJSON_PROPERTY, pOutputObject:PJSON_PROPERTY
   local pContent:PJSON_PROPERTY, pContentObject:PJSON_PROPERTY
 
   SetObject xsi
-  mov pResponse, NULL
+  mov pAnswer, NULL
+  mov [xsi].MemStream.dPosition, 0
   New Response::Json
   OCall Response::Json.Init, xsi
   OCall Response::Json.Read, addr [xsi].MemStream
@@ -167,8 +244,8 @@ Method OpenAI.GetResponse, uses xbx xdi xsi
           .if eax == 0
             OCall Response::Json.GetProperty, pContentObject, $OfsCStr("text")
             .break .if xax == NULL
-            mov pResponse, $invoke(StrNew, [xax].JSON_PROPERTY.pValue)
-            jmp @@Exit
+            mov pAnswer, $invoke(StrNew, [xax].JSON_PROPERTY.pValue)
+            jmp @F
           .endif
           inc edi
         .endw
@@ -177,71 +254,124 @@ Method OpenAI.GetResponse, uses xbx xdi xsi
     .endw
   .endif
 
-@@Exit:
-  mov xax, pResponse
+@@:
+  mov xax, pAnswer
 MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     OpenAI.GetResponse
+; Purpose:    Get the response from the server.
+; Arguments:  Arg1: hRequest.
+; Return:     xax = TRUE if succeeded, otherwise FALSE.
+; Note:       The response is a JSON (utf-8).
+
+Method OpenAI.GetResponse, uses xbx xdi xsi, hRequest:HINTERNET 
+  local dBytesRead:DWORD, dResult:DWORD
+  
+  SetObject xsi
+
+  mov dResult, FALSE
+  mov ebx, RCV_BUFFER_SIZE
+  mov xdi, [xsi].MemStream.pBuffer
+  mov [xsi].MemStream.dPosition, 0
+  .repeat
+    invoke InternetReadFile, hRequest, xdi, ebx, addr dBytesRead
+    mov ecx, dBytesRead
+    .break .if eax == 0
+    .if ecx == 0
+      mov dResult, TRUE
+      .break
+    .endif
+    add [xsi].MemStream.dCurrSize, ecx
+    add xdi, xcx
+    sub ebx, ecx
+    .if ebx == 0
+      mov edx, [xsi].MemStream.dLimit
+      add edx, RCV_BUFFER_SIZE
+      OCall [xsi].MemStream::MemoryStream.SetCapacity, edx
+      .break .if eax == 0
+      mov ebx, RCV_BUFFER_SIZE
+    .endif
+  .until FALSE
+  .if ebx != 0
+    mov CHRA ptr [xdi], 0
+  .endif
+
+  invoke InternetCloseHandle, hRequest
+;  DbgStrA [xsi].MemStream.pBuffer
+;  DbgDec [xsi].MemStream.dCurrSize
+  mov eax, dResult
+MethodEnd
+
+;; --------------------------------------------------------------------------------------------------
+;; Method:     OpenAI.GetResponse
+;; Purpose:    Get the response from the server.
+;; Arguments:  Arg1: hRequest.
+;; Return:     xax = TRUE if succeeded, otherwise FALSE.
+;
+;Method OpenAI.GetResponse, uses xbx xdi xsi, hRequest:HINTERNET 
+;  SetObject xsi
+;;  Test response
+;  mov [xsi].MemStream.dPosition, 0
+;  invoke StrCopyA, [xsi].MemStream.pBuffer, addr cResponse
+;  m2m [xsi].MemStream.dCurrSize, $$ResponseLen, ecx
+;  DbgStrA [xsi].MemStream.pBuffer
+;  DbgDec [xsi].MemStream.dCurrSize
+;  mov eax, TRUE
+;MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     OpenAI.SendPrompt
 ; Purpose:    Send a prompt to OpenAI.
 ; Arguments:  Arg1: -> PSTRING.
-; Return:     Nothing.
+; Return:     xax = hRequest if succeeded, otherwise 0.
+; Note:       The transmitted body may be a WIDE string!
 
 Method OpenAI.SendPrompt, uses xbx xdi xsi, pPrompt:PSTRING
   local hRequest:HINTERNET, dBytesRead:DWORD
+  local pEncodedPrompt:POINTER, dEncodedPromptLength:DWORD
   local pBody:POINTER, dBodySize:DWORD
   local cExpandedHeaders[4096]:CHR
 
   SetObject xsi
+  mov hRequest, 0
   .if pPrompt != NULL
     invoke StrLength, pPrompt
-    add eax, 200*sizeof(CHR)                            ;Add 200 extra CHRs for the rest of the JSON
+    mov ebx, eax
+    inc ebx                                             ;Add ZTC
+    lea eax, [8*ebx]                                    ;At most 4 time the original length but as CHRW
     MemAlloc eax
     .if xax != NULL
-      mov pBody, xax
-      mov xbx, pBody
-      WriteF xbx, "{\`model\`:\`¦ST\`,\`input\`:\`¦ST\`}", [xsi].pAiModel, pPrompt
-      sub xbx, pBody                                    ;ebx = body size without ZTC
-      invoke HttpOpenRequest, [xsi].hConnect, $OfsCStr("POST"), addr cOpenAiUrlPath, \
-                              NULL, NULL, NULL, \
-                              INTERNET_FLAG_RELOAD or INTERNET_FLAG_EXISTING_CONNECT or \
-                              INTERNET_FLAG_SECURE, NULL
-      .if xax != 0
-        mov hRequest, xax
-        invoke ExpandEnvironmentStrings, addr cOpenAiHeaders, \
-                                         addr cExpandedHeaders, lengthof(cExpandedHeaders)
-        invoke HttpAddRequestHeaders, hRequest, addr cExpandedHeaders, -1, 0
-        invoke HttpSendRequest, hRequest, NULL, 0, pBody, ebx
-
-        mov ebx, RCV_BUFFER_SIZE
-        mov xdi, [xsi].MemStream.pBuffer
-        .repeat
-          invoke InternetReadFile, hRequest, xdi, ebx, addr dBytesRead
-          mov ecx, dBytesRead
-          .break .if eax == 0 || ecx == 0
-          add [xsi].MemStream.dCurrSize, ecx
-          add xdi, xcx
-          sub ebx, ecx
-          .if ebx == 0
-            mov edx, [xsi].MemStream.dLimit
-            add edx, RCV_BUFFER_SIZE
-            OCall [xsi].MemStream::MemoryStream.SetCapacity, edx
-            .break .if eax == 0
-            mov ebx, RCV_BUFFER_SIZE
+      mov pEncodedPrompt, xax                           ;EncodedPrompt is a buffer od CHRW!
+      invoke JsonEscEncode, pPrompt, pEncodedPrompt, ebx
+      mov dEncodedPromptLength, eax                     ;Includes the ZTC
+      add eax, 200*sizeof(CHRW)                         ;Add 200 extra CHRs for the rest of the JSON
+      MemAlloc eax
+      .if xax != NULL
+        mov pBody, xax
+        mov xbx, pBody
+        WriteF xbx, "{\`model\`:\`¦ST\`,\`input\`:\`¦SU\`}", [xsi].pAiModel, pEncodedPrompt
+        sub xbx, pBody                                    ;ebx = body size without ZTC
+        invoke HttpOpenRequest, [xsi].hConnect, $OfsCStr("POST"), addr cOpenAiUrlPath, \
+                                NULL, NULL, NULL, \
+                                INTERNET_FLAG_RELOAD or INTERNET_FLAG_EXISTING_CONNECT or \
+                                INTERNET_FLAG_SECURE, NULL
+        .if xax != 0
+          mov hRequest, xax
+          invoke ExpandEnvironmentStrings, addr cOpenAiHeaders, \
+                                           addr cExpandedHeaders, lengthof(cExpandedHeaders)
+          invoke HttpAddRequestHeaders, hRequest, addr cExpandedHeaders, -1, 0
+          invoke HttpSendRequest, hRequest, NULL, 0, pBody, ebx
+          .if eax == 0
+            invoke InternetCloseHandle, hRequest
+            mov hRequest, 0
           .endif
-        .until FALSE
-        .if ebx != 0
-          mov CHRA ptr [xdi], 0
         .endif
-
       .endif
-    ;  Test response
-    ;  invoke StrCopyA, [xsi].MemStream.pBuffer, addr cResponse
-    ;  m2m [xsi].MemStream.dCurrSize, $$ResponseLen, ecx
-;      DbgStrA [xsi].MemStream.pBuffer
-;      DbgDec [xsi].MemStream.dCurrSize
+      MemFree pEncodedPrompt
     .endif
   .endif
+  mov xax, hRequest
 MethodEnd
 
 endif
