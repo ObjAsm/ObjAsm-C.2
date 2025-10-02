@@ -28,7 +28,7 @@ ObjectEnd
 ; ==================================================================================================
 
 if IMPLEMENT
-RCV_BUFFER_SIZE equ 4*PAGESIZE         ;Reserve 4 pages, should be enough
+STRM_BUFFER_SIZE equ 4*PAGESIZE         ;Reserve 4 pages, should be enough
 
 
 .code
@@ -70,12 +70,12 @@ Method CloudAI.Init, uses xsi, pOwner:POINTER, pUrlHost:PSTRING
   mov [xsi].hInternet, 0
   mov [xsi].hConnect, 0
   
-  OCall [xsi].MemStream::MemoryStream.Init, xsi, RCV_BUFFER_SIZE, RCV_BUFFER_SIZE, 100*RCV_BUFFER_SIZE
+  OCall [xsi].MemStream::MemoryStream.Init, xsi, STRM_BUFFER_SIZE, STRM_BUFFER_SIZE, 100*STRM_BUFFER_SIZE
 
   invoke InternetOpen, $OfsCStr("ObjAsmClient/1.0"), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0
   .if xax != 0
     mov [xsi].hInternet, xax
-    mov dRecieveTimeout, 60*1000                        ;60 secs
+    mov dRecieveTimeout, 10*60*1000                     ;10 Min
     invoke InternetSetOption, [xsi].hInternet, INTERNET_OPTION_RECEIVE_TIMEOUT, \
                               addr dRecieveTimeout, sizeof dRecieveTimeout
     invoke InternetConnect, [xsi].hInternet, pUrlHost, \

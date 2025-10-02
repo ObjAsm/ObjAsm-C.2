@@ -162,7 +162,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=1
+MilestoneOnDateDate=2
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -197,18 +197,18 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,2196
-1=0,0,0,0,525
+2=0,0,0,0,1332
+1=0,0,0,0,2339
 6=0,0,1456,414,59484
 4=0,0,0,0,786
 31=0,0,1213,691,1768
 8=0,0,777,591,7946
 7=0,0,0,0,151
-9=0,0,0,0,74115
+9=0,0,0,0,23784
 10=0,0,0,0,8243
 5=0,0,0,0,4185
 3=0,0,0,0,3946
-11=0,0,1783,588,830
+11=0,0,1783,588,523
 15=0,0,0,0,6542
 14=
 13=0,0,0,0,7167
@@ -225,17 +225,17 @@ ProductVer4Range=0
 22=0,0,0,0,941
 26=
 27=0,0,0,0,0
-33=0,0,0,0,1974
+33=0,0,0,0,7410
 32=0,0,0,0,11491
 30=0,0,0,0,6051
-34=0,0,0,0,9483
-29=0,0,0,0,5274
+34=0,0,0,0,2718
+29=0,0,0,0,14842
 35=0,0,0,0,8460
 28=0,0,0,0,0
-36=0,0,0,0,2547
+36=0,0,0,0,2757
 37=0,0,0,0
 38=0,0,0,0,1740
-39=0,0,0,0,19439
+39=0,0,0,0,9147
 40=0,0,0,0
 
 [BookMark]
@@ -255,16 +255,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="dPromptLength"
-2="pResponse"
-3="TARGETSTRTYPE"
-4="int 3"
-5="GetResponse"
-6="DlgApp.Run"
-7="WM_CLOSE"
-8=".if xax == [xbx].MoveChildWndInfo.hParent"
-9="DefDlgProc"
-10="DL_CHILD_INFO"
+1="TRUE"
+2="JsonEscDecode"
+3="Write"
+4="GUI_Template"
+5="OpenAIApp"
+6="DskStream"
+7="AddData"
+8="JsonBody"
+9="RCV_BUFFER_SIZE"
+10="dPromptLength"
 [Collapse]
 1=
 2=
@@ -355,7 +355,7 @@ ProductVer4Range=0
 40=,
 36=
 35=
-34=1073741824,1407418882,1006371715,3
+34=,1407385602,1006371715,3
 33=,,
 29=
 28=,
@@ -380,9 +380,9 @@ ProductVer4Range=0
 37=
 38=
 [AutoLoad]
-AutoLoad=1,2,36,29,40,21
+AutoLoad=1,2,36,29,34,9
 [PTimer]
-PTimer=1066385134
+PTimer=1076877634
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

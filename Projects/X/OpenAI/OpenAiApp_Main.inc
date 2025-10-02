@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      GUI_Template_Main.inc
+; Title:      OpenAiApp_Main.inc
 ; Author:     G. Friedrich
 ; Purpose:    ObjAsm OpenAI Application.
 ; Notes:      See OpenAIApp.asm

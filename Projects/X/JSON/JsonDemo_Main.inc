@@ -99,7 +99,7 @@ Method Application.Init, uses xbx xsi
   DbgStr [xax].JSON_PROPERTY.pName
   DbgStr [xax].JSON_PROPERTY.pValue
 
-  OCall xbx::Json.Write, addr DskStream
+  OCall xbx::Json.Write, addr DskStream, 0
   Destroy xbx
   OCall DskStream::DiskStream.Done
 
@@ -110,7 +110,7 @@ Method Application.Init, uses xbx xsi
                                     0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
   mov xbx, $New(Json)
   OCall xbx::Json.Init, xsi
-  OCall xbx::Json.Read, addr DskStream
+  OCall xbx::Json.Read, addr DskStream, 0
 
   OCall xbx::Json.GetProperty, addr [xbx].$Obj(Json).RootProperty, $OfsCStr("Person")
   mov pPerson, xax
@@ -131,7 +131,7 @@ Method Application.Init, uses xbx xsi
   DbgDec eax
   invoke JsonEscEncode, $OfsCStrW("123§"), addr wBuffer, sizeof(wBuffer)
   DbgStr wBuffer
-  invoke JsonEscDecode, addr wBuffer, addr wBuffer, sizeof(wBuffer)
+  invoke JsonEscDecode, addr wBuffer, addr wBuffer, sizeof(wBuffer), 0
   DbgStr wBuffer
 
 MethodEnd

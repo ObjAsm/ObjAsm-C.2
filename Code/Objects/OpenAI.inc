@@ -217,7 +217,7 @@ Method OpenAI.ExtractAnswer, uses xbx xdi xsi
   mov [xsi].MemStream.dPosition, 0
   New Response::Json
   OCall Response::Json.Init, xsi
-  OCall Response::Json.Read, addr [xsi].MemStream
+  OCall Response::Json.Read, addr [xsi].MemStream, JSON_OPTION_CRLF
   OCall Response::Json.GetProperty, addr Response.RootProperty, $OfsCStr("output")
   .if xax != NULL
     mov pOutput, xax
@@ -267,11 +267,10 @@ MethodEnd
 
 Method OpenAI.GetResponse, uses xbx xdi xsi, hRequest:HINTERNET 
   local dBytesRead:DWORD, dResult:DWORD
-  
-  SetObject xsi
 
+  SetObject xsi
   mov dResult, FALSE
-  mov ebx, RCV_BUFFER_SIZE
+  mov ebx, STRM_BUFFER_SIZE
   mov xdi, [xsi].MemStream.pBuffer
   mov [xsi].MemStream.dPosition, 0
   .repeat
@@ -287,10 +286,10 @@ Method OpenAI.GetResponse, uses xbx xdi xsi, hRequest:HINTERNET
     sub ebx, ecx
     .if ebx == 0
       mov edx, [xsi].MemStream.dLimit
-      add edx, RCV_BUFFER_SIZE
+      add edx, STRM_BUFFER_SIZE
       OCall [xsi].MemStream::MemoryStream.SetCapacity, edx
       .break .if eax == 0
-      mov ebx, RCV_BUFFER_SIZE
+      mov ebx, STRM_BUFFER_SIZE
     .endif
   .until FALSE
   .if ebx != 0
@@ -298,8 +297,6 @@ Method OpenAI.GetResponse, uses xbx xdi xsi, hRequest:HINTERNET
   .endif
 
   invoke InternetCloseHandle, hRequest
-;  DbgStrA [xsi].MemStream.pBuffer
-;  DbgDec [xsi].MemStream.dCurrSize
   mov eax, dResult
 MethodEnd
 
@@ -333,42 +330,39 @@ Method OpenAI.SendPrompt, uses xbx xdi xsi, pPrompt:PSTRING
   local pBody:POINTER, dBodySize:DWORD
   local cExpandedHeaders[4096]:CHR
 
+  local JsonBody:$Obj(Json)
+  local pModel:PJSON_PROPERTY, pInput:PJSON_PROPERTY
+
   SetObject xsi
   mov hRequest, 0
+  mov xdi, [xsi].MemStream.pBuffer
+  mov [xsi].MemStream.dPosition, 0
+  mov [xsi].MemStream.dCurrSize, 0
+
   .if pPrompt != NULL
-    invoke StrLength, pPrompt
-    mov ebx, eax
-    inc ebx                                             ;Add ZTC
-    lea eax, [8*ebx]                                    ;At most 4 time the original length but as CHRW
-    MemAlloc eax
-    .if xax != NULL
-      mov pEncodedPrompt, xax                           ;EncodedPrompt is a buffer od CHRW!
-      invoke JsonEscEncode, pPrompt, pEncodedPrompt, ebx
-      mov dEncodedPromptLength, eax                     ;Includes the ZTC
-      add eax, 200*sizeof(CHRW)                         ;Add 200 extra CHRs for the rest of the JSON
-      MemAlloc eax
-      .if xax != NULL
-        mov pBody, xax
-        mov xbx, pBody
-        WriteF xbx, "{\`model\`:\`¦ST\`,\`input\`:\`¦SU\`}", [xsi].pAiModel, pEncodedPrompt
-        sub xbx, pBody                                    ;ebx = body size without ZTC
-        invoke HttpOpenRequest, [xsi].hConnect, $OfsCStr("POST"), addr cOpenAiUrlPath, \
-                                NULL, NULL, NULL, \
-                                INTERNET_FLAG_RELOAD or INTERNET_FLAG_EXISTING_CONNECT or \
-                                INTERNET_FLAG_SECURE, NULL
-        .if xax != 0
-          mov hRequest, xax
-          invoke ExpandEnvironmentStrings, addr cOpenAiHeaders, \
-                                           addr cExpandedHeaders, lengthof(cExpandedHeaders)
-          invoke HttpAddRequestHeaders, hRequest, addr cExpandedHeaders, -1, 0
-          invoke HttpSendRequest, hRequest, NULL, 0, pBody, ebx
-          .if eax == 0
-            invoke InternetCloseHandle, hRequest
-            mov hRequest, 0
-          .endif
-        .endif
+    New JsonBody::Json
+    OCall JsonBody::Json.Init, xsi
+    mov JsonBody.RootProperty.dType, JSON_TYPE_OBJECT
+    OCall JsonBody::Json.AddData, addr JsonBody.RootProperty, $OfsCStr("model"), JSON_TYPE_STRING, [xsi].pAiModel
+    OCall JsonBody::Json.AddData, addr JsonBody.RootProperty, $OfsCStr("input"), JSON_TYPE_STRING, pPrompt
+
+    OCall JsonBody::Json.Write, addr [xsi].MemStream, JSON_OPTION_CRLF
+    OCall JsonBody::Json.Done
+
+    invoke HttpOpenRequest, [xsi].hConnect, $OfsCStr("POST"), addr cOpenAiUrlPath, \
+                            NULL, NULL, NULL, \
+                            INTERNET_FLAG_RELOAD or INTERNET_FLAG_EXISTING_CONNECT or \
+                            INTERNET_FLAG_SECURE, NULL
+    .if xax != 0
+      mov hRequest, xax
+      invoke ExpandEnvironmentStrings, addr cOpenAiHeaders, \
+                                       addr cExpandedHeaders, lengthof(cExpandedHeaders)
+      invoke HttpAddRequestHeaders, hRequest, addr cExpandedHeaders, -1, 0
+      invoke HttpSendRequest, hRequest, NULL, 0, [xsi].MemStream.pBuffer, [xsi].MemStream.dCurrSize
+      .if eax == 0
+        invoke InternetCloseHandle, hRequest
+        mov hRequest, 0
       .endif
-      MemFree pEncodedPrompt
     .endif
   .endif
   mov xax, hRequest

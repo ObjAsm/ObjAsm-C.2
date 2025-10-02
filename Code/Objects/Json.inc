@@ -63,6 +63,8 @@ JSON_PROPERTY struc
   ends
 JSON_PROPERTY ends
 
+JSON_OPTION_CRLF  equ   BIT00
+
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Json
 ; Purpose:    This object provides the functionality read and write information in JSON format.
@@ -122,9 +124,9 @@ Object Json, JsonID, Streamable
   VirtualMethod     GetNextProperty,  PJSON_PROPERTY
   VirtualMethod     GetPrevProperty,  PJSON_PROPERTY
   VirtualMethod     GetProperty,      PJSON_PROPERTY, PSTRING
-  VirtualMethod     Read,             $ObjPtr(Stream)
-  VirtualMethod     Write,            $ObjPtr(Stream)
-  VirtualMethod     WriteProperty,    $ObjPtr(Stream), PJSON_PROPERTY, POINTER
+  VirtualMethod     Read,             $ObjPtr(Stream), DWORD
+  VirtualMethod     Write,            $ObjPtr(Stream), DWORD
+  VirtualMethod     WriteProperty,    $ObjPtr(Stream), PJSON_PROPERTY, POINTER, DWORD
 
   DefineVariable    RootProperty,     JSON_PROPERTY,  {, {}, JSON_TYPE_ERROR, NULL}
 ObjectEnd
@@ -158,7 +160,7 @@ JsonEscDecodeGetHex macro
   .endif
 endm
 
-JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharCount:DWORD
+JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharCount:DWORD, dOptions:DWORD
 .const
   JsonEscDecodeJumpTable POINTER @@0, @@1, @@2, @@3, @@4, @@5
 
@@ -214,8 +216,13 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharC
       add xdi, sizeof(CHRW)
       sub ebx, 2
     .elseif ax == 'n'
-      mov CHRW ptr [xdi], 10                            ;Linefeed
-      add xdi, sizeof(CHRW)
+      .ifBitSet dOptions, BIT00
+        mov DCHRW ptr [xdi], 10*256*256+13              ;CR + LF (Windows)
+        add xdi, 2*sizeof(CHRW)
+      .else
+        mov CHRW ptr [xdi], 10                          ;Linefeed
+        add xdi, sizeof(CHRW)
+      .endif
       sub ebx, 2
     .elseif ax == 'r'
       mov CHRW ptr [xdi], 13                            ;Carriage return
@@ -687,9 +694,9 @@ JsonSkipBlanks        proto
 JsonCreateProperty    proto :PJSON_PROPERTY, :PSTRING
 JsonGetStringEnd      proto
 JsonGetNumberEnd      proto
-JsonGetArrayContent   proto :PJSON_PROPERTY
-JsonGetObjectContent  proto :PJSON_PROPERTY
-JsonGetValue          proto :PJSON_PROPERTY
+JsonGetArrayContent   proto :PJSON_PROPERTY, :DWORD
+JsonGetObjectContent  proto :PJSON_PROPERTY, :DWORD
+JsonGetValue          proto :PJSON_PROPERTY, :DWORD
 
 JsonSkipBlanks proc
   ANNOTATION prv:xbx xsi
@@ -790,7 +797,7 @@ JsonGetNumberEnd proc                                   ;On entry, xsi -> first 
   ret
 JsonGetNumberEnd endp
 
-JsonGetArrayContent proc pParent:PJSON_PROPERTY
+JsonGetArrayContent proc pParent:PJSON_PROPERTY, dOptions:DWORD
   ANNOTATION prv:xbx xsi
 
 ;  DbgText "JsonGetArrayContent"
@@ -810,7 +817,7 @@ JsonGetArrayContent proc pParent:PJSON_PROPERTY
     .endif
 
     invoke JsonCreateProperty, pParent, NULL            ;Pass xbx & xsi implicitly
-    invoke JsonGetValue, xax                            ;Pass xbx & xsi implicitly
+    invoke JsonGetValue, xax, dOptions                  ;Pass xbx & xsi implicitly
     .break .if eax == FALSE
 
     .if CHRW ptr [xsi] == ","
@@ -831,7 +838,7 @@ JsonGetArrayContent proc pParent:PJSON_PROPERTY
   ret
 JsonGetArrayContent endp
 
-JsonGetObjectContent proc pParent:PJSON_PROPERTY
+JsonGetObjectContent proc pParent:PJSON_PROPERTY, dOptions:DWORD
   ANNOTATION prv:xbx xdi xsi
   local pBegin:POINTER, dSize:DWORD
 
@@ -878,7 +885,7 @@ JsonGetObjectContent proc pParent:PJSON_PROPERTY
       .endif
       add xsi, sizeof(CHRW)
       invoke JsonCreateProperty, pParent, xdi           ;Pass xbx & xsi implicitly
-      invoke JsonGetValue, xax                          ;Pass xbx & xsi implicitly
+      invoke JsonGetValue, xax, dOptions                ;Pass xbx & xsi implicitly
       .break .if eax == FALSE
 
       .if CHRW ptr [xsi] == ","
@@ -923,7 +930,7 @@ JsonCreateProperty proc pParent:PJSON_PROPERTY, pName:PSTRING
   ret
 JsonCreateProperty endp
 
-JsonGetValue proc pProperty:PJSON_PROPERTY
+JsonGetValue proc pProperty:PJSON_PROPERTY, dOptions:DWORD
   ANNOTATION prv:xbx xdi xsi                            ;xbx -> last byte, xsi -> cur. byte in Buff
   local pBegin:POINTER, pValue:POINTER, dLen:DWORD
 
@@ -949,7 +956,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY
     sub xax, pBegin
     shr eax, 1
     dec eax                                             ;Go back 1 char
-    invoke JsonEscDecode, pBegin, pBegin, eax
+    invoke JsonEscDecode, pBegin, pBegin, eax, dOptions
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
       mov dLen, eax
       mov pValue, $invoke(StrAllocA, eax)
@@ -992,7 +999,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY
   .if ax == "{"
     add xsi, sizeof(CHRW)
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_OBJECT
-    invoke JsonGetObjectContent, xdi
+    invoke JsonGetObjectContent, xdi, dOptions
     .if eax != FALSE
       invoke JsonSkipBlanks
     .endif
@@ -1002,7 +1009,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY
   .if ax == "["
     add xsi, sizeof(CHRW)
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_ARRAY
-    invoke JsonGetArrayContent, xdi
+    invoke JsonGetArrayContent, xdi, dOptions
     .if eax != FALSE
       invoke JsonSkipBlanks
     .endif
@@ -1051,7 +1058,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY
 JsonGetValue endp
 
 
-Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
+Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream), dOptions:DWORD
   local pMemBlockUTF8:POINTER, pMemBlockWide:POINTER
 
   SetObject xdi
@@ -1081,7 +1088,7 @@ Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
           mov [xdi].RootProperty.Children.pLastMember, NULL
 
           ;Read in all values contained in the memory block
-          invoke JsonGetValue, addr [xdi].RootProperty
+          invoke JsonGetValue, addr [xdi].RootProperty, dOptions
 
           MemFree pMemBlockWide
         .endif
@@ -1097,14 +1104,16 @@ MethodEnd
 ; Method:     Json.Write
 ; Purpose:    Write a JSON object to stream (also known as Stringify).
 ; Arguments:  Arg1: -> Stream.
+;             Arg2: Options:
+;                     BIT00 set means use CRLF for \n.
 ; Return:     TRUE if succeeded, otherwise FALSE.
 
-Method Json.Write,, pStream:$ObjPtr(Stream)
+Method Json.Write,, pStream:$ObjPtr(Stream), dOptions:DWORD
   local dIndentation:DWORD
 
   SetObject xcx
   mov dIndentation, 0
-  OCall xcx::Json.WriteProperty, pStream, addr [xcx].RootProperty, addr dIndentation
+  OCall xcx::Json.WriteProperty, pStream, addr [xcx].RootProperty, addr dIndentation, dOptions
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -1112,6 +1121,8 @@ MethodEnd
 ; Purpose:    Write a JSON object to stream (also known as Stringify).
 ; Arguments:  Arg1: -> Stream.
 ;             Arg2: -> JSON_PROPERTY.
+;             Arg3: Options:
+;                     BIT00 set means use CRLF for \n.
 ; Return:     TRUE if succeeded, otherwise FALSE.
 
 IndentNow macro
@@ -1124,7 +1135,7 @@ IndentNow macro
 endm
 
 Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:PJSON_PROPERTY, \
-                                             pIndentation:POINTER
+                                             pIndentation:POINTER, dOptions:DWORD
   local pBufferW:POINTER, pEncBuffer:POINTER
 
   mov xbx, pProperty
@@ -1158,7 +1169,7 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
       .while xsi != NULL
         lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
-        OCall pSelf::Json.WriteProperty, pStream, xax, xdi
+        OCall pSelf::Json.WriteProperty, pStream, xax, xdi, dOptions
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength
@@ -1179,7 +1190,7 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
       .while xsi != NULL
         lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
-        OCall pSelf::Json.WriteProperty, pStream, xax, xdi
+        OCall pSelf::Json.WriteProperty, pStream, xax, xdi, dOptions
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength

@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      MemoryStream.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.1.3
 ; Purpose:    ObjAsm support of memory streaming objects.
-; Notes:      Version C.1.2, december 2020
+; Notes:      Version C.1.2, December 2020
 ;               - First release.
+;             Version C.1.3, October 2025
+;               - BinWriteXXX update dCurrSize bug corrected.
 ; ==================================================================================================
 
 
@@ -205,7 +207,7 @@ MethodEnd
 ;             current position of the stream by Count bytes.
 ; Arguments:  Arg1: -> Buffer.
 ;             Arg2: Number of bytes to write.
-; Return:     eax = Bytes written.
+; Return:     eax = Bytes written or zero if failed.
 
 Method MemoryStream.BinWrite, uses xsi, pBuffer:POINTER, dCount:DWORD
   SetObject xsi
@@ -225,14 +227,18 @@ Method MemoryStream.BinWrite, uses xsi, pBuffer:POINTER, dCount:DWORD
         ExitMethod .if eax == 0
       .else
         OCall xsi.ErrorReport, NULL, STM_WRITE_ERROR
+        xor eax, eax
         ExitMethod
       .endif
     .endif
     mov eax, [xsi].dPosition
     add xax, [xsi].pBuffer
-    invoke MemClone, xax, pBuffer, dCount
-    mov eax, dCount                               ;Set return value
+    invoke MemClone, xax, pBuffer, dCount         ;eax = number of copied bytes
     add [xsi].dPosition, eax
+    mov edx, [xsi].dPosition
+    .if edx > [xsi].dCurrSize
+      mov [xsi].dCurrSize, edx
+    .endif
   .endif
 MethodEnd
 
@@ -240,7 +246,7 @@ MethodEnd
 ; Method:     DiskStream.BinWrite8
 ; Purpose:    Write a byte value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Byte value.
-; Return:     eax = Bytes written (= 1).
+; Return:     eax = Bytes written (= 1) or zero if failed.
 
 Method MemoryStream.BinWrite8, uses xsi, bValue:BYTE
   SetObject xsi
@@ -261,6 +267,7 @@ Method MemoryStream.BinWrite8, uses xsi, bValue:BYTE
         ExitMethod .if eax == 0
       .else
         OCall xsi.ErrorReport, NULL, STM_WRITE_ERROR
+        xor eax, eax
         ExitMethod
       .endif
       mov eax, sizeof(BYTE)                       ;Set return value
@@ -270,6 +277,10 @@ Method MemoryStream.BinWrite8, uses xsi, bValue:BYTE
     mov cl, bValue
     mov [xdx], cl
     add [xsi].dPosition, eax
+    mov edx, [xsi].dPosition
+    .if edx > [xsi].dCurrSize
+      mov [xsi].dCurrSize, edx
+    .endif
   .endif
 MethodEnd
 
@@ -277,7 +288,7 @@ MethodEnd
 ; Method:     MemoryStream.BinWrite16
 ; Purpose:    Write a word value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Word value.
-; Return:     eax = Bytes written (= 2).
+; Return:     eax = Bytes written (= 2) or zero if failed.
 
 Method MemoryStream.BinWrite16, uses xsi, wValue:WORD
   SetObject xsi
@@ -298,6 +309,7 @@ Method MemoryStream.BinWrite16, uses xsi, wValue:WORD
         ExitMethod .if eax == 0
       .else
         OCall xsi.ErrorReport, NULL, STM_WRITE_ERROR
+        xor eax, eax
         ExitMethod
       .endif
       mov eax, sizeof(WORD)                       ;Set return value
@@ -307,6 +319,10 @@ Method MemoryStream.BinWrite16, uses xsi, wValue:WORD
     mov cx, wValue
     mov [xdx], cx
     add [xsi].dPosition, eax
+    mov edx, [xsi].dPosition
+    .if edx > [xsi].dCurrSize
+      mov [xsi].dCurrSize, edx
+    .endif
   .endif
 MethodEnd
 
@@ -314,7 +330,7 @@ MethodEnd
 ; Method:     MemoryStream.BinWrite32
 ; Purpose:    Write a DWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: DWORD value.
-; Return:     eax = Bytes written (= 4).
+; Return:     eax = Bytes written (= 4) or zero if failed.
 
 Method MemoryStream.BinWrite32, uses xsi, dValue:DWORD
   SetObject xsi
@@ -335,6 +351,7 @@ Method MemoryStream.BinWrite32, uses xsi, dValue:DWORD
         ExitMethod .if eax == 0
       .else
         OCall xsi.ErrorReport, NULL, STM_WRITE_ERROR
+        xor eax, eax
         ExitMethod
       .endif
       mov eax, sizeof(DWORD)                      ;Set return value
@@ -344,6 +361,10 @@ Method MemoryStream.BinWrite32, uses xsi, dValue:DWORD
     mov ecx, dValue
     mov [xdx], ecx
     add [xsi].dPosition, eax
+    mov edx, [xsi].dPosition
+    .if edx > [xsi].dCurrSize
+      mov [xsi].dCurrSize, edx
+    .endif
   .endif
 MethodEnd
 
@@ -351,7 +372,7 @@ MethodEnd
 ; Method:     MemoryStream.BinWrite64
 ; Purpose:    Write a QWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: QWORD value.
-; Return:     eax = Bytes written (= 8).
+; Return:     eax = Bytes written (= 8) or zero if failed.
 
 Method MemoryStream.BinWrite64, uses xsi, qValue:QWORD
   SetObject xsi
@@ -372,6 +393,7 @@ Method MemoryStream.BinWrite64, uses xsi, qValue:QWORD
         ExitMethod .if eax == 0
       .else
         OCall xsi.ErrorReport, NULL, STM_WRITE_ERROR
+        xor eax, eax
         ExitMethod
       .endif
       mov eax, sizeof(QWORD)                      ;Set return value
@@ -385,6 +407,10 @@ Method MemoryStream.BinWrite64, uses xsi, qValue:QWORD
       mov [edx + sizeof(DWORD)], ecx
     endif
     add [xsi].dPosition, eax
+    mov edx, [xsi].dPosition
+    .if edx > [xsi].dCurrSize
+      mov [xsi].dCurrSize, edx
+    .endif
   .endif
 MethodEnd
 
