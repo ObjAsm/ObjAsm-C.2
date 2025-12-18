@@ -52,15 +52,14 @@ Menu=1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
 
 1=4,O,$B\RA_RC.cmd,1
 2=3,O,$B\RA_ASM.cmd,2
-3=5,O,"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe" @$A\Build\Options\OPT_LNK_DBG_32.txt /OUT:"$5" "$3" 
-4=0,0,,5
+3=5,O,$B\RA_LINK.cmd,34=0,0,,5
 7=0,O,$B\RA_DEBUG.cmd,5
 5=rsrc.obj,O,$B\CVTRES.EXE,rsrc.res
 6=*.obj,O,$B\Tools\UASM64.EXE /c /coff /Cp /nologo /I"$I",*.asm
 
 11=4,O,$B\RA_RC.cmd,1
 12=3,O,$B\RA_ASM.cmd,2
-13=5,O,"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe" @$A\Build\Options\OPT_LNK_DBG_64.txt /OUT:"$5" "$3"
+13=5,O,$B\RA_LINK.cmd,3
 14=0,0,,5
 17=0,O,$B\RA_DEBUG.cmd,5
 15=rsrc.obj,O,$B\CVTRES.EXE,rsrc.res
@@ -120,7 +119,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=9
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -157,10 +156,10 @@ ProductVer4Range=0
 [Size]
 2=
 3=0,0,0,0,5922
-1=0,0,1833,628,589
-4=0,0,0,0,1738
+1=0,0,1833,628,887
+4=0,0,0,0,10126
 5=0,0,1300,620,95121
-6=0,0,1833,628,56697
+6=0,0,1833,628,61381
 8=
 7=0,0,0,0,188038
 9=
@@ -193,16 +192,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Get_Sheets"
-2="_Workbook"
-3="GetSheet"
-4="Open"
-5="SaveAs"
-6="Opne"
-7="Init"
-8="m2m"
-9="EchoNum"
-10="%$$ArgSize"
+1="invoke Str2BStr, addr cBuffer, addr cBuffer"
+2="StrW2BStr"
+3="SetSavedFlag"
+4="TARGET_USER_INTERFACE"
+5="USER_INTERFACE_NONE"
+6="COLORREF"
+7="SetChartAxisGridlines"
+8="SetInteriorAttr"
+9="SetFontAttr"
+10="SetBorderAttr"
 [Collapse]
 1=
 4=
@@ -227,7 +226,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1
 [PTimer]
-PTimer=568479087
+PTimer=573836041
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,0,0
 [RADebugBP]

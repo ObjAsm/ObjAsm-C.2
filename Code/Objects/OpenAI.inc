@@ -217,7 +217,8 @@ Method OpenAI.ExtractAnswer, uses xbx xdi xsi
   mov [xsi].MemStream.dPosition, 0
   New Response::Json
   OCall Response::Json.Init, xsi
-  OCall Response::Json.Read, addr [xsi].MemStream, JSON_OPTION_CRLF
+  mov Response.$Obj(Json).dFlags, JSON_FLAG_USE_CRLF
+  OCall Response::Json.Read, addr [xsi].MemStream
   OCall Response::Json.GetProperty, addr Response.RootProperty, $OfsCStr("output")
   .if xax != NULL
     mov pOutput, xax
@@ -346,7 +347,7 @@ Method OpenAI.SendPrompt, uses xbx xdi xsi, pPrompt:PSTRING
     OCall JsonBody::Json.AddData, addr JsonBody.RootProperty, $OfsCStr("model"), JSON_TYPE_STRING, [xsi].pAiModel
     OCall JsonBody::Json.AddData, addr JsonBody.RootProperty, $OfsCStr("input"), JSON_TYPE_STRING, pPrompt
 
-    OCall JsonBody::Json.Write, addr [xsi].MemStream, JSON_OPTION_CRLF
+    OCall JsonBody::Json.Write, addr [xsi].MemStream
     OCall JsonBody::Json.Done
 
     invoke HttpOpenRequest, [xsi].hConnect, $OfsCStr("POST"), addr cOpenAiUrlPath, \

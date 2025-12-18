@@ -277,9 +277,9 @@ Object XTreeView, XTreeViewID, WinPrimer
   DefineVariable    hMemDC,             HDC,                0       ;Back DC
   DefineVariable    hBmpPrv,            HBITMAP,            0
   DefineVariable    hBackBuffer,        HBITMAP,            0
-  DefineVariable    dColorLine,         DWORD,              $RGB(192,192,192)
-  DefineVariable    dColorToggler,      DWORD,              $RGB(0,0,0)
-  DefineVariable    dColorBackground,   DWORD,              $RGB(255,255,255)
+  DefineVariable    ColorLine,          COLORREF,           $RGB(192,192,192)
+  DefineVariable    ColorToggler,       COLORREF,           $RGB(0,0,0)
+  DefineVariable    ColorBackground,    COLORREF,           $RGB(255,255,255)
   DefineVariable    hFontText,          HFONT,              0
   DefineVariable    hPenLine,           HPEN,               0
   DefineVariable    hPenToggler,        HPEN,               0
@@ -2160,8 +2160,8 @@ Method XTreeView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke ReleaseDC, [xsi].hWnd, hDC
 
   ;Create pens to draw
-  mov [xsi].hPenLine, $invoke(CreatePen, PS_SOLID, 0, [xsi].dColorLine)
-  mov [xsi].hPenToggler, $invoke(CreatePen, PS_SOLID, 0, [xsi].dColorToggler)
+  mov [xsi].hPenLine, $invoke(CreatePen, PS_SOLID, 0, [xsi].ColorLine)
+  mov [xsi].hPenToggler, $invoke(CreatePen, PS_SOLID, 0, [xsi].ColorToggler)
 
   ;Set scrollbar infos
   mov ScrollInfo.cbSize, sizeof SCROLLINFO
@@ -3505,7 +3505,7 @@ MethodEnd
 Method XTreeView.RenderBackground, uses xbx xsi, pRect:PRECT
   SetObject xsi
   .ifBitSet [xsi].dFlags, XTVF_USE_USER_BKGND_COLOR
-    mov eax, [xsi].dColorBackground
+    mov eax, [xsi].ColorBackground
   .else
     invoke GetSysColor, COLOR_WINDOW
   .endif

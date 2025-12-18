@@ -165,7 +165,7 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, hPrevBrush:HBRUSH, dPrevColor:DWORD, dPrevBackMode:DWORD, Rct:RECT
+  local PS:PAINTSTRUCT, hPrevBrush:HBRUSH, PrevColor:COLORREF, dPrevBackMode:DWORD, Rct:RECT
 
   SetObject xsi
   invoke GetParent, [xsi].hWnd
@@ -198,7 +198,7 @@ Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
     .ifBitClr [xsi].dFlags, BTF_DISABLED
       ;Enabled
       invoke GetSysColor, COLOR_WINDOWTEXT
-      mov dPrevColor, $32($invoke(SetTextColor, [xsi].hMemDC, eax))
+      mov PrevColor, $32($invoke(SetTextColor, [xsi].hMemDC, eax))
       invoke DrawTextEx, [xsi].hMemDC, [xsi].pTextBuffer, -1, \
                          addr [xsi].TextRect, DT_LEFT or DT_VCENTER or DT_SINGLELINE, NULL
       .ifBitSet [xsi].dFlags, BTF_FOCUSED
@@ -211,7 +211,7 @@ Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
     .else
       ;Disabled
       invoke GetSysColor, COLOR_BTNHILIGHT
-      mov dPrevColor, $32($invoke(SetTextColor, [xsi].hMemDC, eax))
+      mov PrevColor, $32($invoke(SetTextColor, [xsi].hMemDC, eax))
       MoveRect [xsi].TextRect, 1
       invoke DrawTextEx, [xsi].hMemDC, [xsi].pTextBuffer, -1, \
                      addr [xsi].TextRect, DT_LEFT or DT_VCENTER or DT_SINGLELINE, NULL
@@ -220,7 +220,7 @@ Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
       invoke DrawTextEx, [xsi].hMemDC, [xsi].pTextBuffer, -1, \
                          addr [xsi].TextRect, DT_LEFT or DT_VCENTER or DT_SINGLELINE, NULL
     .endif
-    invoke SetTextColor, [xsi].hMemDC, dPrevColor
+    invoke SetTextColor, [xsi].hMemDC, PrevColor
     invoke SetBkMode, [xsi].hMemDC, dPrevBackMode
   .endif
 

@@ -142,10 +142,10 @@ Object XPropertyTree, XPropertyTreeID, XTreeView
   RedefineVariable  dDispInfoSize,      sizeof XPTN_DISP_INFO         ;Extended structure
   RedefineVariable  dFlags,             XPT_FLAGS
   RedefineVariable  dNodeIndent,        12                            ;Pixel
-;  RedefineVariable  dColorBackground,               $RGB(128,128,128)
-;  DefineVariable    dColorBackgroundDark, DWORD,    $RGB(255,255,255)
-  RedefineVariable  dColorBackground,               $RGB(245,245,245)
-  DefineVariable    dColorBackgroundDark, DWORD,    $RGB(220,220,220)
+;  RedefineVariable  ColorBackground,                $RGB(128,128,128)
+;  DefineVariable    ColorBackgroundDark,COLORREF,   $RGB(255,255,255)
+  RedefineVariable  ColorBackground,                $RGB(245,245,245)
+  DefineVariable    ColorBackgroundDark,COLORREF,   $RGB(220,220,220)
   DefineVariable    hPenAux,            HPEN,       0
 
   DefineVariable    pEdtCtrl,           $ObjPtr(XPT_Edit),      NULL  ;-> EDIT control object
@@ -1093,7 +1093,7 @@ Method XPT_PropertyNode.RenderContent, uses xbx xdi xsi, pDispInfo:PXPTN_DISP_IN
     m2m [xdi].ButtonRect.top, [xdi].TextRect.top, ecx       ;ButtonRect.top
 
     ;Fill the icon background
-    mov hBrush, $invoke(CreateSolidBrush, [xbx].dColorBackground)
+    mov hBrush, $invoke(CreateSolidBrush, [xbx].ColorBackground)
     invoke FillRect, [xbx].hMemDC, addr RRect, hBrush
     invoke DeleteObject, hBrush
 
@@ -1120,11 +1120,11 @@ Method XPT_PropertyNode.RenderContent, uses xbx xdi xsi, pDispInfo:PXPTN_DISP_IN
     .elseIfBitSet [xsi].dState, XTVNS_HOTTRACK          ;Check if the node is beeing hottracked
       invoke GetSysColor, COLOR_HIGHLIGHT
       mov dPrevColor, $32($invoke(SetTextColor, [xbx].hMemDC, eax))
-      mov hBrush, $invoke(CreateSolidBrush, [xbx].dColorBackground)
+      mov hBrush, $invoke(CreateSolidBrush, [xbx].ColorBackground)
     .else
       invoke GetSysColor, COLOR_WINDOWTEXT
       mov dPrevColor, $32($invoke(SetTextColor, [xbx].hMemDC, eax))
-      mov hBrush, $invoke(CreateSolidBrush, [xbx].dColorBackground)
+      mov hBrush, $invoke(CreateSolidBrush, [xbx].ColorBackground)
     .endif
 
     ;Set the font
@@ -1160,7 +1160,7 @@ Method XPT_PropertyNode.RenderContent, uses xbx xdi xsi, pDispInfo:PXPTN_DISP_IN
         !(([xbx].dState & XTVS_DISABLED) || ([xsi].dState & XTVNS_DISABLED))
       invoke GetSysColor, COLOR_WINDOW
     .else
-      mov eax, [xbx].dColorBackground
+      mov eax, [xbx].ColorBackground
     .endif
     mov hBrush, $invoke(CreateSolidBrush, eax)
     invoke FillRect, [xbx].hMemDC, addr [xdi].TextRect, hBrush
@@ -1527,9 +1527,9 @@ Method XPropertyTree.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke ReleaseDC, [xsi].hWnd, hDC
 
   ;Create pens to draw
-  mov [xsi].hPenLine, $invoke(CreatePen, PS_SOLID, 0, [xsi].dColorLine)
-  mov [xsi].hPenToggler, $invoke(CreatePen, PS_SOLID, 0, [xsi].dColorToggler)
-  mov [xsi].hPenAux, $invoke(CreatePen, PS_SOLID, 0, [xsi].dColorBackgroundDark)
+  mov [xsi].hPenLine, $invoke(CreatePen, PS_SOLID, 0, [xsi].ColorLine)
+  mov [xsi].hPenToggler, $invoke(CreatePen, PS_SOLID, 0, [xsi].ColorToggler)
+  mov [xsi].hPenAux, $invoke(CreatePen, PS_SOLID, 0, [xsi].ColorBackgroundDark)
 
   ;Set scrollbar infos
   mov ScrollInfo.cbSize, sizeof SCROLLINFO
@@ -2379,7 +2379,7 @@ Method XPropertyTree.RenderBackground, uses xsi, pRect:PRECT
   local hBrush:HBRUSH
 
   SetObject xsi
-  mov hBrush, $invoke(CreateSolidBrush, [xsi].dColorBackgroundDark)
+  mov hBrush, $invoke(CreateSolidBrush, [xsi].ColorBackgroundDark)
   invoke FillRect, [xsi].hMemDC, pRect, xax
   invoke DeleteObject, hBrush
 MethodEnd

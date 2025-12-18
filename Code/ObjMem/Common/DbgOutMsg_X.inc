@@ -13,6 +13,28 @@ DOM struc
   pStr  POINTER   ?
 DOM ends
 
+;Missing definitions
+WM_SIZEWAIT           equ 0004h
+WM_SETVISIBLE         equ 0009h
+WM_SYSTEMERROR        equ 0017h
+WM_ALTTABACTIVE       equ 0029h
+WM_FILESYSCHANGE      equ 0034h
+WM_ISACTIVEICON       equ 0035h
+WM_QUERYPARKICON      equ 0036h
+WM_QUERYSAVESTATE     equ 0038h
+WM_TESTING            equ 0040h
+WM_SYNCTASK           equ 0089h
+WM_CONVERTREQUEST     equ 010Ah
+WM_CONVERTRESULT      equ 010Bh
+WM_INTERIM            equ 010Ch
+WM_LBTRACKPOINT       equ 0131h
+WM_DROPOBJECT         equ 022Ah
+WM_QUERYDROPOBJECT    equ 022Bh
+WM_BEGINDRAG          equ 022Ch
+WM_DRAGLOOP           equ 022Dh
+WM_DRAGSELECT         equ 022Eh
+WM_DRAGMOVE           equ 022Fh
+
 .const
 DbgWndMsgTable \
   DOM {WM_NULL,                           $OfsTStrA("WM_NULL")}                           ;0000
@@ -198,7 +220,7 @@ DbgWndMsgTable \
   DOM {WM_KEYLAST,                        $OfsTStrA("WM_KEYLAST or WM_CONVERTREQUESTEX")} ;0108
   DOM {WM_UNICHAR,                        $OfsTStrA("WM_UNICHAR")}                        ;0109
   DOM {WM_CONVERTREQUEST,                 $OfsTStrA("WM_CONVERTREQUEST")}                 ;010A
-  DOM {WM_CONVERTRESULT ,                 $OfsTStrA("WM_CONVERTRESULT")}                  ;010B
+  DOM {WM_CONVERTRESULT,                  $OfsTStrA("WM_CONVERTRESULT")}                  ;010B
   DOM {WM_INTERIM,                        $OfsTStrA("WM_INTERIM")}                        ;010C
   DOM {WM_IME_STARTCOMPOSITION,           $OfsTStrA("WM_IME_STARTCOMPOSITION")}           ;010D
   DOM {WM_IME_ENDCOMPOSITION,             $OfsTStrA("WM_IME_ENDCOMPOSITION")}             ;010E

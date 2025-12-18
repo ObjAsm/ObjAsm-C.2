@@ -40,7 +40,7 @@ MethodEnd
 ;             Arg3: -> Real4 number containing the box depth.
 ; Return:     xax -> New created D3Object.
 
-Method D3Scene.CreateBox, uses xdi xsi, pWidth:POINTER, pHeight:POINTER, pDepth:POINTER, dColor:DWORD
+Method D3Scene.CreateBox, uses xdi xsi, pWidth:POINTER, pHeight:POINTER, pDepth:POINTER, Color:COLORREF
   local Vector1:D3Vector, Vector2:D3Vector, Vector3:D3Vector, Vector4:D3Vector
   local Vector5:D3Vector, Vector6:D3Vector, Vector7:D3Vector, Vector8:D3Vector
 
@@ -96,12 +96,12 @@ Method D3Scene.CreateBox, uses xdi xsi, pWidth:POINTER, pHeight:POINTER, pDepth:
   mov Vector8.r4X, eax
 
   mov xdi, $OCall(xsi::D3Scene.NewObject)
-  OCall xdi::D3Object.AddRectangle, addr Vector4, addr Vector3, addr Vector2, addr Vector1, dColor
-  OCall xdi::D3Object.AddRectangle, addr Vector5, addr Vector6, addr Vector7, addr Vector8, dColor
-  OCall xdi::D3Object.AddRectangle, addr Vector2, addr Vector3, addr Vector7, addr Vector6, dColor
-  OCall xdi::D3Object.AddRectangle, addr Vector1, addr Vector5, addr Vector8, addr Vector4, dColor
-  OCall xdi::D3Object.AddRectangle, addr Vector1, addr Vector2, addr Vector6, addr Vector5, dColor
-  OCall xdi::D3Object.AddRectangle, addr Vector3, addr Vector4, addr Vector8, addr Vector7, dColor
+  OCall xdi::D3Object.AddRectangle, addr Vector4, addr Vector3, addr Vector2, addr Vector1, Color
+  OCall xdi::D3Object.AddRectangle, addr Vector5, addr Vector6, addr Vector7, addr Vector8, Color
+  OCall xdi::D3Object.AddRectangle, addr Vector2, addr Vector3, addr Vector7, addr Vector6, Color
+  OCall xdi::D3Object.AddRectangle, addr Vector1, addr Vector5, addr Vector8, addr Vector4, Color
+  OCall xdi::D3Object.AddRectangle, addr Vector1, addr Vector2, addr Vector6, addr Vector5, Color
+  OCall xdi::D3Object.AddRectangle, addr Vector3, addr Vector4, addr Vector8, addr Vector7, Color
   mov xax, xdi
 MethodEnd
 
@@ -115,7 +115,7 @@ MethodEnd
 ; Return:     xax -> New created D3Object.
 
 Method D3Scene.CreateGeoSphere, uses xbx xdi xsi, dMeridians:DWORD, dParallels:DWORD, \
-                                                  r4Radius:REAL4, dColor:DWORD
+                                                  r4Radius:REAL4, Color:COLORREF
   local dCurrParallel:DWORD, r4CurrY:REAL4, pSphere:$ObjPtr(D3Object)
   local r4DeltaAlpha:REAL4, r4DeltaBeta:REAL4, r4PhaseShift:REAL4, r4Phase:REAL4
   local dBaseIndex:DWORD, pVectorMemory:POINTER
@@ -215,7 +215,7 @@ Method D3Scene.CreateGeoSphere, uses xbx xdi xsi, dMeridians:DWORD, dParallels:D
     GetD3VectorFromTable pVectorMemory, edx, xsi
     inc edx
     GetD3VectorFromTable pVectorMemory, edx, xax
-    OCall pSphere::D3Object.AddTriangle, pVectorMemory, xsi, xax, dColor
+    OCall pSphere::D3Object.AddTriangle, pVectorMemory, xsi, xax, Color
     inc ebx
   .endw
 
@@ -244,7 +244,7 @@ Method D3Scene.CreateGeoSphere, uses xbx xdi xsi, dMeridians:DWORD, dParallels:D
       mov pVec2, xax
       dec ecx
       GetD3VectorFromTable pVectorMemory, ecx
-      OCall pSphere::D3Object.AddRectangle, xdx, pVec1, pVec2, xax, dColor
+      OCall pSphere::D3Object.AddRectangle, xdx, pVec1, pVec2, xax, Color
       inc edi
     .endw
     inc ebx
@@ -262,7 +262,7 @@ Method D3Scene.CreateGeoSphere, uses xbx xdi xsi, dMeridians:DWORD, dParallels:D
     GetD3VectorFromTable pVectorMemory, ecx
     inc ecx
     GetD3VectorFromTable pVectorMemory, ecx, xdi
-    OCall pSphere::D3Object.AddTriangle, xsi, xdi, xax, dColor
+    OCall pSphere::D3Object.AddTriangle, xsi, xdi, xax, Color
     inc ebx
   .endw
 

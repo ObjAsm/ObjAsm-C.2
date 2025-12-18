@@ -1,8 +1,0 @@
--l
--y
--d3
--i
--V1
--W2
--o".\MKL"
-"C:\Program Files (x86)\Intel\oneAPI\mkl\2024.2\include\mkl.h"

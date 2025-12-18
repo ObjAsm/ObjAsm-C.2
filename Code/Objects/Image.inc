@@ -285,7 +285,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Image.GetCompatibleBmp
-; Purpose:    Initialize the object
+; Purpose:    Initialize the object.
 ; Arguments:  Arg1: Device Context HANDLE.
 ; Return:     xax = HBITMAP or zero if failed.
 
@@ -327,7 +327,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Init
-; Purpose:    Initialize the object
+; Purpose:    Initialize the object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
 

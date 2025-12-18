@@ -162,7 +162,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -198,7 +198,7 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,1332
-1=0,0,0,0,2339
+1=0,0,0,0,2345
 6=0,0,1456,414,59484
 4=0,0,0,0,786
 31=0,0,1213,691,1768
@@ -228,8 +228,8 @@ ProductVer4Range=0
 33=0,0,0,0,7410
 32=0,0,0,0,11491
 30=0,0,0,0,6051
-34=0,0,0,0,2718
-29=0,0,0,0,14842
+34=0,0,0,0,4082
+29=0,0,0,0,10543
 35=0,0,0,0,8460
 28=0,0,0,0,0
 36=0,0,0,0,2757
@@ -255,16 +255,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="TRUE"
-2="JsonEscDecode"
-3="Write"
-4="GUI_Template"
-5="OpenAIApp"
-6="DskStream"
-7="AddData"
-8="JsonBody"
-9="RCV_BUFFER_SIZE"
-10="dPromptLength"
+1="JsonGetValue"
+2="dOptions"
+3=", dOptions:DWORD"
+4="TRUE"
+5="JsonEscDecode"
+6="Write"
+7="GUI_Template"
+8="OpenAIApp"
+9="DskStream"
+10="AddData"
 [Collapse]
 1=
 2=
@@ -382,7 +382,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,36,29,34,9
 [PTimer]
-PTimer=1076877634
+PTimer=1077554243
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

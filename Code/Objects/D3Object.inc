@@ -17,7 +17,7 @@
 ;             Arg2: RGB color value of the point.
 ; Return:     Nothing.
 
-Method D3Object.AddPoint, uses xbx xsi, pVector:PD3Vector, dColor:DWORD
+Method D3Object.AddPoint, uses xbx xsi, pVector:PD3Vector, Color:COLORREF
   SetObject xsi
   mov xbx, $New(D3Triangle)
   OCall xbx::D3Triangle.Init, [xsi].pTriangles
@@ -26,7 +26,7 @@ Method D3Object.AddPoint, uses xbx xsi, pVector:PD3Vector, dColor:DWORD
   mov [xbx].$Obj(D3Triangle).dIndex1, eax
   mov [xbx].$Obj(D3Triangle).dIndex2, eax
   mov [xbx].$Obj(D3Triangle).dIndex3, eax
-  mov eax, dColor
+  mov eax, Color
   mov [xbx].$Obj(D3Triangle).SrcColor, eax
   mov [xbx].$Obj(D3Triangle).OutColor1, eax
   mov [xbx].$Obj(D3Triangle).OutColor2, eax
@@ -41,7 +41,7 @@ MethodEnd
 ;             Arg3: RGB color value of the line.
 ; Return:     Nothing.
 
-Method D3Object.AddLine, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vector, dColor:DWORD
+Method D3Object.AddLine, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vector, Color:DWORD
   SetObject xsi
   mov xbx, $New(D3Triangle)
   OCall xbx::D3Triangle.Init, [xsi].pTriangles
@@ -51,7 +51,7 @@ Method D3Object.AddLine, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vector, d
   mov [xbx].$Obj(D3Triangle).dIndex2, eax
   OCall [xsi].pVectrons::D3VectronCollection.Append, pVector2
   mov [xbx].$Obj(D3Triangle).dIndex3, eax
-  mov eax, dColor
+  mov eax, Color
   mov [xbx].$Obj(D3Triangle).SrcColor, eax
   mov [xbx].$Obj(D3Triangle).OutColor1, eax
   mov [xbx].$Obj(D3Triangle).OutColor2, eax
@@ -82,7 +82,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method D3Object.AddRectangle, uses xbx xdi xsi, pVector1:PD3Vector, pVector2:PD3Vector, \
-                                                pVector3:PD3Vector, pVector4:PD3Vector, dColor:DWORD
+                                                pVector3:PD3Vector, pVector4:PD3Vector, Color:COLORREF
   SetObject xsi
   mov xbx, $New(D3Triangle)
   OCall xbx::D3Triangle.Init, [xsi].pTriangles
@@ -102,7 +102,7 @@ Method D3Object.AddRectangle, uses xbx xdi xsi, pVector1:PD3Vector, pVector2:PD3
   mov [xbx].$Obj(D3Triangle).dIndex3, eax
   mov [xdi].$Obj(D3Triangle).dIndex2, eax
 
-  mov eax, dColor
+  mov eax, Color
   mov [xbx].$Obj(D3Triangle).SrcColor, eax
   mov [xbx].$Obj(D3Triangle).OutColor1, eax
   mov [xbx].$Obj(D3Triangle).OutColor2, eax
@@ -123,7 +123,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method D3Object.AddTriangle, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vector, \
-                                           pVector3:PD3Vector, dColor:DWORD
+                                           pVector3:PD3Vector, Color:COLORREF
   SetObject xsi
   mov xbx, $New(D3Triangle)
   OCall xbx::D3Triangle.Init, [xsi].pTriangles
@@ -134,7 +134,7 @@ Method D3Object.AddTriangle, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vecto
   mov [xbx].$Obj(D3Triangle).dIndex2, eax
   OCall [xsi].pVectrons::D3VectronCollection.Append, pVector3
   mov [xbx].$Obj(D3Triangle).dIndex3, eax
-  mov eax, dColor
+  mov eax, Color
   mov [xbx].$Obj(D3Triangle).SrcColor, eax
   mov [xbx].$Obj(D3Triangle).OutColor1, eax
   mov [xbx].$Obj(D3Triangle).OutColor2, eax

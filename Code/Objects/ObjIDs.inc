@@ -108,6 +108,7 @@ MdiChildDlgID                     equ     0000000165
 WindowID                          equ     0000000166
 DlgAppID                          equ     0000000167
 ConsoleAppID                      equ     0000000168
+ServiceID                         equ     0000000169
 
 ;Generic Application IDs
 ApplicationID                     equ     0000000170      ;For test or demo purposes only!
@@ -188,6 +189,10 @@ ElasticSkinID                     equ     0000000368
 ThrobberID                        equ     0000000370
 SpinningThrobberID                equ     0000000371
 MovingThrobberID                  equ     0000000372
+
+;Badge
+TextBadgeID                       equ     0000000375
+CounterBadgeID                    equ     0000000376
 
 ;3D Engine
 D3VectronCollectionID             equ     0000000400

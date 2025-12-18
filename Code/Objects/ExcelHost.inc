@@ -50,13 +50,13 @@ Object ExcelHost, ExcelHostID, Primer
   StaticMethod      SetScreenUpdating,        BOOL
 
   StaticMethod      GetBorder,                POINTER
-  StaticMethod      SetBorderAttr,            POINTER, DWORD, DWORD, DWORD
+  StaticMethod      SetBorderAttr,            POINTER, DWORD, DWORD, COLORREF
 
   StaticMethod      GetFont,                  POINTER
-  StaticMethod      SetFontAttr,              POINTER, BSTR, DWORD, DWORD, DWORD, DWORD
+  StaticMethod      SetFontAttr,              POINTER, BSTR, DWORD, DWORD, COLORREF, DWORD
 
   StaticMethod      GetInterior,              POINTER
-  StaticMethod      SetInteriorAttr,          POINTER, DWORD, DWORD, DWORD
+  StaticMethod      SetInteriorAttr,          POINTER, COLORREF, DWORD, COLORREF
 
   StaticMethod      SetChartData,             POINTER, POINTER, DWORD
   StaticMethod      HasChartTitle,            POINTER, DWORD
@@ -66,12 +66,12 @@ Object ExcelHost, ExcelHostID, Primer
   StaticMethod      SetChartAxisAttr,         POINTER, DWORD, DWORD, DWORD, DWORD
   StaticMethod      SetChartAxisValues,       POINTER, DWORD, REAL8, DWORD, REAL8
   StaticMethod      SetChartAxisTicks,        POINTER, DWORD, DWORD, REAL8, DWORD, DWORD, REAL8
-  StaticMethod      SetChartAxisGridlines,    POINTER, DWORD, DWORD, DWORD, DWORD, DWORD
+  StaticMethod      SetChartAxisGridlines,    POINTER, DWORD, DWORD, DWORD, DWORD, COLORREF
   StaticMethod      GetChartLegend,           POINTER
   StaticMethod      GetChartArea,             POINTER
   StaticMethod      GetChartPlotArea,         POINTER
   StaticMethod      GetChartSeries,           POINTER, DWORD
-  StaticMethod      SetChartSeriesAttr,       POINTER, DWORD, DWORD, DWORD, DWORD, DWORD, DWORD
+  StaticMethod      SetChartSeriesAttr,       POINTER, DWORD, DWORD, COLORREF, COLORREF, DWORD, DWORD
   StaticMethod      SetChartSeriesData,       POINTER, BSTR, POINTER, POINTER
 
   StaticMethod      SetRangeAlignHor,         POINTER, DWORD
@@ -166,7 +166,7 @@ MethodEnd
 ; Return:     eax = Error code.
 
 Method ExcelHost.SetChartSeriesAttr,, pIXlSeries:POINTER, dXlStyle:DWORD, dXlSize:DWORD, \
-                                      dXlForeColor:DWORD, dXlBackColor:DWORD, \
+                                      dXlForeColor:COLORREF, dXlBackColor:COLORREF, \
                                       dXlSmooth:DWORD, dXlShadow:DWORD
   local vArg:VARIANT
 
@@ -286,7 +286,7 @@ MethodEnd
 ;             Arg4: RGB color.
 ; Return:     eax = Error code.
 
-Method ExcelHost.SetBorderAttr,, pIXlBorder:POINTER, dXlStyle:DWORD, dXlWeight:DWORD, dXlColor:DWORD
+Method ExcelHost.SetBorderAttr,, pIXlBorder:POINTER, dXlStyle:DWORD, dXlWeight:DWORD, dXlColor:COLORREF
   local vArg:VARIANT
 
   .if pIXlBorder == NULL
@@ -344,7 +344,7 @@ MethodEnd
 ; Return:     eax = Error code.
 
 Method ExcelHost.SetFontAttr,, pIXlFont:POINTER, pXlName:BSTR, dXlStyle:DWORD, dXlSize:DWORD, \
-                               dXlColor:DWORD, dXlUnderlineStyle:DWORD
+                               dXlColor:COLORREF, dXlUnderlineStyle:DWORD
   local vArg:VARIANT
 
   .if pIXlFont == NULL
@@ -461,8 +461,8 @@ MethodEnd
 ;             Arg4: Pattern RGB color value.
 ; Return:     eax = Error code.
 
-Method ExcelHost.SetInteriorAttr,, pIXlInterior:POINTER, dXlColor:DWORD, dXlPatternStyle:DWORD, \
-                                   dXlPatternColor:DWORD
+Method ExcelHost.SetInteriorAttr,, pIXlInterior:POINTER, dXlColor:COLORREF, dXlPatternStyle:DWORD, \
+                                   dXlPatternColor:COLORREF
   local vArg:VARIANT
 
   .if pIXlInterior == NULL
@@ -1410,7 +1410,7 @@ MethodEnd
 ; Return:     eax = Error code.
 
 Method ExcelHost.SetChartAxisGridlines,, pIXlAxis:POINTER, dXlGridLineType:DWORD, dXlHasLine:DWORD, \
-                                     dXlStyle:DWORD, dXlWeight:DWORD, dXlColor:DWORD
+                                     dXlStyle:DWORD, dXlWeight:DWORD, dXlColor:COLORREF
   local vArg:VARIANT, vGridlines:VARIANT
 
   .if pIXlAxis == NULL

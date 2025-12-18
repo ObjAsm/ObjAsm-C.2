@@ -94,6 +94,8 @@ SpinningThrobber
 MovingThrobber
 TextView
 GridView
+TextBadge
+CounterBadge
 
 Dialog
 DialogAbout
@@ -110,6 +112,7 @@ DlgApp
 MdiApp
 SdiApp
 ConsoleApp
+Service
 
 Chart
 ChartXY

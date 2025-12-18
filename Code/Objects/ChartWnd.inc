@@ -611,7 +611,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
-  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, dPrevColor:DWORD
+  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, PrevColor:COLORREF
   local hDivPen:HPEN, hMjrGridPen:HPEN, hMnrGridPen:HPEN, PenBrush:LOGBRUSH, dTempEDI:DWORD
   local LastPoint:POINT, cBuffer[256]:CHR
   local dDivMjrEnd:DWORD, dDivMnrEnd:DWORD, dMjrCount:DWORD, dMnrCount:DWORD, sdPosition:SDWORD
@@ -630,7 +630,7 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
   .else
     mov ebx, $RGB(000,000,000)
   .endif
-  mov dPrevColor, $32($invoke(SetTextColor, hDC, ebx))
+  mov PrevColor, $32($invoke(SetTextColor, hDC, ebx))
   mov hDivPen, $invoke(CreatePen, PS_SOLID, 1, ebx)
 
   ;Create the grid pens
@@ -934,7 +934,7 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
   invoke SelectObject, hDC, hPrevPen
   invoke SelectObject, hDC, hPrevFont
   invoke SetTextAlign, hDC, dPrevAlign
-  invoke SetTextColor, hDC, dPrevColor
+  invoke SetTextColor, hDC, PrevColor
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 
@@ -945,7 +945,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
-  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, dPrevColor:DWORD
+  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, PrevColor:COLORREF
   local hDivPen:HPEN, hMjrGridPen:HPEN, hMnrGridPen:HPEN, PenBrush:LOGBRUSH, dTempEDI:DWORD
   local dDivMjrEnd:DWORD, dDivMnrEnd:DWORD, dMjrCount:DWORD, dMnrCount:DWORD, sdPosition:SDWORD
   local FpuContext:FPU_CONTEXT, LabelInfo[200]:CHT_LABEL_INFO, pCurLabelInfo:PCHT_LABEL_INFO
@@ -963,7 +963,7 @@ Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
   .else
     mov ebx, $RGB(000,000,000)
   .endif
-  mov dPrevColor, $32($invoke(SetTextColor, hDC, ebx))
+  mov PrevColor, $32($invoke(SetTextColor, hDC, ebx))
   mov hDivPen, $invoke(CreatePen, PS_SOLID, 1, ebx)
 
   ;Create the grid pens
@@ -1197,7 +1197,7 @@ Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
   invoke SelectObject, hDC, hPrevPen
   invoke SelectObject, hDC, hPrevFont
   invoke SetTextAlign, hDC, dPrevAlign
-  invoke SetTextColor, hDC, dPrevColor
+  invoke SetTextColor, hDC, PrevColor
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 
@@ -1208,7 +1208,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
-  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, dPrevColor:DWORD
+  local dPrevBkMode:DWORD, hPrevFont:HFONT, hPrevPen:HPEN, dPrevAlign:DWORD, PrevColor:COLORREF
   local hDivPen:HPEN, hMjrGridPen:HPEN, hMnrGridPen:HPEN, PenBrush:LOGBRUSH, dTempEDI:DWORD
   local dDivMjrEnd:DWORD, dDivMnrEnd:DWORD, dMjrCount:DWORD, dMnrCount:DWORD, sdPosition:SDWORD
   local FpuContext:FPU_CONTEXT, LabelInfo[200]:CHT_LABEL_INFO, pCurLabelInfo:PCHT_LABEL_INFO
@@ -1226,7 +1226,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
   .else
     mov ebx, $RGB(000,000,000)
   .endif
-  mov dPrevColor, $32($invoke(SetTextColor, hDC, ebx))
+  mov PrevColor, $32($invoke(SetTextColor, hDC, ebx))
   mov hDivPen, $invoke(CreatePen, PS_SOLID, 1, ebx)
 
   ;Create the grid pens
@@ -1458,7 +1458,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
   invoke SelectObject, hDC, hPrevPen
   invoke SelectObject, hDC, hPrevFont
   invoke SetTextAlign, hDC, dPrevAlign
-  invoke SetTextColor, hDC, dPrevColor
+  invoke SetTextColor, hDC, PrevColor
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 

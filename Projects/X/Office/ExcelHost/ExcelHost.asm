@@ -30,11 +30,15 @@ DefGUID IID_IUnknown, %sIID_IUnknown
 
 MakeObjects Primer, ExcelHost
 
+MyBStr struct
+  dByteSize DWORD ?
+  cBuffer   CHR 20 dup(?)  
+MyBStr ends
+
 .code
 start proc uses xbx xdi
   local pIBook:POINTER, pISheet:POINTER, pIRange:POINTER, pIChart:POINTER
-  local vString:VARIANT, vArray1:VARIANT, vArray2:VARIANT
-  local dBStrSize:DWORD, cBuffer[20]:CHR
+  local vString:VARIANT, vArray1:VARIANT, vArray2:VARIANT, BStrBuffer:MyBStr
   local hWnd:HANDLE, dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   ;***** ObjAsm initialization *****
@@ -104,15 +108,16 @@ start proc uses xbx xdi
     ;***** Fill the Chart data range *****
     mov pIRange, $OCall($ObjTmpl(ExcelHost)::ExcelHost.GetRange, pISheet, $OfsCBStr("A7:B36"))
     mov ebx, 1
+    lea xdi, BStrBuffer.cBuffer
     .while ebx <= 30
-      invoke dword2dec, addr cBuffer, ebx
-      invoke Str2BStr, addr cBuffer, addr cBuffer
-      OCall $ObjTmpl(ExcelHost)::ExcelHost.SetCell, pIRange, ebx, 1, addr cBuffer
+      invoke dword2dec, xdi, ebx
+      mov BStrBuffer.dByteSize, eax                     ;Set BStr size
+      OCall $ObjTmpl(ExcelHost)::ExcelHost.SetCell, pIRange, ebx, 1, xdi
       lea eax, [2*ebx]
-      invoke dword2dec, addr cBuffer, eax
-      invoke Str2BStr, addr cBuffer, addr cBuffer
-      OCall $ObjTmpl(ExcelHost)::ExcelHost.SetCell, pIRange, ebx, 2, addr cBuffer
-      inc xbx
+      invoke dword2dec, xdi, eax
+      mov BStrBuffer.dByteSize, eax                     ;Set BStr size
+      OCall $ObjTmpl(ExcelHost)::ExcelHost.SetCell, pIRange, ebx, 2, xdi
+      inc ebx
     .endw
 
     OCall $ObjTmpl(ExcelHost)::ExcelHost.SetChartData, pIChart, pIRange, xlColumns

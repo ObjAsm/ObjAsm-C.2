@@ -503,6 +503,8 @@ CreateBitmapFromFileInMem, pBitmapData
 CreateBitmapFromCompressedFileInRes, hInst, xResourceID
 CreateCursorFromCompressedFileInRes, hInst, xResourceID, dWidth, dHeight
 CreateIconFromCompressedFileInRes, hInst, xResourceID, dWidth, dHeight
+DrawRoundedRect, hDC, sdLeft, sdTop, dWidth, dHeight, dRadius, Color
+
 Bmp2Rgn, hDC, hRegion, dCombineMode, dTransparentColor
 SysShutdown, dType, dReason
 SysStandby

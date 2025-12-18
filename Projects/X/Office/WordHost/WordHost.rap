@@ -45,7 +45,7 @@ MinorFiles=*.res;*.obj;*.exp;
 Menu=0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0
 1=4,O,$B\RA_RC.cmd,1
 2=3,O,$B\RA_ASM.cmd,2
-3=5,O,"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe" @$A\Build\Options\OPT_LNK_DBG_32.txt /OUT:"$5" "$3"
+3=5,O,$B\RA_LINK.cmd,3
 4=0,0,,5
 7=0,O,$B\RA_DEBUG.cmd,5
 5=rsrc.obj,O,$B\CVTRES.EXE,rsrc.res
@@ -53,7 +53,7 @@ Menu=0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0
 
 11=4,O,$B\RA_RC.cmd,1
 12=3,O,$B\RA_ASM.cmd,2
-13=5,O,"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe" @$A\Build\Options\OPT_LNK_DBG_64.txt /OUT:"$5" "$3"
+13=5,O,$B\RA_LINK.cmd,3
 14=0,0,,5
 17=0,O,$B\RA_DEBUG.cmd,5
 15=rsrc.obj,O,$B\CVTRES.EXE,rsrc.res

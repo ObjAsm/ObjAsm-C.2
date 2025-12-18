@@ -170,7 +170,7 @@ Object D3Light, D3LightID, Streamable
 
   DefineVariable  Origin,           D3Vector,   { 0.0, 0.0, 0.0}  ;Displacement vector
   DefineVariable  r4Intensity,      REAL4,      100.0
-  DefineVariable  dColor,           DWORD,      $RGB( 255, 255, 255)
+  DefineVariable  Color,            COLORREF,   $RGB( 255, 255, 255)
   DefineVariable  dFlags,           DWORD,      0
 ObjectEnd
 
@@ -229,11 +229,11 @@ ObjectEnd
 ; Purpose:  Implementation of D3Engine D3Object object.
 
 Object D3Object, D3ObjectID, Streamable
-  VirtualMethod   AddPoint,         PD3Vector, DWORD              ;1x -> Vector, RGB
-  VirtualMethod   AddLine,          PD3Vector, PD3Vector, DWORD   ;2x -> Vector, RGB
+  VirtualMethod   AddPoint,         PD3Vector, COLORREF           ;1x -> Vector, RGB
+  VirtualMethod   AddLine,          PD3Vector, PD3Vector, COLORREF;2x -> Vector, RGB
   VirtualMethod   AddObject,        POINTER                       ;-> D3Object
-  VirtualMethod   AddRectangle,     PD3Vector, PD3Vector, PD3Vector, PD3Vector, DWORD ;4x -> Vec, RGB
-  VirtualMethod   AddTriangle,      PD3Vector, PD3Vector, PD3Vector, DWORD  ;3x -> Vector, RGB
+  VirtualMethod   AddRectangle,     PD3Vector, PD3Vector, PD3Vector, PD3Vector, COLORREF ;4x -> Vec, RGB
+  VirtualMethod   AddTriangle,      PD3Vector, PD3Vector, PD3Vector, COLORREF  ;3x -> Vector, RGB
   RedefineMethod  Deserialize,      PDESER_INFO
   RedefineMethod  Done
   VirtualMethod   InfoAddTriCount,  POINTER, XWORD
@@ -256,8 +256,8 @@ ObjectEnd
 Object D3Scene, D3SceneID, Streamable
   VirtualMethod   Clear
   VirtualMethod   Colorize
-  VirtualMethod   CreateBox,        POINTER, POINTER, POINTER, DWORD  ;-> WxHxD, RGB
-  VirtualMethod   CreateGeoSphere,  DWORD, DWORD, REAL4, DWORD        ;Merid., Para., Rad., RGB
+  VirtualMethod   CreateBox,        POINTER, POINTER, POINTER, COLORREF ;-> WxHxD, RGB
+  VirtualMethod   CreateGeoSphere,  DWORD, DWORD, REAL4, COLORREF     ;Merid., Para., Rad., RGB
   RedefineMethod  Done
   RedefineMethod  Deserialize,      PDESER_INFO
   VirtualMethod   DestroyCamera,    $ObjPtr(D3Camera)

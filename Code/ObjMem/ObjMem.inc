@@ -443,7 +443,7 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
-BStrFillChr proto :POINTER, :DWORD, :CHRA
+BStrFillChr proto :POINTER, :DWORD, :CHRW
 StrFillChrA proto :POINTER, :DWORD, :CHRA
 StrFillChrW proto :POINTER, :DWORD, :CHRW
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -952,6 +952,7 @@ else
 endif
 
 RGB24To16ColorIndex proto :DWORD
+DrawRoundedRect proto :HANDLE, :SDWORD, :SDWORD, :DWORD, :DWORD, :DWORD, :DWORD
 
 DWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
 QWORD2DEC_MAX_CHARS textequ <UQWORD2DEC_MAX_CHARS>

@@ -25,7 +25,6 @@ SysSetup OOP, NUI32, ANSI_STRING, DEBUG(LOG, "GetNetworkTime")  ;Load OOP files 
 % includelib &LibPath&Windows\Shell32.lib
 % includelib &LibPath&Windows\Shlwapi.lib
 
-;http://computer-programming-forum.com/82-mfc/18430496f2f86b9a.htm
 ;https://labs.apnic.net/?p=462
 
 NTPts struc

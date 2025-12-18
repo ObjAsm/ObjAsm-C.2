@@ -32,7 +32,7 @@ Method D3Light.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   ACall xsi.Load, pStream, pDeserInfo
   OCall pStream::Stream.BinRead, addr [xsi].Origin, sizeof(D3Vector)
   mov [xsi].r4Intensity, $32($OCall(pStream::Stream.BinRead32))
-  mov [xsi].dColor, $32($OCall(pStream::Stream.BinRead32))
+  mov [xsi].Color, $32($OCall(pStream::Stream.BinRead32))
   mov [xsi].dFlags, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
@@ -58,6 +58,6 @@ Method D3Light.Store, uses xsi, pStream:$ObjPtr(Stream)
   ACall xsi.Store, pStream
   OCall pStream::Stream.BinWrite, addr [xsi].Origin, sizeof(D3Vector)
   OCall pStream::Stream.BinWrite32, [xsi].r4Intensity
-  OCall pStream::Stream.BinWrite32, [xsi].dColor
+  OCall pStream::Stream.BinWrite32, [xsi].Color
   OCall pStream::Stream.BinWrite32, [xsi].dFlags
 MethodEnd
