@@ -8,13 +8,13 @@
 ; ==================================================================================================
 
 ; Notes about ObjAsm:
-; ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+; ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  1. Naming rules
-;     a. Constants, structures, unions and native types are written in capitals and words are
-;        separated with an underscore, e.g. MAX_SIZE.
-;     b. Variables follows the "medial capitals" style (CamelCase), e.g. dSelection.
+;     a. Constants, structures, unions, and native types are written in capitals and words are
+;        separated with an underscore, e.g., MAX_SIZE.
+;     b. Variables follow the "medial capitals" style (CamelCase), e.g., dSelection.
 ;  2. Prefixes:
-;     a. Hidden Symbols prepended with "??" are "cross macro" symbols. Do not alter them with other
+;     a. Hidden symbols prepended with "??" are "cross macro" symbols. Do not alter them with other
 ;        macros.
 ;     b. Local macro variables are reused as much as possible to minimize symbol table growth.
 ;        They are prepended with "$$".
@@ -32,79 +32,78 @@
 ;        - so: SOWORD
 ;        - t: TBYTE
 ;        - c: CHR (CHRA, CHRW, CHRU)
-;        - sz: zero terminated string (ANSI or WIDE)
+;        - sz: zero-terminated string (ANSI or WIDE)
 ;        - h: HANDLE
 ;        - p: POINTER
 ;        - pp: POINTER to a POINTER
 ;        - pv: POINTER to a vector
-;        - v: Vector, e.g. VEC3 or VEC4
-;        - m: matrix, e.g. MAT33 or MAT44
-;        - sz: Zero terminated string of CHR characters, usually defined as CONST
+;        - v: Vector, e.g., VEC3 or VEC4
+;        - m: matrix, e.g., MAT33 or MAT44
+;        - sz: zero-terminated string of CHR characters, usually defined as CONST
 ;        - r4: REAL4
 ;        - r8: REAL8
 ;        - r10: REAL10
-;        - P_: ptr type, e.g. ptr RECT = P_RECT
+;        - P_: ptr type, e.g., ptr RECT = P_RECT
 ;        - POB_: ptr Object type
 ;        - TPL_: Object template
 ;        - $: macro that returns a text or a number
 ;        - s: user symbols (sIID_xxx)
-;        - $$: hidden symbols, but reused by macros (save space on the symbol table)
-;        - ??: hidden symbols, but shared between macros
-
-;  3. Macro parameters are usually InsName, ObjName, MtdMame, VarName, IfcName, Args, ...
-;  4. Stucture alingnement are usually 1, 4, 8.
+;        - $$: hidden symbols, reused by macros (saves space in the symbol table)
+;        - ??: hidden symbols, shared between macros
+;  3. Macro parameters are usually InsName, ObjName, MtdName, VarName, IfcName, Args, ...
+;  4. Structure alignment is usually 1, 4, 8.
 ;  5. Object is a synonym for class.
 ;  6. The following prefixes are used:
 ;       TPL_ : object template from which an instance is created.
-;       POB_ : object POINTER type. Used to type cast e.g. variables, paramters, etc.
-;  7. Each macro, procedure or method has a standard header, that can be parsed into a help system.
-;     The header should include the following items in this format (descs should start at pos. 15):
+;       POB_ : object POINTER type. Used to type cast, e.g., variables, parameters, etc.
+;  7. Each macro, procedure, or method has a standard header, which can be parsed into a help
+;     system. The header should include the following items in this format:
+;     (descriptions should start at pos. 15)
 ;        ; Macro:      ... /Procedure/Method
 ;        ; Purpose:    ...
 ;        ; Arguments:  Arg1: ...
 ;        ;             Arg2: ...
 ;        ; Return:     ...
-;  8. ObjAsm uses a dual method table (DMT) that fuses a virtual method table (VMT) with an interface
-;     method table (IMT). The layout of the VMT is designed with negative offsets from the table
-;     entry point. To have a quick access to a event translation table (ETT), a POINTER is inserted
-;     in between the VMT and the IMT, shifting the VMT one entry back.
-;  9. The event translation table (ETT) is used to dispatch Windows messages, COM and other events.
-; 10. Information about objects are hold in a metadata chained list, that starts with p1stOMD.
-; 11. Each object/instance can be identifed at runtime by its ID, declared with the "Object" macro.
-;     If this ID is not declared, ObjAsm doesn't emmit an error. The ID is assumed as "0" and the
-;     object/instance can not be identifed at runtime anymore.
-; 12. Object definition and implementation are hold together in one single file (ObjName.inc).
+;  8. ObjAsm uses a dual method table (DMT) that fuses a virtual method table (VMT) with an
+;     interface method table (IMT). The layout of the VMT is designed with negative offsets from
+;     the table entry point. To have quick access to an event translation table (ETT), a POINTER
+;     is inserted between the VMT and the IMT, shifting the VMT one entry back.
+;  9. The event translation table (ETT) is used to dispatch Windows messages, COM, and other events.
+; 10. Information about objects is held in a metadata chained list, starting with p1stOMD.
+; 11. Each object/instance can be identified at runtime by its ID, declared with the "Object" macro.
+;     If this ID is not declared, ObjAsm doesn't emit an error. The ID is assumed as "0" and the
+;     object/instance cannot be identified at runtime anymore.
+; 12. Object definition and implementation are held together in a single file (ObjName.inc).
 ;     To separate them, a conditional compilation switch called IMPLEMENT is used to encapsulate
 ;     the implementation. This switch is handled automatically.
 ; 13. Object implementation can be precompiled to a library file (ObjName.lib) using an auxiliary
-;     assembly file (ObjName.asm) located in most cases in the same communal directory (ObjPath).
-; 14. Communal paths and other basic definitions are defined in one file called OA_Setup64.inc
-; 15. Including objects are done using the MakeObjects or LoadObjects macro. The first builds
+;     assembly file (ObjName.asm), usually located in the same communal directory (ObjPath).
+; 14. Communal paths and other basic definitions are defined in a file called OA_Setup64.inc
+; 15. Including objects is done using the MakeObjects or LoadObjects macro. The first builds
 ;     the object source while the second loads the precompiled library file. Descendant objects
-;     must be loaded in inheritance order. Included or loaded Objects have to be included or
+;     must be loaded in inheritance order. Included or loaded objects have to be included or
 ;     loaded again. If no path is prepended to the object name, the ObjPath communal directory
 ;     is assumed.
-; 16. An object may have virtual methods, that are invoked using the VMT and the OCall macro.
-;     Interface methods use the IMT and may use ICall or OCall for their invoketion.
+; 16. An object may have virtual methods, invoked using the VMT and the OCall macro.
+;     Interface methods use the IMT and may use ICall or OCall for their invocation.
 ; 17. Static methods use a direct call to the method implementation without any indirection.
 ; 18. Dynamic methods are like virtual or interface methods, but the indirection is done using
-;     a method address stored in the object instance. This way, subclassing of an object instance
-;     can be done.
-; 19. Superclassing can be done redefining the adresses stored in the DMT. For this purpose use the
-;     RedefineMethod macro.
-; 20. In this implementation, the VMT & IMT are per object, not per instance. To implement instance
-;     dependant methods use "Dynamic Methods".
-; 21. Object errors are written in the ObjErr.inc file. User defined errors should be kept in a
+;     a method address stored in the object instance. This allows subclassing of an object instance.
+; 19. Superclassing can be done by redefining the addresses stored in the DMT. Use the
+;     RedefineMethod macro for this purpose.
+; 20. In this implementation, the VMT & IMT are per object, not per instance. To implement instance-
+;     dependent methods, use "Dynamic Methods".
+; 21. Object errors are written in the ObjErr.inc file. User-defined errors should be kept in a
 ;     separate file.
-; 22. Object IDs are written in the ObjIDs.inc file. User defined IDs should be kept in a separate
+; 22. Object IDs are written in the ObjIDs.inc file. User-defined IDs should be kept in a separate
 ;     file.
-; 23. WIDE string support is enabled adding the WIDE_STRING keyword to the SysSetup macro at the
-;     beginning of the sorece. ANSI_STRING switches the ANSI string support on.
-; 24. The "CHR", "PCHR" and "PSTRING" types change their meaning according the string compilation
-;     target (ANSI_STRING or WIDE_STRING).
+; 23. WIDE string support is enabled by adding the WIDE_STRING keyword to the SysSetup macro at the
+;     beginning of the source. ANSI_STRING switches the ANSI string support on.
+; 24. The "CHR", "PCHR", and "PSTRING" types change their meaning according to the string
+;     compilation target (ANSI_STRING or WIDE_STRING).
 ; 25. Debugging macros are enabled when DEBUG() is added to the SysSetup macro. The destination
-;     of the debug information is directed using the Debug auguments WND, CON, LOG or NET.
-; 26. If a string procedure name contain one of the following characters, it behaves as follows:
+;     of the debug information is directed using the Debug arguments WND, CON, LOG, or NET.
+; 26. If a string procedure name contains one of the following characters, it behaves as follows:
 ;       - A: ANSI procedure
 ;       - W: WIDE procedure
 ;       - C: character count is limited
@@ -113,7 +112,7 @@
 ;       - L: operation starts from left
 ;       - R: operation starts from right
 ; 27. Versioning is almost according to SemVer 2.0 (https://semver.org/)
-;     Majors (packages) are identified using capital letters. 
+;     Majors (packages) are identified using capital letters.
 
 ; --------------------------------------------------------------------------------------------------
 
@@ -166,7 +165,7 @@ BIN_FORMAT_LIB          equ       3
 TARGET_BIN_FORMAT       =         BIN_FORMAT_EXE
 
 USER_INTERFACE_NONE     equ       1                     ;No user interface
-USER_INTERFACE_GUI      equ       2                     ;Graphic user interface
+USER_INTERFACE_GUI      equ       2                     ;Graphical user interface
 USER_INTERFACE_CLI      equ       3                     ;Command line interface
 TARGET_USER_INTERFACE   =         USER_INTERFACE_GUI    ;Default: Window
 
@@ -443,7 +442,7 @@ SysSetup macro Arguments:vararg
   if DEBUGGING
     if TARGET_BITNESS eq 64
       ??StackBase equ <rbp>                             ;;Set default
-      option stackbase:??StackBase                      ;;use rbp as stackbase for easier debugging
+      option stackbase:??StackBase                      ;;Use rbp as stackbase for easier debugging
     endif
 
     % include &MacPath&DebugShare.inc
@@ -492,7 +491,7 @@ SysSetup macro Arguments:vararg
 
     externdef dDbgDev:DWORD                           ;;Export dDbgDev symbol
     externdef dDbgOpt:DWORD                           ;;Export dDbgOpt symbol
-    externdef hDbgInternet:HANDLE    
+    externdef hDbgInternet:HANDLE
     externdef pDbgIpStrA:PSTRINGA
     externdef wDbgIpPort:WORD
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
@@ -604,7 +603,7 @@ SysSetup macro Arguments:vararg
   % include &MacPath&Debug.inc
 
   TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX
-  
+
   ??ObjectContext textequ <>
   ??MethodContext textequ <>
   ??CodeContext textequ <>
@@ -630,7 +629,7 @@ SysInit macro Arg1, Arg2
     ifidn DBG_DEVICE, <NET>
       pDbgIpStrA    PSTRINGA    $OfsCStrA(DBG_IP_ADDR)
       wDbgIpPort    WORD        DBG_IP_PORT
-      hDbgInternet  HINTERNET   0                       
+      hDbgInternet  HINTERNET   0
     else
       pDbgIpStrA    PSTRINGA    NULL
       wDbgIpPort    WORD        0
@@ -777,7 +776,7 @@ SysInit macro Arg1, Arg2
           mov hDbgInternet, xax
         .else
           invoke MessageBox, 0, $OfsCStr("No Network connection"), $OfsCStr("Error"), MB_ICONERROR
-        .endif 
+        .endif
         mov DbgColorForeground, DBG_COLOR_FOREGROUND_WND_LIGHT
         mov DbgColorBackground, DBG_COLOR_BACKGROUND_WND_LIGHT
         mov DbgColorComment, DBG_COLOR_COMMENT_WND_LIGHT
@@ -828,7 +827,7 @@ SysInit macro Arg1, Arg2
   if TARGET_OOP eq OOP_ENABLED
     ObjectsInit
   endif
-  
+
   if RESGUARD_LOADED ne FALSE
     invoke ResGuardInit
   endif

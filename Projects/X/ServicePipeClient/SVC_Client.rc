@@ -1,0 +1,20 @@
+; ==================================================================================================
+; Title:      SVC_Client.rc
+; Author:     G. Friedrich
+; Notes:      See SVC_Client.asm
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "SVC_Client_Shared.rc"     //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Icons -------------------------------------------------------------------------------------------
+ICON_APP              ICON DISCARDABLE "ICO\OA.ico"
+
+// Dialogs -----------------------------------------------------------------------------------------
+#include "Res/MainWndDlg.rc"
+

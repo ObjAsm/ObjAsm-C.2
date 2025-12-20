@@ -34,7 +34,9 @@ DBG_IP_PORT textequ <8080>                              ;Debug target port
 
 % includelib &LibPath&Windows\shell32.lib               ;Shell API library
 % includelib &LibPath&Windows\Wininet.lib               ;WinInet networking
+% includelib &LibPath&Windows\Advapi32.lib
 
+;% include &MacPath&fMath.inc                            ;Floating-point math macros
 % include &IncPath&Windows\ShellApi.inc                 ;Shell API declarations
 % include &IncPath&Windows\wininet.inc                  ;WinInet declarations
 
@@ -42,7 +44,7 @@ DBG_IP_PORT textequ <8080>                              ;Debug target port
 MakeObjects Primer, Stream, Service                     ;Include required ObjAsm objects
 
 include SVC_Template_Globals.inc                        ;Global constants / data
-include SVC_Template_Main.inc                           ;Service object implementations
+include SVC_Template_Main.inc                           ;Services implementation
 
 
 ; ==================================================================================================
@@ -73,7 +75,7 @@ start proc uses xbx
   local dArgCount:DWORD                                 ;Argument count
 
   SysInit                                               ;Initialize ObjAsm runtime
-  DbgClearAll                                           ;Clear debug output
+;  DbgClear "SVC_TEMPLATE"                               ;Clear debug output
   DbgText "Service called"                              ;Debug trace
   invoke OpenServiceLogFile, offset cLogFileName        ;Open Log-File for writing
 

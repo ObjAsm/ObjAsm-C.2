@@ -2,10 +2,10 @@
 ; Title:      Dialog.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of Dialog objects.
+; Purpose:    ObjAsm support for Dialog objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
-;               - Set the focus on a Dialog (Don't use SetFocus => WM_NEXTDLGCTL):
+;               - Set the focus on a Dialog (do not use SetFocus => WM_NEXTDLGCTL):
 ;                 https://devblogs.microsoft.com/oldnewthing/20040802-00/?p=38283
 ; ==================================================================================================
 
@@ -15,11 +15,11 @@ LMA_ALPHA       equ   2
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Dialog
-; Purpose:    This object provides all the functionality needed to create, show and destroy a
-;             windows dialog. This class is the base for derived classes like DialogModal and
+; Purpose:    This object provides all the functionality needed to create, show, and destroy a
+;             Windows dialog. This class is the base for derived classes such as DialogModal and
 ;             DialogModeless.
 
-Object Dialog, DialogID, Window                              ;Class name "#32770"
+Object Dialog, DialogID, Window                         ;Class name "#32770"
   VirtualMethod     CtlsGet
   VirtualMethod     CtlsInvalidate,     DWORD, DWORD
   VirtualMethod     CtlsLock,           DWORD, DWORD, DWORD
@@ -81,7 +81,7 @@ OPTION EPILOGUE:EpilogueDef
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsGet
-; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
+; Purpose:    Does nothing at this stage. It must be redefined to provide proper functionality.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -90,7 +90,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsInvalidate
-; Purpose:    Invalidate a range of controls.
+; Purpose:    Invalidates a range of controls.
 ; Arguments:  Arg1: Low control ID limit.
 ;             Arg2: High control ID limit.
 ; Return:     Nothing.
@@ -106,7 +106,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsLock
-; Purpose:    Lock or unlock the redrawing of a range of controls.
+; Purpose:    Locks or unlocks redrawing of a range of controls.
 ; Arguments:  Arg1: TRUE = controls locked => no redrawing, FALSE = unlocked => redrawing enabled.
 ;             Arg2: Low control ID limit.
 ;             Arg3: High control ID limit.
@@ -116,7 +116,7 @@ Method Dialog.CtlsLock,, dLock:DWORD, dLowID:DWORD, dHighID:DWORD
   local Limits:LIMIT_DATA
 
   SetObject xcx
-  xor dLock, TRUE                                     ;dLock ;Swap TRUE and FALSE
+  xor dLock, TRUE                                     ;Swap TRUE and FALSE
   m2m Limits.dLowerLimit, dLowID, eax
   m2m Limits.dUpperLimit, dHighID, edx
   m2m Limits.dData, dLock, eax
@@ -125,7 +125,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsSet
-; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
+; Purpose:    Does nothing at this stage. It must be redefined to provide proper functionality.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -134,7 +134,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.DestroyDialog
-; Purpose:    Destroy a dialog.
+; Purpose:    Destroys the dialog.
 ; Arguments:  Arg1: Windows return value.
 ; Return:     Nothing.
 
@@ -145,12 +145,12 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.DlgProc
-; Purpose:    Processing of window messages.
+; Purpose:    Processes window messages.
 ; Arguments:  Arg1: Message identifier.
 ;             Arg2: First message parameter.
 ;             Arg3: Second message parameter.
-; Return:     eax = is the result of the message processing and depends on the message.
-; Note:       Window HANDLE passed in pSelf (hidden parameter).
+; Return:     eax = Result of the message processing; depends on the message.
+; Note:       Window HANDLE is passed in pSelf (hidden parameter).
 
 Method Dialog.DlgProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   ;DbgMessage uMsg,, "Dialog.DlgProc"
@@ -161,9 +161,9 @@ Method Dialog.DlgProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
     mrm [xsi].$Obj(Dialog).hWnd, pSelf, xcx             ;pSelf = hWnd
     invoke SetWindowLongPtr, xcx, DWLP_USER, xsi
   .else
-    invoke GetWindowLongPtr, pSelf, DWLP_USER           ;If DWLP_USER wasn't set, it returns NULL
+    invoke GetWindowLongPtr, pSelf, DWLP_USER           ;If DWLP_USER wasn't set, returns NULL
     test xax, xax
-    jz @@EOM                                            ;NULL => not handled!
+    jz @@EOM                                            ;NULL => not handled
     mov xsi, xax                                        ;xsi -> object instance
   .endif
   DispatchEvent                                         ;xsi -> object instance
@@ -171,10 +171,10 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.Init
-; Purpose:    Initialize the Dialog object.
+; Purpose:    Initializes the Dialog object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: Parent window HANDLE.
-;             Arg3: -> Template name or Resource ID.
+;             Arg3: -> Template name or resource ID.
 ; Return:     Nothing.
 
 Method Dialog.Init,, pOwner:POINTER, hParent:HWND, pTemplate:POINTER
@@ -189,7 +189,7 @@ MethodEnd
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
-; Return:     eax = If an application processes this message, it should return zero.
+; Return:     eax = If the application processes this message, it should return zero.
 
 Method Dialog.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
@@ -225,7 +225,7 @@ MethodEnd
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
-; Return:     eax = TRUE to direct the system to set the keyboard focus to the control specified by
+; Return:     eax = TRUE to instruct the system to set the keyboard focus to the control specified by
 ;             wParam. Otherwise, it should return FALSE to prevent the system from setting the
 ;             default keyboard focus.
 
@@ -255,9 +255,9 @@ MethodEnd                                               ;  setting the default k
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.ShowAt
-; Purpose:    Show a dialog at a specified position.
-; Arguments:  Arg1: X position from screen top border.
-;             Arg2: Y position from screen left border.
+; Purpose:    Shows a dialog at a specified position.
+; Arguments:  Arg1: X position from the top of the screen.
+;             Arg2: Y position from the left of the screen.
 ; Return:     Nothing.
 
 Method Dialog.ShowAt,, sdXPos:SDWORD, sdYPos:SDWORD

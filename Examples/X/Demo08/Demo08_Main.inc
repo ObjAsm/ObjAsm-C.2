@@ -50,10 +50,13 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Application.Init, uses xsi
+Method Application.Init, uses xbx xsi
   SetObject xsi
   ACall xsi.Init
   invoke CreateDialogParam, hInstance, IDD_DLG_MAIN, 0, $MethodAddr(DlgApp.WndProc), xsi
+  mov xbx, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+  invoke SendMessage, [xsi].hWnd, WM_SETICON, ICON_SMALL, xbx
+  invoke SendMessage, [xsi].hWnd, WM_SETICON, ICON_BIG, xbx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

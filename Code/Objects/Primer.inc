@@ -2,9 +2,9 @@
 ; Title:      Primer.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.1
-; Purpose:    ObjAsm support of Primer objects.
+; Purpose:    ObjAsm support for Primer objects.
 ; Notes:      Version C.1.1, October 2022
-;               - ErrorSet and ErrorReport return the error value. Bug in ErrorReport corrected.
+;               - ErrorSet and ErrorReport return the error value; bug in ErrorReport corrected.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ; ==================================================================================================
@@ -12,7 +12,7 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Primer
-; Purpose:    This object is at the top of the inheritance tree and it defines the common properties
+; Purpose:    This object is at the top of the inheritance tree and defines the common properties
 ;             for all descendant objects in the ObjAsm object library.
 ; Notes:      The Done destructor MUST always be the first method in the virtual method table (VMT).
 
@@ -46,8 +46,8 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorClear
-; Purpose:    Call recursively ErrorClear until the instance that reported the error was reached.
-;             All dErrorCode(s) and pErrorObject(s) members were zeroed/nulled.
+; Purpose:    Recursively calls ErrorClear until the instance that reported the error is reached.
+;             All dErrorCode(s) and pErrorCaller(s) are cleared.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -64,7 +64,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorReport
-; Purpose:    Error handling method. Sets dErrorCode member and propagates the error invoking the
+; Purpose:    Error handling method. Sets dErrorCode member and propagates the error by invoking the
 ;             ErrorSet method of the owner object. If it can take a corrective action, it must reset
 ;             the error condition using the ErrorClear method.
 ; Arguments:  Arg1: -> Instance that invokes the procedure (may be NULL).
@@ -83,10 +83,10 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorSet
-; Purpose:    Set the error code and takes no further action.
+; Purpose:    Sets the error code and takes no further action.
 ; Arguments:  Arg1: Error code.
 ; Return:     eax = Error code.
-; Note:       If this method is compiled with the DEBUGGING switch enabled it emits error info.
+; Note:       If compiled with the DEBUGGING switch enabled, this method outputs error information.
 
 if DEBUGGING
 
@@ -155,8 +155,9 @@ MethodEnd
 
 endif
 
-; -------------------------------------------------------------------------------------------------; Method:     Primer.Init
-; Purpose:    Set the owner of the object.
+; --------------------------------------------------------------------------------------------------
+; Method:     Primer.Init
+; Purpose:    Sets the owner of the object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
 

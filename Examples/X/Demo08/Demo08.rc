@@ -15,6 +15,9 @@
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
+// Icons -------------------------------------------------------------------------------------------
+ICON_APP              ICON DISCARDABLE "ICO\OA.ico"
+
 // Dialogs -----------------------------------------------------------------------------------------
 #include "Res/MainWndDlg.rc"
 

@@ -10,14 +10,14 @@
 ; Purpose:    2 test services derived from Service.
 ;             They setup pName, pDisp and pDesc on Startup.
 
-Object Service1,, Service                              ;Service1 derives from base Service
-  StaticMethod      Startup                            ;Static initializer for service metadata
-  RedefineMethod    Run                                ;Main service execution thread
+Object Service1,, Service                               ;Service1 derives from base Service
+  StaticMethod      Startup                             ;Static initializer for service metadata
+  RedefineMethod    Run                                 ;Main service execution thread
 ObjectEnd
 
-Object Service2,, Service                              ;Service2 derives from base Service
-  StaticMethod      Startup                            ;Static initializer for service metadata
-  RedefineMethod    Run                                ;Main service execution thread
+Object Service2,, Service                               ;Service2 derives from base Service
+  StaticMethod      Startup                             ;Static initializer for service metadata
+  RedefineMethod    Run                                 ;Main service execution thread
 ObjectEnd
 
 

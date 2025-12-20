@@ -9,6 +9,19 @@
 
 
 ; --------------------------------------------------------------------------------------------------
+; SERVICE_HOSTING_TYPE determines how this services is hosted:
+;
+;   SERVICE_WIN32_SHARE_PROCESS  - The services share a single process with other
+;                                  services. Use this if you want multiple services
+;                                  to run in one host process.
+;
+;   SERVICE_WIN32_OWN_PROCESS    - The services run in their own dedicated process.
+;                                  Use this if you want each service isolated.
+; --------------------------------------------------------------------------------------------------
+SERVICE_HOSTING_TYPE equ SERVICE_WIN32_SHARE_PROCESS
+
+
+; --------------------------------------------------------------------------------------------------
 ; Object:     Service
 ; Purpose:    A Windows service is a special type of application that runs in the background,
 ;             usually without a user interface, and starts automatically when Windows boots
@@ -21,9 +34,9 @@
 ;     ¦
 ;     ¦  StartService
 ;     V
-;    ServiceMain (external bootstrap)
+;    ServiceMainThunk (external bootstrap)
 ;     ¦
-;     ¦  Init()
+;     ¦  Init
 ;     V
 ;    RegisterServiceCtrlHandlerEx
 ;     ¦
@@ -57,11 +70,11 @@
 ;    OnStop / OnShutdown
 ;     ¦
 ;     ¦ SetEvent(hStopEvent)
-;     ?
+;     V
 ;    Service.Run loop exits
 ;     ¦
-;     ¦ Set SERVICE_STOPPED
-;     ?
+;     ¦ Set SERVICE_STOPPED & Done cleanup
+;     V
 ;    Thread returns
 
 
@@ -216,7 +229,7 @@ MethodEnd                                               ;End Dispatch
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Service.Done
-; Purpose:    Finalize the application object.
+; Purpose:    Finalize the Service object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -229,7 +242,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Service.Init
-; Purpose:    Initialize the application object.
+; Purpose:    Initialize the Service object.
 ; Arguments:  Arg1: Number of arguments.
 ;             Arg2: -> Argument array. First element is the service name.
 ; Return:     eax = 0 if failed.
@@ -245,8 +258,8 @@ Method Service.Init, uses xsi, dArgC:DWORD, pArgV:POINTER
   .if xax != 0
     mov [xsi].hServiceStatus, xax                       ;Store SCM status handle
 
-    invoke MemZero, addr [xsi].Status, sizeof SERVICE_STATUS  ;Clear SERVICE_STATUS
-    mov [xsi].Status.dwServiceType, SERVICE_WIN32_OWN_PROCESS ;Own-process service type
+    invoke MemZero, addr [xsi].Status, sizeof SERVICE_STATUS    ;Clear SERVICE_STATUS
+    mov [xsi].Status.dwServiceType, SERVICE_HOSTING_TYPE
 
     mov [xsi].Status.dwCurrentState, SERVICE_START_PENDING    ;Report startup pending
     invoke SetServiceStatus, [xsi].hServiceStatus, addr [xsi].Status  ;Notify SCM
@@ -383,7 +396,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Service.Run, uses xsi
-  DbgText "Entering Service.Run"                        ;Debug trace
+  DbgText "Service.Run"                                 ;Debug trace
   SetObject xsi                                         ;Load object pointer
   mov [xsi].Status.dwControlsAccepted, SERVICE_ACCEPT_STOP or SERVICE_ACCEPT_PAUSE_CONTINUE or \
                                        SERVICE_ACCEPT_PRESHUTDOWN or SERVICE_ACCEPT_SHUTDOWN
@@ -392,18 +405,26 @@ Method Service.Run, uses xsi
   invoke SetServiceStatus, [xsi].hServiceStatus, addr [xsi].Status    ;Notify SCM
   .while TRUE
     invoke WaitForSingleObject, [xsi].hStopEvent, 1000  ;Poll stop event
-    DbgDec eax, "WaitForSingleObject result from Service.Run" ;Debug wait result
+
+    ; Do something ...
+
     .continue .if eax == WAIT_TIMEOUT                   ;Continue if timeout
 
-    mov [xsi].Status.dwControlsAccepted, SERVICE_ACCEPT_PRESHUTDOWN or SERVICE_ACCEPT_SHUTDOWN
-                                                        ;Limit controls
-    mov [xsi].Status.dwCurrentState, SERVICE_STOPPED    ;Stopped
-    invoke SetServiceStatus, [xsi].hServiceStatus, addr [xsi].Status  ;Notify SCM
-    xor eax, eax                                        ;Return code 0
     .break                                              ;Exit loop
   .endw
-  DbgText "Exiting Service.Run"                         ;Debug trace
+
+  OCall xsi.Done
+
+  mov [xsi].Status.dwControlsAccepted, SERVICE_ACCEPT_PRESHUTDOWN or SERVICE_ACCEPT_SHUTDOWN
+                                                        ;Limit controls
+  mov [xsi].Status.dwCurrentState, SERVICE_STOPPED      ;Stopped
+  invoke SetServiceStatus, [xsi].hServiceStatus, addr [xsi].Status  ;Notify SCM
 MethodEnd
+
+
+; ==================================================================================================
+;    Service (un)installation procedures
+; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Service.Install
@@ -422,14 +443,15 @@ Method Service.Install, uses xbx xdi xsi
   SetObject xsi                                         ;Load object pointer
   mov dLastError, 0                                     ;Assume success
 
-  invoke GetModuleFileName, 0, addr cModulePath, lengthof cModulePath   ;Get executable path
   invoke OpenSCManager, 0, 0, SC_MANAGER_CREATE_SERVICE ;Open SCM with create rights
   .if xax != 0
     mov xbx, xax                                        ;Save SCM handle
 
+    invoke GetModuleFileName, 0, addr cModulePath, lengthof cModulePath   ;Get executable path
+
     ;Create service entry
     invoke CreateService, xbx, [xsi].pName, [xsi].pDisp, SERVICE_ALL_ACCESS, \
-                          SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL, \
+                          SERVICE_HOSTING_TYPE, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL, \
                           addr cModulePath, NULL, NULL, NULL, NULL, NULL
     .if xax != 0
       mov xdi, xax                                      ;Service handle
