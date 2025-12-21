@@ -120,6 +120,7 @@ ServiceLogCritSect CRITICAL_SECTION  {}
 ; Arguments:  None.
 ; Return:     Nothing.
 
+align ALIGN_CODE
 CloseServiceLogFile proc
   ;Delete the critical section used for thread-safe logging
   invoke DeleteCriticalSection, addr ServiceLogCritSect
@@ -139,6 +140,7 @@ CloseServiceLogFile endp
 ; Arguments:  Arg1: -> File name.
 ; Return:     xax = File HANDLE or 0 if failed.
 
+align ALIGN_CODE
 OpenServiceLogFile proc uses xbx pLogFileName:PSTRING
   ;Open the file in append mode, allowing multiple processes to write simultaneously
   invoke CreateFile, pLogFileName, GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, \
@@ -161,6 +163,7 @@ OpenServiceLogFile endp
 ; Arguments:  Arg1: -> Message (ANSI).
 ; Return:     Nothing.
 
+align ALIGN_CODE
 LogServiceMessage proc, pMessage:PSTRINGA
   .if hServiceLogFile != 0
     invoke EnterCriticalSection, addr ServiceLogCritSect  ;Lock critical section

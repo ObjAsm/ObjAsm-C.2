@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include ObjAsm model macros and core setup
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)           ;Enable OOP support, target Win64,
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND)           ;Enable OOP support, target Win64,
                                                         ;use wide strings
 
 % include &MacPath&fMath.inc                            ;Include floating-point math macros

@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="SVC_RESP_MAX_SIZE"
-2="dRetBufferSize"
-3="SVC_RESP_SIZE"
-4="DbgClear"
-5="BytesRW"
-6="DLG_Template"
-7="IDD_DLG_MAIN"
-8="Demo08"
-9="SVC_Client_"
-10="Demo08_"
+1="SendPipeCommand"
+2="SVC_RESP_MAX_SIZE"
+3="dRetBufferSize"
+4="SVC_RESP_SIZE"
+5="DbgClear"
+6="BytesRW"
+7="DLG_Template"
+8="IDD_DLG_MAIN"
+9="Demo08"
+10="SVC_Client_"
 [Collapse]
 1=
 2=

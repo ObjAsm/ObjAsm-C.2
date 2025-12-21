@@ -37,6 +37,52 @@ ObjectEnd
 ; Service1 Implementation
 ; ==================================================================================================
 
+.code
+; --------------------------------------------------------------------------------------------------
+; Procedure:  ServiceSendUserNotification
+; Purpose:    Display a message box to the active user session without waiting for an answer.
+;             Intended for use by a service to notify the currently logged-on interactive user.
+; Arguments:  Arg1: -> Message text.
+;             Arg2: -> Title text.
+; Return:     eax = 0 on failure.
+; Notes:      This function uses WTSSendMessage to communicate from a service context to a
+;             user session. The call is non-blocking and returns immediately.
+; --------------------------------------------------------------------------------------------------
+
+ServiceSendUserNotification proc uses xbx xdi, pText:PSTRING, pTitle:PSTRING
+  local dSessionId:DWORD, dResponse:DWORD
+  local dTextSize:DWORD, dTitleSize:DWORD
+
+  ;Retrieve the session ID of the active console session
+  ;This corresponds to the user currently logged on at the physical console
+  invoke WTSGetActiveConsoleSessionId
+
+  ;Validate the returned session ID
+  ;A value of 0FFFFFFFFh indicates that no active session was found
+  .if eax != 0FFFFFFFFh
+    mov dSessionId, eax
+
+    ;Determine the size of the message and title strings in bytes
+    mov dTextSize,  $32($invoke(StrSize, pText))
+    mov dTitleSize, $32($invoke(StrSize, pTitle))
+
+    ;Send a message box to the specified user session
+    invoke WTSSendMessage, \
+           0, \                                         ;WTS_CURRENT_SERVER_HANDLE
+           dSessionId, \                                ;Target session ID
+           pTitle, \                                    ;Message box title
+           dTitleSize, \                                ;Title length in bytes
+           pText, \                                     ;Message text
+           dTextSize, \                                 ;Text length in bytes
+           MB_OK or MB_ICONINFORMATION, \               ;Message box style
+           0, \                                         ;Timeout in seconds (non-blocking)
+           addr dResponse, \                            ;Receives user response, if any
+           FALSE                                        ;Do not wait for user input
+  .endif
+
+  ret                                                   ;Return to caller
+ServiceSendUserNotification endp
+
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Service1.Run
 ; Purpose:    Main worker thread of Service1
@@ -163,6 +209,10 @@ Method Service1.Run, uses xbx xdi xsi
       mov dCommand, 200                                 ;STOP response
     .elseif dCommand == CMD_QUERYSTATE
       m2m dCommand, [xsi].Status.dwCurrentState, eax    ;Return current state
+    .elseif dCommand == CMD_NOTIFICATION
+      invoke ServiceSendUserNotification, $OfsCStr("Service recieved a CMD_NOTIFICATION"), \
+                                          $OfsCStr("ObjAsm Service - 1")
+      mov dCommand, 400                                 ;PING response
     .else
       mov dCommand, 0
     .endif

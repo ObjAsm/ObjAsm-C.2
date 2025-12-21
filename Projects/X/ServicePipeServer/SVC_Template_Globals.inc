@@ -34,9 +34,10 @@ ServiceHostTable label SERVICE_TABLE_ENTRY              ;1 entry for each servic
   SERVICE_TABLE_ENTRY <offset cServiceName2, offset ServiceMainThunk>
   SERVICE_TABLE_ENTRY <NULL, NULL>
 
-CMD_PING        equ 1
-CMD_STOP        equ 2
-CMD_QUERYSTATE  equ 3
+CMD_PING          equ 1
+CMD_STOP          equ 2
+CMD_QUERYSTATE    equ 3
+CMD_NOTIFICATION  equ 4
 
 ;The header file sddl.h has not been translated yet!
 @DefProto DllImport, ConvertStringSecurityDescriptorToSecurityDescriptorA, WIN_STD_CALL_CONV,, <:POINTER, :DWORD, :POINTER, :POINTER>, 16
@@ -48,3 +49,11 @@ else
 endif
 
 SDDL_REVISION_1 equ 1
+
+@DefProto DllImport, WTSSendMessageA, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :POINTER, :DWORD, :POINTER, :DWORD, :DWORD, :DWORD, :POINTER, :DWORD>, 40
+@DefProto DllImport, WTSSendMessageW, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :POINTER, :DWORD, :POINTER, :DWORD, :DWORD, :DWORD, :POINTER, :DWORD>, 40
+ifdef UNICODE
+  WTSSendMessage equ <WTSSendMessageW>
+else
+  WTSSendMessage equ <WTSSendMessageA>
+endif

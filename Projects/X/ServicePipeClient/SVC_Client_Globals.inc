@@ -9,6 +9,7 @@ include SVC_Client_Shared.inc
 
 CStr cPipeName, "\\.\pipe\ObjAsmService1"
 
-CMD_PING        equ 1
-CMD_STOP        equ 2
-CMD_QUERYSTATE  equ 3
+CMD_PING          equ 1
+CMD_STOP          equ 2
+CMD_QUERYSTATE    equ 3
+CMD_NOTIFICATION  equ 4

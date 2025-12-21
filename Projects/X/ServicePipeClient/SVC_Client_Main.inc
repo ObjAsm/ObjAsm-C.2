@@ -37,12 +37,12 @@ ObjectEnd
 ; Purpose:    Send a command to the service using a named pipe.
 ;             Writes the command ID and reads back the service response.
 ; Arguments:  Arg1: Command ID.
-;             Arg2: Returned bytes.
+;             Arg2: -> Returned bytes.
 ;             Arg3: -> Response buffer.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-.code
-SendPipeCommand proc dCommand:DWORD, dRetSize:DWORD, pRetBuffer:POINTER
+align ALIGN_CODE
+SendPipeCommand proc dCommand:DWORD, pRetSize:POINTER, pRetBuffer:POINTER
   local hPipe:HANDLE, dBytesRW:DWORD                     ;Pipe handle and byte counter
 
   ;Open the named pipe exposed by the service
@@ -54,7 +54,7 @@ SendPipeCommand proc dCommand:DWORD, dRetSize:DWORD, pRetBuffer:POINTER
     invoke WriteFile, hPipe, addr dCommand, sizeof dCommand, NULL, 0
 
     ;Read the response data from the service
-    invoke ReadFile, hPipe, pRetBuffer, SVC_RESPONSE_MAX_SIZE, addr dRetSize, 0
+    invoke ReadFile, hPipe, pRetBuffer, SVC_RESPONSE_MAX_SIZE, pRetSize, 0
 
     ;Close the pipe handle
     invoke CloseHandle, hPipe
@@ -90,7 +90,7 @@ MethodEnd
 
 Method Application.CtlsSet, uses xsi
   SetObject xsi
-  invoke SetDlgItemInt, [xsi].hWnd, IDC_EDT_RESP, [xsi].bSvcResponse, FALSE
+  invoke SetDlgItemInt, [xsi].hWnd, IDC_EDT_RESP, DWORD ptr [xsi].bSvcResponse, FALSE
                                                         ;Show response in output control
 MethodEnd
 
@@ -129,6 +129,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .if ax == IDC_BTN_SEND
     OCall xsi.CtlsGet                                   ;Retrieve command from input control
     invoke SendPipeCommand, [xsi].dSvcCommand, addr [xsi].dSvcRespSize, addr [xsi].bSvcResponse
+
                                                         ;Send command and receive response
     OCall xsi.CtlsSet                                   ;Update response display
     xor eax, eax                                        ;Return zero (message handled)

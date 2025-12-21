@@ -35,6 +35,7 @@ DBG_IP_PORT textequ <8080>                              ;Debug target port
 % includelib &LibPath&Windows\shell32.lib               ;Shell API library
 % includelib &LibPath&Windows\Wininet.lib               ;WinInet networking
 % includelib &LibPath&Windows\Advapi32.lib
+% includelib &LibPath&Windows\Wtsapi32.lib
 
 ;% include &MacPath&fMath.inc                            ;Floating-point math macros
 % include &IncPath&Windows\ShellApi.inc                 ;Shell API declarations
