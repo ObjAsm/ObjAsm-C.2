@@ -107,19 +107,19 @@ Method Service1.Run, uses xbx xdi xsi
 
   ;Convert SDDL string to security descriptor for pipe access
   invoke ConvertStringSecurityDescriptorToSecurityDescriptor, addr cSDDL, SDDL_REVISION_1, \
-                                                              addr pSecDesc,0
+                                                              addr pSecDesc, 0
   mov SecAttr.nLength, sizeof SecAttr                   ;Set size of SECURITY_ATTRIBUTES
   m2m SecAttr.lpSecurityDescriptor, pSecDesc, xax       ;Assign security descriptor
   mov SecAttr.bInheritHandle, FALSE                     ;Pipe handles are not inheritable
 
   xor ebx, ebx                                          ;Initialize pipe instance counter
-  xor edi, edi                                          ;Initialize OVERLAPPED structure counter
+  xor edi, edi                                          ;Initialize OVERLAPPED structure offset
 
   ;Loop: create MAX_PIPE_INSTANCES named pipes
   .while ebx < MAX_PIPE_INSTANCES
     invoke CreateNamedPipe, [xsi].pPipeName, \
                             PIPE_ACCESS_DUPLEX or FILE_FLAG_OVERLAPPED, \
-                            PIPE_TYPE_MESSAGE or PIPE_READMODE_MESSAGE or PIPE_WAIT, \
+                            PIPE_TYPE_MESSAGE or PIPE_READMODE_MESSAGE, \
                             MAX_PIPE_INSTANCES, PIPE_BUFFER_SIZE, PIPE_BUFFER_SIZE, \
                             0, addr SecAttr
     mov PipeHandleArray[xbx*sizeof(HANDLE)], xax        ;Save pipe handle
@@ -135,23 +135,30 @@ Method Service1.Run, uses xbx xdi xsi
     mov [xdx].OVERLAPPED.OffsetHigh, 0
     mov [xdx].OVERLAPPED.hEvent, xax
     mov OverlappedPtrArray[xbx*sizeof(POINTER)], xdx    ;Save pointer to overlapped structure
-    add edi, sizeof(OVERLAPPED)
+    add edi, sizeof(OVERLAPPED)                         ;Move to next OVERLAPPED structure
 
-    ;Start asynchronous pipe connection
+    ;Attempt to connect named pipe asynchronously
     invoke ConnectNamedPipe, PipeHandleArray[xbx*sizeof(HANDLE)], xdx
     .if eax == FALSE
       invoke GetLastError
-      cmp eax, ERROR_IO_PENDING
-      je @F                                             ;Normal async connect pending
-      cmp eax, ERROR_PIPE_CONNECTED
-      je @F                                             ;Client already connected
-      invoke CloseHandle, PipeHandleArray[xbx*sizeof(HANDLE)]   ;Close pipe on error
-    @@:
+      .if eax != ERROR_IO_PENDING                       ;Normal async connect pending => continue
+        .if eax == ERROR_PIPE_CONNECTED
+          ;Client already connected — treat as if connection succeeded
+          ;Optionally, signal the event manually to start read immediately
+          invoke SetEvent, EventHandleArray[xbx*sizeof(HANDLE)]
+        .else
+          ;If another error, close pipe and event
+          invoke CloseHandle, PipeHandleArray[xbx*sizeof(HANDLE)]
+          invoke CloseHandle, EventHandleArray[xbx*sizeof(HANDLE)]
+        .endif
+      .endif
     .endif
 
     inc ebx                                             ;Next pipe instance
   .endw
 
+  invoke LocalFree, pSecDesc                            ;Free security descriptor
+  
   ;Add stop event as the last event in array
   m2m EventHandleArray[xbx*sizeof(HANDLE)], [xsi].hStopEvent, xax
 
@@ -199,6 +206,8 @@ Method Service1.Run, uses xbx xdi xsi
                                   OverlappedPtrArray[xbx*sizeof(POINTER)], addr dSize, FALSE
       test eax, eax
       jz PipeReset                                      ;Restart pipe on failure
+      cmp dSize, sizeof DWORD
+      jne PipeReset                                     ;Restart pipe on misformed message
     .endif
 
     ;Process command received via pipe
@@ -239,20 +248,42 @@ Method Service1.Run, uses xbx xdi xsi
     .endif
 
   PipeReset:
+    invoke CancelIoEx, PipeHandleArray[xbx*sizeof(HANDLE)], NULL
     invoke DisconnectNamedPipe, PipeHandleArray[xbx*sizeof(HANDLE)] ;Disconnect client
     invoke ResetEvent, EventHandleArray[xbx*sizeof(HANDLE)]         ;Reset pipe event
 
     ;Re-arm async ConnectNamedPipe for next client
-    mov xdi, OverlappedPtrArray[xbx*sizeof(POINTER)]
-    mov [xdi].OVERLAPPED.Internal, 0
-    mov [xdi].OVERLAPPED.InternalHigh, 0
-    mov [xdi].OVERLAPPED.Offset_, 0
-    mov [xdi].OVERLAPPED.OffsetHigh, 0
-    m2m [xdi].OVERLAPPED.hEvent, EventHandleArray[xbx*sizeof(HANDLE)], xax
-    invoke ConnectNamedPipe, PipeHandleArray[xbx*sizeof(HANDLE)], xdi
+    mov xdx, OverlappedPtrArray[xbx*sizeof(POINTER)]
+    mov [xdx].OVERLAPPED.Internal, 0
+    mov [xdx].OVERLAPPED.InternalHigh, 0
+    mov [xdx].OVERLAPPED.Offset_, 0
+    mov [xdx].OVERLAPPED.OffsetHigh, 0
+    m2m [xdx].OVERLAPPED.hEvent, EventHandleArray[xbx*sizeof(HANDLE)], xax
 
+    ;Attempt to connect named pipe asynchronously
+    invoke ConnectNamedPipe, PipeHandleArray[xbx*sizeof(HANDLE)], xdx
+    .if eax == FALSE
+      invoke GetLastError
+      .if eax != ERROR_IO_PENDING
+        .if eax == ERROR_PIPE_CONNECTED
+          ;Client already connected — signal the event to handle immediately
+          invoke SetEvent, EventHandleArray[xbx*sizeof(HANDLE)]
+        .else
+          ;Unexpected error — close pipe and event to avoid leaks
+          invoke CloseHandle, PipeHandleArray[xbx*sizeof(HANDLE)]
+          invoke CloseHandle, EventHandleArray[xbx*sizeof(HANDLE)]
+        .endif
+      .endif
+    .endif
   .endw
 
+  ;Loop: close all handles
+  xor ebx, ebx
+  .while ebx < MAX_PIPE_INSTANCES
+    invoke CloseHandle, PipeHandleArray[xbx*sizeof(HANDLE)]   ;Close pipe
+    invoke CloseHandle, EventHandleArray[xbx*sizeof(HANDLE)]  ;Close Event
+    inc ebx
+  .endw
 
   OCall xsi.Done                                        ;Signal service completion
 

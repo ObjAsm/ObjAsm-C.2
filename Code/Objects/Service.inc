@@ -142,17 +142,21 @@ CloseServiceLogFile endp
 
 align ALIGN_CODE
 OpenServiceLogFile proc uses xbx pLogFileName:PSTRING
-  ;Open the file in append mode, allowing multiple processes to write simultaneously
-  invoke CreateFile, pLogFileName, GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, \
-                     0, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0  ;Create or open file
-  .if xax != 0
-    mov hServiceLogFile, xax                            ;Save the handle globally
-    ;Move file pointer to the end so writes will append
-    invoke SetFilePointer, hServiceLogFile, 0, 0, FILE_END
-
-    ;Initialize critical section for thread-safe writes
-    invoke InitializeCriticalSection, addr ServiceLogCritSect
-    mov xax, hServiceLogFile                            ;Return file handle in xax
+  .if hServiceLogFile == 0
+    ;Open the file in append mode, allowing multiple processes to write simultaneously
+    invoke CreateFile, pLogFileName, GENERIC_WRITE, FILE_SHARE_READ or FILE_SHARE_WRITE, \
+                       0, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0  ;Create or open file
+    .if xax != 0
+      mov hServiceLogFile, xax                          ;Save the handle globally
+      ;Move file pointer to the end so writes will append
+      invoke SetFilePointer, hServiceLogFile, 0, 0, FILE_END
+  
+      ;Initialize critical section for thread-safe writes
+      invoke InitializeCriticalSection, addr ServiceLogCritSect
+      mov xax, hServiceLogFile                          ;Return file handle in xax
+    .endif
+  .else
+    xor eax, eax
   .endif
   ret
 OpenServiceLogFile endp
@@ -239,7 +243,10 @@ MethodEnd                                               ;End Dispatch
 Method Service.Done, uses xsi
   DbgText "Service.Done"                                ;Debug trace
   SetObject xsi                                         ;Load object pointer
-  invoke CloseHandle, [xsi].hStopEvent                  ;Release stop event
+  mov xcx, [xsi].hStopEvent
+  .if xcx != 0
+    invoke CloseHandle, xcx                             ;Release stop event
+  .endif
   ACall xsi.Done                                        ;Call base class destructor
 MethodEnd
 
@@ -459,7 +466,7 @@ Method Service.Install, uses xbx xdi xsi
     .if xax != 0
       mov xdi, xax                                      ;Service handle
       m2m SvcDesc.lpDescription, [xsi].pDesc, xcx       ;Set description pointer
-      invoke ChangeServiceConfig2, rdi, SERVICE_CONFIG_DESCRIPTION, addr SvcDesc  ;Apply description
+      invoke ChangeServiceConfig2, xdi, SERVICE_CONFIG_DESCRIPTION, addr SvcDesc  ;Apply description
       invoke CloseServiceHandle, xdi                    ;Close service handle
     .else
       mov dLastError, $32($invoke(GetLastError))        ;Store error

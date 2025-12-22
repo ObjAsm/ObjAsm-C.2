@@ -171,8 +171,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,667,284,11472
-1=0,0,1469,901,923
+2=0,0,667,284,12888
+1=0,0,1469,901,4053
 6=0,0,1456,414,29053
 4=0,0,0,0,494
 31=0,0,1213,691,1416
@@ -181,10 +181,10 @@ ProductVer4Range=0
 9=0,0,0,0,17332
 10=0,0,0,0,18138
 5=0,0,0,0,10260
-3=0,0,0,0,521
+3=0,0,0,0,1167
 11=0,0,1783,588,695
 15=0,0,0,0,6625
-14=0,0,667,284,6747
+14=0,0,667,284,14140
 13=0,0,0,0,4641
 12=0,0,0,0,1793
 16=0,0,0,0,4734
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Length"
-2="ServiceSendUserNotification"
-3="ServiceSendUserMessage"
-4="CMD_PING"
-5="Primer.Init"
-6="Method: Primer.Init"
-7="Window"
-8="Graphic user interface"
-9=";;use rbp as stackbase for easier debugging"
-10="; "
+1="SERVICE_ACCEPT_STOP or SERVICE_ACCEPT_SHUTDOWN"
+2="pSecDesc"
+3="PIPE_TYPE_MESSAGE or PIPE_READMODE_MESSAGE or PIPE_WAIT"
+4="lea xdx, OverlappedArray[xdi]"
+5="Length"
+6="ServiceSendUserNotification"
+7="ServiceSendUserMessage"
+8="CMD_PING"
+9="Primer.Init"
+10="Method: Primer.Init"
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=2,1,14
+AutoLoad=1,3,2,14
 [PTimer]
-PTimer=1425970447
+PTimer=1465784305
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

@@ -91,7 +91,7 @@ MethodEnd
 Method Application.CtlsSet, uses xsi
   SetObject xsi
   invoke SetDlgItemInt, [xsi].hWnd, IDC_EDT_RESP, DWORD ptr [xsi].bSvcResponse, FALSE
-                                                        ;Show response in output control
+                                                        ;Show response in edit control
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

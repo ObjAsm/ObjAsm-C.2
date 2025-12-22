@@ -55,6 +55,8 @@ include SVC_Template_Main.inc                           ;Services implementation
 ;SCM service entry:
 ;  SCM already parsed arguments. Do NOT call GetCommandLineW!
 ;  This thunk is only called when SCM starts the service.
+
+align ALIGN_CODE
 ServiceMainThunk proc uses xbx dArgC:DWORD, pArgV:POINTER
   mov xax, pArgV                                        ;Get argv array
   mov xbx, PSTRINGW ptr [xax]                           ;xbx -> argv[0]
@@ -72,6 +74,8 @@ ServiceMainThunk endp                                   ;End service entry thunk
 
 
 ;Process entry point:
+
+align ALIGN_CODE
 start proc uses xbx
   local dArgCount:DWORD                                 ;Argument count
 
