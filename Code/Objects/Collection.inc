@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Collection.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.1.3
 ; Purpose:    ObjAsm support of Collection objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -10,6 +10,8 @@
 ;             Version C.1.2, October 2023
 ;               - .ColForEach, .ColForEachRev and .ColNext macros added.
 ;               - Removed "private" from SetLimit.
+;             Version C.1.3, December 2025
+;               - ColForEach_Step assignment error spotted by HSE.
 ; ==================================================================================================
 
 
@@ -99,7 +101,7 @@ ObjectEnd
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) = +1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
@@ -135,7 +137,7 @@ endm
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) = -1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0

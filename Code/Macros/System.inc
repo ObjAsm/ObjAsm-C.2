@@ -4316,14 +4316,6 @@ endm
 ; Purpose:    Replaces the Expression with the corresponding local or register.
 ; Arguments:  SymbolName declared with LocReg.
 
-;$LocReg macro SymbolName
-;  ifb <??ObjectContext>
-;    .err $LocReg - out of method context
-;  else
-;    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
-;  endif
-;endm
-
 $LocReg macro SymbolName
   ifb <??CodeContext>
     .err $LocReg - no code context
@@ -4392,14 +4384,6 @@ endm
 ; Macro:      $ArgReg
 ; Purpose:    Replaces the Expression with the corresponding argument or register.
 ; Arguments:  SymbolName.
-
-;$ArgReg macro SymbolName
-;  ifb <??ObjectContext>
-;    .err $ArgReg - out of method context
-;  else
-;    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
-;  endif
-;endm
 
 $ArgReg macro SymbolName
   ifb <??CodeContext>
