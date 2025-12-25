@@ -92,14 +92,16 @@ ObjectEnd
 ;               DbgHex [xax].$Obj(Primer).pOwner
 ;             .ColNext
 
+??ColForEach_ID = 0
 .ColForEach macro Coll:req, Index
   ??ColForEach_ID = ??ColForEach_ID + 1
+% echo @CatStr(%??ColForEach_ID)
   ifb <Index>
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) = 1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
@@ -135,7 +137,7 @@ endm
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) = 1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
