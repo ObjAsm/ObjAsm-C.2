@@ -7,65 +7,88 @@
 ;               - First release.
 ; ==================================================================================================
 
-;10.10.163.34 hia
 
-WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exlude WinSock.inc
-INCL_WINSOCK_API_PROTOTYPES equ 1
+; --------------------------------------------------------------------------------------------------
+; Summary:
+;   This module implements the NetComServer application, a Windows SDI server using the NetCom
+;   framework. It manages incoming TCP client connections, monitors I/O activity, and maintains
+;   runtime statistics such as worker threads, listeners, connections, I/O jobs, bytes transferred,
+;   and transfer rates.
+;
+;   The NetComServer object handles window creation, menu commands, timers, and lifecycle events,
+;   embedding a NetComEngine instance to perform all network-level operations.
+;
+;   Each accepted client connection is wrapped in a NetComConnection object, processed
+;   asynchronously, and disconnected gracefully. Data blocks from clients follow the protocol
+;   defined in NetComServerProtocol.
+;
+;   Received bitmap images from clients are captured and displayed in the DebugCenter for monitoring
+;   or debugging purposes.
+;
+;   A WM_TIMER-driven mechanism ensures the GUI updates statistics in real time without blocking
+;   network operations. This implementation demonstrates efficient handling of multiple concurrent
+;   client connections and real-time data visualization.
+;
+; --------------------------------------------------------------------------------------------------
 
-PROTOCOL_WND_NAME           textequ <Server Protocol>
-INTERNET_PROTOCOL_VERSION   equ 4
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Load OOP files and OS related objects
+WIN32_LEAN_AND_MEAN         equ 1                       ;Exclude rarely-used Windows headers
+INCL_WINSOCK_API_PROTOTYPES equ 1                       ;Enable WinSock API prototypes
 
-% include &MacPath&fMath.inc
-% include &MacPath&SDLL.inc
+PROTOCOL_WND_NAME           textequ <Server Protocol>   ;Debug/protocol window title
+INTERNET_PROTOCOL_VERSION   equ 4                       ;Select IP version (4 or 6)
 
-% include &IncPath&Windows\WinSock2.inc
-% include &IncPath&Windows\ws2ipdef.inc
-% include &IncPath&Windows\ws2tcpip.inc
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;ObjAsm model macros and setup
+SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Initialize OOP model and OS bindings
 
-% include &IncPath&Windows\ShellApi.inc
-% include &IncPath&Windows\CommCtrl.inc
+% include &MacPath&fMath.inc                            ;Floating-point math helpers
+% include &MacPath&SDLL.inc                             ;Linked List support macros
 
-% includelib &LibPath&Windows\Ws2_32.lib
-% includelib &LibPath&Windows\Mswsock.lib
-% includelib &LibPath&Windows\Kernel32.lib
-% includelib &LibPath&Windows\Shell32.lib
-% includelib &LibPath&Windows\Shlwapi.lib
+% include &IncPath&Windows\WinSock2.inc                 ;WinSock core definitions
+% include &IncPath&Windows\ws2ipdef.inc                 ;IP protocol definitions
+% include &IncPath&Windows\ws2tcpip.inc                 ;TCP/IP helper APIs
+
+% include &IncPath&Windows\ShellApi.inc                 ;Shell API declarations
+% include &IncPath&Windows\CommCtrl.inc                 ;Common controls support
+
+% includelib &LibPath&Windows\Ws2_32.lib                ;WinSock 2 library
+% includelib &LibPath&Windows\Mswsock.lib               ;Microsoft WinSock extensions
+% includelib &LibPath&Windows\Kernel32.lib              ;Core Windows kernel functions
+% includelib &LibPath&Windows\Shell32.lib               ;Shell functionality
+% includelib &LibPath&Windows\Shlwapi.lib               ;Shell lightweight utilities
 
 if INTERNET_PROTOCOL_VERSION eq 4
-  AF_INETX  equ   AF_INET
+  AF_INETX  equ   AF_INET                               ;Use IPv4 address family
 elseif INTERNET_PROTOCOL_VERSION eq 6
-  AF_INETX  equ   AF_INET6
+  AF_INETX  equ   AF_INET6                              ;Use IPv6 address family
 else
   %.err <NetComEngine.Init - wrong IP version: $ToStr(%INTERNET_PROTOCOL_VERSION)>
 endif
 
 
-;Load or build the following objects
-MakeObjects Primer, Stream, DiskStream, Collection, DataPool, StopWatch
-MakeObjects DataCollection, XWCollection, SortedCollection, SortedDataCollection
-MakeObjects WinPrimer, Window, Button, Hyperlink
-MakeObjects Dialog, DialogModal, DialogAbout
-MakeObjects WinApp, SdiApp
-MakeObjects NetCom
+; Load or build the following ObjAsm framework objects
+MakeObjects Primer, Stream, DiskStream, Collection, DataPool, StopWatch ;Core utilities and I/O
+MakeObjects DataCollection, XWCollection, SortedCollection, SortedDataCollection ;Containers
+MakeObjects WinPrimer, Window, Button, Hyperlink        ;Basic windowing controls
+MakeObjects Dialog, DialogModal, DialogAbout            ;Dialog-related classes
+MakeObjects WinApp, SdiApp                              ;Windows application base classes
+MakeObjects NetCom                                      ;NetCom networking framework
 
 .code
-include NetComServer_Globals.inc                        ;Includes application globals
-include NetComServer_Main.inc                           ;Includes NetComServer object
+include NetComServer_Globals.inc                        ;Application-wide globals
+include NetComServer_Main.inc                           ;NetComServer implementation
 
 start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+  SysInit                                               ;Initialize ObjAsm runtime model
 
-  DbgClearTxt "NETCOMSERVER"                            ;Clear this DbgCenter text window
-  DbgClearTxt "&PROTOCOL_WND_NAME"                      ;Clear this DbgCenter text window
-  OCall $ObjTmpl(NetComServer)::NetComServer.Init       ;Initializes the object data
-  OCall $ObjTmpl(NetComServer)::NetComServer.Run        ;Executes the application
-  OCall $ObjTmpl(NetComServer)::NetComServer.Done       ;Finalizes it
+  DbgClearTxt "NETCOMSERVER"                            ;Clear main debug output window
+  DbgClearTxt "&PROTOCOL_WND_NAME"                      ;Clear protocol debug window
+  OCall $ObjTmpl(NetComServer)::NetComServer.Init       ;Initialize NetComServer object
+  OCall $ObjTmpl(NetComServer)::NetComServer.Run        ;Enter application message loop
+  OCall $ObjTmpl(NetComServer)::NetComServer.Done       ;Shutdown and cleanup resources
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exits program returning 0 to the OS
-start endp
+  SysDone                                               ;Finalize ObjAsm runtime model
+  invoke ExitProcess, 0                                 ;Terminate process with success code
+start endp                                              ;End of program entry procedure
 
-end
+end                                                     ;End of assembly unit

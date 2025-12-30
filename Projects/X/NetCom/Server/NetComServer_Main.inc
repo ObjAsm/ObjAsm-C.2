@@ -6,26 +6,28 @@
 ; ==================================================================================================
 
 
-CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
+;If you use a browser, use the following address to connect to the server: http://127.0.0.1:25773
+
+CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW
 
 CStr szNetComServer, "OAC_NetComServer"                 ;Creates szNetComServer string in .const
 
 
-Object NetComServer, ApplicationID, SdiApp                 ;Single Document Interface App.
-  RedefineMethod    Done
-  RedefineMethod    Init                                ;Init method redefinition
-  StaticMethod      Startup
+Object NetComServer, ApplicationID, SdiApp              ;Single Document Interface App
+  RedefineMethod    Done                                ;Finalize application object
+  RedefineMethod    Init                                ;Initialize application object
+  StaticMethod      Startup                             ;Registers object class with OS
 
-  VirtualEvent      OnCommand,  WM_COMMAND
-  VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
-  VirtualEvent      OnTimer,    WM_TIMER
+  VirtualEvent      OnCommand,  WM_COMMAND              ;WM_COMMAND handler (menu and controls)
+  VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION  ;WM_CLOSE handler
+  VirtualEvent      OnTimer,    WM_TIMER                ;WM_TIMER handler for status updates
 
-  Embed  Server,    NetComEngine
+  Embed  Server,    NetComEngine                        ;Embedded NetCom engine instance
 
-ObjectEnd                                               ;Ends object definition
+ObjectEnd
 
 
-include NetComServer_Protocol.inc
+include NetComServer_Protocol.inc                       ;Include server-specific protocol
 
 
 .code
@@ -35,7 +37,7 @@ include NetComServer_Protocol.inc
 
 if IMPLEMENT
 
-TimerID equ 5361783
+TimerID equ 5361783                                     ;Timer ID for periodic status updates
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.Done
@@ -44,15 +46,15 @@ TimerID equ 5361783
 ; Return:    Nothing.
 
 Method NetComServer.Done, uses xsi
-  SetObject xsi
-  invoke KillTimer, [xsi].hWnd, TimerID
-  OCall [xsi].Server::NetComEngine.Done
-  ACall xsi.Done
+  SetObject xsi                                         ;Bind object context
+  invoke KillTimer, [xsi].hWnd, TimerID                 ;Stop status update timer
+  OCall [xsi].Server::NetComEngine.Done                 ;Shutdown NetCom engine
+  ACall xsi.Done                                        ;Call ancestor Done method
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.Init
-; Purpose:   Initalize the SDI application object.
+; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
@@ -60,55 +62,60 @@ Method NetComServer.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
   local cCaption[512]:CHR, cAddrStr[100]:CHR, dLength:DWORD
 
-  SetObject xsi
-  ACall xsi.Init
-  
-  mov dWndWidth, 500                                  ;Default creation width
-  mov dWndHeight, 350                                 ;Default creation height
+  SetObject xsi                                         ;Bind object context
+  ACall xsi.Init                                        ;Call ancestor Init method
+
+  mov dWndWidth, 550                                    ;Default window width
+  mov dWndHeight, 350                                   ;Default window height
   mov dWndPosX, $32($invoke(CenterForm, dWndWidth, $32($invoke(GetSystemMetrics, SM_CXSCREEN))))
-  add dWndPosX, 300
+  add dWndPosX, 300                                     ;Offset to adjust window placement
   mov dWndPosY, $32($invoke(CenterForm, dWndHeight, $32($invoke(GetSystemMetrics, SM_CYSCREEN))))
 
+  ;Create main window
   invoke CreateWindowEx, WS_EX_LEFT or WS_EX_APPWINDOW, \
                          offset szNetComServer, offset szAppTitle, WS_OVERLAPPEDWINDOW, \
                          dWndPosX, dWndPosY, dWndWidth, dWndHeight, NULL, NULL, hInstance, xsi
 
-  invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL        ;Show the window
-  invoke UpdateWindow, [xsi].hWnd                     ;Update if necessary
+  invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show application window
+  invoke UpdateWindow, [xsi].hWnd                       ;Update window client area
 
+  ;Initialize NetCom engine
   OCall [xsi].Server::NetComEngine.Init, xsi, 3, 50, 1000, MSS_ETHERNET_IPVX
   .if eax == 0
+    ;Initialize server protocol
     OCall $ObjTmpl(NetComServerProtocol)::NetComServerProtocol.Init, xsi, $OfsCStr("25773")
     .if eax == 0
+      ;Start listening for connections
       OCall [xsi].Server::NetComEngine.Listen, offset $ObjTmpl(NetComServerProtocol)
-                                               
-      DbgText "Server is running"
+      DbgText "Server is running"                       ;Debug message: server started
     .else
-      DbgWarning "NetComSvrProtocol initialization failed"
+      DbgWarning "NetComSvrProtocol initialization failed" ;Warn if protocol init failed
     .endif
   .else
-    DbgWarning "NetComEngine initialization failed"
+    DbgWarning "NetComEngine initialization failed"     ;Warn if engine init failed
   .endif
-  
+
   ;Set application caption
   mov dLength, lengthof(cAddrStr)
   lea xcx, [xsi].Server
   invoke GetNameInfo, addr [xcx].$Obj(NetComEngine).LocalHostAddr, sizeof NETCOMADDR, \
                       addr cAddrStr, lengthof cAddrStr, \
                       NULL, 0, \
-                      NI_NUMERICHOST
-  invoke StrECopy, addr cCaption, offset szAppTitle
-  invoke StrECopy, xax, $OfsCStr(" - ")
+                      NI_NUMERICHOST                    ;Resolve local IP address
+  invoke StrECopy, addr cCaption, offset szAppTitle     ;Copy base window title
+  invoke StrECopy, xax, $OfsCStr(" on ")                ;Append "on" text
   lea xdx, [xsi].Server
-  invoke StrECopy, xax, [xdx].$Obj(NetComEngine).pLocalHostName
-  invoke StrECopy, xax, $OfsCStr(" at ")
+  invoke StrECopy, xax, [xdx].$Obj(NetComEngine).pLocalHostName ;Append local host name
+  invoke StrECopy, xax, $OfsCStr(", listening at ")     ;Append "listening at"
   lea xdx, cAddrStr
-  invoke StrCopy, xax, xdx
-  invoke SetWindowText, [xsi].hWnd, addr cCaption
+  invoke StrECopy, xax, xdx                             ;Append IP address string
+  invoke StrECopy, xax, $OfsCStr(":")                   ;Append colon separator
+  invoke StrCopy, xax, $ObjTmpl(NetComServerProtocol).pServiceName ;Append listening port
+  invoke SetWindowText, [xsi].hWnd, addr cCaption       ;Set final window caption
 
-  DbgLine
+  DbgLine                                               ;Insert debug line for readability
 
-  invoke SetTimer, [xsi].hWnd, TimerID, 100, NULL
+  invoke SetTimer, [xsi].hWnd, TimerID, 100, NULL       ;Start timer for periodic status updates
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -121,29 +128,29 @@ MethodEnd
 Method NetComServer.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
-  SetObject xsi
-  mov xax, wParam
+  SetObject xsi                                         ;Bind object context
+  mov xax, wParam                                       ;Extract command ID
   .if ax == IDM_EXIT
-    invoke SendMessage, [xsi].hWnd, WM_SYSCOMMAND, SC_CLOSE, NULL
-    xor eax, eax
+    invoke SendMessage, [xsi].hWnd, WM_SYSCOMMAND, SC_CLOSE, NULL ;Close application
+    xor eax, eax                                        ;Indicate handled
 
   .elseif ax == IDM_ABOUT
-    New Dlg::DialogAbout
-    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
-    OCall Dlg::DialogAbout.Show
-    OCall Dlg::DialogAbout.Done
-    invoke DestroyIcon, hIcon
-    xor eax, eax
+    New Dlg::DialogAbout                                ;Create About dialog
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP")) ;Load application icon
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText ;Init dialog
+    OCall Dlg::DialogAbout.Show                         ;Show dialog
+    OCall Dlg::DialogAbout.Done                         ;Release dialog resources
+    invoke DestroyIcon, hIcon                           ;Free icon
+    xor eax, eax                                        ;Indicate handled
 
   .elseif ax == IDM_HELP
     invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
-                                     addr cBuffer, lengthof(cBuffer)
-    invoke PdfView, [xsi].hWnd, addr cBuffer, NULL
-    xor eax, eax
+                                     addr cBuffer, lengthof(cBuffer)  ;Resolve PDF path
+    invoke PdfView, [xsi].hWnd, addr cBuffer, NULL      ;Display help PDF
+    xor eax, eax                                        ;Indicate handled
 
   .else
-    invoke DefWindowProc, [xsi].hWnd, WM_COMMAND, wParam, lParam
+    invoke DefWindowProc, [xsi].hWnd, WM_COMMAND, wParam, lParam  ;Default processing
   .endif
 MethodEnd
 
@@ -155,13 +162,13 @@ MethodEnd
 ; Return:    eax = Zero if handled.
 
 Method NetComServer.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
-  SetObject xsi
-  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
-                     MB_YESNO or MB_ICONQUESTION
+  SetObject xsi                                         ;Bind object context
+  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure?"), $OfsCStr("Application exit"), \
+                     MB_YESNO or MB_ICONQUESTION        ;Prompt user to confirm exit
   .if eax == IDNO
-    xor eax, eax
+    xor eax, eax                                        ;Cancel close, indicate handled
   .else
-    invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
+    invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam  ;Proceed with default close
   .endif
 MethodEnd
 
@@ -173,19 +180,19 @@ MethodEnd
 ; Return:    eax = Zero if handled.
 
 Method NetComServer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[1024]:CHR
+  local cBuffer[1024]:CHR                               ;Local string buffer for status output
 
-  SetObject xsi
-  mov xbx, $invoke(GetDC, [xsi].hWnd)
-  invoke GetSysColor, COLOR_WINDOWTEXT
-  invoke SetTextColor, xbx, eax
-;  invoke SetBkMode, xbx, TRANSPARENT
+  SetObject xsi                                         ;Bind object context
+  mov xbx, $invoke(GetDC, [xsi].hWnd)                   ;Get device context
+  invoke GetSysColor, COLOR_WINDOWTEXT                  ;Retrieve default text color
+  invoke SetTextColor, xbx, eax                         ;Set text color
 
-  lea xdi, cBuffer
+  lea xdi, cBuffer                                      ;xdi -> cBuffer
 
-  XPOS = 20
-  YPOS = -10
+  XPOS = 20                                             ;X offset for text output
+  YPOS = -10                                            ;Initial Y position
 
+  ;Output server statistics line by line
   YPOS = YPOS + 30
   invoke wsprintf, xdi, $OfsCStr("#Workers = %lu         "), [xsi].Server.dWorkerCount
   invoke StrLength, xdi
@@ -226,8 +233,8 @@ Method NetComServer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke StrLength, xdi
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax
 
-  invoke ReleaseDC, [xsi].hWnd, xbx
-  xor eax, eax
+  invoke ReleaseDC, [xsi].hWnd, xbx                     ;Release device context
+  xor eax, eax                                          ;Return zero to indicate handled
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -240,20 +247,20 @@ MethodEnd
 Method NetComServer.Startup
   local WC:WNDCLASSEX
 
-  mov WC.cbSize, sizeof WNDCLASSEX
-  mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(NetComServer.WndProc), xax
-  and WC.cbClsExtra, 0
-  and WC.cbWndExtra, 0
-  m2m WC.hInstance, hInstance, xax
-  mov WC.hbrBackground, COLOR_WINDOW + 1
-  c2m WC.lpszMenuName, $OfsCStr("MENU_APP"), xax
-  c2m WC.lpszClassName, offset szNetComServer, xax
-  mov WC.hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
-  mov WC.hCursor, $invoke(LoadCursor, NULL, IDC_ARROW)
-  and WC.hIconSm, 0
+  mov WC.cbSize, sizeof WNDCLASSEX                      ;Structure size
+  mov WC.style, CLSSTYLE                                ;Window class style
+  m2m WC.lpfnWndProc, $MethodAddr(NetComServer.WndProc), xax ;Window procedure
+  and WC.cbClsExtra, 0                                  ;No extra class bytes
+  and WC.cbWndExtra, 0                                  ;No extra window bytes
+  m2m WC.hInstance, hInstance, xax                      ;Application instance
+  mov WC.hbrBackground, COLOR_WINDOW + 1                ;Default window background
+  c2m WC.lpszMenuName, $OfsCStr("MENU_APP"), xax        ;Menu resource
+  c2m WC.lpszClassName, offset szNetComServer, xax      ;Window class name
+  mov WC.hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP")) ;Load main icon
+  mov WC.hCursor, $invoke(LoadCursor, NULL, IDC_ARROW)  ;Set arrow cursor
+  and WC.hIconSm, 0                                     ;No small icon
 
-  invoke RegisterClassEx, addr WC
+  invoke RegisterClassEx, addr WC                       ;Register window class
 MethodEnd
 
 endif

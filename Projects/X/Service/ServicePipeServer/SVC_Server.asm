@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      SVC_Template.asm
+; Title:      SVC_Server.asm
 ; Author:     G. Friedrich
 ; Version:    C.2.0
 ; Purpose:    ObjAsm application.
@@ -10,8 +10,8 @@
 ;               - In debug mode, start DebugCenter manually before the services launch.
 ;                 If not started, services may run noticeably slower.
 ;               - Instances of Service1 and Service2 are their own templates.
-;               - To install the service (as admin):     SVC_Template install
-;               - To uninstall the service (as admin):   SVC_Template uninstall
+;               - To install the service (as admin):     SVC_Server install
+;               - To uninstall the service (as admin):   SVC_Server uninstall
 ; ==================================================================================================
 
 
@@ -44,8 +44,8 @@ DBG_IP_PORT textequ <8080>                              ;Debug target port
 ;Load or build the following objects:
 MakeObjects Primer, Stream, Service                     ;Include required ObjAsm objects
 
-include SVC_Template_Globals.inc                        ;Global constants / data
-include SVC_Template_Main.inc                           ;Services implementation
+include SVC_Server_Globals.inc                          ;Global constants / data
+include SVC_Server_Main.inc                             ;Services implementation
 
 
 ; ==================================================================================================

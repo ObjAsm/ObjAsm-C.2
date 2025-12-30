@@ -229,10 +229,6 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, dAcceptorCount:DWORD, \
     invoke GetHostName, addr cLocalHostName, lengthof cLocalHostName
     mov [xsi].pLocalHostName, $invoke(StrNew, addr cLocalHostName)
 
-;    mov xbx, [xsi].pOwner
-;    invoke MemClone, addr [xsi].LocalHostAddr, addr [xbx].$Obj(Sequencer).LocAddress, \
-;                     sizeof(NETCOMADDR)
-
     mov Hints.ai_flags, 0
     mov Hints.ai_family, AF_INETX
     mov Hints.ai_socktype, SOCK_STREAM

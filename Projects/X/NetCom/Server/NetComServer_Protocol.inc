@@ -6,8 +6,6 @@
 ; ==================================================================================================
 
 
-;If you use a browser, use the following address to connect to the server: http://127.0.0.1:25773
-
 SRVPROTDATA struc
   pNextIOData   POINTER   ?
 SRVPROTDATA ends
@@ -117,7 +115,7 @@ Method NetComServerProtocol.OnAccept, uses xbx xsi, pConnection:$ObjPtr(NetComCo
   if DEBUGGING
     DbgLine
     DbgText "RemoteHost is requesting a connection"
-    DbgHex [xbx].$Obj(NetComConnection).RemoteHostAddr.sin_addr, 
+    DbgHex [xbx].$Obj(NetComConnection).RemoteHostAddr.sin_addr,
     DbgHex WORD ptr [xbx].$Obj(NetComConnection).RemoteHostAddr.sin_port
   endif
 
@@ -127,7 +125,7 @@ Method NetComServerProtocol.OnAccept, uses xbx xsi, pConnection:$ObjPtr(NetComCo
     mov eax, PROT_CMD_REJECT_CONNECTION
   .else
     DbgText "RemoteHost is OK; connection granded..."
-    
+
     mov dLength, lengthof(cAddrStr)
     invoke WSAAddressToString, addr [xbx].$Obj(NetComConnection).LocalHostAddr, sizeof(sockaddr_in), \
                                NULL, \

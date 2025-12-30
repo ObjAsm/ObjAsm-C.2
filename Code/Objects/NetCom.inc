@@ -294,7 +294,7 @@ Object NetComConnection, NetComConnectionID, Primer
   VirtualMethod   QueueClose
   VirtualMethod   QueueFree
 
-  ;Methods to place IO socket jobs or message on the IOCP queue
+  ;Methods to place IO socket jobs or messages on the IOCP queue
   VirtualMethod   QueueAccept,        PLISTENER, POINTER      ;-> Listener, -> NetComProtocol
   VirtualMethod   QueueConnect,       PNETCOMADDR             ;-> HostAddr
   VirtualMethod   QueueRead
@@ -323,7 +323,7 @@ Object NetComConnection, NetComConnectionID, Primer
 
   ;Networking stuff
   DefineVariable  pProtocol,          POINTER,          NULL
-  DefineVariable  hSocket,            HANDLE,           INVALID_SOCKET
+  DefineVariable  hSocket,            SOCKET,           INVALID_SOCKET
   DefineVariable  RemoteHostAddr,     NETCOMADDR,       {}
   DefineVariable  LocalHostAddr,      NETCOMADDR,       {}    ;Here is the complete addr, incl. port
   DefineVariable  ConnStartTime,      SYSTEMTIME,       {0,0,0,0,0,0,0,0}

@@ -1,11 +1,11 @@
 ; ==================================================================================================
-; Title:      SVC_Template_Globals.inc
+; Title:      SVC_Server_Globals.inc
 ; Author:     G. Friedrich
-; Notes:      See SVC_Template.asm.
+; Notes:      See SVC_Server.asm.
 ; ==================================================================================================
 
 
-include SVC_Template_Shared.inc
+include SVC_Server_Shared.inc
 
 ;Security Descriptor Definition Language
 ; BA: Built-in Administrators => All access (GA)

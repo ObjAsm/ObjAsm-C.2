@@ -47,11 +47,7 @@ Method NetComClientProtocol.OnClose, uses xbx xsi, pConnection:$ObjPtr(NetComCon
   DbgHex pConnection, "NetComClientProtocol.OnClose", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, [xsi].pOwner
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_CONNECT
-  invoke EnableWindow, xax, TRUE
   invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_SEND
-  invoke EnableWindow, xax, FALSE
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_DISCONNECT
   invoke EnableWindow, xax, FALSE
   ACall xsi.OnClose, pConnection
 MethodEnd
@@ -69,11 +65,7 @@ Method NetComClientProtocol.OnConnect, uses xbx xsi, pConnection:$ObjPtr(NetComC
   DbgHex pConnection, "NetComClientProtocol.OnConnect", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, [xsi].pOwner
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_CONNECT
-  invoke EnableWindow, xax, FALSE
   invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_SEND
-  invoke EnableWindow, xax, TRUE
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_DISCONNECT
   invoke EnableWindow, xax, TRUE
   ACall xsi.OnConnect, pConnection
 MethodEnd
@@ -88,11 +80,7 @@ Method NetComClientProtocol.OnDisconnect, uses xbx xsi, pConnection:$ObjPtr(NetC
   DbgHex pConnection, "NetComClientProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, [xsi].pOwner
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_CONNECT
-  invoke EnableWindow, xax, TRUE
   invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_SEND
-  invoke EnableWindow, xax, FALSE
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_DISCONNECT
   invoke EnableWindow, xax, FALSE
   ACall xsi.OnDisconnect, pConnection
 MethodEnd
@@ -110,11 +98,7 @@ Method NetComClientProtocol.OnError, uses xbx xsi, pConnection:$ObjPtr(NetComCon
   DbgHex pConnection, "NetComClientProtocol.OnError", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, [xsi].pOwner
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_CONNECT
-  invoke EnableWindow, xax, TRUE
   invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_SEND
-  invoke EnableWindow, xax, FALSE
-  invoke GetDlgItem, [xbx].$Obj(%APP_NAME).SndDlg.hWnd, IDC_BTN_DISCONNECT
   invoke EnableWindow, xax, FALSE
   ACall xsi.OnError, pConnection, pIOSockJob, dError
 MethodEnd

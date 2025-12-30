@@ -859,21 +859,21 @@ FillStringA macro StrVar:req, Text:req
   forc $$Char, <Text>
     $$j = ('&$$Char' shl ((??StrLen and 3) * 8)) + $$j
     if (??StrLen and 3) eq 3
-      mov DWORD ptr StrVar[(??StrLen and -4)], $$j
+      mov QCHRA ptr StrVar[(??StrLen and -4)], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 3) eq 0
-    m2z BYTE ptr StrVar[??StrLen]
+    m2z CHRA ptr StrVar[??StrLen]
   elseif (??StrLen and 3) eq 1
-    mov WORD ptr StrVar[??StrLen - 1], $$j
+    mov DCHRA ptr StrVar[??StrLen - 1], $$j
   elseif (??StrLen and 3) eq 2
-    mov WORD ptr StrVar[??StrLen - 2], $$j
-    m2z BYTE ptr StrVar[??StrLen]
+    mov DCHRA ptr StrVar[??StrLen - 2], $$j
+    m2z CHRA ptr StrVar[??StrLen]
   else
-    mov DWORD ptr StrVar[(??StrLen - 3)], $$j
+    mov QCHRA ptr StrVar[(??StrLen - 3)], $$j
   endif
   ??StrSize = ??StrLen + 1
 endm
@@ -894,21 +894,21 @@ FillQuotedStringA macro StrVar:req, QuotedText:vararg
 % for $$Char, <$QuotedText(QuotedText)>
     $$j = (&$$Char shl ((??StrLen and 3) * 8)) + $$j
     if (??StrLen and 3) eq 3
-      mov DWORD ptr StrVar[(??StrLen and -4)], $$j
+      mov QCHRA ptr StrVar[(??StrLen and -4)], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 3) eq 0
-    m2z BYTE ptr StrVar[??StrLen]
+    m2z CHRA ptr StrVar[??StrLen]
   elseif (??StrLen and 3) eq 1
-    mov WORD ptr StrVar[??StrLen - 1], $$j
+    mov DCHRA ptr StrVar[??StrLen - 1], $$j
   elseif (??StrLen and 3) eq 2
-    mov WORD ptr StrVar[??StrLen - 2], $$j
-    m2z BYTE ptr StrVar[??StrLen]
+    mov DCHRA ptr StrVar[??StrLen - 2], $$j
+    m2z CHRA ptr StrVar[??StrLen]
   else
-    mov DWORD ptr StrVar[(??StrLen - 3)], $$j
+    mov QCHRA ptr StrVar[(??StrLen - 3)], $$j
   endif
   ??StrSize = ??StrLen + 1
 endm
@@ -929,20 +929,20 @@ FillStringB macro StrVar:req, Text:req
   forc $$Char, <Text>
     $$j = ('&$$Char' shl ((??StrLen and 1) * 16)) + $$j
     if (??StrLen and 1) eq 1
-      mov DWORD ptr StrVar[(??StrLen and -2)*2 + 4], $$j
+      mov DCHRW ptr StrVar[(??StrLen and -2)*2 + 4], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 1) eq 0
-    m2z WORD ptr StrVar[??StrLen*2 + 4]
+    m2z CHRW ptr StrVar[??StrLen*2 + 4]
   elseif (??StrLen and 1) eq 1
-    mov DWORD ptr StrVar[(??StrLen - 1)*2 + 4], $$j
+    mov DCHRW ptr StrVar[(??StrLen - 1)*2 + 4], $$j
   endif
 
   mov DWORD ptr StrVar[0], 2*??StrLen                      ;;Set byte count
-  ??StrSize = sizeof(WORD)*(??StrLen + 1) + sizeof(DWORD)
+  ??StrSize = sizeof(CHRW)*(??StrLen + 1) + sizeof(DWORD)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -961,18 +961,18 @@ FillStringW macro StrVar:req, Text:req
   forc $$Char, <Text>
     $$j = ('&$$Char' shl ((??StrLen and 1) * 16)) + $$j
     if (??StrLen and 1) eq 1
-      mov DWORD ptr StrVar[(??StrLen and -2)*2], $$j
+      mov DCHRW ptr StrVar[(??StrLen and -2)*2], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 1) eq 0
-    m2z WORD ptr StrVar[??StrLen*2]
+    m2z CHRW ptr StrVar[??StrLen*2]
   elseif (??StrLen and 1) eq 1
-    mov DWORD ptr StrVar[(??StrLen - 1)*2], $$j
+    mov DCHRW ptr StrVar[(??StrLen - 1)*2], $$j
   endif
-  ??StrSize = sizeof(WORD)*(??StrLen + 1)
+  ??StrSize = sizeof(CHRW)*(??StrLen + 1)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -991,16 +991,16 @@ FillQuotedStringW macro StrVar:req, QuotedText:vararg
 % for $$Char, <$QuotedText(QuotedText)>
     $$j = (&$$Char shl ((??StrLen and 1) * 16)) + $$j
     if (??StrLen and 1) eq 1
-      mov DWORD ptr StrVar[(??StrLen and -2)*2], $$j
+      mov DCHRW ptr StrVar[(??StrLen and -2)*2], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 1) eq 0
-    m2z WORD ptr StrVar[??StrLen*2]
+    m2z CHRW ptr StrVar[??StrLen*2]
   elseif (??StrLen and 1) eq 1
-    mov DWORD ptr StrVar[(??StrLen - 1)*2], $$j
+    mov DCHRW ptr StrVar[(??StrLen - 1)*2], $$j
   endif
   ??StrSize = sizeof(CHRW)*(??StrLen + 1)
 endm
@@ -1023,6 +1023,7 @@ endif
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
+; Note:       No ZTC is added.
 ; Return:     ??StrLen = Number of copied chars.
 ;             ??StrSize = Number of BYTEs copied.
 ; Example:    FillTextA myBuffer, <Hello>
@@ -1033,19 +1034,19 @@ FillTextA macro StrVar:req, Text:req
   forc $$Char, <Text>
     $$j = ('&$$Char' shl ((??StrLen and 3) * 8)) + $$j
     if (??StrLen and 3) eq 3
-      mov DWORD ptr StrVar[(??StrLen and -4)], $$j
+      mov QCHRA ptr StrVar[(??StrLen and -4)], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 3) eq 1
-    mov BYTE ptr StrVar[??StrLen - 1], $$j
+    mov CHRA ptr StrVar[??StrLen - 1], $$j
   elseif (??StrLen and 3) eq 2
-    mov WORD ptr StrVar[??StrLen - 2], $$j
+    mov DCHRA ptr StrVar[??StrLen - 2], $$j
   elseif (??StrLen and 3) eq 3
-    mov WORD ptr StrVar[??StrLen - 3], $$j and 0FFFFh
-    mov BYTE ptr StrVar[??StrLen - 1], $$j shr 16
+    mov DCHRA ptr StrVar[??StrLen - 3], $$j and 0FFFFh
+    mov CHRA ptr StrVar[??StrLen - 1], $$j shr 16
   endif
   ??StrSize = ??StrLen
 endm
@@ -1056,6 +1057,7 @@ endm
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
+; Note:       No ZTC is added.
 ; Return:     ??StrLen = Number of copied chars.
 ;             ??StrSize = Number of BYTEs copied.
 ; Example:    FillTextW myBuffer, <Hello>
@@ -1066,16 +1068,16 @@ FillTextW macro StrVar:req, Text:req
   forc $$Char, <Text>
     $$j = ('&$$Char' shl ((??StrLen and 1) * 16)) + $$j
     if (??StrLen and 1) eq 1
-      mov DWORD ptr StrVar[(??StrLen and -2)*2], $$j
+      mov DCHRW ptr StrVar[(??StrLen and -2)*2], $$j
       $$j = 0
     endif
     ??StrLen = ??StrLen + 1
   endm
 
   if (??StrLen and 1) eq 1
-    mov WORD ptr StrVar[(??StrLen - 1)*2], $$j
+    mov CHRW ptr StrVar[(??StrLen - 1)*2], $$j
   endif
-  ??StrSize = sizeof(WORD)*??StrLen
+  ??StrSize = sizeof(CHRW)*??StrLen
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1110,7 +1112,7 @@ DoesTextMatchA? macro StrVar:req, Text:req, NoMatchLabel
     $$j = ('&$$Char' shl (($$i and 3)*8)) + $$j
 
     if ($$i and 3) eq 3
-      cmp DWORD ptr StrVar[($$i and -4)], $$j
+      cmp QCHRA ptr StrVar[($$i and -4)], $$j
       ifb <NoMatchLabel>
         if $$k ne $$i + 1                               ;;Supress last "jne" instruction
           jne ExitLabel
@@ -1124,17 +1126,17 @@ DoesTextMatchA? macro StrVar:req, Text:req, NoMatchLabel
   endm
 
   if ($$i and 3) eq 1
-    cmp BYTE ptr StrVar[$$i - 1], $$j
+    cmp CHRA ptr StrVar[$$i - 1], $$j
   elseif ($$i and 3) eq 2
-    cmp WORD ptr StrVar[$$i - 2], $$j
+    cmp DCHRA ptr StrVar[$$i - 2], $$j
   elseif ($$i and 3) eq 3
-    cmp WORD ptr StrVar[$$i - 3], ($$j and 0000FFFFh)
+    cmp DCHRA ptr StrVar[$$i - 3], ($$j and 0000FFFFh)
     ifb <NoMatchLabel>
       jne ExitLabel
     else
       jne NoMatchLabel
     endif
-    cmp BYTE ptr StrVar[$$i - 1], ($$j shr 16)
+    cmp CHRA ptr StrVar[$$i - 1], ($$j shr 16)
   endif
   ifnb <NoMatchLabel>
     jne NoMatchLabel
@@ -1169,7 +1171,7 @@ DoesTextMatchW? macro StrVar:req, Text:req, NoMatchLabel
     $$j = ('&$$Char' shl (($$i and 1)*16)) + $$j
 
     if ($$i and 1) eq 1
-      cmp DWORD ptr StrVar[($$i and -2)*2], $$j
+      cmp DCHRW ptr StrVar[($$i and -2)*2], $$j
       ifb <NoMatchLabel>
         if $$k ne $$i + 1                               ;;Supress last "jne" instruction
           jne ExitLabel
@@ -1183,7 +1185,7 @@ DoesTextMatchW? macro StrVar:req, Text:req, NoMatchLabel
   endm
 
   if ($$i and 1) eq 1
-    cmp WORD ptr StrVar[($$i and -2)*2], $$j
+    cmp CHRW ptr StrVar[($$i and -2)*2], $$j
   endif
   ifnb <NoMatchLabel>
     jne NoMatchLabel
@@ -1230,7 +1232,7 @@ DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel
     $$j = ('&$$Char' shl (($$i and 3)*8)) + $$j
 
     if ($$i and 3) eq 3
-      cmp DWORD ptr StrVar[($$i and -4)], $$j
+      cmp QCHRA ptr StrVar[($$i and -4)], $$j
       ifb <NoMatchLabel>
         if @SizeStr(&Text) ne $$i                       ;;Supress last "jne"
           jne ExitLabel
@@ -1244,19 +1246,19 @@ DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel
   endm
 
   if ($$i and 3) eq 0
-    cmp BYTE ptr StrVar[$$i], 0
+    cmp CHRA ptr StrVar[$$i], 0
   elseif ($$i and 3) eq 1
-    cmp WORD ptr StrVar[$$i - 1], $$j
+    cmp DCHRA ptr StrVar[$$i - 1], $$j
   elseif ($$i and 3) eq 2
-    cmp WORD ptr StrVar[$$i - 2], $$j
+    cmp DCHRA ptr StrVar[$$i - 2], $$j
     ifb <NoMatchLabel>
       jne ExitLabel
     else
       jne NoMatchLabel
     endif
-    cmp BYTE ptr StrVar[$$i], 0
+    cmp CHRA ptr StrVar[$$i], 0
   elseif ($$i and 3) eq 3
-    cmp DWORD ptr StrVar[$$i - 3], ($$j and 00FFFFFFh)
+    cmp QCHRA ptr StrVar[$$i - 3], ($$j and 00FFFFFFh)
   endif
   ifnb <NoMatchLabel>
     jne NoMatchLabel
@@ -1289,7 +1291,7 @@ DoesStringMatchW? macro StrVar:req, Text:req, NoMatchLabel
     $$j = ('&$$Char' shl (($$i and 1)*16)) + $$j
 
     if ($$i and 1) eq 1
-      cmp DWORD ptr StrVar[($$i and -2)*2], $$j
+      cmp DCHRW ptr StrVar[($$i and -2)*2], $$j
       ifb <NoMatchLabel>
         jne ExitLabel
       else
@@ -1301,9 +1303,9 @@ DoesStringMatchW? macro StrVar:req, Text:req, NoMatchLabel
   endm
 
   if ($$i and 1) eq 1
-    cmp DWORD ptr StrVar[($$i and -2)*2], $$j
+    cmp DCHRW ptr StrVar[($$i and -2)*2], $$j
   else
-    cmp WORD ptr StrVar[($$i and -2)*2], 0
+    cmp CHRW ptr StrVar[($$i and -2)*2], 0
   endif
   ifnb <NoMatchLabel>
     jne NoMatchLabel

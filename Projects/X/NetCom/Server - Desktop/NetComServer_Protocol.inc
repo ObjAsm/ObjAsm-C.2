@@ -8,11 +8,49 @@
 ; ==================================================================================================
 
 
+; --------------------------------------------------------------------------------------------------
+; Summary:
+;   This code implements the server-side protocol handler for the NetCom framework.
+;   It manages per-connection state, receives desktop image transmissions from NetCom clients,
+;   reassembles data across multiple IO_SOCKJOB buffers, and displays the received images
+;   on the DebugCenter. The protocol expects the first DWORD of each transmission to contain
+;   the total payload size. The server also handles connection acceptance/rejection,
+;   blacklisting, disconnections, and resource cleanup.
+; --------------------------------------------------------------------------------------------------
+
+
+; --------------------------------------------------------------------------------------------------
+; SRVPROTDATA
+;   Holds per-connection protocol state:
+;   - dTotRcvBytes: total bytes received so far for this transmission
+;   - pLastIOJob: pointer to the last processed IO_SOCKJOB
+;   - dMemSize: expected total transmission size (from first DWORD of client payload)
+
 SRVPROTDATA struc
-  dTotRcvBytes    DWORD         ?     ;Total recieved byte count up to the last served IOJob 
+  dTotRcvBytes    DWORD         ?     ;Total recieved byte count up to the last served IOJob
   pLastIOJob      PIO_SOCKJOB   ?     ;Last served IOJob
   dMemSize        DWORD         ?     ;Required TX length
 SRVPROTDATA ends
+
+; --------------------------------------------------------------------------------------------------
+; Object:     NetComServerProtocol
+; Purpose:    NetComServerProtocol is a descendant of NetComProtocol. It implements the
+;             server-side transmission protocol used by the NetCom framework to receive,
+;             validate, assemble, and process incoming desktop image data sent by clients.
+;
+;             The protocol reconstructs a complete transmission from multiple asynchronous
+;             IO_SOCKJOB buffers, based on a size-prefixed message format, and renders the
+;             received bitmap data to the DebugCenter for visualization.
+;
+; Notes:      - Each transmission starts with a DWORD specifying the total payload size
+;               in bytes (including the DWORD itself).
+;             - Per-connection protocol state is stored in a SRVPROTDATA structure and
+;               allocated via the Allocate method.
+;             - The IsDataComplete? method enforces protocol framing and determines when a
+;               full transmission has been received.
+;             - ProcessData assembles the payload, builds a DIB bitmap, and displays it.
+;             - Connection acceptance may be conditionally rejected using a blacklist.
+;             - All protocol state is released when the connection is closed.
 
 Object NetComServerProtocol,, NetComProtocol
   RedefineMethod  Allocate,           $ObjPtr(NetComConnection)
@@ -38,15 +76,15 @@ if IMPLEMENT
 ;             Additional resources can be reserved here. The POINTER to the allocated memory is
 ;             stored in pProtocolData member of NetComConnection.
 ; Arguments:  Arg1: -> NetComConnection
-; Return:     Zero if succeeded, otherwise an error code.
+; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComServerProtocol.Allocate,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComServerProtocol.Allocate", "&PROTOCOL_WND_NAME"
-  MemAlloc sizeof SRVPROTDATA, MEM_INIT_ZERO
+;  DbgHex pConnection, "NetComServerProtocol.Allocate", "&PROTOCOL_WND_NAME"
+  MemAlloc sizeof SRVPROTDATA, MEM_INIT_ZERO            ;Allocate zero-initialized SRVPROTDATA
   .if xax != NULL
     mov xcx, pConnection
-    mov [xcx].$Obj(NetComConnection).pProtocolData, xax
-    xor eax, eax
+    mov [xcx].$Obj(NetComConnection).pProtocolData, xax ;Store pointer in connection object
+    xor eax, eax                                        ;Return success
   .else
     OCall ErrorReport, NULL, NCSP_OUT_OF_MEMORY
   .endif
@@ -54,15 +92,15 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.IsDataComplete?
-; Purpose:    A NetComConnection class will call this method to determine if we have received at
-;             least one complete packet, given the rules of your Protocol. This is where your
-;             derived class examines the received data looking to find a valid Delimiter and doing
-;             protocol enforcement.
+; Purpose:    Determine if at least one complete transmission has been received.
+;             Protocol:
+;               - The first DWORD of the payload contains total transmission size.
+;               - Data may arrive in multiple IO_SOCKJOB buffers.
 ; Arguments:  Arg1: -> NetComConnection.
-; Return:     ERROR_BADPROTOCOL  - The buffer content is not following our protocol.
-;             ERROR_USERQUIT     - The user sent a nice QUIT message using our protocol.
-;             Positive INT32     - This many bytes are the complete packet length.
-;             Zero               - We need more data.
+; Return:     eax = ERROR_BADPROTOCOL  - The buffer content is not following our protocol.
+;                   ERROR_USERQUIT     - The user sent a quit message.
+;                   Positive INT32     - Complete packet length.
+;                   Zero               - More data needed.
 
 Method NetComServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr(NetComConnection), \
                                                        pIOSockJob:PIO_SOCKJOB
@@ -71,55 +109,31 @@ Method NetComServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr(NetCo
 ;  DbgHex pConnection, "NetComServerProtocol.IsDataComplete?", "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   mov xsi, [xdx].$Obj(NetComConnection).pProtocolData   ;xsi -> SRVPROTDATA
-  lea xcx, [xdx].$Obj(NetComConnection).RcvIOChain      ;xcx -> SDLL_SENTINEL
+  lea xcx, [xdx].$Obj(NetComConnection).RcvIOChain      ;xcx -> IO job chain sentinel
   mov pRcvIOChain, xcx
 
+  ; ----------------------------------------------------------------------
+  ; First IO job: read total transmission size from client
+  ; ----------------------------------------------------------------------
   .if [xsi].SRVPROTDATA.pLastIOJob == NULL
-    ;We are here since we got an IO_SOCKJOB serviced.
-    ;That means, that pFirstItem != Sentinel
     mov xdx, [xcx].SDLL_SENTINEL.pFirstItem             ;First IO_SOCKJOB
     .ifBitSet [xdx - IO_HEADER_SIZE].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-      .if [xdx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed >= 4 ;At least we have the TX length
+      .if [xdx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed >= 4
         mov xcx, [xdx - IO_HEADER_SIZE].IO_SOCKJOB.WSABuf.buf
-        mrm [xsi].SRVPROTDATA.dMemSize, DWORD ptr [xcx], eax    ;TX length
+        mrm [xsi].SRVPROTDATA.dMemSize, DWORD ptr [xcx], eax    ;Store TX length
       .else
-        xor eax, eax                                    ;Get more data
+        xor eax, eax                                    ;Need more data
         ExitMethod
       .endif
     .else
-      xor eax, eax                                      ;Get more data
+      xor eax, eax                                      ;Job not yet complete
       ExitMethod
     .endif
   .endif
 
-;  ; ********************************************************
-;  preserve xbx xdi !!!
-;  mov xdi, pRcvIOChain
-;  lea xbx, [xdi - IO_HEADER_SIZE]
-;  .while TRUE
-;    mov xbx, [xbx].IO_SOCKJOB.pNextItem
-;    .break .if xbx == pRcvIOChain 
-;    sub xbx, IO_HEADER_SIZE                             ;Correct POINTER to beginning of structure
-;
-;    mov ecx, [xbx].IO_SOCKJOB.dBytesConsumed
-;    test ecx, ecx
-;    .if ZERO?
-;      mov edx, $RGB(255,0,0)
-;    .else
-;      mov edx, $RGB(0,0,255)
-;    .endif
-;
-;    test [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-;    .if ZERO?
-;      mov xcx, $OfsCStr("0")
-;    .else
-;      mov xcx, $OfsCStr("1")
-;    .endif
-;    invoke DbgOutText, xcx, edx, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-;  .endw
-;  invoke DbgOutText, $OfsCStr(" "), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;  ; ********************************************************
-
+  ; ----------------------------------------------------------------------
+  ; Accumulate bytes across IO_SOCKJOB chain
+  ; ----------------------------------------------------------------------
   .if [xsi].SRVPROTDATA.pLastIOJob == NULL
     mov xcx, pRcvIOChain
     lea xdx, [xcx - IO_HEADER_SIZE]
@@ -129,47 +143,44 @@ Method NetComServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr(NetCo
 
   mov eax, [xsi].SRVPROTDATA.dMemSize
   .while TRUE
-    mov xdx, [xdx].IO_SOCKJOB.pNextItem                 ;Move to the next IO_SOCKJOB Item
+    mov xdx, [xdx].IO_SOCKJOB.pNextItem                 ;Next IO_SOCKJOB
     .break .if xdx == pRcvIOChain                       ;End of chain
-    sub xdx, IO_HEADER_SIZE                             ;Correct POINTER to beginning of structure
+    sub xdx, IO_HEADER_SIZE                             ;Correct pointer to structure
     test [xdx].IO_SOCKJOB.wFlags, IOF_JOB_ENGAGED
-    .break .if ZERO?                                    ;Is it pending IOJob?
+    .break .if ZERO?                                    ;Job not active
     mov ecx, [xdx].IO_SOCKJOB.dBytesConsumed
-    add [xsi].SRVPROTDATA.dTotRcvBytes, ecx
+    add [xsi].SRVPROTDATA.dTotRcvBytes, ecx             ;Update total received
     mov [xsi].SRVPROTDATA.pLastIOJob, xdx
-    .break .if eax <= [xsi].SRVPROTDATA.dTotRcvBytes
+    .break .if eax <= [xsi].SRVPROTDATA.dTotRcvBytes    ;Complete packet received?
   .endw
 
   mov eax, [xsi].SRVPROTDATA.dMemSize
   .if eax > [xsi].SRVPROTDATA.dTotRcvBytes
-    xor eax, eax                                        ;Get more data, otherwise We have the
-  .endif                                                ;  complete data! (and maybe more...)
+    xor eax, eax                                        ;Incomplete
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.OnAccept
-; Purpose:    An inbound connection 'accept' has completed.
-; Arguments:  Arg1: -> NetComConnection.
-; Return:     eax = command (CMD_ACCEPT_CONNECTION or CMD_REJECT_CONNECTION).
+; Purpose:    Handle incoming connection requests.
+;             Reject if remote host is blacklisted.
+; Arguments:  Arg1: -> NetComConnection
+; Return:     eax = CMD_ACCEPT_CONNECTION or CMD_REJECT_CONNECTION
 
 Method NetComServerProtocol.OnAccept, uses xbx xsi, pConnection:$ObjPtr(NetComConnection)
   local cAddrStr[1024]:CHR
 
-  DbgHex pConnection, "NetComServerProtocol.OnAccept", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComServerProtocol.OnAccept", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, pConnection
   if DEBUGGING
-    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, 0, 0, ??DbgDstWnd
     invoke GetNameInfo, addr [xbx].$Obj(NetComConnection).RemoteHostAddr, sizeof NETCOMADDR, \
-                        addr cAddrStr, lengthof cAddrStr, \
-                        NULL, 0, \
-                        NI_NUMERICHOST
+                        addr cAddrStr, lengthof cAddrStr, NULL, 0, NI_NUMERICHOST
     invoke DbgOutText, addr cAddrStr, DbgColorString, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    invoke DbgOutText, $OfsCStr(" is requesting a connection..."), DbgColorString, DbgColorBackground, \
-                       DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    invoke DbgOutText, $OfsCStr(" is requesting a connection..."), \
+                       DbgColorString, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
   endif
 
-  ;Check if the RemoteHost is in the BlackList. If yes, close the NetComConnection
   .if $OCall(xsi.IsBlackListed?, addr [xbx].$Obj(NetComConnection).RemoteHostAddr) != FALSE
     DbgWarning "RemoteHost is blacklisted; Connection rejected", "&PROTOCOL_WND_NAME"
     mov eax, PROT_CMD_REJECT_CONNECTION
@@ -182,12 +193,12 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.OnDisconnect
-; Purpose:    An established connection has been disconnected.
-; Arguments:  Arg1: -> NetComConnection.
-; Return:     eax = Command.
+; Purpose:    Marks connection as free and calls base disconnection handler
+; Arguments:  Arg1: -> NetComConnection
+; Return:     Nothing.
 
 Method NetComServerProtocol.OnDisconnect,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComServerProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComServerProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   SetObject xcx
   ACall xcx.OnDisconnect, pConnection
   mov xdx, pConnection
@@ -196,14 +207,11 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.ProcessData
-; Purpose:    A client has finished sending us data. Now we build the bitmap and display it on
-;             DebugCenter.
-; Arguments:  Arg1: -> NetComConnection.
-;             Arg2: Transmition length found by NetComProtocol.IsDataComplete?.
-; Return:     ERROR_BADPROTOCOL  - The buffer content isnt following our protocol.
-;             ERROR_USERQUIT     - The user sent a nice QUIT message using our protocol.
-;             Positive INT32     - This many bytes were cleanly processed and should be removed
-;                                  from the IOJob buffers.
+; Purpose:    Reassemble complete payload, build bitmap, and display.
+;             The first DWORD of the payload contains the total size in bytes.
+; Arguments:  Arg1: -> NetComConnection
+;             Arg2: Transmission length from IsDataComplete?
+; Return:     eax = Number of bytes processed.
 
 Method NetComServerProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection), \
                                                            TransmitionLength:dword
@@ -212,48 +220,49 @@ Method NetComServerProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(N
   local dSizeX:DWORD, dSizeY:DWORD, pBuffer:POINTER, wCaptionDC[100]:CHRW
 
 ;  DbgHex pConnection, "NetComServerProtocol.ProcessData", "&PROTOCOL_WND_NAME"
-
   SetObject xsi, NetComConnection, pConnection
   mov eax, TransmitionLength
   mov dConsumed, eax
   mov dRetval, eax
-  MemAlloc eax                                          ;Allocate memory for the assembled transmition
+  MemAlloc eax                                          ;Allocate contiguous buffer for payload
   mov pMemory, xax
   mov pBuffer, xax
 
-  lea xdi, [xsi].RcvIOChain                             ;Sentinel
-  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;xbx -> first item
+  ; ----------------------------------------------------------------------
+  ; Copy data from IO_SOCKJOB chain into contiguous buffer
+  ; ----------------------------------------------------------------------
+  lea xdi, [xsi].RcvIOChain
+  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem
   .while xbx != xdi && dConsumed != 0
     mov eax, [xbx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed
     .if eax <= dConsumed
       sub dConsumed, eax
-      lea xdx, [xbx - IO_HEADER_SIZE]                   ;xdx -> IOSockJob
-      mov xbx, [xbx].SDLL_ITEM.pNextItem                ;Move to next IOSockJob
+      lea xdx, [xbx - IO_HEADER_SIZE]
+      mov xbx, [xbx].SDLL_ITEM.pNextItem
       mov xcx, pMemory
       add pMemory, xax
       invoke MemClone, xcx, [xdx].IO_SOCKJOB.WSABuf.buf, eax
-      .break .if dConsumed == 0
     .else
-      lea xdx, [xbx - IO_HEADER_SIZE]                   ;xdx -> IOSockJob
+      lea xdx, [xbx - IO_HEADER_SIZE]
       invoke MemClone, pMemory, [xdx].IO_SOCKJOB.WSABuf.buf, dConsumed
       .break
     .endif
   .endw
 
-  ;Build the Bitmap and display it on DebugCenter
-  ;CreateCompatibleBitmap => SetDIBits
-  mov hScreenDC, $invoke(GetDC, 0)                      ;Get the DC of desktop
-  mov hMemDC, $invoke(CreateCompatibleDC, hScreenDC)    ;Create a DC compatible with hScreenDC
+  ; ----------------------------------------------------------------------
+  ; Build bitmap from received data and display on DebugCenter
+  ; ----------------------------------------------------------------------
+  mov hScreenDC, $invoke(GetDC, 0)
+  mov hMemDC, $invoke(CreateCompatibleDC, hScreenDC)
   mov xbx, pBuffer
-  add xbx, sizeof(DWORD)                                ;Skip TX length
+  add xbx, sizeof(DWORD)                                ;Skip total size DWORD
   m2m dSizeX, [xbx].BITMAPINFO.bmiHeader.biWidth, eax
   m2m dSizeY, [xbx].BITMAPINFO.bmiHeader.biHeight, ecx
-  mov hNewBmp, $invoke(CreateCompatibleBitmap, hScreenDC, dSizeX, dSizeY) ;Create a compatible bmp
+  mov hNewBmp, $invoke(CreateCompatibleBitmap, hScreenDC, dSizeX, dSizeY)
   mov hPrvBmp, $invoke(SelectObject, hMemDC, hNewBmp)
   lea xax, [xbx + sizeof(BITMAPINFO)]
-  invoke SetDIBits, hMemDC, hNewBmp, 0, [xbx].BITMAPINFO.bmiHeader.biHeight, \
-                    xax, xbx, DIB_RGB_COLORS
-  invoke SelectObject, hMemDC, hPrvBmp                  ;Return back the previous Bitmap
+  invoke SetDIBits, hMemDC, hNewBmp, 0, dSizeY, xax, xbx, DIB_RGB_COLORS
+  invoke SelectObject, hMemDC, hPrvBmp
   invoke DeleteDC, hMemDC
   invoke ReleaseDC, 0, hScreenDC
   invoke StrECopyW, addr wCaptionDC, $OfsCStrW("Desktop image from connection ")
@@ -261,25 +270,26 @@ Method NetComServerProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(N
   invoke DbgOutBitmap, hNewBmp, $RGB(0,0,0), addr wCaptionDC
   invoke DeleteObject, hNewBmp
 
-  MemFree pBuffer                                       ;Dispose assembled payload
+  MemFree pBuffer                                       ;Release assembled payload
 
+  ; ----------------------------------------------------------------------
+  ; Reset protocol state for next transmission
+  ; ----------------------------------------------------------------------
   mov xbx, [xsi].pProtocolData
   mov [xbx].SRVPROTDATA.dMemSize, 0
   mov [xbx].SRVPROTDATA.dTotRcvBytes, 0
   mov [xbx].SRVPROTDATA.pLastIOJob, NULL
   mov eax, dRetval
-
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.Release
-; Purpose:    Releases the memory chunk allocated with Allocate. Additional resources must be freed
-;             here.
-; Arguments:  Arg1: -> NetComConnection.
+; Purpose:    Release protocol memory allocated by Allocate
+; Arguments:  Arg1: -> NetComConnection
 ; Return:     Nothing.
 
 Method NetComServerProtocol.Release,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComServerProtocol.Release", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComServerProtocol.Release", "&PROTOCOL_WND_NAME"
   mov xax, pConnection
   MemFree [xax].$Obj(NetComConnection).pProtocolData
 MethodEnd

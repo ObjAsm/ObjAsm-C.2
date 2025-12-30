@@ -232,7 +232,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=29
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -267,10 +267,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1914,602,240
+2=0,0,1914,602,362
 3=0,0,0,0,1122
-1=453,0,453,706,2267
-4=0,0,0,0,234
+1=453,0,453,706,2328
+4=0,0,0,0,1054
 1001=0,0,0,0,460
 5=0,0,0,0,4506
 6=0,0,0,0
@@ -336,8 +336,8 @@ ProductVer4Range=0
 67=0,0,0,0,318
 68=0,0,0,0,1098
 72=0,0,1839,628,464
-70=0,0,1783,628,2820
-71=0,0,0,0,21121
+70=0,0,1783,628,49270
+71=0,0,0,0,29280
 69=0,0,0,0,9532
 73=0,0,0,0,14139
 74=0,0,0,0,11221
@@ -360,16 +360,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="LocReg"
-2="$LocReg m"
-3="DL_HEADER.MaxSize"
-4="StrucDlgChildrenInfo"
-5="IndexDlgChildrenInfo"
-6="MaxSize"
-7="DL_HEADER "
-8="DL_HEADER"
-9="DLF_LOAD_MIN_INISIZE"
-10="DLF_LOAD_MINMAX_INISIZE"
+1="hUdcFieldParam"
+2="DB_StructEditor"
+3="LocReg"
+4="$LocReg m"
+5="DL_HEADER.MaxSize"
+6="StrucDlgChildrenInfo"
+7="IndexDlgChildrenInfo"
+8="MaxSize"
+9="DL_HEADER "
+10="DL_HEADER"
 [Collapse]
 2=6750208,128
 1=
@@ -438,7 +438,7 @@ ProductVer4Range=0
 67=
 68=
 72=
-70=3520,,78672
+70=3520,,78608
 71=1069547520,,,7940
 69=
 73=4194304
@@ -449,7 +449,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,4,70,2,71
 [RADebugBP]
 2=
 50=
@@ -516,7 +516,7 @@ AutoLoad=1
 74=
 77=
 [PTimer]
-PTimer=642765675
+PTimer=646897253
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0
 [TLink]

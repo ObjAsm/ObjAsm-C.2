@@ -68,6 +68,7 @@ Method NetComProtocol.Init, uses xsi, pOwner:POINTER, pServiceName:PSTRING
   ACall xsi.Init, xdx
   mov [xsi].pServiceName, $invoke(StrNew, pServiceName)
   OCall [xsi].BlackList::NetComAddrCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
+  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -144,7 +145,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnDisconnect,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
+  DbgHex pConnection, "NetComProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
 MethodEnd
@@ -159,8 +160,8 @@ MethodEnd
 
 Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJob:PIO_SOCKJOB, \
                                 dError:DWORD
-;  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
-;  DbgDec dError,, "&PROTOCOL_WND_NAME"
+  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
+  DbgDec dError,, "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   mov xcx, pIOSockJob
   movzx eax, [xcx].IO_SOCKJOB.wOperation

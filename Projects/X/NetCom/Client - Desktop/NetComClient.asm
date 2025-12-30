@@ -1,72 +1,116 @@
 ; ==================================================================================================
 ; Title:      NetComClient.asm
 ; Author:     G. Friedrich
-; Version:    1.1.0
+; Version:    1.0.0
 ; Purpose:    NetCom Client Application.
 ; Notes:      Version 1.0.0, October 2017
 ;               - First release.
 ; ==================================================================================================
 
 
-WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exlude WinSock.inc  
-INCL_WINSOCK_API_PROTOTYPES equ 1
+; --------------------------------------------------------------------------------------------------
+; Summary:
+;   This module implements the user-interface logic for the NetComClient application.
+;   It provides command handling, status display, and a Send dialog used to establish, manage, and
+;   terminate network connections using the NetCom engine.
+;
+;   The NetComClient object processes window messages such as WM_COMMAND, WM_CLOSE, and WM_TIMER to
+;   control application flow, display runtime statistics, and handle user interaction through menus
+;   and dialogs.
+;
+;   The SendDlg object encapsulates all dialog behavior required to configure a remote endpoint,
+;   resolve network addresses, initiate outbound TCP connections, transmit captured desktop image
+;   data, and manage the connection lifecycle and resources.
+;
+;   This code implements a Windows GUI client that captures the local desktop and streams it over a
+;   TCP connection to a remote server, primarily as a NetCom framework demonstration or
+;   remote-display sender prototype. Data transmission and UI updates are driven by timers to avoid
+;   blocking operations.
+;
+;   All network connections are gracefully disconnected and released on user request or error
+;   conditions to ensure safe resource management.
+;
+;   Transmission protocol:
+;     Each transmission begins with a DWORD containing the total size of the
+;     transmitted block in bytes (including this DWORD itself), followed by a
+;     BITMAPINFO structure (including RGBQUAD color entries) and by the bitmap pixel
+;     data
+;
+;     The transmitted memory layout is as follows:
+;       DWORD  - Total transmission size in bytes (dMemSize)
+;       BMI    - BITMAPINFO structure including RGBQUAD color entries
+;       DATA   - Bitmap pixel data
+;
+;     The transmitted memory block is contiguous and is sent as a single payload
+;     using the NetComConnection QueueWrite mechanism.
+;
+;   All network connections are gracefully disconnected and released on user request or error
+;   conditions to ensure safe resource management.
+;
+; --------------------------------------------------------------------------------------------------
 
-APP_NAME                    textequ <NetComClient>
-PROTOCOL_WND_NAME           textequ <Client Protocol>
-INTERNET_PROTOCOL_VERSION   equ 4
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Load OOP files and OS related objects
+WIN32_LEAN_AND_MEAN         equ 1                       ;Exclude rarely-used Windows headers
+INCL_WINSOCK_API_PROTOTYPES equ 1                       ;Enable WinSock API prototypes
 
-% include &MacPath&fMath.inc
-% include &MacPath&SDLL.inc
+APP_NAME                    textequ <NetComClient>      ;Application internal name
+PROTOCOL_WND_NAME           textequ <Client Protocol>   ;Debug/protocol window title
+INTERNET_PROTOCOL_VERSION   equ 4                       ;Select IP version (4 or 6)
 
-% include &IncPath&Windows\WinSock2.inc
-% include &IncPath&Windows\ws2ipdef.inc
-% include &IncPath&Windows\ws2tcpip.inc
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;ObjAsm model macros and setup
+SysSetup OOP, WIN64, ANSI_STRING;, DEBUG(WND)           ;Initialize OOP model
 
-% include &IncPath&Windows\ShellApi.inc 
-% include &IncPath&Windows\CommCtrl.inc 
+% include &MacPath&fMath.inc                            ;Floating-point math helpers
+% include &MacPath&SDLL.inc                             ;Linked list support macros
 
-% includelib &LibPath&Windows\Ws2_32.lib
-% includelib &LibPath&Windows\Mswsock.lib
-% includelib &LibPath&Windows\Kernel32.lib
-% includelib &LibPath&Windows\Shell32.lib
-% includelib &LibPath&Windows\Shlwapi.lib
+% include &IncPath&Windows\WinSock2.inc                 ;WinSock core definitions
+% include &IncPath&Windows\ws2ipdef.inc                 ;IP protocol definitions
+% include &IncPath&Windows\ws2tcpip.inc                 ;TCP/IP helper APIs
+
+% include &IncPath&Windows\ShellApi.inc                 ;Shell API declarations
+% include &IncPath&Windows\CommCtrl.inc                 ;Common controls support
+
+% includelib &LibPath&Windows\Ws2_32.lib                ;WinSock 2 library
+% includelib &LibPath&Windows\Mswsock.lib               ;Microsoft WinSock extensions
+% includelib &LibPath&Windows\Kernel32.lib              ;Core Windows kernel functions
+% includelib &LibPath&Windows\Shell32.lib               ;Shell functionality
+% includelib &LibPath&Windows\Shlwapi.lib               ;Shell lightweight utilities
 
 if INTERNET_PROTOCOL_VERSION eq 4
-  AF_INETX  equ   AF_INET
+  AF_INETX  equ   AF_INET                               ;Use IPv4 address family
 elseif INTERNET_PROTOCOL_VERSION eq 6
-  AF_INETX  equ   AF_INET6
+  AF_INETX  equ   AF_INET6                              ;Use IPv6 address family
 else
   %.err <NetComEngine.Init - wrong IP version: $ToStr(%INTERNET_PROTOCOL_VERSION)>
 endif
 
 
-;Load or build the following objects
-MakeObjects Primer, Stream, StopWatch
-MakeObjects Collection, DataCollection, XWCollection, SortedCollection, SortedDataCollection
-MakeObjects WinPrimer, Window, Button, Hyperlink
-MakeObjects Dialog, DialogModal, DialogAbout
-MakeObjects DataPool
-MakeObjects WinApp, SdiApp
-MakeObjects NetCom
+; Load or build the following ObjAsm framework objects
+MakeObjects Primer, Stream, StopWatch                   ;Core utility and timing objects
+MakeObjects Collection, DataCollection, XWCollection    ;Generic container classes
+MakeObjects SortedCollection, SortedDataCollection      ;Sorted container variants
+MakeObjects WinPrimer, Window, Button, Hyperlink        ;Basic windowing controls
+MakeObjects Dialog, DialogModal, DialogAbout            ;Dialog-related classes
+MakeObjects DataPool                                    ;Data pool support
+MakeObjects WinApp, SdiApp                              ;Windows application base classes
+MakeObjects NetCom                                      ;NetCom networking framework
 
 .code
-include NetComClient_Globals.inc                        ;Includes application globals
-include NetComClient_Main.inc
+include NetComClient_Globals.inc                        ;Application-wide globals
+include NetComClient_Main.inc                           ;Main application implementation
 
 start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+  SysInit                                               ;Initialize ObjAsm runtime model
 
-  DbgClearTxt "NETCOMCLIENT"                            ;Clear this DbgCenter text window
-  DbgClearTxt "&PROTOCOL_WND_NAME"                      ;Clear this DbgCenter text window
-  OCall $ObjTmpl(NetComClient)::NetComClient.Init       ;Initializes the object data
-  OCall $ObjTmpl(NetComClient)::NetComClient.Run        ;Executes the application
-  OCall $ObjTmpl(NetComClient)::NetComClient.Done       ;Finalizes it
+  DbgClearTxt "NETCOMCLIENT"                            ;Clear main debug output window
+  DbgClearTxt "&PROTOCOL_WND_NAME"                      ;Clear protocol debug window
+  OCall $ObjTmpl(NetComClient)::NetComClient.Init       ;Initialize NetComClient object
+  OCall $ObjTmpl(NetComClient)::NetComClient.Run        ;Enter application message loop
+  OCall $ObjTmpl(NetComClient)::NetComClient.Done       ;Shutdown and cleanup resources
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exits program returning 0 to the OS
-start endp                                              ;Code end and defines prg entry point
+  SysDone                                               ;Finalize ObjAsm runtime model
+  invoke ExitProcess, 0                                 ;Terminate process with success code
+start endp                                              ;End of program entry procedure
 
-end
+end                                                     ;End of assembly unit
+

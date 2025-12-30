@@ -110,8 +110,8 @@ MethodEnd
 Method NetComConnection.DoWrite, uses xbx xsi, pIOSockJob:PIO_SOCKJOB
   local dLen:DWORD
 
-;  DbgText "NetComConnection.DoWrite"
   SetObject xsi
+;  DbgHex xsi, "NetComConnection.DoWrite"
   mov xbx, pIOSockJob
   mov dLen, sizeof NETCOMADDR
   lea xdx, [xbx].IO_SOCKJOB.WSABuf
@@ -373,6 +373,7 @@ Method NetComConnection.OnError, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB, dErro
   local dProtocolCommand:DWORD
 
   SetObject xsi
+;  DbgHex xsi, "NetComConnection.OnError"
   mov xbx, pIOSockJob
   mov xdi, [xsi].pOwner                                 ;xdi -> NetComConnectionPool
   lock dec [xsi].dPendingIOJobs                         ;This IOJov is not pending anymore
@@ -475,7 +476,7 @@ MethodEnd
 
 Method NetComConnection.OnFree, uses xsi
   SetObject xsi
-  DbgHex xsi, "NetComConnection.OnFree"
+;  DbgHex xsi, "NetComConnection.OnFree"
   OCall xsi.Done
   xBitSet [xsi].dFlags, NCC_FREED
 MethodEnd
@@ -572,7 +573,7 @@ MethodEnd
 
 Method NetComConnection.OnWrite, uses xsi, pIOSockJob:PIO_SOCKJOB
   SetObject xsi
-  DbgHex xsi, "NetComConnection.OnWrite"
+;  DbgHex xsi, "NetComConnection.OnWrite"
   mov xcx, [xsi].pOwner
   ;Toss the completed IOSockJob back in the IOJobPool
   OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, pIOSockJob
@@ -640,8 +641,8 @@ Method NetComConnection.QueueConnect, uses xdi xsi, pRemoteHostAddr:PNETCOMADDR
   invoke MemClone, addr [xsi].LocalHostAddr, \
                    addr [xdi].$Obj(NetComEngine).LocalHostAddr, \
                    sizeof NETCOMADDR
-  ;Here we can change the returning port
 
+  ;Here we can change the returning port
   mov dOption, 1
   invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_REUSEADDR, addr dOption, sizeof dOption
   CheckSockError "ERROR on SetSockOpt SO_REUSEADDR"
@@ -659,18 +660,19 @@ Method NetComConnection.QueueConnect, uses xdi xsi, pRemoteHostAddr:PNETCOMADDR
     .if xax != NULL
       mov xdi, xax
       .if [xsi].pConnectEx != NULL
-        m2z [xdi].IO_SOCKJOB.WSABuf.len                 ;dSize MUST be zero to get
+        m2z [xdi].IO_SOCKJOB.WSABuf.len                 ;Size MUST be zero
         invoke [xsi].pConnectEx, [xsi].hSocket, addr [xsi].RemoteHostAddr, \
                                                 sizeof NETCOMADDR, NULL, 0, NULL, xdi
         .if eax != 0                                    ;Zero means success
           invoke WSAGetLastError
-          .if eax != ERROR_IO_PENDING
+          .if eax == ERROR_IO_PENDING
+            lock inc [xsi].dPendingIOJobs
+          .else
             DbgWarning "Error while connecting"
             OCall xsi.OnError, xdi, eax
             ExitMethod
           .endif
         .endif
-        lock inc [xsi].dPendingIOJobs
         xor eax, eax
       .else
         DbgWarning "FAILED TO GET PTR TO CONNECTEX"

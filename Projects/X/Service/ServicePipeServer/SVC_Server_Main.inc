@@ -1,7 +1,7 @@
 ; ==================================================================================================
-; Title:      SVC_Template_Main.inc
+; Title:      SVC_Server_Main.inc
 ; Author:     G. Friedrich
-; Notes:      See SVC_Template.asm
+; Notes:      See SVC_Server.asm
 ; ==================================================================================================
 
 

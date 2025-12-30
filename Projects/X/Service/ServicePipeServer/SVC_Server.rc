@@ -1,0 +1,15 @@
+; ==================================================================================================
+; Title:      SVC_Server.rc
+; Author:     G. Friedrich
+; Notes:      See SVC_Server.asm.
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "SVC_Server_Shared.rc"     //Service shared definitions
+#include "VER\Version.rc"           //Service version definition
+#include "MFT\Manifest_Invoker.rc"  //Service manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+
