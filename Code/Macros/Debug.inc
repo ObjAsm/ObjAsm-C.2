@@ -931,7 +931,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInTxt
 ; Purpose:    Zoom In a specified text output window.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomInTxt macro Dest
   if DEBUGGING
@@ -954,7 +954,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInBmp
 ; Purpose:    Zoom In a specified bitmap output window.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomInBmp macro Dest
   if DEBUGGING
@@ -977,7 +977,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomIn
 ; Purpose:    Zoom In specified output windows.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomIn macro Dest
   if DEBUGGING
@@ -1002,7 +1002,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutTxt
 ; Purpose:    Zoom Out a specified text output window.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOutTxt macro Dest
   if DEBUGGING
@@ -1025,7 +1025,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutBmp
 ; Purpose:    Zoom Out a specified bitmap output window.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOutBmp macro Dest
   if DEBUGGING
@@ -1048,7 +1048,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOut
 ; Purpose:    Zoom Out specified output windows.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOut macro Dest
   if DEBUGGING
@@ -1073,7 +1073,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontTxt
 ; Purpose:    Bring a specified text output window to front.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontTxt macro Dest
   if DEBUGGING
@@ -1096,7 +1096,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontBmp
 ; Purpose:    Bring a specified output bitmap window to front.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontBmp macro Dest
   if DEBUGGING
@@ -1119,7 +1119,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFront
 ; Purpose:    Bring specified output windows to front.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgFront macro Dest
   if DEBUGGING
@@ -1186,7 +1186,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontWnd
 ; Purpose:    Bring specified output windows to front.
-; Arguments:  Arg1: Destination Window name.
+; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontWnd macro Dest
   if DEBUGGING
@@ -1319,7 +1319,7 @@ endif
 ; Macro:      DbgStrA
 ; Purpose:    Output a specified string on the debug device.
 ; Arguments:  Arg1: ANSI String.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgStrA macro Var:req, InfoText, Dest
@@ -1351,7 +1351,7 @@ endm
 ; Macro:      DbgStrW
 ; Purpose:    Output a specified WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgStrW macro Var:req, InfoText, Dest
@@ -1384,7 +1384,7 @@ endm
 ; Purpose:    Output a limited ANSI string on the debug device.
 ; Arguments:  Arg1: ANSI string.
 ;             Arg2: Character count (fix number, like 8 or a variable but not a register).
-;             Arg3: Additional information.
+;             Arg3: Optional information.
 ;             Arg4: Optional destination Window name.
 
 DbgStrCA macro Var:req, StrLen:req, InfoText, Dest
@@ -1418,7 +1418,7 @@ endm
 ; Purpose:    Output a limited WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
 ;             Arg2: Character count (fix number, like 8 or a variable but not a register).
-;             Arg3: Additional information.
+;             Arg3: Optional information.
 ;             Arg4: Optional destination Window name.
 
 DbgStrCW macro Var:req, StrLen:req, InfoText, Dest
@@ -1464,7 +1464,7 @@ endif
 ; Macro:      DbgHex
 ; Purpose:    Display a number in hexadecimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Note:       If register addressing is used, a size prefix is required.
 ;             i.e.:  DbgHex DWORD ptr [rcx]
@@ -1484,7 +1484,7 @@ endm
 ; Macro:      DbgBin
 ; Purpose:    Output a number in binary format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol). Max 32 bits.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Note:       If register addressing is used, a size prefix is required.
 ;             i.e.:  DbgBin DWORD ptr [rcx]
@@ -1528,7 +1528,7 @@ endm
 ; Macro:      DbgDec
 ; Purpose:    Output a number in signed decimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Note:       If register addressing is used, a size prefix is required.
 ;             i.e.:  DbgDec DWORD ptr [rcx]
@@ -1579,7 +1579,7 @@ endm
 ; Macro:      DbgFloat
 ; Purpose:    Display a floating point number in decimal format on the debug device.
 ; Arguments:  Arg1: Floating point number (REAL4 or REAL8)
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgFloat macro Var:req, InfoText, Dest
@@ -1621,7 +1621,7 @@ endm
 ; Procedure:  DbgGUID
 ; Purpose:    Output the a GUID on the debug device.
 ; Arguments:  Arg1: GUID.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgGUID macro Var:req, InfoText, Dest
@@ -1665,7 +1665,7 @@ endm
 ; Procedure:  DbgARGB
 ; Purpose:    Output the an ARGB color on the debug device.
 ; Arguments:  Arg1: ARGB DWORD color value.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgARGB macro Var:req, InfoText, Dest
@@ -1773,7 +1773,7 @@ endm
 ; Arguments:  Arg1: -> memory block.
 ;             Arg2: Size of memory block.
 ;             Arg3: Output format (DBG_MEM_STR, DBG_MEM_[U]I??, DBG_MEM_R?, DBG_MEM_H??).
-;             Arg4: Additional information.
+;             Arg4: Optional information.
 ;             Arg5: Optional destination Window name.
 
 DbgMem macro pData:req, DataSize:req, OutputFormat:=<DBG_MEM_NONE>, InfoText, Dest
@@ -1793,7 +1793,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgGlobalMemUsage
 ; Purpose:    Display global memory usage on the debug window.
-; Arguments:  Arg1: Additional information.
+; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
 DbgGlobalMemUsage macro InfoText, Dest
@@ -1840,7 +1840,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFPU
 ; Purpose:    Output the content of the FPU registers on the debug device.
-; Arguments:  Arg1: Additional information.
+; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
 DbgFPU macro InfoText, Dest
@@ -1859,7 +1859,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCpuFlags
 ; Purpose:    Output the content of the CPU Flags on the debug device.
-; Arguments:  Arg1: Additional information.
+; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 ; Links:      https://en.wikipedia.org/wiki/FLAGS_register
 
@@ -1928,7 +1928,7 @@ endm
 ; Macro:      DbgMessage
 ; Purpose:    Translate a windows message to a string and output it to the debug device.
 ; Arguments:  Arg1: Windows message.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgMessage macro Var:req, InfoText, Dest
@@ -1947,7 +1947,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgApiError
 ; Purpose:    Translate an API error to a string and output it to the debug device.
-; Arguments:  Arg1: Additional information.
+; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
 DbgApiError macro InfoText, Dest
@@ -1968,7 +1968,7 @@ endm
 ; Macro:      DbgComError
 ; Purpose:    Translate a COM error to a string and output it to the debug device.
 ; Arguments:  Arg1: COM error code.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgComError macro Var:req, InfoText, Dest
@@ -1993,7 +1993,7 @@ endm
 ; Macro:      DbgObject
 ; Purpose:    Output object variables to the debug device.
 ; Arguments:  Arg1: Instance::ClassName.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Return:     Nothing.
 ; Note:       ebp is assumed to nothing!
@@ -2110,7 +2110,7 @@ endm
 ; Macro:      DbgVMT
 ; Purpose:    Output offsets contained in a VMT.
 ; Arguments:  Arg1: Instance::ClassName.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Return:     Nothing.
 ; Note:       ebp is assumed to nothing!
@@ -2159,7 +2159,7 @@ endm
 ; Macro:      DbgIMT
 ; Purpose:    Output offsets contained in a IMT.
 ; Arguments:  Arg1: Instance::ClassName.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Return:     Nothing.
 ; Note:       ebp is assumed to nothing!
@@ -2239,7 +2239,7 @@ endm
 ;; Macro:      DbgTraceShow
 ;; Purpose:    Display gattered trace information.
 ;; Arguments:  Arg1: Object name.
-;;             Arg2: Additional information.
+;;             Arg2: Optional information.
 ;;             Arg2: Optional destination Window name.
 ;
 ;DbgTraceShow macro OName:req, InfoText, Dest
@@ -2700,7 +2700,7 @@ endm
 ; Macro:      ASSERT
 ; Purpose:    Display a message if an argument value is FALSE.
 ; Arguments:  Arg1: Value.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Note:       ! acts as escape character, use !!= as unequality comparison.
 
@@ -2812,7 +2812,7 @@ endm
 ; Procedure:  DbgComponent
 ; Purpose:    Output Componet information on the debug device.
 ; Arguments:  Arg1: GUID.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgComponent macro Var:req, InfoText, Dest
@@ -2838,7 +2838,7 @@ endm
 ; Procedure:  DbgInterface
 ; Purpose:    Output Interface information on the debug device.
 ; Arguments:  Arg1: IID.
-;             Arg2: Additional information.
+;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgInterface macro Var:req, InfoText, Dest
@@ -2871,8 +2871,8 @@ DbgQuaternion equ DbgVec4
 ; Macro:      DbgVec2
 ; Purpose:    Outputs the components of the D3DXVECTOR2 vector.
 ; Arguments:  Arg1: -> Vector2
-;             Arg2: Additional information.
-;             Arg3: Destination Window name.
+;             Arg2: Optional information.
+;             Arg3: Optional destination Window name.
 
 DbgVec2 macro Var:req, InfoText, Dest
   if DEBUGGING
@@ -2903,8 +2903,8 @@ endm
 ; Macro:     DbgVec3
 ; Purpose:   Outputs the components of the D3DXVECTOR3 vector.
 ; Arguments: Arg1: -> Vector3
-;            Arg2: Additional information.
-;            Arg3: Destination Window name.
+;            Arg2: Optional information.
+;            Arg3: Optional destination Window name.
 
 DbgVec3 macro Var:req, InfoText, Dest
   if DEBUGGING
@@ -2936,8 +2936,8 @@ endm
 ; Macro:     DbgVec4
 ; Purpose:   Outputs the components of the D3DXVECTOR4 vector.
 ; Arguments: Arg1: -> Vector4
-;            Arg2: Additional information.
-;            Arg3: Destination Window name.
+;            Arg2: Optional information.
+;            Arg3: Optional destination Window name.
 
 DbgVec4 macro Var:req, InfoText, Dest
   if DEBUGGING
@@ -2968,8 +2968,8 @@ endm
 ; Macro:     DbgMemBlock
 ; Purpose:   Output MemBlock information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
-;            Arg2: Additional information.
-;            Arg3: Destination Window name.
+;            Arg2: Optional information.
+;            Arg3: Optional destination Window name.
 
 DbgMemBlock macro Var:req, InfoText, Dest
   if DEBUGGING
@@ -3009,8 +3009,8 @@ endm
 ; Macro:     DbgMStr
 ; Purpose:   Output MemBlock / DbgMStr information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
-;            Arg2: Additional information.
-;            Arg3: Destination Window name.
+;            Arg2: Optional information.
+;            Arg3: Optional destination Window name.
 
 DbgMStr macro Var:req, InfoText, Dest
   if DEBUGGING

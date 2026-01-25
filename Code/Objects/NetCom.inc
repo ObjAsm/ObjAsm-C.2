@@ -28,9 +28,9 @@
 ;             and all necessary ancestors not previously included.
 ;
 ;             Our typical TCP streaming connections use the 'session global' copy of the
-;             RemoteHostAddr field, stored in NetComConnection. The newly-supported SOCK_SEQPACKET
+;             RemoteAddr field, stored in NetComConnection. The newly-supported SOCK_SEQPACKET
 ;             will also use that. But the SOCK_DGRAM, SOCK_RDM and SOCK_RAW will use the
-;             'session local' copy of the RemoteHostAddr field, stored in IOSockJob.
+;             'session local' copy of the RemoteAddr field, stored in IOSockJob.
 ;             This is because these socket types typically communicate with multiple remote hosts,
 ;             so we are tagging messages with host ids. This allows us to associate a message with
 ;             an individual remote host.
@@ -49,66 +49,65 @@
 ;                                   -------------------
 ;
 ;
-;                         -------------------
-;          ------------->|    Application    |<----------
-;         |              |-------------------|           |
-;         |              |                   |           |
-;         |              |                   |           |
-;         |              |                   |           |
-;         |               -------------------            |
-;         |                                              |
-;         |                                              |
-;         |          Server/Client                       |        Functionality
-;         |       -------------------                    |      -------------------
-;         |   -->|   NetComEngine    |<----              |     |  NetComProtocol   |
-;         |  |   |-------------------|     |             |     |-------------------|
-;          --|---| pOwner            |     |              -----| pOwner            |
-;            |   |                   |     |                   |                   |
-;            |   |                   |     |                   |                   |
-;            |    -------------------      |                    -------------------
-;            |                             |
-;            |                              ---------------
-;            |                                             |
-;            |           --------------------              |    -------------------
-;            |       -->|NetComConnectionPool|        -------->|NetComIOSockJobPool|- - -
-;            |      |   |--------------------|       |     |   |-------------------|     |
-;             ------|---| pOwner             |       |      ---| pOwner            |
-;                   |   |     pIOSockJobPool |-------          | dBufferSize       |     |
-;                   |   |                    |                 |                   |
-;                   |    --------------------                   -------------------      |
-;                   |
-;                   |                                                                    |
-;                   |
-;                   |           -------------------            -------------------       |
-;                   |          | NetComConnection  |< - - - - |  NetComIOSockJob  |< - -
-;                   |          |-------------------||         |-------------------||
-;                    ----------| pOwner            |||        |                   |||
-;                              |                   |||        |                   ||||
-;                              |                   |||        |                   |||||
-;                               ------------------- ||         ------------------- |||||
-;                                ------------------- |          ------------------- ||||
-;                                 -------------------            ------------------- |||
-;                                                                 --------------------||
-;                                                                  ------------------- |
-;                                                                   -------------------
-;
+;                         -------------------                
+;          ------------->|    Application    |<----------        
+;         |              |-------------------|           |       
+;         |              |                   |           |       
+;         |              |                   |           |       
+;         |              |                   |           |       
+;         |               -------------------            |       
+;         |                                              |       
+;         |                                              |       
+;         |          Server/Client                       |              Functionality
+;         |       -------------------                    |            -------------------
+;         |   -->|   NetComEngine    |<----              |   ------->|  NetComProtocol   |
+;         |  |   |-------------------|     |             |  |        |-------------------|
+;          --|---| pOwner            |     |              --|--------| pOwner            |
+;            |   |                   |     |                |        |                   |
+;            |   |                   |     |                |        |                   |
+;            |    -------------------      |                |         -------------------
+;            |                             |                |     
+;            |                              ----------------|----  
+;            |                                              |    |
+;            |           --------------------               |    |    -------------------
+;            |       -->|NetComConnectionPool|        ------|------->|NetComIOSockJobPool|- - -
+;            |      |   |--------------------|       |      |    |   |-------------------|     |
+;             ------|---| pOwner             |       |      |     ---| pOwner            |
+;                   |   |     pIOSockJobPool |-------       |        | dBufferSize       |     |
+;                   |   |                    |              |        |                   |
+;                   |    --------------------               |         -------------------      |
+;                   |                                       |    
+;                   |                                       |                                  |
+;                   |                                       |    
+;                   |           -------------------         |        -------------------       |
+;                   |          | NetComConnection  |< - - - | - - - |  NetComIOSockJob  |< - -
+;                   |          |-------------------||       |       |-------------------||
+;                    ----------| pOwner            |||      |       |                   |||
+;                              |         pProtocol |||------        |                   ||||
+;                              |                   |||              |                   |||||
+;                               ------------------- ||               ------------------- |||||
+;                                ------------------- |                ------------------- ||||
+;                                 -------------------                  ------------------- |||
+;                                                                       --------------------||
+;                                                                        ------------------- |
+;                                                                         -------------------
+;                                                            
 ;
 ; ==================================================================================================
 
 
 SO_CONNECT_TIME             equ   0700Ch
-
 ;SO_EXCLUSIVEADDRUSE
 
 ;IO socket operations
 OPERATION_SOCK_ACCEPT       equ   1h
-OPERATION_SOCK_WRITE        equ   2h
-OPERATION_SOCK_READ         equ   3h
-OPERATION_SOCK_CONNECT      equ   4h
+OPERATION_SOCK_CONNECT      equ   2h
+OPERATION_SOCK_RECV         equ   3h
+OPERATION_SOCK_SEND         equ   4h
 
 ;IO Flag
-IOF_JOB_COMPLETED           equ   BIT00     ;Pending or completed
-IOF_JOB_ENGAGED             equ   BIT01     ;Engaged (read chain)
+IOF_JOB_COMPLETED           equ   BIT00     ;Completed 
+IOF_JOB_LINKED              equ   BIT01     ;Linked to the receive chain
 
 ERROR_BAD_PROTOCOL          equ   -10
 ERROR_USER_QUIT             equ   -12
@@ -120,31 +119,29 @@ PROT_CMD_DISCONNECT         equ   3         ;Connection teardown
 PROT_CMD_CLOSE              equ   4         ;Connection cut
 PROT_CMD_CONTINUE           equ   5         ;Continue actual operation
 PROT_CMD_DELETE_IOJOBS      equ   6
-PROT_CMD_FREE               equ   7         ;Free connection object
+PROT_CMD_DESTROY            equ   7         ;Destroy connection object
+PROT_CMD_STOP               equ   8         ;Stop engine - fatal error
 
-;NetCom Connection states
-NCC_DISCONNECTED_LOCAL      equ   BIT00     ;Disconnected by local host
-NCC_DISCONNECTED_REMOTE     equ   BIT01     ;Disconnected by remote host
-NCC_CLOSE_MARKED            equ   BIT02     ;Marked to close
-NCC_CLOSED                  equ   BIT03     ;Closed
-NCC_FREE_MARKED             equ   BIT04     ;Marked to free
-NCC_FREED                   equ   BIT05     ;Freed
+;NetCom Connection flags
+NCC_SHUTDOWN_RECEIVE_REMOTE equ   BIT00
+NCC_SHUTDOWN_SEND_REMOTE    equ   BIT01
+NCC_SHUTDOWN_RECEIVE_LOCAL  equ   BIT02
+NCC_SHUTDOWN_SEND_LOCAL     equ   BIT03
+NCC_DESTROY_QUEUED          equ   BIT04     ;Marked to terminate the connection object
+NCC_DESTROYED               equ   BIT05     ;Done - socket Closed (abortive disconnection) and free
+NCC_CLOSED                  equ   BIT06         
 
-NCC_DISCONNECTED            equ   NCC_DISCONNECTED_LOCAL or NCC_DISCONNECTED_REMOTE
+NCC_DISCONNECTED_LOCAL      equ   NCC_SHUTDOWN_RECEIVE_LOCAL or NCC_SHUTDOWN_SEND_LOCAL
+NCC_DISCONNECTED_REMOTE     equ   NCC_SHUTDOWN_RECEIVE_REMOTE or NCC_SHUTDOWN_SEND_REMOTE
+NCC_DISCONNECTED_SEND       equ   NCC_SHUTDOWN_RECEIVE_REMOTE or NCC_SHUTDOWN_SEND_LOCAL
+NCC_DISCONNECTED_RECEIVE    equ   NCC_SHUTDOWN_RECEIVE_LOCAL or NCC_SHUTDOWN_SEND_REMOTE
 
 ;NetCom Error states
 NCE_ACCEPT                  equ   BIT27     ;Error happend while accepting
 NCE_CONNECT                 equ   BIT28     ;Error happend while connecting
-NCE_WRITE                   equ   BIT29     ;Error happend while writing
-NCE_READ                    equ   BIT30     ;Error happend while reading
+NCE_SEND                    equ   BIT29     ;Error happend while sending
+NCE_RECEIVE                 equ   BIT30     ;Error happend while receiving
 NCE_UNKNOWN                 equ   BIT31     ;Error happend during an unknown operation
-
-
-;Shutdown stages
-SDN_CLOSE_CONNECTIONS       equ   1
-SDN_CLOSE_WORKERS           equ   2
-SDN_QUIT_WORKERS            equ   3         ;Abortive close
-SDN_HOUSEKEEPING            equ   4
 
 ;Error codes
 ERROR_BASE = 111111110
@@ -178,27 +175,34 @@ SIO_GET_EXTENSION_FUNCTION_POINTER  equ IOC_INOUT or IOC_WS2 or 6
 SO_UPDATE_ACCEPT_CONTEXT      equ   700Bh
 SO_UPDATE_CONNECT_CONTEXT     equ   7010h
 
-NETCOMADDR struc                                        ;Needed for NetComAddrCollection
+_NETCOMADDR_ struc                                      ;Auxiliar structure to get the total size
   union
     SOCKADDR                  {}                        ;IPv4
     SOCKADDR_IN               {}                        ;IPv4 only
     SOCKADDR_IN6              {}                        ;IPv6 only
     SOCKADDR_STORAGE          {}                        ;IPv4, IPv6, NetBIOS, infrared or Bluetooth
   ends
+_NETCOMADDR_ ends
+
+NETCOMADDR struc                                        ;Universal address structure
+  wFamily   WORD  ?
+  wPort     WORD  ?
+  Address   BYTE  sizeof(_NETCOMADDR_) - 2*sizeof(WORD) dup(?)
 NETCOMADDR ends
 PNETCOMADDR typedef ptr NETCOMADDR
 
+
 LISTENER struc 4
-  hSocket         HANDLE      ?
+  hSocket         SOCKET      ?
 LISTENER ends
 PLISTENER typedef ptr LISTENER
 
 ;This structure is not integrated into IO_SOCKJOB to be able to calculate some offsets
 IO_HEADER struc 2
-  Ovl             OVERLAPPED  {}                        ;Must be the first structure member!
-  wOperation      WORD        ?                         ;Operation ID, i.e. OPERATION_SOCK_READ
-  wFlags          WORD        ?                         ;Flags, i.e. IOF_JOB_ENGAGED
-  dBytesConsumed  DWORD       ?                         ;#bytes currently in buffer
+  Ovl             OVERLAPPED  {}                        ;Must be always the first structure member!
+  wOperation      WORD        ?                         ;Operation ID, i.e. OPERATION_SOCK_RECV
+  wFlags          WORD        ?                         ;Flags, i.e. IOF_JOB_LINKED
+  dBytesConsumed  DWORD       ?                         ;#bytes currently placed in the buffer
 IO_HEADER ends
 IO_HEADER_SIZE equ sizeof(IO_HEADER)
 
@@ -210,21 +214,15 @@ IO_SOCKJOB struc 4
 IO_SOCKJOB ends                                         ;  Minimal size of the buffer must
 PIO_SOCKJOB typedef ptr IO_SOCKJOB                      ;  be sizeof ACCEPT_DATA
 
-ACCEPT_DATA struct 4
-  LocalHostAddr   BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;16 BYTEs added, see AcceptEx
-  RemoteHostAddr  BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;  documentation
+;IO_SOCKJOB databuffer structure for an OPERATION_SOCK_ACCEPT operation
+ACCEPT_DATA struct 4                                    
+  LocalAddr       BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;16 BYTEs added, see AcceptEx
+  RemoteAddr      BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;  documentation
   pListener       PLISTENER   ?
   pConnection     POINTER     ?
 ACCEPT_DATA ends
 
-NETCOMADDR_ENTRY struc
-              NETCOMADDR      {}
-;  wCounter    WORD            ?
-;  wFlags      WORD            ?                         ;Reserved for internal use
-NETCOMADDR_ENTRY ends
-PNETCOMADDR_ENTRY typedef ptr NETCOMADDR_ENTRY
-
-WSACF_DONT_REMOVE             equ   BIT00
+;WSACF_DONT_REMOVE             equ   BIT00
 
 
 ;Maximum Transmission Unit (MTU) of network hardware in BYTEs
@@ -247,11 +245,20 @@ else
   MSS_ETHERNET_IPVX   equ   MSS_ETHERNET_IPV6
 endif
 
+; Example: MTU=1500, MSS=1460 (Wireshark)
+; 1460 bytes TCP payload (MSS)
+; + 20 bytes TCP header
+; + 20 bytes IP header
+; + 4 bytes Ethernet FCS (depends on capture method)
+; = 1504 bytes captured
 
-COMPLETION_KEY_LISTENER       equ   -1
-
+COMPLETION_KEY_VOID           equ   -1      ;Used to purge the connection
+COMPLETION_KEY_KILL_WORKER    equ   -2
+COMPLETION_KEY_SOCK_ACCEPTED  equ   -3
 
 AcceptEx proto WIN_STD_CALL_CONV :SOCKET,:SOCKET,:PVOID,:DWORD,:DWORD,:DWORD,:LPDWORD,:LPOVERLAPPED
+TYPE_Connectex typedef proto :HANDLE, :POINTER, :DWORD, :POINTER, :DWORD, :POINTER, :LPOVERLAPPED
+PTO_CONNECTEX typedef ptr TYPE_Connectex
 
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -259,11 +266,112 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 else
   GetHostName equ GetHostNameW
 endif
+  
+@DefProto DllImport, GetAdaptersAddresses, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :DWORD, :POINTER, :POINTER>, 20
+
+IP_ADAPTER_UNICAST_ADDRESS struct
+  Length_              DWORD      ?
+  Flags                DWORD      ?
+  Next                 POINTER    ?
+  Address              SOCKET_ADDRESS <>
+  PrefixOrigin         DWORD      ?
+  SuffixOrigin         DWORD      ?
+  DadState             DWORD      ?
+  ValidLifetime        DWORD      ?
+  PreferredLifetime    DWORD      ?
+  LeaseLifetime        DWORD      ?
+  OnLinkPrefixLength   BYTE       ?
+  _pad                 BYTE 3 dup(?)          ; alignment
+IP_ADAPTER_UNICAST_ADDRESS ends
+
+IP_ADAPTER_ADDRESSES struct
+  Length_                    DWORD ?
+  IfIndex                    DWORD ?
+
+  Next                       POINTER ?
+  AdapterName                POINTER ?
+
+  FirstUnicastAddress        POINTER ?
+  FirstAnycastAddress        POINTER ?
+  FirstMulticastAddress      POINTER ?
+  FirstDnsServerAddress      POINTER ?
+
+  DnsSuffix                  PWSTR ?
+  Description                PWSTR ?
+  FriendlyName               PWSTR ?
+
+  PhysicalAddress            BYTE 8 dup(?)
+  PhysicalAddressLength      DWORD ?
+
+  Flags                      DWORD ?
+  Mtu                        DWORD ?
+  IfType                     DWORD ?
+  OperStatus                 DWORD ?
+
+  Ipv6IfIndex                DWORD ?
+  ZoneIndices                DWORD 16 dup(?)
+
+  FirstPrefix                POINTER ?
+IP_ADAPTER_ADDRESSES ends
+
+
+@DefProto DllImport, GetIpNetTable2, WIN_STD_CALL_CONV,, <:DWORD, :POINTER>, 8
+@DefProto DllImport, FreeMibTable, WIN_STD_CALL_CONV,, <:POINTER>, 4
+
+IF_MAX_PHYS_ADDRESS_LENGTH equ  32
+
+MIB_IPNET_ROW2 struct 4
+  Address               SOCKADDR_INET   <>
+  InterfaceIndex        DWORD           ?       ;NET_IFINDEX
+  InterfaceLuid         LUID            <>
+  PhysicalAddress       UCHAR IF_MAX_PHYS_ADDRESS_LENGTH dup (?)
+  PhysicalAddressLength ULONG           ?
+  State                 SDWORD          ?       ;NL_NEIGHBOR_STATE
+  union
+    struct
+      IsRouter          BOOLEAN         ?
+      IsUnreachable     BOOLEAN         ?
+    ends
+    Flags               UCHAR           ?
+  ends
+  union ReachabilityTime
+    LastReachable       ULONG           ?
+    LastUnreachable     ULONG           ?
+  ends
+MIB_IPNET_ROW2 ends
+PMIB_IPNET_ROW2 typedef ptr MIB_IPNET_ROW2
+
+MIB_IPNET_TABLE2 struct
+  NumEntries      DWORD     ?
+                  DWORD     ?                   ;Alignment 32/64 bit
+  Table           MIB_IPNET_ROW2 0 dup(<>)
+MIB_IPNET_TABLE2 ends
+PMIB_IPNET_TABLE2 typedef ptr MIB_IPNET_TABLE2
 
 
 ; --------------------------------------------------------------------------------------------------
+; Macro:      $htons / $htonl
+; Purpose:    Convert a WORD/DWORD to a network port (network byte order = big endian).
+; Arguments:  Arg1: Port.
+
+$htons macro Port
+  %exitm <((Port and 0ffh) shl 8) or ((Port and 0ff00h) shr 8)>
+endm
+
+$htonl macro Port
+  %exitm <((Port and 0000000ffh) shl 24) or \
+          ((Port and 00000ff00h) shl  8) or \
+          ((Port and 000ff0000h) shr  8) or \
+          ((Port and 0ff000000h) shr 24)>
+endm
+
+
+
+DEFAULT_LISTENING_PORT equ $htons(25773)
+
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComIOSockJobPool
-; Purpose: Implement a DataPool of IOJobs. An IOSockJob is a memory chunk with a header structure
+; Purpose: Implement a DataPool of IOSockJobs. An IOSockJob is a memory chunk with a header structure
 ;          called IO_SOCKJOB followed by a data buffer.
 
 Object NetComIOSockJobPool, NetComIOSockJobPoolID, DataPool
@@ -271,65 +379,61 @@ Object NetComIOSockJobPool, NetComIOSockJobPoolID, DataPool
 
   RedefineMethod  NewItem,            WORD
   RedefineMethod  FreeItem,           PIO_SOCKJOB
+  RedefineMethod  Reset
   VirtualMethod   ResetIOJob,         PIO_SOCKJOB, WORD
 
   DefineVariable  dBufferSize,        DWORD,            0
-  DefineVariable  dCount,             DWORD,            0     ;Control value, can be omited
+  DefineVariable  dCount,             DWORD,            0     ;Control value
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:  NetComConnection
 ; Purpose: Implement a NetCom connection.
 
-TYPE_Connectex typedef proto :HANDLE, :POINTER, :DWORD, :POINTER, :DWORD, :POINTER, :LPOVERLAPPED
-PTO_CONNECTEX typedef ptr TYPE_Connectex
-
 Object NetComConnection, NetComConnectionID, Primer
-  VirtualMethod   Disconnect,         DWORD
+  VirtualMethod   Allow,              DWORD
+  VirtualMethod   Close,              DWORD                   ;Graceful/Abortive disconnection
+  VirtualMethod   Disconnect,         DWORD                   ;Gracefull disconnect one or both directions
   RedefineMethod  Done
-  RedefineMethod  Init,               POINTER, POINTER
-  VirtualMethod   FreeIOJobs
+  RedefineMethod  Init,               POINTER, POINTER        ;-> Owner, -> NetComProtocol
+  VirtualMethod   FreeRcvIOJobs
 
   ;Methods to place supervisor jobs
-  VirtualMethod   QueueClose
-  VirtualMethod   QueueFree
+  VirtualMethod   QueueDestroy
 
   ;Methods to place IO socket jobs or messages on the IOCP queue
-  VirtualMethod   QueueAccept,        PLISTENER, POINTER      ;-> Listener, -> NetComProtocol
-  VirtualMethod   QueueConnect,       PNETCOMADDR             ;-> HostAddr
-  VirtualMethod   QueueRead
-  VirtualMethod   QueueWrite,         POINTER, DWORD          ;-> Data, Size
+  VirtualMethod   QueueAccept,        PLISTENER               ;-> Listener
+  VirtualMethod   QueueConnect,       PNETCOMADDR, PNETCOMADDR;-> RemoteAddr, -> LocalAddr
+  VirtualMethod   QueueReceive
+  VirtualMethod   QueueSend,          POINTER, DWORD          ;-> Data, Size
 
   ;Methods to marshal completion notifications
-  VirtualMethod   OnAccept,           PIO_SOCKJOB
-  VirtualMethod   OnClose
-  VirtualMethod   OnConnect,          PIO_SOCKJOB
+  VirtualMethod   OnAccepted,         PIO_SOCKJOB
+  VirtualMethod   OnConnected,        PIO_SOCKJOB
   VirtualMethod   OnError,            PIO_SOCKJOB, DWORD      ;-> IO_SockJob, dError
-  VirtualMethod   OnFree
-  VirtualMethod   OnRead,             PIO_SOCKJOB
-  VirtualMethod   OnWrite,            PIO_SOCKJOB
+  VirtualMethod   OnReceived,         PIO_SOCKJOB
+  VirtualMethod   OnSent,             PIO_SOCKJOB
 
   ;Methods to (re)issue send/recv jobs
-  VirtualMethod   DoRead,             PIO_SOCKJOB
-  VirtualMethod   DoWrite,            PIO_SOCKJOB
+  VirtualMethod   DoReceive,          PIO_SOCKJOB
+  VirtualMethod   DoSend,             PIO_SOCKJOB
 
   ;Data Members
-  DefineVariable  ChainItem,          SDLL_ITEM,        {NULL, NULL}
+  DefineVariable  ChainItem,          SDLL_ITEM,        {NULL, NULL} ;Link to other Connections
   DefineVariable  dPendingIOJobs,     DWORD,            0     ;Pending IO jobs
   DefineVariable  dCompletedIOJobs,   DWORD,            0     ;Completed IO jobs
   DefineVariable  RcvIOChain,         SDLL_SENTINEL,    {NULL, NULL}  ;Recieve IOSockJob chain
-  DefineVariable  dFlags,             DWORD,            NCC_DISCONNECTED
-  DefineVariable  dRcvLastTime,       DWORD,            -1    ;Last time we recieved data (secs)
+  DefineVariable  dFlags,             DWORD,            NCC_DISCONNECTED_LOCAL
+  DefineVariable  dRcvLstElpsdTime,   DWORD,            0     ;Last elapsed time we recieved data (secs)
 
   ;Networking stuff
   DefineVariable  pProtocol,          POINTER,          NULL
   DefineVariable  hSocket,            SOCKET,           INVALID_SOCKET
-  DefineVariable  RemoteHostAddr,     NETCOMADDR,       {}
-  DefineVariable  LocalHostAddr,      NETCOMADDR,       {}    ;Here is the complete addr, incl. port
-  DefineVariable  ConnStartTime,      SYSTEMTIME,       {0,0,0,0,0,0,0,0}
-  DefineVariable  pConnectEx,         PTO_CONNECTEX,    NULL  ;Procedure address per socket basis
+  DefineVariable  LocalAddr,          NETCOMADDR,       {AF_INETX}  ;IP + Port
+  DefineVariable  RemoteAddr,         NETCOMADDR,       {AF_INETX}  ;IP + Port
+  DefineVariable  ConnStartTime,      SYSTEMTIME,       {}
 
-  DefineVariable  pProtocolData,      POINTER,          NULL  ;-> local protocol data
+  DefineVariable  pData,              POINTER,          NULL  ;-> Data managed by the protocol
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
 ObjectEnd
 
@@ -342,7 +446,7 @@ Object NetComConnectionPool, NetComConnectionPoolID, DataPool
   RedefineMethod  NewItem
   RedefineMethod  FreeItem,           $ObjPtr(NetComConnection)
 
-  DefineVariable  dCount,             DWORD,    0
+  DefineVariable  dCount,             DWORD,    0             ;Control value
   DefineVariable  pIOSockJobPool,     $ObjPtr(NetComIOSockJobPool),  NULL
 ObjectEnd
 
@@ -351,7 +455,7 @@ ObjectEnd
 ; Purpose: Implement an WinSockAddr collection.
 
 Object NetComAddrCollection,, SortedDataCollection
-  RedefineMethod  Compare,            PNETCOMADDR_ENTRY, PNETCOMADDR
+  RedefineMethod  Compare,            PNETCOMADDR, PNETCOMADDR
   RedefineMethod  Init,               POINTER, DWORD, DWORD, DWORD
   RedefineMethod  Insert,             POINTER
 ObjectEnd
@@ -375,21 +479,27 @@ Object NetComProtocol, NetComProtocolID, Primer
   VirtualMethod   Allocate,           $ObjPtr(NetComConnection)
   VirtualMethod   AddToBlackList,     PNETCOMADDR                   ;-> NETCOMADDR
   RedefineMethod  Done
-  RedefineMethod  Init,               POINTER, PSTRING              ;-> Owner, -> Service name
+  RedefineMethod  Init,               POINTER                       ;-> Owner
   VirtualMethod   IsDataComplete?,    $ObjPtr(NetComConnection), PIO_SOCKJOB
   VirtualMethod   IsBlackListed?,     PNETCOMADDR                   ;-> NETCOMADDR
-  VirtualMethod   OnAccept,           $ObjPtr(NetComConnection)
-  VirtualMethod   OnClose,            $ObjPtr(NetComConnection)
-  VirtualMethod   OnConnect,          $ObjPtr(NetComConnection)
-  VirtualMethod   OnDisconnect,       $ObjPtr(NetComConnection)
+  VirtualMethod   OnAccepted,         $ObjPtr(NetComConnection)
+  VirtualMethod   OnClosed,           $ObjPtr(NetComConnection)
+  VirtualMethod   OnConnected,        $ObjPtr(NetComConnection)
+  VirtualMethod   OnDisconnected,     $ObjPtr(NetComConnection), DWORD
   VirtualMethod   OnError,            $ObjPtr(NetComConnection), PIO_SOCKJOB, DWORD
-  VirtualMethod   OnTimeout,          $ObjPtr(NetComConnection)
+  VirtualMethod   OnTimeouted,        $ObjPtr(NetComConnection)
   VirtualMethod   ProcessData,        $ObjPtr(NetComConnection), DWORD ;-> NetComConnection, Index
   VirtualMethod   Release,            $ObjPtr(NetComConnection)
 
-  DefineVariable  pServiceName,       PSTRING,  NULL
-  DefineVariable  dTimeoutRcv,        DWORD,    0       ;Timeout in msecs, 0 means no timeout
-  DefineVariable  dTimeoutSnd,        DWORD,    0       ;Timeout in msecs, 0 means no timeout
+  ;If ClientLocalAddr is set to INADDR_ANY, the server listens on all available network interfaces
+  ;Supported service strings are listed here: %WINDIR%\system32\drivers\etc\services
+  DefineVariable  ListeningAddr,      NETCOMADDR, {AF_INETX, DEFAULT_LISTENING_PORT}
+
+  ;Timeout in msecs, 0 means no timeout
+  DefineVariable  dTimeoutAcp,        DWORD,      0       ;Accept - not implementd yet
+  DefineVariable  dTimeoutCon,        DWORD,      0       ;Connect - not implementd yet
+  DefineVariable  dTimeoutRcv,        DWORD,      0       ;Recieve
+  DefineVariable  dTimeoutSnd,        DWORD,      0       ;Send - not implementd yet
 
   Embed BlackList, NetComAddrCollection         ;List of addresses that are not allowed to connect
 ObjectEnd
@@ -404,21 +514,21 @@ ObjectEnd
 Object NetComEngine, NetComEngineID, Primer
   VirtualMethod   ConnectionsClose
   VirtualMethod   ConnectionsDisconnect
-  VirtualMethod   ConnectionsFree
-  VirtualMethod   ConnectTo,          $ObjPtr(NetComProtocol), PNETCOMADDR
+  VirtualMethod   ConnectionsDestroy
+  VirtualMethod   ConnectTo,          $ObjPtr(NetComProtocol), PNETCOMADDR, PNETCOMADDR
   RedefineMethod  Done
-  VirtualMethod   FreeConnection,     $ObjPtr(NetComConnection)
-  RedefineMethod  Init,               POINTER, DWORD, DWORD, DWORD, DWORD
-  VirtualMethod   Listen,             $ObjPtr(NetComProtocol)       ;-> NetComProtocol
-  VirtualMethod   NewConnection,      $ObjPtr(NetComProtocol)       ;-> NetComProtocol
-  VirtualMethod   QueueAcceptor,      PLISTENER, $ObjPtr(NetComProtocol)
+  RedefineMethod  Init,               POINTER, DWORD, DWORD, DWORD
+  VirtualMethod   NewConnection,      $ObjPtr(NetComProtocol)
+  VirtualMethod   NewAcceptor,        PLISTENER, $ObjPtr(NetComProtocol)
   StaticMethod    Worker
   StaticMethod    Supervisor
+  StaticMethod    Startup
+  StaticMethod    Shutdown
+  VirtualMethod   StartListening,     DWORD, $ObjPtr(NetComProtocol)
+  VirtualMethod   StopListening
 
   DefineVariable  hIOCP,              HANDLE,         0             ;IOCP HANDLE
   DefineVariable  dWorkerCount,       DWORD,          0
-  DefineVariable  dShuttingDown,      DWORD,          0
-  DefineVariable  dAcceptorCount,     DWORD,          0             ;Acceptor count
   DefineVariable  hSupervisor,        HANDLE,         0             ;Thread HANDLE
   DefineVariable  ConnectionChain,    SDLL_SENTINEL,  {NULL, NULL}
   DefineVariable  dBytesIn,           DWORD,          0
@@ -426,11 +536,10 @@ Object NetComEngine, NetComEngineID, Primer
   DefineVariable  dRateIn,            DWORD,          0
   DefineVariable  dRateOut,           DWORD,          0
   DefineVariable  pLocalHostName,     PSTRING,        NULL
-  DefineVariable  LocalHostAddr,      NETCOMADDR,     {}
 
   Embed Connections,  NetComConnectionPool              ;Pool of NetComConnections
   Embed Listeners,    DataCollection                    ;DataCollection of listening sockets
-  Embed IOJobs,       NetComIOSockJobPool               ;IOSockJob Pool
+  Embed IOSockJobs,   NetComIOSockJobPool               ;IOSockJob Pool
   Embed Workers,      XWCollection                      ;Collection of Worker thread HANDLEs
 ObjectEnd
 
@@ -439,14 +548,119 @@ ObjectEnd
 
 if IMPLEMENT
 
-DbgSockError macro WarningText:req, InfoText, Dest
+; --------------------------------------------------------------------------------------------------
+; Purpose:    Debugging macros
+
+DbgOutSockMessage macro WarningText:req, Error, InfoText, Dest
+  invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorWarning, DbgColorBackground, ??DbgDstWnd
+  invoke DbgOutTextA, $OfsCStrA($Esc(<WarningText>)), DbgColorWarning, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  $$Buffersize = 1024
+  sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
+  if TARGET_BITNESS eq 32
+    mov edi, esp                                      ;;Get a pointer to the buffer
+  else
+    lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
+  endif
+  invoke wsprintfA, xdi, $OfsCStrA(CRLF, "WSA error code: %lit - "), ebx
+  invoke StrEnd, xdi
+  mov xsi, xax
+  invoke NetErr2StrA, ebx, xax, $$Buffersize - 28h    ;;Get the error message
+  mov CHRA ptr [xsi + xax - 2*sizeof(CHRA)], 0        ;;Remove last CHRLF
+  invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+  add xsp, 1024                                       ;;Retrieve the string space
+  DbgShowTxtInfo InfoText, ??DbgDstWnd
+  DbgShowSrcInfo ??DbgDstWnd
+  invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorWarning, DbgColorBackground, ??DbgDstWnd
+endm
+
+DbgSockError macro WarningText:req, Error, InfoText, Dest
   if DEBUGGING
-    DbgSaveContext
+    DbgSaveContext FALSE, Error
     DbgSetDestWnd Dest
-    invoke DbgOutTextA, $OfsCStrA($Esc(<WarningText>)), DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, \
-                        ??DbgDstWnd
-    invoke WSAGetLastError
-    mov ebx, eax
+    ifb <Error>
+      invoke WSAGetLastError
+      mov ebx, eax
+    endif
+    DbgOutSockMessage WarningText, Error, InfoText, Dest
+    DbgLoadContext
+  endif
+endm
+
+DbgOnSockError macro WarningText:req, Error, InfoText, Dest
+  if DEBUGGING
+    DbgSaveContext FALSE, Error
+    DbgSetDestWnd Dest
+    ifb <Error>
+      invoke WSAGetLastError
+      mov ebx, eax
+    endif
+    .if ebx != NO_ERROR 
+      DbgOutSockMessage WarningText, Error, InfoText, Dest
+    .endif
+    DbgLoadContext
+  endif
+endm
+
+DbgCheckSockReturn macro QuotedWarningText:req, InfoText, Dest
+  if DEBUGGING
+    .if eax != NO_ERROR
+       DbgSockError QuotedWarningText,, InfoText, Dest
+    .endif
+  endif
+endm
+
+
+DbgOutComAddrIPV4 macro NetComAddr:req
+  invoke DbgOutTextA, $OfsCStrA("Family = "), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  movsx edx, SWORD ptr NetComAddr.NETCOMADDR.wFamily
+  invoke sdword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  invoke DbgOutTextA, $OfsCStrA(", Port = "), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  movzx edx, BYTE ptr NetComAddr.NETCOMADDR.wPort[1]
+  mov dh, BYTE ptr NetComAddr.NETCOMADDR.wPort[0]
+  invoke udword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  invoke DbgOutTextA, $OfsCStrA(", IP = "), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  movzx edx, BYTE ptr NetComAddr.NETCOMADDR.Address[0]
+  invoke udword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  invoke DbgOutTextA, $OfsCStrA("."), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  movzx edx, BYTE ptr NetComAddr.NETCOMADDR.Address[1]
+  invoke udword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  invoke DbgOutTextA, $OfsCStrA("."), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  movzx edx, BYTE ptr NetComAddr.NETCOMADDR.Address[2]
+  invoke udword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  invoke DbgOutTextA, $OfsCStrA("."), DbgColorDefaultPre, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+
+  movzx edx, BYTE ptr NetComAddr.NETCOMADDR.Address[3]
+  invoke udword2decA, xdi, edx
+  invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+endm
+
+DbgNetComAddrIPV4 macro NetComAddr:req, InfoText, Dest
+  if DEBUGGING
+    DbgSaveContext TRUE, NetComAddr
+    DbgSetDestWnd Dest
     $$Buffersize = 1024
     sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
     if TARGET_BITNESS eq 32
@@ -454,22 +668,12 @@ DbgSockError macro WarningText:req, InfoText, Dest
     else
       lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
     endif
-    invoke wsprintfA, xdi, $OfsCStrA(" - WSA error code: %lit - "), ebx
-    invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    invoke NetErr2Str, ebx, xdi, $$Buffersize - 28h     ;Get the error message
-    invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    add xsp, 1024                                       ;Retrieve the string room
+    DbgOutComAddrIPV4 [xbx]
+
+    add xsp, $$Buffersize                               ;;Restore stack
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
-  endif
-endm
-
-CheckSockError macro QuotedWarningText:req, InfoText, Dest
-  if DEBUGGING
-    .if eax == SOCKET_ERROR
-      DbgSockError QuotedWarningText, InfoText, Dest
-    .endif
   endif
 endm
 
@@ -478,29 +682,108 @@ endm
 ; Purpose:    Convert a string to an IPv4 network address (network byte order = big endian).
 ; Arguments:  Arg1: String (aaa.bbb.ccc.ddd).
 
-$NetworkAddressIPv4 macro Address:req
+$NetworkAddressIPv4 macro StrAddr:req
   $$Addr = 0
   $$Pos1 = 1
   $$Multiplier = 1
   repeat 3
-    $$Pos2 InStr $$Pos1, <Address>, <.>
-    $$Addr = $$Addr + $$Multiplier * @SubStr(<&Address>, $$Pos1, $$Pos2 - $$Pos1)
+    $$Pos2 InStr $$Pos1, <StrAddr>, <.>
+    $$Addr = $$Addr + $$Multiplier * @SubStr(<&StrAddr>, $$Pos1, $$Pos2 - $$Pos1)
     $$Pos1 = $$Pos2 + 1
     $$Multiplier = 256*$$Multiplier
   endm
-  $$Addr = $$Addr + $$Multiplier*@SubStr(<&Address>, $$Pos1)
+  $$Addr = $$Addr + $$Multiplier*@SubStr(<&StrAddr>, $$Pos1)
   %exitm <$$Addr>
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      $NetworkPort
-; Purpose:    Convert a WORD to a network port (network byte order = big endian).
-; Arguments:  Arg1: Port.
+; Macro:      DbgConnection
+; Purpose:    Shows NetComConnection internal data.
+; Arguments:  Arg1: -> NetComConnection.
+;             Arg2: Optional information.
+;             Arg3: Optional destination Window name.
 
-$NetworkPort macro Port:req
-  %exitm <(Port and 0FFh) shl 8 + (Port shr 8)>
+DBG_COLOR_FORE_CONNECTION equ DbgColorDefaultVar
+DBG_COLOR_BACK_CONNECTION equ DbgColorBackground
+
+DbgConnection macro pConnection:req, InfoText, Dest
+  if DEBUGGING
+    DbgSaveContext FALSE, pConnection
+    assume xax:NOTHING, xbx:NOTHING, xcx:NOTHING, xdx:NOTHING, xdi:NOTHING, xsi:NOTHING
+    DbgSetDestWnd Dest
+    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, ??DbgDstWnd
+    ifnb <InfoText>
+      invoke DbgOutTextA, $OfsCStrA(<InfoText>), DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    endif
+    DbgShowSrcInfo ??DbgDstWnd
+  
+    $$Buffersize = 1024
+    sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
+    if TARGET_BITNESS eq 32
+      mov esi, esp                                      ;;Get a pointer to the buffer
+    else
+      lea rsi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
+    endif
+
+    mov xdi, xsi
+    WriteFA xdi, "Connection = ¦HXh", xbx 
+    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+
+    FillStringA [xsi], <Connection flags = >
+    lea xdi, [xsi + ??StrLen]
+    xor eax, eax
+    mov edx, [xbx].$Obj(NetComConnection).dFlags
+    mov xcx, 32                                         ;;Bits
+  @@:
+    rcl edx, 1                                          ;;Set bit in carry flag
+    setc al
+    add al, "0"
+    stosb
+    loop @B
+    mov DCHRA ptr [xdi], "y"                            ;;Set "y" specifier and ZTC
+    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+
+    mov xdi, xsi
+    WriteFA xdi, "Pending IO-Jobs = ¦UD", [xbx].$Obj(NetComConnection).dPendingIOJobs
+    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+
+    mov xdi, xsi
+    WriteFA xdi, "Completed IO-Jobs = ¦UD", [xbx].$Obj(NetComConnection).dCompletedIOJobs
+    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+;    mov xdi, xsi
+;    WriteFA xdi, "Receive last time = ¦UD seconds", [xbx].$Obj(NetComConnection).dRcvLstElpsdTime
+;    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+;                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+;
+;    mov xdi, xsi
+;    WriteFA xdi, "Protocol = ¦HXh", [xbx].$Obj(NetComConnection).pProtocol
+;    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+;                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+
+    mov xdi, xsi
+    WriteFA xdi, "Socket Handle = ¦HX ", [xbx].$Obj(NetComConnection).hSocket
+    invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    
+    mov xdi, xsi
+    DbgOutComAddrIPV4 [xbx].$Obj(NetComConnection).LocalAddr
+    invoke DbgOutTextA, $OfsCStrA(", Local address"), DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    mov xdi, xsi
+    DbgOutComAddrIPV4 [xbx].$Obj(NetComConnection).RemoteAddr
+    invoke DbgOutTextA, $OfsCStrA(", Remote address"), DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
+                        DBG_EFFECT_NEWLINE, ??DbgDstWnd
+
+    add xsp, 1024                                       ;;Retrieve the string space
+
+    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, ??DbgDstWnd
+    DbgLoadContext
+  endif
 endm
-
 
 ; ==================================================================================================
 
@@ -514,3 +797,108 @@ include NetComEngine.inc           ;The main IOCP object, and IOCP message handl
 ; ==================================================================================================
 
 endif
+
+;  State	      Who is here	  What it means
+;  -------------------------------------------
+;  CLOSED       Both          No connection
+;  LISTEN       Server        Waiting for SYN
+;  SYN_SENT     Client        Sent SYN
+;  SYN_RECEIVED Server        Got SYN
+;  ESTABLISHED  Both          Connected
+;  FIN_WAIT_1   Closing side  Sent FIN
+;  FIN_WAIT_2   Closing side  FIN acked
+;  CLOSE_WAIT   Other side    Received FIN
+;  LAST_ACK     Other side    Sent FIN
+;  TIME_WAIT    Active closer Cleanup
+;  CLOSING      Both          Simultaneous FIN
+; 
+; 
+;  Mapping WSA calls to TCP states:
+;
+;  1) Creating a socket
+;  WSAStartup(...)
+;  socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+;  TCP state: CLOSED
+;  At this point the socket exists, but no connection.
+;  ________________________________________
+;  2) Server side
+;  bind + listen -> LISTEN
+;  bind(sock, ...);
+;  listen(sock, backlog);
+;  TCP state: LISTEN
+;  The socket is now waiting for incoming connections.
+;  ________________________________________
+;  accept -> SYN_RECEIVED -> ESTABLISHED
+;  clientSock = accept(listenSock, ...);
+;  Behind the scenes:
+;  Client sends SYN
+;  Server enters SYN_RECEIVED
+;  Server sends SYN-ACK
+;  Client sends ACK
+;  TCP state: ESTABLISHED
+;  Your accept() only returns once the connection is ESTABLISHED.
+;  ________________________________________
+;  3) Client side
+;  connect -> SYN_SENT -> ESTABLISHED
+;  connect(sock, ...);
+;  Behind the scenes: SYN_SENT (wait for SYN-ACK) (send ACK)
+;  TCP state: ESTABLISHED
+;  If successful, connect() returns and the socket is ready.
+;  ________________________________________
+;  4) Data transfer (ESTABLISHED)
+;  send(sock, buf, len, 0);
+;  recv(sock, buf, len, 0);
+;  TCP state: ESTABLISHED
+;  TCP handles segmentation, retransmission, ordering, flow control.
+;  ________________________________________
+;  5) Half-close with shutdown()
+;  shutdown(sock, SD_SEND);   // same as SHUT_WR
+;  TCP state: FIN_WAIT_1 -> FIN_WAIT_2
+;  You told TCP: "I am done sending, but I can still receive."
+;  Peer enters: CLOSE_WAIT
+;  ________________________________________
+;  6) Full close with closesocket()
+;  closesocket(sock);
+;  TCP transitions: FIN_WAIT_1 -> FIN_WAIT_2 -> TIME_WAIT -> CLOSED
+;  Or on the peer: CLOSE_WAIT -> LAST_ACK -> CLOSED
+;  ________________________________________
+;  Abortive close (RST)
+;  If you do:
+;  setsockopt(sock, SOL_SOCKET, SO_LINGER, ...);
+;  closesocket(sock);
+;  TCP may send: RST
+;  Which immediately destroys the connection (no TIME_WAIT).
+;  This is an abort, not a graceful close.
+;  ________________________________________
+;  Error handling via WSA
+;  Winsock reports TCP state problems as errors:
+;  TCP condition	WSA error
+;  Connection reset	WSAECONNRESET
+;  Peer closed	recv() returns 0
+;  Broken pipe	WSAECONNABORTED
+;  Timeout	    WSAETIMEDOUT
+;  Unreachable	WSAENETUNREACH
+;  ________________________________________
+;  Common state-related bugs in WSA apps
+;  1) CLOSE_WAIT leak
+;  You forgot to call closesocket() after peer closed.
+;  Symptom: netstat shows tons of CLOSE_WAIT sockets
+;  ________________________________________
+;  2) TIME_WAIT exhaustion
+;  You open/close thousands of short-lived connections.
+;  Symptom: Cannot bind() - address already in use
+;  ________________________________________
+;  3) Sending after shutdown
+;  shutdown(sock, SD_SEND);
+;  send(sock, ...);   // -> WSAESHUTDOWN
+;  ________________________________________
+;  Summary
+;  WSA Call	TCP State Effect
+;  socket()	CLOSED
+;  bind()+listen()	LISTEN
+;  connect()	SYN_SENT -> ESTABLISHED
+;  accept()	SYN_RECEIVED -> ESTABLISHED
+;  send()/recv()	ESTABLISHED
+;  shutdown(SD_SEND)	FIN_WAIT_1 -> FIN_WAIT_2
+;  closesocket()	LAST_ACK / TIME_WAIT
+;  SO_LINGER abort	RST

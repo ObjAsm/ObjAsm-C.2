@@ -26,12 +26,12 @@ Method NetComConnectionPool.FreeItem, uses xsi, pConnection:$ObjPtr(NetComConnec
 ;  DbgHex pConnection, "NetComConnectionPool.FreeItem"
   SetObject xsi
   LockObjectAccess [xsi].$Obj(NetComConnectionPool)
-    dec [xsi].dCount
-    mov xax, [xsi].pOwner
-    mov xdx, pConnection
-    lea xdx, [xdx].$Obj(NetComConnection).ChainItem
-    SDLL_Remove xdx, xax                                ;Remove connection from the chain
-    ACall xsi.FreeItem, pConnection                     ;Return it to the DataPool
+;  DbgHex pConnection, "Free", "NetComConnectionPool"
+  lock dec [xsi].dCount
+  mov xax, pConnection
+  lea xdx, [xax].$Obj(NetComConnection).ChainItem
+  SDLL_Remove xdx, xax, xcx                             ;Remove connection from the chain
+  ACall xsi.FreeItem, pConnection                       ;Return it to the DataPool
   UnlockObjectAccess [xsi].$Obj(NetComConnectionPool)
 MethodEnd
 
@@ -46,7 +46,7 @@ MethodEnd
 Method NetComConnectionPool.Init,, pOwner:POINTER, dMaxClients:DWORD, pIOSockJobPool:POINTER
   SetObject xcx
   m2m [xcx].pIOSockJobPool, pIOSockJobPool, xax
-  ACall xcx.Init, pOwner, sizeof $Obj(NetComConnection), dMaxClients, 1
+  ACall xcx.Init, pOwner, sizeof($Obj(NetComConnection)), dMaxClients, 1
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ Method NetComConnectionPool.NewItem, uses xbx xsi
   LockObjectAccess [xsi].$Obj(NetComConnectionPool)
   ACall xsi.NewItem                                     ;Get a new connection from the pool
   .if xax != NULL
-    inc [xsi].dCount
+    lock inc [xsi].dCount
     mov xbx, xax
     New xbx::NetComConnection
     lea xax, [xbx].$Obj(NetComConnection).ChainItem
@@ -69,6 +69,7 @@ Method NetComConnectionPool.NewItem, uses xbx xsi
     SDLL_InsertFirst xcx, xax, xdx                      ;Insert this connection in the chain
     UnlockObjectAccess [xsi].$Obj(NetComConnectionPool)
     mov xax, xbx
+;    DbgHex xax, "New", "NetComConnectionPool"
   .else
     UnlockObjectAccess [xsi].$Obj(NetComConnectionPool)
     OCall xsi.ErrorReport, NULL, NCCP_OUT_OF_MEMORY

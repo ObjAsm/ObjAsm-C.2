@@ -8,9 +8,52 @@
 ; ==================================================================================================
 
 
-.code
+.data
+  pConnectEx  POINTER   NULL
 
 if IMPLEMENT
+
+.code
+; ==================================================================================================
+;    Helper
+; ==================================================================================================
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  WsaErrBox
+; Purpose:    Auxiliar procedure to to show a WSA error
+; Arguments:  Arg1: Parent Window Hnadle.
+;             Arg2: -> Message.
+;             Arg3: -> Caption.
+;             Arg4: MessageBox options.
+;             Arg5: WSA Error Code.
+; Return:     MessageBox return value.
+
+WsaErrBox proc uses xbx hParent:HWND, pMessage:PSTRING, pCaption:PSTRING, dOptions:DWORD, dError:DWORD
+  local cBuffer[4096]:CHR 
+
+  lea xbx, cBuffer
+  invoke StrECopy, xbx, pMessage
+  invoke StrECopy, xax, offset cCRLF
+  invoke StrECopy, xax, offset cCRLF
+  invoke StrECopy, xax, $OfsCStr("Description: ")
+  mov xdx, xax
+  sub xax, xbx
+  mov xbx, xdx
+  neg xax
+  add xax, sizeof cBuffer   
+  if sizeof(CHR) eq 2
+    shr eax, 1
+  endif
+  invoke NetErr2Str, dError, xdx, eax                 ;Returns the number of CHRs written
+  if sizeof(CHR) eq 2
+    shl eax, 1
+  endif
+  add xbx, xax
+  WriteF xbx, "\nError = ¦UD", dError
+  invoke MessageBox, hParent, addr cBuffer, pCaption, dOptions
+  ret
+WsaErrBox endp
+
 
 ; ==================================================================================================
 ;    ListenerCollection implementation
@@ -23,18 +66,18 @@ if IMPLEMENT
 ; Return:     Nothing.
 
 Method ListenerCollection.DestroyItem, uses xbx, pListener:PLISTENER
-  local MyLinger:linger
+  local Linger:linger
 
   DbgText "ListenerCollection.DestroyItem"
   mov xbx, pListener
   .if xbx != NULL
     .if [xbx].LISTENER.hSocket != INVALID_SOCKET
       ;Perform an "abortive close" of the socket, just in case.
-      mov MyLinger.l_onoff, 1
-      m2z MyLinger.l_linger
+      mov Linger.l_onoff, 1
+      mov Linger.l_linger, 0
       invoke setsockopt, [xbx].LISTENER.hSocket, SOL_SOCKET, SO_LINGER, \
-                         addr MyLinger, sizeof MyLinger
-      CheckSockError "ERROR on SetSockOpt SO_LINGER"
+                         addr Linger, sizeof Linger
+      DbgOnSockError "ListenerCollection.DestroyItem - ERROR on SetSockOpt SO_LINGER"
       invoke closesocket, [xbx].LISTENER.hSocket
     .endif
     MemFree xbx                                         ;Frees data from heap
@@ -49,27 +92,46 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectionsClose
-; Purpose:    Close all connections.
+; Purpose:    Closes all connections.
 ; Arguments:  None.
 ; Return:     Nothing.
 
 Method NetComEngine.ConnectionsClose, uses xbx xdi xsi
   SetObject xsi
   LockObjectAccess [xsi].Connections                    ;ConnectionChain should not change!
-    lea xdi, [xsi].ConnectionChain                      ;xdi -> SENTINEL
-    mov xdx, [xdi].SDLL_SENTINEL.pFirstItem             ;Get first Item
-    .while xdx != xdi
-      mov xbx, [xdx].SDLL_ITEM.pNextItem
-      lea xcx, [xdx - offset($Obj(NetComConnection).ChainItem)]
-      OCall xcx::NetComConnection.QueueClose
-      mov xdx, xbx
-    .endw
+  lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
+  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first Item
+  .while xbx != xdi                                     ;Empty?
+    lea xcx, [xbx - offset($Obj(NetComConnection).ChainItem)]
+    mov xbx, [xbx].SDLL_ITEM.pNextItem
+    OCall xcx::NetComConnection.Close, FALSE
+  .endw
   UnlockObjectAccess [xsi].Connections
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     NetComEngine.ConnectionsDestroy
+; Purpose:    Destroy all connections.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method NetComEngine.ConnectionsDestroy, uses xbx xdi xsi
+  SetObject xsi
+  LockObjectAccess [xsi].Connections                    ;ConnectionChain should not change!
+  lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
+  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first Item
+  .while xbx != xdi                                     ;Empty?
+    lea xcx, [xbx - offset($Obj(NetComConnection).ChainItem)] 
+    mov xbx, [xbx].SDLL_ITEM.pNextItem
+    OCall xcx::NetComConnection.QueueDestroy
+  .endw
+  SDLL_Init xdi                                         ;Reset the chain 
+UnlockObjectAccess [xsi].Connections
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectionsDisconnect
-; Purpose:    Disconnect all connections.
+; Purpose:    Disconnects all connections.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -88,42 +150,24 @@ Method NetComEngine.ConnectionsDisconnect, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComEngine.ConnectionsFree
-; Purpose:    Free all connections.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method NetComEngine.ConnectionsFree, uses xbx xdi xsi
-  SetObject xsi
-  LockObjectAccess [xsi].Connections                    ;ConnectionChain should not change!
-    lea xdi, [xsi].ConnectionChain                      ;xdi -> SENTINEL
-    mov xdx, [xax].SDLL_SENTINEL.pFirstItem             ;Get first Item
-    .while xdx != xdi
-      mov xbx, [xdx].SDLL_ITEM.pNextItem
-      lea xcx, [xdx - offset($Obj(NetComConnection).ChainItem)]
-      OCall xcx::NetComConnection.QueueFree
-      mov xdx, xbx
-    .endw
-  UnlockObjectAccess [xsi].Connections
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectTo
-; Purpose:    Create a NetComConnection, and initiate a Connect attempt.
+; Purpose:    Creates a NetComConnection and initiates a Connect attempt.
 ; Arguments:  Arg1: -> Protocol object.
-;             Arg2: Remote Host address.
+;             Arg2: -> Remote address.
+;             Arg2: -> Local address.
 ; Return:     xax -> New NetComConnection or NULL if failed.
 ;             ecx = Error code.
 
 Method NetComEngine.ConnectTo, uses xbx xsi, pProtocol:$ObjPtr(NetComProtocol), \
-                                             pRemoteHostAddr:PNETCOMADDR
+                                             pRemoteAddr:PNETCOMADDR, \
+                                             pLocalAddr:PNETCOMADDR
   SetObject xsi
-  ;Allocate a NetComConnection and (re)initialize it.
+  ;Get a new NetComConnection and (re)initialize it.
   ?mov xdx, pProtocol
   OCall xsi.NewConnection, xdx
   .if xax != NULL
     mov xbx, xax
-    OCall xbx::NetComConnection.QueueConnect, pRemoteHostAddr
+    OCall xbx::NetComConnection.QueueConnect, pRemoteAddr, pLocalAddr
     mov ecx, eax                                        ;ecx = error code
     mov xax, xbx                                        ;Return xax -> NetComConnection
   .endif
@@ -131,264 +175,157 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Done
-; Purpose:    Finalize the NetComEngine object.
+; Purpose:    Finalizes the NetComEngine object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method NetComEngine.Done, uses xbx xdi xsi
+Method NetComEngine.Done, uses xdi xsi
   local dThreadExitCode:DWORD
 
   SetObject xsi
 
   ;Close all connections
-  mov [xsi].dShuttingDown, SDN_CLOSE_CONNECTIONS
-  OCall xsi.ConnectionsClose
+  OCall xsi.ConnectionsDestroy
 
   ;Close listener sockets and release DataCollection structures
   OCall [xsi].Listeners::DataCollection.Done
 
   ;Tell NetComEngine worker to die, and wait for the death. Then shutdown the supervisor thread.
-  mov [xsi].dShuttingDown, SDN_CLOSE_WORKERS
+  DbgText "NetComEngine.Done - Closing Workers"
+  .ColForEach [xsi].Workers
+    invoke PostQueuedCompletionStatus, [xsi].hIOCP, 0, COMPLETION_KEY_KILL_WORKER, NULL
+  .ColNext
+
   invoke WaitForMultipleObjects, [xsi].Workers.dCount, [xsi].Workers.pItems, TRUE, 4000
   .if eax == WAIT_TIMEOUT
-    DbgWarning "Abortive worker close"
-    mov [xsi].dShuttingDown, SDN_QUIT_WORKERS
-    invoke WaitForMultipleObjects, [xsi].Workers.dCount, [xsi].Workers.pItems, TRUE, 4000
-    .if eax == WAIT_TIMEOUT
-      DbgWarning "Brute force worker close"
-      xor ebx, ebx
-      mov xdi, [xsi].Workers.pItems
-      .while ebx < [xsi].Workers.dCount
-        invoke GetExitCodeThread, HANDLE ptr [xdi], addr dThreadExitCode
-        .if eax != 0 && dThreadExitCode == STILL_ACTIVE
-          invoke TerminateThread, HANDLE ptr [xdi], -1
-          ;IMPORTANT: calling TerminateThread can left synchronization objects in an
-          ;           undefined state. Don't call an Debug macro after this point,
-          ;           since you can hang the server application!
-        .endif
-        inc ebx
-        add xdi, sizeof HANDLE
-      .endw
-    .endif
+    DbgWarning "NetComEngine.Done - Brute force worker close"
+    .ColForEach [xsi].Workers
+      mov xdi, xax
+      invoke GetExitCodeThread, HANDLE ptr [xdi], addr dThreadExitCode
+      .if eax != 0 && dThreadExitCode == STILL_ACTIVE
+        invoke TerminateThread, HANDLE ptr [xdi], -1
+        ;IMPORTANT: calling TerminateThread can left synchronization objects in an
+        ;           undefined state. Don't call an Debug macro after this point,
+        ;           since you can hang the server application!
+      .endif
+    .ColNext
   .endif
-  OCall [xsi].Workers::XWCollection.DeleteAll
+  OCall [xsi].Workers::XWCollection.Done
 
   invoke WaitForSingleObject, [xsi].hSupervisor, 4000
   .if eax == WAIT_TIMEOUT
     invoke TerminateThread, [xsi].hSupervisor, -1
   .endif
 
-  mov [xsi].dShuttingDown, SDN_HOUSEKEEPING
-  ;Destroy Events
+  ;Destroy IOCP
   invoke CloseHandle, [xsi].hIOCP
 
   ;Clean up resource pools
-  OCall [xsi].IOJobs::NetComIOSockJobPool.Done
+  OCall [xsi].IOSockJobs::NetComIOSockJobPool.Done
   OCall [xsi].Connections::NetComConnectionPool.Done
-  OCall [xsi].Workers::XWCollection.Done
 
   ;Housekeeping
   Invoke StrDispose, [xsi].pLocalHostName
-
-  ;Shutdown WinSock
-  invoke WSACleanup
-  DbgText "NetComEngine.Done"
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Init
-; Purpose:    Initialize internal collections, threads, IOCP etc.
+; Purpose:    Initializes internal collections, threads, IOCP etc.
 ; Arguments:  Arg1: -> Owner object.
-;             Arg2: Number of accept connections.
-;             Arg3: Number of preallocated connections.
-;             Arg4: Number of preallocated IO_SOCKJOBs.
-;             Arg5: IO socket buffer size, usually the MTU size.
-; Return:     eax = Zero if succeeded, otherwise an error code.
+;             Arg2: Number of preallocated connections.
+;             Arg3: Number of preallocated IO_SOCKJOBs.
+;             Arg4: IO socket buffer size, usually the "Maximum Segment Size" (MSS).
+; Return:     eax = 0 if succeeded, otherwise an error code.
 
-Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, dAcceptorCount:DWORD, \
+Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, \
                                         dAllocConnections:DWORD, dAllocIOSockJobs:DWORD, \
                                         dSockBufferSize:DWORD
-  local dThreadId:DWORD, WsaData:WSADATA, SysInfo:SYSTEM_INFO
-  local cLocalHostName[256]:CHR                        ;max. 256 characters
-  local Hints:ADDRINFOT, pResult:PADDRINFOT
+  local dRetValue:DWORD, SysInfo:SYSTEM_INFO, cLocalHostName[256]:CHR    ;Max. 256 characters
 
   SetObject xsi
+
   ACall xsi.Init, pOwner
+  mov dRetValue, NO_ERROR
   lea xax, [xsi].ConnectionChain
   SDLL_Init xax
 
-  invoke WSAStartup, 0202h, addr WsaData
-  .if eax != 0
-    OCall xsi.ErrorReport, NULL, NCE_WINSOCK_INIT_FAILED
-    DbgSockError "Failed to start WinSock 2.2"
-  .else
-    Override [xsi].Listeners::DataCollection.DestroyItem, ListenerCollection.DestroyItem
-    m2m [xsi].dAcceptorCount, dAcceptorCount, edx
+  ;Override Listeners methods
+  Override [xsi].Listeners::DataCollection.DestroyItem, ListenerCollection.DestroyItem
 
-    ;Get information about the local host
-    invoke GetHostName, addr cLocalHostName, lengthof cLocalHostName
-    mov [xsi].pLocalHostName, $invoke(StrNew, addr cLocalHostName)
+  ;Get the local host name
+  invoke GetHostName, addr cLocalHostName, lengthof cLocalHostName
+  mov [xsi].pLocalHostName, $invoke(StrNew, addr cLocalHostName)
 
-    mov Hints.ai_flags, 0
-    mov Hints.ai_family, AF_INETX
-    mov Hints.ai_socktype, SOCK_STREAM
-    mov Hints.ai_protocol, IPPROTO_TCP
-    mov Hints.ai_addrlen, 0
-    mov Hints.ai_canonname, NULL
-    mov Hints.ai_addr, NULL
-    mov Hints.ai_next, NULL
-    invoke GetAddrInfo, [xsi].pLocalHostName, NULL, addr Hints, addr pResult
-    .if eax == 0 && pResult != NULL
-      mov xax, pResult
-      invoke MemClone, addr [xsi].LocalHostAddr, [xax].ADDRINFOT.ai_addr, \
-                       DWORD ptr [xax].ADDRINFOT.ai_addrlen
-      invoke FreeAddrInfo, pResult
-    .endif
+  ;Initialize the collections
+  lea xbx, [xsi].IOSockJobs                             ;xbx -> NetComIOSockJobPool
+  OCall xbx::NetComIOSockJobPool.Init, xsi, dAllocIOSockJobs, dSockBufferSize
+  OCall [xsi].Connections::NetComConnectionPool.Init, xsi, dAllocConnections, xbx
+  OCall [xsi].Listeners::DataCollection.Init, xsi, 5, 5, COL_MAX_CAPACITY
+  invoke GetSystemInfo, addr SysInfo
+  mrm [xsi].dWorkerCount, SysInfo.dwNumberOfProcessors, eax   ;Number of logical processors
+  OCall [xsi].Workers::XWCollection.Init, xsi, eax, 0, eax
 
-    ;Initialize the collections
-    lea xbx, [xsi].IOJobs                               ;xbx -> NetComIOSockJobPool
-    OCall xbx::NetComIOSockJobPool.Init, xsi, dAllocIOSockJobs, dSockBufferSize
-    OCall [xsi].Connections::NetComConnectionPool.Init, xsi, dAllocConnections, xbx
-    OCall [xsi].Listeners::DataCollection.Init, xsi, 5, 5, COL_MAX_CAPACITY
-    invoke GetSystemInfo, addr SysInfo
-    mrm [xsi].dWorkerCount, SysInfo.dwNumberOfProcessors, eax
-    OCall [xsi].Workers::XWCollection.Init, xsi, eax, eax, eax
-
-    ;Create the IOCP
-    mov [xsi].hIOCP, $invoke(CreateIoCompletionPort, INVALID_HANDLE_VALUE, 0, 0, [xsi].dWorkerCount)
-    .if xax == 0
-      OCall xsi.ErrorReport, NULL, NCE_IOCP_INIT_ERROR
-      DbgSockError "Failed to create the IOCP"
-    .else
-      ;Create one Worker Thread per available logical cpu
-      mov ebx, [xsi].dWorkerCount
-      test ebx, ebx
-      .while !ZERO?
-        invoke CreateThread, 0, 16*1024, $MethodAddr(NetComEngine.Worker), xsi, 0, addr dThreadId
-        .if xax != 0
-          OCall [xsi].Workers::XWCollection.Insert, xax
-        .else
-          OCall xsi.ErrorReport, NULL, NCE_THREAD_CREATION_FAILED
-          DbgSockError "Failed to create worker thread"
-          ExitMethod
-        .endif
-        dec ebx
-      .endw
-
-      ;Create supervisor thread
-      invoke CreateThread, 0, 16*1024, $MethodAddr(NetComEngine.Supervisor), xsi, 0, addr dThreadId
-      .if xax != 0
-        mov [xsi].hSupervisor, xax
-        xor eax, eax
-      .else
-        OCall xsi.ErrorReport, NULL, NCE_THREAD_CREATION_FAILED
-        DbgSockError "Failed to create supervisor thread"
-      .endif
-    .endif
+  ;Create the IOCP
+  mov [xsi].hIOCP, $invoke(CreateIoCompletionPort, INVALID_HANDLE_VALUE, 0, 0, [xsi].dWorkerCount)
+  .if xax == 0
+    OCall xsi.ErrorReport, NULL, NCE_IOCP_INIT_ERROR
+    mov dRetValue, $32($invoke(WSAGetLastError))
+    DbgSockError "NetComEngine.Init - Failed to create the IOCP", dRetValue
+    jmp @@Exit
   .endif
+  ;Create supervisor thread
+  invoke CreateThread, 0, 16*1024, $MethodAddr(NetComEngine.Supervisor), xsi, 0, NULL
+  .if xax == 0
+    mov dRetValue, $32($invoke(GetLastError))
+    OCall xsi.ErrorReport, NULL, NCE_THREAD_CREATION_FAILED
+    DbgSockError "NetComEngine.Init - Failed to create supervisor thread", dRetValue
+    jmp @@Exit
+  .endif
+  mov [xsi].hSupervisor, xax
+
+  ;Create a Worker Thread per available "logical" cpu
+  mov ebx, [xsi].dWorkerCount
+  test ebx, ebx
+  .while !ZERO?
+    invoke CreateThread, 0, 16*1024, $MethodAddr(NetComEngine.Worker), xsi, 0, NULL
+    .if xax == 0
+      mov dRetValue, $32($invoke(GetLastError))
+      OCall xsi.ErrorReport, NULL, NCE_THREAD_CREATION_FAILED
+      DbgSockError "NetComEngine.Init - Failed to create worker thread", dRetValue
+      jmp @@Exit
+    .endif
+    DbgHex xax, "NetComEngine.Init - New Worker"
+    OCall [xsi].Workers::XWCollection.Insert, xax
+    dec ebx
+  .endw
+
+@@Exit:
+  mov eax, dRetValue
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComEngine.Listen
-; Purpose:    Create a "Listener" and begin listening on a port (Service) using a protocol.
-; Arguments:  Arg1: -> NetComProtocol.
+; Method:     NetComEngine.NewAcceptor
+; Purpose:    Creates a new NetComConnection and enqueues an accept IOSockJob using a new protocol.
+; Arguments:  Arg1: -> Listener.
+;             Arg2: -> NetComProtocol.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComEngine.Listen, uses xbx xdi xsi, pProtocol:$ObjPtr(NetComProtocol)
-  local dOption:DWORD, Hints:ADDRINFOT, pResult:PADDRINFOT, dBindResult:DWORD
-
+Method NetComEngine.NewAcceptor, uses xbx xsi, pListener:PLISTENER, pProtocol:$ObjPtr(NetComProtocol)
   SetObject xsi
-
-  ;Create a socket with WSA_FLAG_OVERLAPPED flag!
-  MemAlloc sizeof(LISTENER)
-  .if xax != NULL
-    mov xbx, xax
-    OCall [xsi].Listeners::DataCollection.Insert, xbx
-
-    invoke WSASocket, AF_INETX, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED
-    .if xax == INVALID_SOCKET
-      OCall xsi.ErrorReport, NULL, NCE_SOCKET_CREATION_FAILED
-      DbgSockError "Failed to create listener socket"
-    .else
-      ;DbgText "Listener socket created"
-      mov [xbx].LISTENER.hSocket, xax
-
-      ;Set socket options: disable nagle's algorithm
-      m2z dOption
-      invoke setsockopt, [xbx].LISTENER.hSocket, IPPROTO_TCP, TCP_NODELAY, \
-                         addr dOption, sizeof dOption
-      CheckSockError "ERROR on SetSockOpt TCP_NODELAY"
-
-      mov Hints.ai_flags, AI_PASSIVE                    ;Bind to all available interfaces
-      mov Hints.ai_family, AF_INETX
-      mov Hints.ai_socktype, SOCK_STREAM
-      mov Hints.ai_protocol, IPPROTO_TCP
-      mov Hints.ai_addrlen, 0
-      mov Hints.ai_canonname, NULL
-      mov Hints.ai_addr, NULL
-      mov Hints.ai_next, NULL
-      mov xdx, pProtocol
-      invoke GetAddrInfo, NULL, [xdx].$Obj(NetComProtocol).pServiceName, \
-                          addr Hints, addr pResult
-      mov xax, pResult
-      invoke bind, [xbx].LISTENER.hSocket, [xax].ADDRINFOT.ai_addr, \
-                   DWORD ptr [xax].ADDRINFOT.ai_addrlen
-      mov dBindResult, eax
-      invoke FreeAddrInfo, pResult
-      .if dBindResult != 0
-        OCall xsi.ErrorReport, NULL, NCE_LISTENER_BIND_ERROR
-        DbgSockError "Failed to bind listener socket"
-      .else
-        DbgText "SocketAddress has been bound to listener socket"
-        invoke listen, [xbx].LISTENER.hSocket, SOMAXCONN
-        .if eax != 0                                    ;Zero means no error
-          OCall xsi.ErrorReport, NULL, NCE_LISTENER_DOESNT_LISTEN
-          DbgSockError "Listener socket failed to listen"
-        .else
-          DbgText "Socket is listening..."
-          ;Bind the listening socket to the IOCP => necessary for acceptor
-          invoke CreateIoCompletionPort, [xbx].LISTENER.hSocket, [xsi].hIOCP, \
-                                         COMPLETION_KEY_LISTENER, 0
-          .if eax == NULL                               ;NULL means failure
-            OCall xsi.ErrorReport, NULL, NCE_LISTENER_IOCP_BIND_FAILED
-            DbgSockError "Listener can not de bound to the IOCP"
-          .else
-            DbgText "Socket has been bound to IOCP"
-            ;Queue some accept NetComConnections
-            mov edi, [xsi].dAcceptorCount
-            test edi, edi
-            .while !ZERO?
-              OCall xsi.QueueAcceptor, xbx, pProtocol
-              test eax, eax
-              jnz @F
-              dec xdi
-            .endw
-            xor eax, eax
-          @@:
-          .endif
-        .endif
-      .endif
-    .endif
+  OCall [xsi].Connections::NetComConnectionPool.NewItem ;Get a new NetComConnection from the pool
+  .if xax == NULL
+    mov eax, WSA_NOT_ENOUGH_MEMORY
   .else
-    mov eax, -1
+    mov xbx, xax
+    OCall xbx::NetComConnection.Init, addr [xsi].Connections, pProtocol
+    OCall xbx::NetComConnection.QueueAccept, pListener  ;Queue the accept job
+;    DbgHex xbx, "NetComEngine.NewAcceptor"
   .endif
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     NetComEngine.FreeConnection
-; Purpose:    Release a NetComConnection.
-; Arguments:  Arg1: -> NetComConnection object.
-; Return:     Nothing.
-
-Method NetComEngine.FreeConnection, uses xsi, pConnection:$ObjPtr(NetComConnection)
-  SetObject xsi
-  OCall pConnection::NetComConnection.OnFree
-  OCall [xsi].Connections::NetComConnectionPool.FreeItem, pConnection
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.NewConnection
-; Purpose:    Create a NetComConnection.
+; Purpose:    Creates a NetComConnection.
 ; Arguments:  Arg1: -> protocol object.
 ; Return:     xax -> new NetComConnection or NULL if failed.
 ; Notes:      This method is useful for creating sockets with arbitrary semantics.
@@ -409,27 +346,6 @@ Method NetComEngine.NewConnection, uses xbx xsi, pProtocol:$ObjPtr(NetComProtoco
       OCall [xsi].Connections::NetComConnectionPool.FreeItem, xbx
       xor eax, eax
     .endif
-  .endif
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     NetComEngine.QueueAcceptor
-; Purpose:    This method allocates a new NetComConnection and enqueues an accept IOSockJob
-;             using the listener protocol.
-; Arguments:  Arg1: -> Listener.
-;             Arg2: -> NetComProtocol.
-; Return:     eax = Zero if succeeded, otherwise an error code.
-
-Method NetComEngine.QueueAcceptor, uses xbx xsi, pListener:PLISTENER, \
-                                                 pProtocol:$ObjPtr(NetComProtocol)
-  SetObject xsi
-  OCall [xsi].Connections::NetComConnectionPool.NewItem ;Allocate a NetComConnection
-  .if xax != NULL
-    mov xbx, xax
-    OCall xbx::NetComConnection.Init, addr [xsi].Connections, pProtocol
-    OCall xbx::NetComConnection.QueueAccept, pListener, pProtocol   ;Queue the accept job
-  .else
-    mov eax, [xsi].dErrorCode
   .endif
 MethodEnd
 
@@ -464,24 +380,24 @@ Method NetComEngine.Supervisor, uses xbx xdi xsi
         lea xbx, [xbx - offset $Obj(NetComConnection).ChainItem]    ;xbx -> NetComConnection instance
         mov pConnection, xbx
 
-        .if [xbx].$Obj(NetComConnection).hSocket != INVALID_SOCKET  ;Only valid sockets
-          ;Check all connections for a possible attack
+        .ifBitClr [xbx].$Obj(NetComConnection).dFlags, NCC_CLOSED
+          ;Check all open connections for a possible attack
           ;We want to check if a NetComConnection timeouts
 
-;          .if [xbx].$Obj(NetComConnection).dRcvLastTime != -1           ;Only established connections
+;          .if [xbx].$Obj(NetComConnection).dRcvLstElpsdTime != -1           ;Only established connections
 ;            .if [xbx].$Obj(NetComConnection).ObjLock.dLockCount == 0    ;Skip locked connections
 ;              .ifBitClr [xbx].$Obj(NetComConnection).dFlags, NCC_ABORT  ;Not processed before?
 ;                invoke getsockopt, [xbx].$Obj(NetComConnection).hSocket, SOL_SOCKET, SO_CONNECT_TIME, \
 ;                                   addr dConnectionTime, addr dConnectionTimeSize
-;                CheckSockError "ERROR on getsockopt SO_CONNECT_TIME"
+;                DbgOnSockError "ERROR on getsockopt SO_CONNECT_TIME"
 ;                mov eax, dConnectionTime
-;                sub eax, [xbx].$Obj(NetComConnection).dRcvLastTime
+;                sub eax, [xbx].$Obj(NetComConnection).dRcvLstElpsdTime
 ;                mov xcx, [xbx].$Obj(NetComConnection).pProtocol
 ;                mov edx, [xcx].$Obj(NetComProtocol).dTimeoutRcv
 ;                .if edx != 0 && eax >= edx
-;                  OCall xcx::NetComProtocol.OnTimeout, xbx
+;                  OCall xcx::NetComProtocol.OnTimeouted, xbx
 ;                  .if eax == PROT_CMD_CLOSE
-;                    OCall xbx::NetComConnection.QueueClose
+;                    OCall xbx::NetComConnection.QueueDestroy
 ;                  .endif
 ;                .endif
 ;              .endif
@@ -489,35 +405,35 @@ Method NetComEngine.Supervisor, uses xbx xdi xsi
 ;          .endif
         .endif
 
-        ;Check for disconnection or closure
-        mov eax, [xbx].$Obj(NetComConnection).dFlags
-        .ifBitClr eax, NCC_CLOSED
-          .ifBitSet eax, NCC_CLOSE_MARKED
-            and eax, NCC_DISCONNECTED
-            .if eax == NCC_DISCONNECTED
-              .if [xbx].$Obj(NetComConnection).dPendingIOJobs == 0
-                OCall xbx::NetComConnection.OnClose
-              .endif
-            .endif
-          .endif
-        .endif
-
-        mov eax, [xbx].$Obj(NetComConnection).dFlags
-
-        ;Move to next Connection now, in case xbx is freed by the comming code
+;        ;Check for disconnection or closure
+;        mov eax, [xbx].$Obj(NetComConnection).dFlags
+;        .ifBitClr eax, NCC_DESTROYED
+;          .ifBitSet eax, NCC_DESTROY_QUEUED
+;            and eax, NCC_DISCONNECTED
+;            .if eax == NCC_DISCONNECTED
+;              .if [xbx].$Obj(NetComConnection).dPendingIOJobs == 0
+;                OCall xbx::NetComConnection.Reset
+;              .endif
+;            .endif
+;          .endif
+;        .endif
+;
+;        mov eax, [xbx].$Obj(NetComConnection).dFlags
+;
+        ;Move to next Connection now, in case xbx is freed by the coming code
         mov xbx, POINTER ptr [xbx + offset $Obj(NetComConnection).ChainItem]
-
-        .ifBitClr eax, NCC_FREED
-          .ifBitSet eax, NCC_FREE_MARKED
-            .ifBitClr eax, NCC_CLOSED
-              and eax, NCC_DISCONNECTED
-              .if eax == NCC_DISCONNECTED
-                OCall pConnection::NetComConnection.OnClose
-              .endif
-            .endif
-            OCall xsi.FreeConnection, pConnection
-          .endif
-        .endif
+;
+;        .ifBitClr eax, NCC_FREED
+;          .ifBitSet eax, NCC_FREE_QUEUED
+;            .ifBitClr eax, NCC_DESTROYED
+;              and eax, NCC_DISCONNECTED
+;              .if eax == NCC_DISCONNECTED
+;                OCall pConnection::NetComConnection.Reset
+;              .endif
+;            .endif
+;            OCall xsi.FreeConnection, pConnection
+;          .endif
+;        .endif
 
       .endw
 
@@ -551,6 +467,157 @@ Method NetComEngine.Supervisor, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     NetComEngine.StartListening
+; Purpose:    Creates a "Listener" and begins listening on a port (Service) using a protocol.
+; Arguments:  Arg1: Number of preallocated accept connections.
+;             Arg2: -> NetComProtocol.
+; Return:     eax = Zero if succeeded, otherwise an error code.
+
+Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, pProtocol:$ObjPtr(NetComProtocol)
+  local dOption:DWORD, dRetValue:DWORD
+
+  DbgText "NetComEngine.StartListening"
+  SetObject xsi
+  mov dRetValue, NO_ERROR
+
+  ;Create a socket with WSA_FLAG_OVERLAPPED flag!
+  MemAlloc sizeof(LISTENER)
+  .if xax == NULL
+    mov dRetValue, WSA_NOT_ENOUGH_MEMORY
+    DbgSockError "NetComEngine.StartListening - Can not allocate LISTENER structure", dRetValue
+    jmp @@Exit
+  .endif
+  mov xbx, xax
+  mov [xbx].LISTENER.hSocket, INVALID_SOCKET
+  OCall [xsi].Listeners::DataCollection.Insert, xbx
+
+  invoke WSASocket, AF_INETX, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED
+  .if xax == INVALID_SOCKET
+    mov dRetValue, $32($invoke(WSAGetLastError))
+    DbgSockError "NetComEngine.StartListening - Failed to create listener socket", dRetValue
+    OCall xsi.ErrorReport, NULL, NCE_SOCKET_CREATION_FAILED
+    jmp @@Exit
+  .endif
+  mov [xbx].LISTENER.hSocket, xax
+  DbgText "NetComEngine.StartListening - Listener socket created"
+
+  ;Set socket options: disable nagle's algorithm for fast reaction time
+  mov dOption, 0
+  invoke setsockopt, [xbx].LISTENER.hSocket, IPPROTO_TCP, TCP_NODELAY, \
+                     addr dOption, sizeof dOption
+  DbgCheckSockReturn "NetComEngine.StartListening - ERROR on SetSockOpt TCP_NODELAY"
+
+  mov xdi, pProtocol
+  invoke bind, [xbx].LISTENER.hSocket, addr [xdi].$Obj(NetComProtocol).ListeningAddr, \
+               sizeof NETCOMADDR
+  .if xax != NO_ERROR
+    mov dRetValue, $32($invoke(WSAGetLastError))
+    DbgSockError "NetComEngine.StartListening - Failed to bind listener socket", dRetValue
+    OCall pProtocol::NetComProtocol.OnError, NULL, NULL, dRetValue
+    OCall xsi.ErrorReport, NULL, NCE_LISTENER_BIND_ERROR
+    jmp @@Exit
+  .endif
+
+  DbgText "NetComEngine.StartListening - SocketAddress has been bound to listener socket"
+  invoke listen, [xbx].LISTENER.hSocket, SOMAXCONN
+  .if eax != NO_ERROR
+    mov dRetValue, $32($invoke(WSAGetLastError))
+    DbgSockError "NetComEngine.StartListening - Listener socket failed to listen", dRetValue
+    OCall pProtocol::NetComProtocol.OnError, NULL, NULL, dRetValue
+    OCall xsi.ErrorReport, NULL, NCE_LISTENER_DOESNT_LISTEN
+    jmp @@Exit
+  .endif
+
+  DbgText "NetComEngine.StartListening - Socket is listening..."
+  ;Bind the listening socket to the IOCP => necessary for acceptor
+  invoke CreateIoCompletionPort, [xbx].LISTENER.hSocket, [xsi].hIOCP, \
+                                 COMPLETION_KEY_SOCK_ACCEPTED, 0
+  .if xax == 0                                          ;0 means failure
+    mov dRetValue, $32($invoke(GetLastError))
+    DbgSockError "NetComEngine.StartListening - Listener can not de bound to the IOCP", dRetValue
+    OCall pProtocol::NetComProtocol.OnError, NULL, NULL, eax
+    OCall xsi.ErrorReport, NULL, NCE_LISTENER_IOCP_BIND_FAILED
+    jmp @@Exit
+  .endif
+
+  DbgText "NetComEngine.StartListening - Socket has been bound to IOCP"
+  ;Queue some accept NetComConnections
+  mov edi, dAcceptorCount
+  test edi, edi
+  .while !ZERO?
+    OCall xsi.NewAcceptor, xbx, pProtocol               ;Returns eax = error code
+    .break .if eax != NO_ERROR && eax != ERROR_IO_PENDING
+    dec xdi
+  .endw
+
+@@Exit:
+  mov eax, dRetValue
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     NetComEngine.Startup
+; Purpose:    WinSock startup.
+; Arguments:  None.
+; Return:     Nothing.
+; Note:       The WinSock startup is placed here so that other related APIs will work before the
+;             NetComEngine is started.
+
+Method NetComEngine.Startup
+  local WsaData:WSADATA, hSocket:SOCKET, dBytesTransf:DWORD
+
+  invoke WSAStartup, 0202h, addr WsaData
+  .if eax != 0
+    ;Write the error code into the NetComEngine template.
+    ;New instances inherit this error code and must check it.
+    OCall $ObjTmpl(NetComEngine)::NetComEngine.ErrorSet, NCE_WINSOCK_INIT_FAILED
+  .endif
+
+  invoke WSASocket, AF_INETX, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED
+  .if xax != 0
+    mov hSocket, xax
+
+    ;Try to obtain a POINTER to the ConnectEx procedure, which may change from socket to socket
+    invoke WSAIoctl, hSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
+                     offset WSAID_CONNECTEX, sizeof WSAID_CONNECTEX,
+                     addr pConnectEx, sizeof POINTER,
+                     addr dBytesTransf, NULL, NULL
+    .if eax != NO_ERROR
+      DbgWarning "NetComEngine.Startup - Failed to get and address of the procedure ConnextEx"
+    .endif
+    invoke closesocket, hSocket
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     NetComEngine.Shutdown
+; Purpose:    WinSock Shutdown.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method NetComEngine.Shutdown
+  invoke WSACleanup
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     NetComEngine.StopListening
+; Purpose:    Stops the engine.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method NetComEngine.StopListening, uses xsi
+
+  DbgText "NetComEngine.StopListening"
+  SetObject xsi
+
+  ;Close all listerners
+  DbgText "NetComEngine.StopListening - Closing listeners"
+
+  ;Closes all listening sockets. Pending IOs are cancelled through the IOCP,
+  ;which frees the associated acceptor connections.
+  OCall [xsi].Listeners::DataCollection.DisposeAll
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Worker
 ; Purpose:    Here is the HEART AND SOUL of the NetComEngine.
 ;             This thread is responsible for waiting on IOCP completion notifications and passing
@@ -564,75 +631,118 @@ Method NetComEngine.Worker, uses xbx xdi xsi
   local dFlags:DWORD, dBytesConsumed:DWORD, dOvrResult:DWORD
 
   SetObject xsi
-  .repeat
+  .while TRUE
     ;The GetQueuedCompletionStatus API call will (if successful) return two useful pieces of
-    ;information to us. One is the "completion key" of the completed IO, the other is a POINTER
-    ;to the IOSockJob which represents the IO operation which (we hope) is completed.
+    ;information. One is the "completion key" of the completed IO, the other is a POINTER
+    ;to the IOSockJob which represents the IO operation which was completed.
     invoke GetQueuedCompletionStatus, [xsi].hIOCP, addr dBytesTransfered,
                                                    addr xCompletionKey,
-                                                   addr pIOSockJob,         ;-> IO_SOCKJOB
-                                                   250                      ;0.25 s timeout
+                                                   addr pIOSockJob,
+                                                   INFINITE
+    .break .if xCompletionKey == COMPLETION_KEY_KILL_WORKER   ;Exit thread loop immediately
     mov xbx, pIOSockJob
     .if xbx != NULL
-      .if xCompletionKey == COMPLETION_KEY_LISTENER
-        mov xdi, [xbx].IO_SOCKJOB.DataBuffer.ACCEPT_DATA.pConnection
+      .if xCompletionKey == COMPLETION_KEY_VOID
+        mov xdi, xbx                                    ;pConnection passed using pIOSockJob
+        DbgHex xdi, "NetComEngine.Worker - Void posted"
       .else
-        mov xdi, xCompletionKey                         ;xdi -> NetComConnection
-      .endif
-
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      ;Determine whether the operation completed successfully or not
-      invoke WSAGetOverlappedResult, [xdi].$Obj(NetComConnection).hSocket, xbx, \
-                                     addr dBytesConsumed, \
-                                     FALSE, addr dFlags
-      mov dOvrResult, eax
-      ;Serialize on a per connection basis
-;      LockObjectAccess [xdi].$Obj(NetComConnection)
-      .if dOvrResult != FALSE
-        movzx eax, [xbx].IO_SOCKJOB.wOperation
-        .if eax == OPERATION_SOCK_READ
-          mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
-          xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-          lock add [xsi].dBytesIn, edx
-          OCall xdi::NetComConnection.OnRead, xbx
-
-        .elseif eax == OPERATION_SOCK_WRITE
-          mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
-          xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-          lock add [xsi].dBytesOut, edx
-          OCall xdi::NetComConnection.OnWrite, xbx
-
-        .elseif eax == OPERATION_SOCK_CONNECT
-          xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-          OCall xdi::NetComConnection.OnConnect, xbx
-
-        .elseif eax == OPERATION_SOCK_ACCEPT
-          xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-          OCall xdi::NetComConnection.OnAccept, xbx
-
+        .if xCompletionKey == COMPLETION_KEY_SOCK_ACCEPTED
+          mov xdi, [xbx].IO_SOCKJOB.DataBuffer.ACCEPT_DATA.pConnection
+;          DbgHex xdi, "NetComEngine.Worker - Listener detected an incomming connection - accept connection"
         .else
-          xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-          invoke WSAGetLastError                        ;This error is thread specific
-          OCall xdi::NetComConnection.OnError, xbx, eax
+          mov xdi, xCompletionKey                       ;xdi -> NetComConnection
         .endif
+  
+  ;      DbgHex xdi, "NetComEngine.Worker - Connection"
+        invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+  
+        ;Determine whether the operation completed successfully or not
+        invoke WSAGetOverlappedResult, [xdi].$Obj(NetComConnection).hSocket, xbx, \
+                                       addr dBytesConsumed, \
+                                       FALSE, addr dFlags
+        mov dOvrResult, eax
+        ;Serialize on a per connection basis
+  ;      LockObjectAccess [xdi].$Obj(NetComConnection)
+        BitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
+        lock dec [xdi].$Obj(NetComConnection).dPendingIOJobs
+        lock inc [xdi].$Obj(NetComConnection).dCompletedIOJobs
+        .if dOvrResult != FALSE
+          ;Operation succeeded *****************************************************************
+          ;Each of the following connection handlers must manage the IOSockJob themselves
+          movzx eax, [xbx].IO_SOCKJOB.wOperation
+          .if eax == OPERATION_SOCK_RECV
+            mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
+            lock add [xsi].dBytesIn, edx
+            OCall xdi::NetComConnection.OnReceived, xbx
+  
+          .elseif eax == OPERATION_SOCK_SEND
+            mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
+            lock add [xsi].dBytesOut, edx
+            OCall xdi::NetComConnection.OnSent, xbx
+  
+          .elseif eax == OPERATION_SOCK_CONNECT
+            OCall xdi::NetComConnection.OnConnected, xbx
+  
+          .elseif eax == OPERATION_SOCK_ACCEPT
+            OCall xdi::NetComConnection.OnAccepted, xbx
+  
+          .else
+            invoke WSAGetLastError                        ;This error is thread specific
+            OCall xdi::NetComConnection.OnError, xbx, eax
+          .endif
+  
+        .else
+          ;Operation failed! *******************************************************************
+          invoke WSAGetLastError                          ;This error is thread specific
+          movzx ecx, [xbx].IO_SOCKJOB.wOperation
+          .if ecx == OPERATION_SOCK_RECV
+;            DbgSockError "NetComEngine.Worker - Receive ERROR", eax
+;            DbgHex xdi, "NetComEngine.Worker - pConnection"
+            OCall xdi::NetComConnection.OnError, xbx, eax
+  
+          .elseif ecx == OPERATION_SOCK_SEND
+;            DbgSockError "NetComEngine.Worker - Send ERROR", eax
+;            DbgHex xdi, "NetComEngine.Worker - pConnection"
+            OCall xdi::NetComConnection.OnError, xbx, eax
+  
+          .elseif ecx == OPERATION_SOCK_CONNECT
+;            DbgSockError "NetComEngine.Worker - Connect ERROR", eax
+;            DbgHex xdi, "NetComEngine.Worker - pConnection"
+            OCall xdi::NetComConnection.OnError, xbx, eax
+  
+          .elseif ecx == OPERATION_SOCK_ACCEPT
+;            DbgSockError "NetComEngine.Worker - Accept ERROR", eax
+;            DbgHex xdi, "NetComEngine.Worker - pConnection"
+            OCall xdi::NetComConnection.OnError, xbx, eax
+  
+          .else
+;            DbgSockError "NetComEngine.Worker - Unknown operation ERROR", eax
+;            DbgHex xdi, "NetComEngine.Worker - pConnection"
+            OCall xdi::NetComConnection.OnError, xbx, eax
+  
+          .endif
+        .endif
+  
+  ;      UnlockObjectAccess [xdi].$Obj(NetComConnection)
+        invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+      .endif
 
-      .else
-        ;Operation failed!
-        xBitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-        invoke WSAGetLastError                          ;This error is thread specific
-        .if eax != ERROR_IO_INCOMPLETE
-          OCall xdi::NetComConnection.OnError, xbx, eax
+      ;If the connection is flagged for destruction, proceed ONLY if the 
+      ;connection has no pending IOs
+      .ifBitSet [xdi].$Obj(NetComConnection).dFlags, NCC_DESTROY_QUEUED
+  ;      DbgHex xdi, "NetComEngine.Worker - Connection flagged for destruction"
+        .if [xdi].$Obj(NetComConnection).dPendingIOJobs == 0
+  ;        DbgHex xdi, "NetComEngine.Worker - Connection with no pending IOJobs - Done + Free"
+          OCall xdi::NetComConnection.Done
+          OCall [xsi].Connections::NetComConnectionPool.FreeItem, xdi
         .endif
       .endif
-;      UnlockObjectAccess [xdi].$Obj(NetComConnection)
-      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-
     .endif
 
-  .until ([xsi].dShuttingDown == SDN_CLOSE_WORKERS && [xsi].IOJobs.dCount == 0) || \
-          [xsi].dShuttingDown == SDN_QUIT_WORKERS       ;Abortive close
+  .endw
 
-;  DbgText "NetComEngine worker death"
+  DbgText "NetComEngine.Worker - death"
+  DbgDec [xsi].IOSockJobs.dCount, "NetComEngine.Worker"
 MethodEnd
 
 endif

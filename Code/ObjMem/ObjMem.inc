@@ -736,7 +736,7 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   byte2bin textequ <byte2binW>
 else
-  echo Warning: incompatible TARGET_STR_TYPE using byte2bin
+  echo Warning: incompatible TARGET_STR_TYPE
 endif
 BYTE2BIN_MAX_CHARS equ 9                                ;ZTC included
 
@@ -747,7 +747,7 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   word2bin textequ <word2binW>
 else
-  echo Warning: incompatible TARGET_STR_TYPE word2bin
+  echo Warning: incompatible TARGET_STR_TYPE
 endif
 WORD2BIN_MAX_CHARS equ 17                               ;ZTC included
 
@@ -758,7 +758,7 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   dword2bin textequ <dword2binW>
 else
-  echo Warning: incompatible TARGET_STR_TYPE using dword2bin
+  echo Warning: incompatible TARGET_STR_TYPE
 endif
 DWORD2BIN_MAX_CHARS equ 33                              ;ZTC included
 

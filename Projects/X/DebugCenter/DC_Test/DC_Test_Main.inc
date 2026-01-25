@@ -39,9 +39,20 @@ ObjectEnd                                               ;Ends object definition
 ; Arguments:  None.
 ; Return:     Nothing.
 
+externdef HexCharTableW:CHRW
+
+; --------------------------------------------------------------------------------------------------
+; Procedure:  byte2hexW
+; Purpose:    Convert a BYTE to its hexadecimal WIDE string representation.
+; Arguments:  Arg1: -> Destination WIDE string buffer.
+;             Arg2: BYTE value.
+; Return:     Nothing.
+; Notes:      The destination buffer must be at least 5 BYTEs large to allocate the output string
+;             (2 character WORDs + ZTC = 5 BYTEs).
+
 Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
-  local bBuffer[10]:BYTE
+  local bBuffer[10]:BYTE, bTestByte:BYTE
 
   SetObject xsi
   ACall xsi.Init

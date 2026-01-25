@@ -23,6 +23,7 @@ externdef HexCharTableA:CHRA
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 byte2hexA proc pBuffer:POINTER, bValue:BYTE
   ;rcx -> Buffer, dl = bValue

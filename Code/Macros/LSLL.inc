@@ -48,6 +48,8 @@ LSLL_CONTROL struc
   pFirstMember  PLSLL_ITEM    ?                         ;-> First member
 LSLL_CONTROL ends
 
+??ListForEach_ID = 0
+
 ; ==================================================================================================
 
 
@@ -73,9 +75,6 @@ LSLL_RemoveAfter macro RefReg:req, AuxReg:=<xcx>
   mov AuxReg, [RefReg].LSLL_ITEM.pLinkFwrd
   m2m [RefReg].LSLL_ITEM.pLinkFwrd, [AuxReg].LSLL_ITEM.pLinkFwrd, AuxReg
 endm
-
-
-??ListForEach_ID = 0
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListForEach

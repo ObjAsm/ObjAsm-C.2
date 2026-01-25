@@ -42,7 +42,7 @@
 ;  |    Table        ??EVENT_ENTRY #3                        ...          ...
 ;  |                 ...                                     ...          ...
 ;  |
-;  |  Object structures:
+;  |  Object structures:  (64 bit offsets)
 ;  |  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  |  Object Template (TPL)
 ;  |    (+00h) POINTER to the Dual Method Table (DMT) ---------

@@ -1,10 +1,13 @@
 ; ==================================================================================================
 ; Title:      DataPool.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm support of DataPool objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, January 2026
+;               - Safety check to detect multiple added Free operations on the same item added
+;                 to FreeItem in DEBUG modus.
 ; ==================================================================================================
 
 
@@ -126,25 +129,10 @@ if IMPLEMENT
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DataPool.Done, uses xbx xdi xsi
-  local pNextItem:POINTER
-
+Method DataPool.Done, uses xsi
   SetObject xsi
-
-  ;Reset linked list but first get xbx -> pFirstItem
-  lea xdi, [xsi].Blobs
-  mov xbx, [xsi].Blobs.pFirstItem
-  SDLL_Init xdi
-
-  ;Free all allocated memory in the linked list
-  .while xbx != xdi
-    m2m pNextItem, [xbx].DPL_CONTROLDATA.pNextItem, xax   ;Compute this before the page is freed
-    invoke VirtualFree, xbx, 0, MEM_RELEASE
-    mov xbx, pNextItem
-  .endw
-
-  ;Call ancestor Done method
-  ACall xsi.Done
+  OCall xsi.Reset
+  ACall xsi.Done                                        ;Call ancestor Done method
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -173,6 +161,23 @@ Method DataPool.FreeItem, uses xbx xdi xsi, pItem:POINTER
   ret
 
 @@:                                                     ;xbx -> DPL_CONTROLDATA
+  ;Check if pItem is not already deleted
+  if DEBUGGING
+    mov xdx, pItem
+    mov eax, [xbx].DPL_CONTROLDATA.dFirstFreeItem
+    .while eax != 0
+      if DPL_SECURE ne FALSE
+        xor eax, [xsi].dCookie
+      endif
+      add xax, xbx
+      .if xax == pItem
+        DbgHex pItem, "DataPool.FreeItem - ERROR: Item has already been freed - "
+        .break
+      .endif
+      mov eax, [xax]                                    ;move to next free item
+    .endw
+  endif
+
   ;Updated the free item linked list
   mov xdx, pItem
   m2m DWORD ptr [xdx], [xbx].DPL_CONTROLDATA.dFirstFreeItem, eax
@@ -303,13 +308,12 @@ MethodEnd
 ; Return:     eax = Error code.
 
 Method DataPool.LoadBlobs, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
-  local pSentinel:POINTER, dBlobEnd:DWORD, dBlobCount:DWORD
+  local dBlobEnd:DWORD, dBlobCount:DWORD
 
   SetObject xsi
 
   ;Read blob information
-  lea edi, [xsi].Blobs
-  mov pSentinel, xdi
+  lea xdi, [xsi].Blobs
   SDLL_Init xdi                                         ;Reset the list
   OCall pStream::Stream.BinRead32                       ;Read blob count
   mov dBlobCount, eax
@@ -377,7 +381,6 @@ MethodEnd
 
 Method DataPool.NewItem, uses xbx xsi
   SetObject xsi
-
   lea xbx, [xsi].Blobs
   mov xcx, [xsi].Blobs.pFirstItem
   .if xcx != xbx
@@ -414,7 +417,7 @@ Method DataPool.NewItem, uses xbx xsi
 ;  DbgWarning "Allocating new blob"
   invoke VirtualAlloc, NULL, [xsi].dAllocSize, MEM_RESERVE or MEM_COMMIT, PAGE_READWRITE
   .if xax != NULL
-    ;Put the new blob at the end of the linked list
+    ;Put the new blob at the end of the linked list to favorize reuse of freed items
     lea xcx, [xsi].Blobs
     SDLL_Append xcx, xax, xdx
 
@@ -436,14 +439,14 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DataPool.Reset, uses xbx xdi xsi
+Method DataPool.Reset, uses xbx xdi
   SetObject xcx
   lea xdi, [xcx].Blobs
   mov xbx, [xcx].Blobs.pFirstItem
   .while xbx != xdi
-    mov xsi, [xbx].DPL_CONTROLDATA.pNextItem
-    invoke VirtualFree, xbx, 0, MEM_RELEASE
-    mov xbx, xsi
+    mov xcx, xbx
+    mov xbx, [xbx].DPL_CONTROLDATA.pNextItem
+    invoke VirtualFree, xcx, 0, MEM_RELEASE
   .endw
   SDLL_Init xdi                                         ;Reset the list
 MethodEnd

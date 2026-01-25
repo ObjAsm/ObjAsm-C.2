@@ -1408,7 +1408,7 @@ endif
 
 WriteFT macro DstReg:req, Format:req, Args:vararg
   local pBegin
-  
+
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
     $$CHR textequ <CHRA>
   else

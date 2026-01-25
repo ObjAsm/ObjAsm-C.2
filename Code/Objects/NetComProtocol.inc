@@ -20,7 +20,7 @@ if IMPLEMENT
 ; Method:     NetComProtocol.Allocate
 ; Purpose:    Allocate a memory chunk for management data on a per Connection basis.
 ;             Additional related resources can be reserved here. The POINTER to the allocated memory
-;             must be stored in pProtocolData member of NetComConnection.
+;             must be stored in pData member of NetComConnection.
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
@@ -50,7 +50,7 @@ MethodEnd
 
 Method NetComProtocol.Done, uses xsi
   SetObject xsi
-  invoke StrDispose, [xsi].pServiceName
+;  invoke StrDispose, [xsi].pLocalHostSrvName
   OCall [xsi].BlackList::NetComAddrCollection.Done
   ACall xsi.Done
 MethodEnd
@@ -62,11 +62,11 @@ MethodEnd
 ;             Arg2: -> String representing the service or the port number as a string.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComProtocol.Init, uses xsi, pOwner:POINTER, pServiceName:PSTRING
+Method NetComProtocol.Init, uses xsi, pOwner:POINTER;, pServiceName:PSTRING
   SetObject xsi
   ?mov xdx, pOwner
   ACall xsi.Init, xdx
-  mov [xsi].pServiceName, $invoke(StrNew, pServiceName)
+;  mov [xsi].pLocalHostSrvName, $invoke(StrNew, pServiceName)
   OCall [xsi].BlackList::NetComAddrCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
   xor eax, eax
 MethodEnd
@@ -83,8 +83,9 @@ MethodEnd
 ;                                        the client will get booted for this offence.
 ;                   ERROR_USER_QUIT    - The user sent a nice QUIT message using our protocol -
 ;                                        the client will get booted for this.
-;                   Positive INT32     - This many bytes are part of the complete packet.
+;                   Positive INT32     - This many bytes are valid buffer information.
 ;                   Zero               - We need more data.
+; Note:       Zero length packets are NOT passed from the connection to the protocol.
 
 Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
                                         pIOSockJob:PIO_SOCKJOB
@@ -107,47 +108,46 @@ Method NetComProtocol.IsBlackListed?,, pAddr:PNETCOMADDR
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComProtocol.OnAccept
+; Method:     NetComProtocol.OnAccepted
 ; Purpose:    An inbound connection 'accept' has completed.
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     eax = Command (PROT_CMD_ACCEPT_CONNECTION or PROT_CMD_REJECT_CONNECTION).
 
-Method NetComProtocol.OnAccept,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnAccept", "&PROTOCOL_WND_NAME"
+Method NetComProtocol.OnAccepted,, pConnection:$ObjPtr(NetComConnection)
+;  DbgHex pConnection, "NetComProtocol.OnAccepted", "&PROTOCOL_WND_NAME"
   mov eax, PROT_CMD_ACCEPT_CONNECTION
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComProtocol.OnClose
+; Method:     NetComProtocol.OnClosed
 ; Purpose:    A connection has, for whatever reason, been terminated.
 ;             You can override this, perhaps to release extra per connection resources.
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     Nothing.
 
-Method NetComProtocol.OnClose,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnClose", "&PROTOCOL_WND_NAME"
+Method NetComProtocol.OnClosed,, pConnection:$ObjPtr(NetComConnection)
+;  DbgHex pConnection, "NetComProtocol.OnClosed", "&PROTOCOL_WND_NAME"
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComProtocol.OnConnect
+; Method:     NetComProtocol.OnConnected
 ; Purpose:    An outbound connection attempt has completed.
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     Nothing.
 
-Method NetComProtocol.OnConnect,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnConnect", "&PROTOCOL_WND_NAME"
+Method NetComProtocol.OnConnected,, pConnection:$ObjPtr(NetComConnection)
+;  DbgHex pConnection, "NetComProtocol.OnConnected", "&PROTOCOL_WND_NAME"
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComProtocol.OnDisconnect
+; Method:     NetComProtocol.OnDisconnected
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
+;             Arg2: Disconnect direction = SD_SEND/SD_RECEIVE/SD_BOTH
 ; Return:     Nothing.
 
-Method NetComProtocol.OnDisconnect,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
-  ?mov xdx, pConnection
-  xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
+Method NetComProtocol.OnDisconnected,, pConnection:$ObjPtr(NetComConnection), dDirection:DWORD
+;  DbgHex pConnection, "NetComProtocol.OnDisconnected", "&PROTOCOL_WND_NAME"
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -156,59 +156,40 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection.
 ;             Arg2: -> IOSockJob.
 ;             Arg3: Error code.
-; Return:     eax = Command.
+; Return:     eax = Command (PROT_CMD_REJECT_CONNECTION, PROT_CMD_CLOSE, ...)
 
 Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJob:PIO_SOCKJOB, \
                                 dError:DWORD
-  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
-  DbgDec dError,, "&PROTOCOL_WND_NAME"
-  ?mov xdx, pConnection
+;  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
+;  DbgDec dError, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
   mov xcx, pIOSockJob
+  .if xcx == NULL
+    xor eax, eax
+    ExitMethod
+  .endif
+
   movzx eax, [xcx].IO_SOCKJOB.wOperation
   .if eax == OPERATION_SOCK_ACCEPT
-    mov eax, PROT_CMD_REJECT_CONNECTION
-
+    mov eax, PROT_CMD_DESTROY
   .elseif eax == OPERATION_SOCK_CONNECT
-    xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
-    mov eax, PROT_CMD_CLOSE
-
-  .elseif eax == OPERATION_SOCK_WRITE
-    xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
-    mov eax, PROT_CMD_CLOSE
-
-  .elseif eax == OPERATION_SOCK_READ
-    .if dError == WSAECONNRESET || eax == ERROR_NETNAME_DELETED || eax == ERROR_OPERATION_ABORTED
-      xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
-      mov eax, PROT_CMD_CLOSE
-
-    .elseif dError == WSAEDISCON
-      DbgText "Error: disconnect"
-      xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
-      mov eax, PROT_CMD_CLOSE
-
-    .else
-      DbgWarning "An unhandled error has happened..."
-      xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
-      mov eax, PROT_CMD_CLOSE
-
-    .endif
-
+    mov eax, PROT_CMD_DESTROY
+  .elseif eax == OPERATION_SOCK_SEND
+    mov eax, PROT_CMD_DESTROY
+  .elseif eax == OPERATION_SOCK_RECV
+    mov eax, PROT_CMD_DESTROY
   .else
-    DbgWarning "Unknown operation", "&PROTOCOL_WND_NAME"
-    DbgDec [xdx].IO_SOCKJOB.wOperation,, "&PROTOCOL_WND_NAME"
-    xor eax, eax
-
+    mov eax, PROT_CMD_DESTROY
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComProtocol.OnTimeout
+; Method:     NetComProtocol.OnTimeouted
 ; Purpose:    A connection timeout occurs.
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     eax = PROT_CMD_CONTINUE or PROT_CMD_DISCONNECT.
 
-Method NetComProtocol.OnTimeout,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnTimeout", "&PROTOCOL_WND_NAME"
+Method NetComProtocol.OnTimeouted,, pConnection:$ObjPtr(NetComConnection)
+;  DbgHex pConnection, "NetComProtocol.OnTimeouted", "&PROTOCOL_WND_NAME"
   mov eax, PROT_CMD_DISCONNECT
 MethodEnd
 

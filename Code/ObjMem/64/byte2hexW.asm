@@ -23,6 +23,7 @@ externdef HexCharTableW:CHRW
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 byte2hexW proc pBuffer:POINTER, bValue:BYTE
   ;rcx -> Buffer, dl = bValue

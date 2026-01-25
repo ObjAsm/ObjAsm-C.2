@@ -19,34 +19,34 @@ if IMPLEMENT
 ; --------------------------------------------------------------------------------------------------
 ; Method:    NetComAddrCollection.Compare
 ; Purpose:   Compare 2 NETCOMADDR_ENTRYs
-; Arguments: Arg1: -> First NETCOMADDR_ENTRY.
+; Arguments: Arg1: -> First NETCOMADDR.
 ;            Arg2: -> Second NETCOMADDR (Search key).
 ; Return:    eax = Compare result.
 
-Method NetComAddrCollection.Compare,, pItem1:PNETCOMADDR_ENTRY, pItem2:PNETCOMADDR
+Method NetComAddrCollection.Compare,, pItem1:PNETCOMADDR, pItem2:PNETCOMADDR
   mov xcx, pItem1
   mov xdx, pItem2
-  mov ax, [xcx].NETCOMADDR_ENTRY.sa_family
-  sub ax, [xdx].NETCOMADDR_ENTRY.sa_family
+  mov ax, [xcx].NETCOMADDR.wFamily
+  sub ax, [xdx].NETCOMADDR.wFamily
   .if ZERO?
-    .if [xcx].NETCOMADDR_ENTRY.sa_family == AF_INET
-      mov eax, [xcx].NETCOMADDR_ENTRY.sin_addr          ;This address fits in a 32 bit register
-      sub eax, [xdx].NETCOMADDR_ENTRY.sin_addr
+    .if [xcx].NETCOMADDR.wFamily == AF_INET
+      mov eax, DWORD ptr [xcx].NETCOMADDR.Address          ;This address fits in a 32 bit register
+      sub eax, DWORD ptr [xdx].NETCOMADDR.Address
       DbgHex eax,, "NetComAddrCollection"
 ;      .if ZERO?
-;        mov ax, [xcx].NETCOMADDR_ENTRY.sin_port
-;        sub ax, [xdx].NETCOMADDR_ENTRY.sin_port
+;        mov ax, [xcx].NETCOMADDR.wPort
+;        sub ax, [xdx].NETCOMADDR.wPort
 ;        movsx eax, ax
 ;      .endif
-    .elseif [xcx].NETCOMADDR_ENTRY.sa_family == AF_INET6
-      invoke MemComp, addr [xcx].SOCKADDR_IN6.sin6_addr, \
-                      addr [xdx].SOCKADDR_IN6.sin6_addr, \
+    .elseif [xcx].NETCOMADDR.wFamily == AF_INET6
+      invoke MemComp, addr [xcx].NETCOMADDR.Address, \
+                      addr [xdx].NETCOMADDR.Address, \
                       sizeof IN6_ADDR
 ;      .if eax == 0
 ;        mov xcx, pItem1
 ;        mov xdx, pItem2
-;        mov ax, [xcx].SOCKADDR_IN6.sin6_port
-;        sub ax, [xdx].SOCKADDR_IN6.sin6_port
+;        mov ax, [xcx].NETCOMADDR.Address
+;        sub ax, [xdx].NETCOMADDR.Address
 ;        movsx eax, ax
 ;      .endif
     .else
@@ -80,10 +80,10 @@ MethodEnd
 ; Return:     xax -> Inserted item or NULL if failed.
 
 Method NetComAddrCollection.Insert, uses xsi, pItem:POINTER
-  local pEntry:PNETCOMADDR_ENTRY
+  local pEntry:PNETCOMADDR
 
   SetObject xsi
-  MemAlloc sizeof NETCOMADDR_ENTRY
+  MemAlloc sizeof NETCOMADDR
   .if xax != NULL
     mov pEntry, xax
     invoke MemClone, xax, pItem, sizeof NETCOMADDR

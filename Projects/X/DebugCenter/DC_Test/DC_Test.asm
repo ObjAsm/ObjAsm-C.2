@@ -14,8 +14,8 @@ INTERNET_PROTOCOL_VERSION   equ 4
 SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD)
 ;SysSetup OOP, WIN64, WIDE_STRING, DEBUG(NET, INFO, TRACE);, STKGUARD)
 ;DBG_IP_ADDR textequ <"localhost">
-;DBG_IP_ADDR textequ <"192.168.1.43">
-;DBG_IP_PORT textequ <8080>
+;DBG_IP_ADDR textequ <"192.168.1.40">
+DBG_IP_PORT textequ <8080>
 
 
 % includelib &LibPath&Windows\shell32.lib
