@@ -1,0 +1,19 @@
+; ==================================================================================================
+; Title:      SRPS.rc
+; Author:     G. Friedrich
+; Purpose:    See SRPS.asm
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "SRPS_Shared.rc"           //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Dialogs -----------------------------------------------------------------------------------------
+#include "Res/MainWndDlg.rc"
+
+// Icons ------------------------------------------------------------------------------------------
+ICON_APP  ICON DISCARDABLE "ICO\OA.ico"
