@@ -16,7 +16,7 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       2
+BUILD_NUMBER                  equ       3
 BUILD_DATE_STR                textequ   <2026-01-25>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
