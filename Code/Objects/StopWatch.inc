@@ -55,9 +55,9 @@ Object StopWatch, StopWatchID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  $ObjMthd(GetTimeStr) textequ $ObjMthd(GetTimeStrA)
+  $ObjMtd(GetTimeStr) textequ $ObjMtd(GetTimeStrA)
 else
-  $ObjMthd(GetTimeStr) textequ $ObjMthd(GetTimeStrW)
+  $ObjMtd(GetTimeStr) textequ $ObjMtd(GetTimeStrW)
 endif
 
 ; ==================================================================================================

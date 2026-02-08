@@ -49,15 +49,15 @@
 ;                                   -------------------
 ;
 ;
-;                         -------------------                
-;          ------------->|    Application    |<----------        
-;         |              |-------------------|           |       
-;         |              |                   |           |       
-;         |              |                   |           |       
-;         |              |                   |           |       
-;         |               -------------------            |       
-;         |                                              |       
-;         |                                              |       
+;                         -------------------
+;          ------------->|    Application    |<----------
+;         |              |-------------------|           |
+;         |              |                   |           |
+;         |              |                   |           |
+;         |              |                   |           |
+;         |               -------------------            |
+;         |                                              |
+;         |                                              |
 ;         |          Server/Client                       |              Functionality
 ;         |       -------------------                    |            -------------------
 ;         |   -->|   NetComEngine    |<----              |   ------->|  NetComProtocol   |
@@ -66,8 +66,8 @@
 ;            |   |                   |     |                |        |                   |
 ;            |   |                   |     |                |        |                   |
 ;            |    -------------------      |                |         -------------------
-;            |                             |                |     
-;            |                              ----------------|----  
+;            |                             |                |
+;            |                              ----------------|----
 ;            |                                              |    |
 ;            |           --------------------               |    |    -------------------
 ;            |       -->|NetComConnectionPool|        ------|------->|NetComIOSockJobPool|- - -
@@ -76,9 +76,9 @@
 ;                   |   |     pIOSockJobPool |-------       |        | dBufferSize       |     |
 ;                   |   |                    |              |        |                   |
 ;                   |    --------------------               |         -------------------      |
-;                   |                                       |    
+;                   |                                       |
 ;                   |                                       |                                  |
-;                   |                                       |    
+;                   |                                       |
 ;                   |           -------------------         |        -------------------       |
 ;                   |          | NetComConnection  |< - - - | - - - |  NetComIOSockJob  |< - -
 ;                   |          |-------------------||       |       |-------------------||
@@ -91,7 +91,7 @@
 ;                                                                       --------------------||
 ;                                                                        ------------------- |
 ;                                                                         -------------------
-;                                                            
+;
 ;
 ; ==================================================================================================
 
@@ -106,7 +106,7 @@ OPERATION_SOCK_RECV         equ   3h
 OPERATION_SOCK_SEND         equ   4h
 
 ;IO Flag
-IOF_JOB_COMPLETED           equ   BIT00     ;Completed 
+IOF_JOB_COMPLETED           equ   BIT00     ;Completed
 IOF_JOB_LINKED              equ   BIT01     ;Linked to the receive chain
 
 ERROR_BAD_PROTOCOL          equ   -10
@@ -123,18 +123,22 @@ PROT_CMD_DESTROY            equ   7         ;Destroy connection object
 PROT_CMD_STOP               equ   8         ;Stop engine - fatal error
 
 ;NetCom Connection flags
-NCC_SHUTDOWN_RECEIVE_REMOTE equ   BIT00
-NCC_SHUTDOWN_SEND_REMOTE    equ   BIT01
-NCC_SHUTDOWN_RECEIVE_LOCAL  equ   BIT02
-NCC_SHUTDOWN_SEND_LOCAL     equ   BIT03
+NCC_SHUTDOWN_RX_REMOTE      equ   BIT00
+NCC_SHUTDOWN_TX_REMOTE      equ   BIT01
+NCC_SHUTDOWN_RX_LOCAL       equ   BIT02
+NCC_SHUTDOWN_TX_LOCAL       equ   BIT03
+;Lifecycle control
 NCC_DESTROY_QUEUED          equ   BIT04     ;Marked to terminate the connection object
 NCC_DESTROYED               equ   BIT05     ;Done - socket Closed (abortive disconnection) and free
-NCC_CLOSED                  equ   BIT06         
+NCC_CLOSED                  equ   BIT06
+;Backpressure control
+NCC_RX_PAUSED               equ   BIT07
+NCC_TX_PAUSED               equ   BIT08
 
-NCC_DISCONNECTED_LOCAL      equ   NCC_SHUTDOWN_RECEIVE_LOCAL or NCC_SHUTDOWN_SEND_LOCAL
-NCC_DISCONNECTED_REMOTE     equ   NCC_SHUTDOWN_RECEIVE_REMOTE or NCC_SHUTDOWN_SEND_REMOTE
-NCC_DISCONNECTED_SEND       equ   NCC_SHUTDOWN_RECEIVE_REMOTE or NCC_SHUTDOWN_SEND_LOCAL
-NCC_DISCONNECTED_RECEIVE    equ   NCC_SHUTDOWN_RECEIVE_LOCAL or NCC_SHUTDOWN_SEND_REMOTE
+NCC_DISCONNECTED_LOCAL      equ   NCC_SHUTDOWN_RX_LOCAL  or NCC_SHUTDOWN_TX_LOCAL
+NCC_DISCONNECTED_REMOTE     equ   NCC_SHUTDOWN_RX_REMOTE or NCC_SHUTDOWN_TX_REMOTE
+NCC_DISCONNECTED_SEND       equ   NCC_SHUTDOWN_RX_REMOTE or NCC_SHUTDOWN_TX_LOCAL
+NCC_DISCONNECTED_RECEIVE    equ   NCC_SHUTDOWN_RX_LOCAL  or NCC_SHUTDOWN_TX_REMOTE
 
 ;NetCom Error states
 NCE_ACCEPT                  equ   BIT27     ;Error happend while accepting
@@ -175,16 +179,16 @@ SIO_GET_EXTENSION_FUNCTION_POINTER  equ IOC_INOUT or IOC_WS2 or 6
 SO_UPDATE_ACCEPT_CONTEXT      equ   700Bh
 SO_UPDATE_CONNECT_CONTEXT     equ   7010h
 
-_NETCOMADDR_ struc                                      ;Auxiliar structure to get the total size
+_NETCOMADDR_ struc                          ;Auxiliar structure to get the total size
   union
-    SOCKADDR                  {}                        ;IPv4
-    SOCKADDR_IN               {}                        ;IPv4 only
-    SOCKADDR_IN6              {}                        ;IPv6 only
-    SOCKADDR_STORAGE          {}                        ;IPv4, IPv6, NetBIOS, infrared or Bluetooth
+    SOCKADDR                  {}            ;IPv4
+    SOCKADDR_IN               {}            ;IPv4 only
+    SOCKADDR_IN6              {}            ;IPv6 only
+    SOCKADDR_STORAGE          {}            ;IPv4, IPv6, NetBIOS, infrared or Bluetooth
   ends
 _NETCOMADDR_ ends
 
-NETCOMADDR struc                                        ;Universal address structure
+NETCOMADDR struc                            ;Universal address structure
   wFamily   WORD  ?
   wPort     WORD  ?
   Address   BYTE  sizeof(_NETCOMADDR_) - 2*sizeof(WORD) dup(?)
@@ -199,23 +203,23 @@ PLISTENER typedef ptr LISTENER
 
 ;This structure is not integrated into IO_SOCKJOB to be able to calculate some offsets
 IO_HEADER struc 2
-  Ovl             OVERLAPPED  {}                        ;Must be always the first structure member!
-  wOperation      WORD        ?                         ;Operation ID, i.e. OPERATION_SOCK_RECV
-  wFlags          WORD        ?                         ;Flags, i.e. IOF_JOB_LINKED
-  dBytesConsumed  DWORD       ?                         ;#bytes currently placed in the buffer
+  Ovl             OVERLAPPED  {}            ;Must be always the first structure member!
+  wOperation      WORD        ?             ;Operation ID, i.e. OPERATION_SOCK_RECV
+  wFlags          WORD        ?             ;Flags, i.e. IOF_JOB_LINKED
+  dBytesConsumed  DWORD       ?             ;#bytes currently placed in the buffer
 IO_HEADER ends
 IO_HEADER_SIZE equ sizeof(IO_HEADER)
 
 IO_SOCKJOB struc 4
                   IO_HEADER   {}
-                  SDLL_ITEM   {}                        ;Linked list to hold buffers together
+                  SDLL_ITEM   {}            ;Linked list to hold buffers together
   WSABuf          WSABUF      {}
-  DataBuffer      BYTE        0 dup(?)                  ;The data buffer is placed here
-IO_SOCKJOB ends                                         ;  Minimal size of the buffer must
-PIO_SOCKJOB typedef ptr IO_SOCKJOB                      ;  be sizeof ACCEPT_DATA
+  DataBuffer      BYTE        0 dup(?)      ;The data buffer is placed here
+IO_SOCKJOB ends                             ;  Minimal size of the buffer must
+PIO_SOCKJOB typedef ptr IO_SOCKJOB          ;  be sizeof ACCEPT_DATA
 
 ;IO_SOCKJOB databuffer structure for an OPERATION_SOCK_ACCEPT operation
-ACCEPT_DATA struct 4                                    
+ACCEPT_DATA struct 4
   LocalAddr       BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;16 BYTEs added, see AcceptEx
   RemoteAddr      BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;  documentation
   pListener       PLISTENER   ?
@@ -266,52 +270,52 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 else
   GetHostName equ GetHostNameW
 endif
-  
+
 @DefProto DllImport, GetAdaptersAddresses, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :DWORD, :POINTER, :POINTER>, 20
 
 IP_ADAPTER_UNICAST_ADDRESS struct
-  Length_              DWORD      ?
-  Flags                DWORD      ?
-  Next                 POINTER    ?
-  Address              SOCKET_ADDRESS <>
-  PrefixOrigin         DWORD      ?
-  SuffixOrigin         DWORD      ?
-  DadState             DWORD      ?
-  ValidLifetime        DWORD      ?
-  PreferredLifetime    DWORD      ?
-  LeaseLifetime        DWORD      ?
-  OnLinkPrefixLength   BYTE       ?
-  _pad                 BYTE 3 dup(?)          ; alignment
+  Length_               DWORD     ?
+  Flags                 DWORD     ?
+  Next                  POINTER   ?
+  Address               SOCKET_ADDRESS <>
+  PrefixOrigin          DWORD     ?
+  SuffixOrigin          DWORD     ?
+  DadState              DWORD     ?
+  ValidLifetime         DWORD     ?
+  PreferredLifetime     DWORD     ?
+  LeaseLifetime         DWORD     ?
+  OnLinkPrefixLength    BYTE      ?
+  _pad                  BYTE      3 dup(?)  ;Alignment
 IP_ADAPTER_UNICAST_ADDRESS ends
 
 IP_ADAPTER_ADDRESSES struct
-  Length_                    DWORD ?
-  IfIndex                    DWORD ?
+  Length_               DWORD     ?
+  IfIndex               DWORD     ?
 
-  Next                       POINTER ?
-  AdapterName                POINTER ?
+  Next                  POINTER   ?
+  AdapterName           POINTER   ?
 
-  FirstUnicastAddress        POINTER ?
-  FirstAnycastAddress        POINTER ?
-  FirstMulticastAddress      POINTER ?
-  FirstDnsServerAddress      POINTER ?
+  FirstUnicastAddress   POINTER   ?
+  FirstAnycastAddress   POINTER   ?
+  FirstMulticastAddress POINTER   ?
+  FirstDnsServerAddress POINTER   ?
 
-  DnsSuffix                  PWSTR ?
-  Description                PWSTR ?
-  FriendlyName               PWSTR ?
+  DnsSuffix             PWSTR     ?
+  Description           PWSTR     ?
+  FriendlyName          PWSTR     ?
 
-  PhysicalAddress            BYTE 8 dup(?)
-  PhysicalAddressLength      DWORD ?
+  PhysicalAddress       BYTE      8 dup(?)
+  PhysicalAddressLength DWORD     ?
 
-  Flags                      DWORD ?
-  Mtu                        DWORD ?
-  IfType                     DWORD ?
-  OperStatus                 DWORD ?
+  Flags                 DWORD     ?
+  Mtu                   DWORD     ?
+  IfType                DWORD     ?
+  OperStatus            DWORD     ?
 
-  Ipv6IfIndex                DWORD ?
-  ZoneIndices                DWORD 16 dup(?)
+  Ipv6IfIndex           DWORD     ?
+  ZoneIndices           DWORD     16 dup(?)
 
-  FirstPrefix                POINTER ?
+  FirstPrefix           POINTER   ?
 IP_ADAPTER_ADDRESSES ends
 
 
@@ -321,30 +325,30 @@ IP_ADAPTER_ADDRESSES ends
 IF_MAX_PHYS_ADDRESS_LENGTH equ  32
 
 MIB_IPNET_ROW2 struct 4
-  Address               SOCKADDR_INET   <>
-  InterfaceIndex        DWORD           ?       ;NET_IFINDEX
-  InterfaceLuid         LUID            <>
+  Address               SOCKADDR_INET <>
+  InterfaceIndex        DWORD     ?         ;NET_IFINDEX
+  InterfaceLuid         LUID      <>
   PhysicalAddress       UCHAR IF_MAX_PHYS_ADDRESS_LENGTH dup (?)
-  PhysicalAddressLength ULONG           ?
-  State                 SDWORD          ?       ;NL_NEIGHBOR_STATE
+  PhysicalAddressLength ULONG     ?
+  State                 SDWORD    ?         ;NL_NEIGHBOR_STATE
   union
     struct
-      IsRouter          BOOLEAN         ?
-      IsUnreachable     BOOLEAN         ?
+      IsRouter          BOOLEAN   ?
+      IsUnreachable     BOOLEAN   ?
     ends
-    Flags               UCHAR           ?
+    Flags               UCHAR     ?
   ends
   union ReachabilityTime
-    LastReachable       ULONG           ?
-    LastUnreachable     ULONG           ?
+    LastReachable       ULONG     ?
+    LastUnreachable     ULONG     ?
   ends
 MIB_IPNET_ROW2 ends
 PMIB_IPNET_ROW2 typedef ptr MIB_IPNET_ROW2
 
 MIB_IPNET_TABLE2 struct
-  NumEntries      DWORD     ?
-                  DWORD     ?                   ;Alignment 32/64 bit
-  Table           MIB_IPNET_ROW2 0 dup(<>)
+  NumEntries            DWORD     ?
+                        DWORD     ?         ;Alignment 32/64 bit
+  Table                 MIB_IPNET_ROW2 0 dup(<>)
 MIB_IPNET_TABLE2 ends
 PMIB_IPNET_TABLE2 typedef ptr MIB_IPNET_TABLE2
 
@@ -366,8 +370,11 @@ $htonl macro Port
 endm
 
 
+DEFAULT_LISTENING_PORT  equ $htons(25773)
 
-DEFAULT_LISTENING_PORT equ $htons(25773)
+;Defaults (can be changed at runtime via your UI/init paths)
+TX_HIGH_WM_DEFAULT      equ (4*1024*1024)   ;4 MiB Watermark
+TX_LOW_WM_DEFAULT       equ (2*1024*1024)   ;2 MiB Watermark
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:  NetComIOSockJobPool
@@ -382,7 +389,7 @@ Object NetComIOSockJobPool, NetComIOSockJobPoolID, DataPool
   RedefineMethod  Reset
   VirtualMethod   ResetIOJob,         PIO_SOCKJOB, WORD
 
-  DefineVariable  dBufferSize,        DWORD,            0
+  DefineVariable  dBufferSize,        DWORD,            0     ;Payload size of each Item in BYTEs
   DefineVariable  dCount,             DWORD,            0     ;Control value
 ObjectEnd
 
@@ -396,7 +403,8 @@ Object NetComConnection, NetComConnectionID, Primer
   VirtualMethod   Disconnect,         DWORD                   ;Gracefull disconnect one or both directions
   RedefineMethod  Done
   RedefineMethod  Init,               POINTER, POINTER        ;-> Owner, -> NetComProtocol
-  VirtualMethod   FreeRcvIOJobs
+  VirtualMethod   FlushRcvIOJobs
+  VirtualMethod   TryQueueReceive
 
   ;Methods to place supervisor jobs
   VirtualMethod   QueueDestroy
@@ -433,6 +441,15 @@ Object NetComConnection, NetComConnectionID, Primer
   DefineVariable  RemoteAddr,         NETCOMADDR,       {AF_INETX}  ;IP + Port
   DefineVariable  ConnStartTime,      SYSTEMTIME,       {}
 
+  ;Backpressure Metric
+  DefineVariable  dTxQueuedBytes,     DWORD,            0     ;Total queued (in-flight + pending) bytes for WSASend
+  DefineVariable  dTxHighWM,          DWORD,            TX_HIGH_WM_DEFAULT
+  DefineVariable  dTxLowWM,           DWORD,            TX_LOW_WM_DEFAULT
+  DefineVariable  dTxBlocked,         DWORD,            0     ;Boolean: window full reached at least once
+  DefineVariable  dRxPaused,          DWORD,            0     ;Boolean: do not post new WSARecv
+  DefineVariable  dRxInFlight,        DWORD,            0     ;Number of posted Recv operations (0/1)
+
+  ;Management
   DefineVariable  pData,              POINTER,          NULL  ;-> Data managed by the protocol
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
 ObjectEnd
@@ -596,7 +613,7 @@ DbgOnSockError macro WarningText:req, Error, InfoText, Dest
       invoke WSAGetLastError
       mov ebx, eax
     endif
-    .if ebx != NO_ERROR 
+    .if ebx != NO_ERROR
       DbgOutSockMessage WarningText, Error, InfoText, Dest
     .endif
     DbgLoadContext
@@ -717,7 +734,7 @@ DbgConnection macro pConnection:req, InfoText, Dest
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     endif
     DbgShowSrcInfo ??DbgDstWnd
-  
+
     $$Buffersize = 1024
     sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
     if TARGET_BITNESS eq 32
@@ -727,7 +744,7 @@ DbgConnection macro pConnection:req, InfoText, Dest
     endif
 
     mov xdi, xsi
-    WriteFA xdi, "Connection = ¦HXh", xbx 
+    WriteFA xdi, "Connection = ¦HXh", xbx
     invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
                         DBG_EFFECT_NEWLINE, ??DbgDstWnd
 
@@ -768,7 +785,7 @@ DbgConnection macro pConnection:req, InfoText, Dest
     WriteFA xdi, "Socket Handle = ¦HX ", [xbx].$Obj(NetComConnection).hSocket
     invoke DbgOutTextA, xsi, DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
                         DBG_EFFECT_NEWLINE, ??DbgDstWnd
-    
+
     mov xdi, xsi
     DbgOutComAddrIPV4 [xbx].$Obj(NetComConnection).LocalAddr
     invoke DbgOutTextA, $OfsCStrA(", Local address"), DBG_COLOR_FORE_CONNECTION, DBG_COLOR_BACK_CONNECTION, \
@@ -811,8 +828,8 @@ endif
 ;  LAST_ACK     Other side    Sent FIN
 ;  TIME_WAIT    Active closer Cleanup
 ;  CLOSING      Both          Simultaneous FIN
-; 
-; 
+;
+;
 ;  Mapping WSA calls to TCP states:
 ;
 ;  1) Creating a socket
@@ -1407,10 +1424,10 @@ Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, pPro
   DbgText "NetComEngine.StartListening - Listener socket created"
 
   ;Set socket options: disable nagle's algorithm for fast reaction time
-  mov dOption, 0
+  mov dOption, 1                                        ;1 means algo disabled
   invoke setsockopt, [xbx].LISTENER.hSocket, IPPROTO_TCP, TCP_NODELAY, \
                      addr dOption, sizeof dOption
-  DbgCheckSockReturn "NetComEngine.StartListening - ERROR on SetSockOpt TCP_NODELAY"
+  DbgCheckSockReturn "NetComEngine.StartListening - ERROR on SetSockOpt TCP_NODELAY = 1"
 
   mov xdi, pProtocol
   invoke bind, [xbx].LISTENER.hSocket, addr [xdi].$Obj(NetComProtocol).ListeningAddr, \
@@ -1557,91 +1574,62 @@ Method NetComEngine.Worker, uses xbx xdi xsi
         .else
           mov xdi, xCompletionKey                       ;xdi -> NetComConnection
         .endif
-  
-  ;      DbgHex xdi, "NetComEngine.Worker - Connection"
-        invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-  
-        ;Determine whether the operation completed successfully or not
-        invoke WSAGetOverlappedResult, [xdi].$Obj(NetComConnection).hSocket, xbx, \
-                                       addr dBytesConsumed, \
-                                       FALSE, addr dFlags
-        mov dOvrResult, eax
-        ;Serialize on a per connection basis
-  ;      LockObjectAccess [xdi].$Obj(NetComConnection)
-        BitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-        lock dec [xdi].$Obj(NetComConnection).dPendingIOJobs
-        lock inc [xdi].$Obj(NetComConnection).dCompletedIOJobs
-        .if dOvrResult != FALSE
-          ;Operation succeeded *****************************************************************
-          ;Each of the following connection handlers must manage the IOSockJob themselves
-          movzx eax, [xbx].IO_SOCKJOB.wOperation
-          .if eax == OPERATION_SOCK_RECV
-            mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
-            lock add [xsi].dBytesIn, edx
-            OCall xdi::NetComConnection.OnReceived, xbx
-  
-          .elseif eax == OPERATION_SOCK_SEND
-            mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
-            lock add [xsi].dBytesOut, edx
-            OCall xdi::NetComConnection.OnSent, xbx
-  
-          .elseif eax == OPERATION_SOCK_CONNECT
-            OCall xdi::NetComConnection.OnConnected, xbx
-  
-          .elseif eax == OPERATION_SOCK_ACCEPT
-            OCall xdi::NetComConnection.OnAccepted, xbx
-  
-          .else
-            invoke WSAGetLastError                        ;This error is thread specific
-            OCall xdi::NetComConnection.OnError, xbx, eax
-          .endif
-  
+      .endif
+;      DbgHex xdi, "NetComEngine.Worker - Connection"
+      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+
+      ;Determine whether the operation completed successfully or not
+      invoke WSAGetOverlappedResult, [xdi].$Obj(NetComConnection).hSocket, xbx, \
+                                     addr dBytesConsumed, \
+                                     FALSE, addr dFlags
+      mov dOvrResult, eax
+      ;Serialize on a per connection basis
+;      LockObjectAccess [xdi].$Obj(NetComConnection)
+      BitSet [xbx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
+      lock dec [xdi].$Obj(NetComConnection).dPendingIOJobs
+      lock inc [xdi].$Obj(NetComConnection).dCompletedIOJobs
+      .if dOvrResult != FALSE
+        ;Operation succeeded *****************************************************************
+        ;Each of the following connection handlers must manage the IOSockJob themselves
+        movzx eax, [xbx].IO_SOCKJOB.wOperation
+        .if eax == OPERATION_SOCK_RECV
+          mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
+          lock add [xsi].dBytesIn, edx
+          OCall xdi::NetComConnection.OnReceived, xbx
+
+        .elseif eax == OPERATION_SOCK_SEND
+          mrm [xbx].IO_SOCKJOB.dBytesConsumed, dBytesConsumed, edx
+          lock add [xsi].dBytesOut, edx
+          OCall xdi::NetComConnection.OnSent, xbx
+
+        .elseif eax == OPERATION_SOCK_CONNECT
+          OCall xdi::NetComConnection.OnConnected, xbx
+
+        .elseif eax == OPERATION_SOCK_ACCEPT
+          OCall xdi::NetComConnection.OnAccepted, xbx
+
         .else
-          ;Operation failed! *******************************************************************
-          invoke WSAGetLastError                          ;This error is thread specific
-          movzx ecx, [xbx].IO_SOCKJOB.wOperation
-          .if ecx == OPERATION_SOCK_RECV
-;            DbgSockError "NetComEngine.Worker - Receive ERROR", eax
-;            DbgHex xdi, "NetComEngine.Worker - pConnection"
-            OCall xdi::NetComConnection.OnError, xbx, eax
-  
-          .elseif ecx == OPERATION_SOCK_SEND
-;            DbgSockError "NetComEngine.Worker - Send ERROR", eax
-;            DbgHex xdi, "NetComEngine.Worker - pConnection"
-            OCall xdi::NetComConnection.OnError, xbx, eax
-  
-          .elseif ecx == OPERATION_SOCK_CONNECT
-;            DbgSockError "NetComEngine.Worker - Connect ERROR", eax
-;            DbgHex xdi, "NetComEngine.Worker - pConnection"
-            OCall xdi::NetComConnection.OnError, xbx, eax
-  
-          .elseif ecx == OPERATION_SOCK_ACCEPT
-;            DbgSockError "NetComEngine.Worker - Accept ERROR", eax
-;            DbgHex xdi, "NetComEngine.Worker - pConnection"
-            OCall xdi::NetComConnection.OnError, xbx, eax
-  
-          .else
-;            DbgSockError "NetComEngine.Worker - Unknown operation ERROR", eax
-;            DbgHex xdi, "NetComEngine.Worker - pConnection"
-            OCall xdi::NetComConnection.OnError, xbx, eax
-  
-          .endif
+          invoke WSAGetLastError                        ;This error is thread specific
+          OCall xdi::NetComConnection.OnError, xbx, eax
         .endif
-  
-  ;      UnlockObjectAccess [xdi].$Obj(NetComConnection)
-        invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+
+      .else
+        ;Operation failed! *******************************************************************
+        invoke WSAGetLastError                          ;This error is thread specific
+        OCall xdi::NetComConnection.OnError, xbx, eax
       .endif
 
       ;If the connection is flagged for destruction, proceed ONLY if the 
       ;connection has no pending IOs
       .ifBitSet [xdi].$Obj(NetComConnection).dFlags, NCC_DESTROY_QUEUED
-  ;      DbgHex xdi, "NetComEngine.Worker - Connection flagged for destruction"
         .if [xdi].$Obj(NetComConnection).dPendingIOJobs == 0
-  ;        DbgHex xdi, "NetComEngine.Worker - Connection with no pending IOJobs - Done + Free"
           OCall xdi::NetComConnection.Done
           OCall [xsi].Connections::NetComConnectionPool.FreeItem, xdi
         .endif
       .endif
+
+;      UnlockObjectAccess [xdi].$Obj(NetComConnection)
+      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
     .endif
 
   .endw
@@ -1735,11 +1723,11 @@ Method NetComConnection.Disconnect, uses xsi, dDirection:DWORD
 ;    DbgCheckSockReturn "NetComConnection.Disconnect - shutdown error"
     .if eax == NO_ERROR
       .if dDirection == SD_RECEIVE
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RECEIVE_LOCAL
+        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RX_LOCAL
       .elseif dDirection == SD_SEND
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_SEND_LOCAL
+        xBitSet [xsi].dFlags, NCC_SHUTDOWN_TX_LOCAL
       .else
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RECEIVE_LOCAL or NCC_SHUTDOWN_SEND_LOCAL
+        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RX_LOCAL or NCC_SHUTDOWN_TX_LOCAL
       .endif
       OCall [xsi].pProtocol::NetComProtocol.OnDisconnected, xsi, dDirection
     .endif
@@ -1780,6 +1768,7 @@ Method NetComConnection.DoReceive, uses xdi xsi, pIOSockJob:PIO_SOCKJOB
   SDLL_Append xax, xcx                                  ;Link this IOSockJob to the IO list
   mov dFlags, 0
   lock inc [xsi].dPendingIOJobs                         ;Increment before calling WSARecv 
+  lock inc [xsi].dRxInFlight 
   invoke WSARecv, [xsi].hSocket, addr [xdi].IO_SOCKJOB.WSABuf, 1, \
                   addr [xdi].IO_SOCKJOB.dBytesConsumed, addr dFlags, xdi, NULL
   mov dResult, eax
@@ -1820,16 +1809,16 @@ Method NetComConnection.DoSend, uses xdi xsi, pIOSockJob:PIO_SOCKJOB
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComConnection.FreeRcvIOJobs
+; Method:     NetComConnection.FlushRcvIOJobs
 ; Purpose:    Free all gattered IOSockJobs.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method NetComConnection.FreeRcvIOJobs, uses xbx xdi xsi
+Method NetComConnection.FlushRcvIOJobs, uses xbx xdi xsi
   local pItem:POINTER
 
   SetObject xsi
-;  DbgHex xsi, "NetComConnection.FreeRcvIOJobs"
+;  DbgHex xsi, "NetComConnection.FlushRcvIOJobs"
 
   ;Iterate the RcvIOChain Linked List in reverse order.
   ;Since the socket is closed, no new IOSockJobs are queued
@@ -1877,10 +1866,10 @@ Method NetComConnection.Init, uses xsi, pOwner:POINTER, pProtocol:POINTER
     invoke WSASocket, AF_INETX, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED
     mov [xsi].hSocket, xax
     .if xax != INVALID_SOCKET
-      ;Enable the Nagle algorithm for send coalescing
-      mov dOption, 0                                  ;0 means algo enabled
+      ;Set socket options: disable nagle's algorithm for fast reaction time
+      mov dOption, 1                                  ;1 means algo disabled
       invoke setsockopt, [xsi].hSocket, IPPROTO_TCP, TCP_NODELAY, addr dOption, sizeof dOption
-      DbgCheckSockReturn "NetComConnection.Init - ERROR on SetSockOpt TCP_NODELAY = 0"
+      DbgCheckSockReturn "NetComConnection.Init - ERROR on SetSockOpt TCP_NODELAY = 1"
 
       ;Set send buffer size to zero since we provide our own buffers
 ;      m2z dOption
@@ -2118,6 +2107,7 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
 
   SetObject xsi
 ;  DbgHex xsi, "NetComConnection.OnReceived"
+  lock dec [xsi].dRxInFlight
   ?mov xdx, pIOSockJob
   mov xbx, [xsi].pOwner
 
@@ -2127,7 +2117,7 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
     ;There is no other possibility to get a zero length payload => No need to pass it
     ;to any protocol handler
 ;    DbgText "NetComConnection.OnReceived - dBytesConsumed = 0"
-    BitSet [xsi].dFlags, NCC_SHUTDOWN_SEND_REMOTE       ;Remote shutdown send
+    BitSet [xsi].dFlags, NCC_SHUTDOWN_TX_REMOTE       ;Remote shutdown send
     .ifBitClr [xsi].dFlags, NCC_CLOSED
       OCall xsi.Disconnect, SD_RECEIVE                  ;Local shutdown receive
     .endif
@@ -2204,9 +2194,20 @@ MethodEnd
 Method NetComConnection.OnSent,, pIOSockJob:PIO_SOCKJOB
   SetObject xcx
 ;  DbgHex xcx, "NetComConnection.OnSent"
-  mov xax, [xcx].pOwner
+
+  mov xdx, pIOSockJob
+  mov eax, [xdx].IO_SOCKJOB.dBytesConsumed
+  lock sub [xcx].dTxQueuedBytes, eax
+
+  ;If below Low-WM => clear block
+  mov eax, [xcx].dTxQueuedBytes
+  .if eax < [xcx].dTxLowWM
+    BitClr [xcx].dFlags, NCC_TX_PAUSED
+  .endif
+
   ;Toss the completed IOSockJob back in the IOJobPool
-  OCall [xax].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, pIOSockJob
+  mov xax, [xcx].pOwner
+  OCall [xax].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, xdx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -2352,7 +2353,7 @@ Method NetComConnection.QueueReceive, uses xsi
   OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.NewItem, \
                                                                              OPERATION_SOCK_RECV
   .if xax != NULL
-    OCall xsi.DoReceive, xax
+    OCall xsi.DoReceive, xax                            ;dRxInFlight is incremented inside DoReceive
   .endif
 MethodEnd
 
@@ -2365,14 +2366,25 @@ MethodEnd
 ; Return:     eax = Data size not queued. Zero means all was sent.
 
 Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
-  local dBufferSize:DWORD, pItem:POINTER
+  local dBufferSize:DWORD, pItem:POINTER, dAvail:DWORD
 
   SetObject xsi
 ;  DbgHex xsi, "NetComConnection.QueueSend"
+  mov eax, dSize
+  mov edx, [xsi].dTxHighWM
+  sub edx, [xsi].dTxQueuedBytes
+  .if SIGN? || ZERO?
+    BitSet [xsi].dFlags, NCC_TX_PAUSED
+    ExitMethod                                        ;eax = dSize                         
+  .endif
+  mov edi, eax
+  cmp edi, edx
+  cmovg edi, edx
+  
   mov xcx, [xsi].pOwner                               ;xcx -> NetComConnectionPool
   mov xdx, [xcx].$Obj(NetComConnectionPool).pIOSockJobPool  ;xdx -> NetComIOJobPool
   m2m dBufferSize, [xdx].$Obj(NetComIOSockJobPool).dBufferSize, eax
-  mov edi, dSize
+
   .while edi != 0
     mov xcx, [xsi].pOwner                             ;xcx -> NetComConnectionPool
     OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.NewItem, \
@@ -2384,17 +2396,22 @@ Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
         m2m [xax].IO_SOCKJOB.WSABuf.len, dBufferSize, edx
         invoke MemClone, [xax].IO_SOCKJOB.WSABuf.buf, pData, dBufferSize
         OCall xsi.DoSend, pItem
-        .break .if eax != 0
         mov edx, dBufferSize
-        add pData, xdx
+        sub edx, eax 
+        lock add [xsi].dTxQueuedBytes, edx
         sub edi, edx
+        .break .if eax != 0
+        add pData, xdx
       .else
-        ;Send a partially full buffer
+        ;Send a partially full buffer and break
         mov [xax].IO_SOCKJOB.WSABuf.len, edi
         invoke MemClone, [xax].IO_SOCKJOB.WSABuf.buf, pData, edi
         OCall xsi.DoSend, pItem
-        .break .if eax != 0
-        xor edi, edi
+        mov edx, edi
+        sub edx, eax 
+        lock add [xsi].dTxQueuedBytes, edx
+        sub edi, edx
+        .break
       .endif
     .else
       OCall xsi.ErrorReport, NULL, NCCN_OUT_OF_MEMORY
@@ -2402,6 +2419,21 @@ Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
     .endif
   .endw
   mov eax, edi
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     NetComConnection.TryQueueReceive
+; Purpose:    Tries to resume the receiving IOJobs.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method NetComConnection.TryQueueReceive, uses xsi
+  SetObject xsi
+  .ifBitClr [xsi].dFlags, NCC_RX_PAUSED
+    .if [xsi].dRxInFlight == 0
+      OCall xsi.QueueReceive
+    .endif
+  .endif
 MethodEnd
 
 endif
@@ -2698,6 +2730,7 @@ MethodEnd
 ; Return:     eax = Found condition (TRUE/FALSE).
 ;             ecx = Index in the range [0..Count]. If the ListEntry is not found, ecx is set to the
 ;                   index where the ListEntry would be placed if inserted.
+; ToDo:       Add CIDR matching.
 
 Method NetComProtocol.IsBlackListed?,, pAddr:PNETCOMADDR
   SetObject xcx
@@ -2949,6 +2982,7 @@ endif
 ; ToDos:
 ; 1. Backpressure indicator (TCP Window Full) to slow down WSASend
 ; 2. Supervisor implementation
+; 3. Add CIDR (Classless Inter-Domain Routing) matching to the Blacklist.
 ; --------------------------------------------------------------------------------------------------
 
 
@@ -3927,6 +3961,8 @@ MethodEnd
 
 Method NetComSrpsProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection), \
                                                          TransmitionLength:DWORD
+  local dRemainingBytes:DWORD
+
 ;  DbgHex pConnection, "NetComSrpsProtocol.ProcessData", "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   mov xsi, [xdx].$Obj(NetComConnection).pData
@@ -3943,6 +3979,7 @@ Method NetComSrpsProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(Net
   .endif
   
   lea xbx, [xdx].$Obj(NetComConnection).RcvIOChain      ;xbx -> Sentinel from the incoming connection
+  m2m dRemainingBytes, TransmitionLength, eax
 
   .while TRUE
     ;Get first IOJob from receive chain
@@ -3960,12 +3997,21 @@ Method NetComSrpsProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(Net
     mov [xbx].SDLL_SENTINEL.pFirstItem, xdx
     mov [xdx].SDLL_ITEM.pPrevItem, xbx
 
-    OCall xdi::NetComConnection.QueueSend, addr [xsi].IO_SOCKJOB.DataBuffer, TransmitionLength
-
-    mov xax, [xdi].$Obj(NetComConnection).pOwner
+    OCall xdi::NetComConnection.QueueSend, addr [xsi].IO_SOCKJOB.DataBuffer, [xsi].IO_SOCKJOB.dBytesConsumed
+    ;Return value is the number of not queued bytes, what may be different than TransmitionLength
+    sub dRemainingBytes, eax
+    .if eax != 0
+      ;Move the pointer inside IOJob
+      mov ecx, [xsi].IO_SOCKJOB.dBytesConsumed
+      sub ecx, eax
+      add xcx, [xsi].IO_SOCKJOB.WSABuf.buf
+      mov [xsi].IO_SOCKJOB.WSABuf.buf, xcx
+      mov [xsi].IO_SOCKJOB.dBytesConsumed, eax
+      .break
+    .endif
     ;Toss the received IOSockJob back in the IOJobPool
+    mov xax, [xdi].$Obj(NetComConnection).pOwner
     OCall [xax].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, xsi
-    
   .endw
 
   xor eax, eax                                          ;Dont touch the receive chain

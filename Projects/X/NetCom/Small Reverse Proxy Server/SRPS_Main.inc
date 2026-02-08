@@ -47,7 +47,7 @@ MSG_INFO struct
   pMessage    PSTRING   ?
   pCaption    PSTRING   ?
   dType       DWORD     ?
-  cBuffer     CHR       0 DUP (?)  
+  cBuffer     CHR       0 DUP (?)
 MSG_INFO ends
 PMSG_INFO typedef ptr MSG_INFO
 
@@ -71,11 +71,16 @@ Object Application,, DlgApp
   DefineVariable    dFlags,           DWORD,          0 ;Runtime state flags
   DefineVariable    hTimer,           HANDLE,         0
 
+  ;Used to update the application caption
+  DefineVariable    dConnectionCount, DWORD,          -1
+  DefineVariable    dIOSockJobCount,  DWORD,          -1
+
   Embed  RevProxy,  NetComEngine                        ;Embedded reverse proxy engine
 ObjectEnd
 
 
 include SRPS_Protocol.inc
+include SRPS_Supervisor.inc
 
 TIMER_ID  equ   126985
 
@@ -170,7 +175,6 @@ Method Application.CtlsGet, uses xdi xbx xsi
   local cClientLocalAddr[32]:CHR, cClientLocalServiceName[32]:CHR
   local cServerLocalAddr[32]:CHR, cServerLocalServiceName[32]:CHR
   local cServerRemoteAddr[32]:CHR, cServerRemoteServiceName[32]:CHR
-  local cBuffer:DWORD
 
   DbgText "Application.CtlsGet"
   SetObject xsi
@@ -225,17 +229,16 @@ Method Application.CtlsGet, uses xdi xbx xsi
   .endif
 
   ;Read server remote IP
-  mov xdi, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_SERVER_REMOTE_ADDR)
-  invoke SendMessage, xdi, CB_GETCURSEL, 0, 0
-  lea xbx, cServerRemoteAddr
-  invoke SendMessage, xdi, CB_GETLBTEXT, eax, xbx       ;Can only return valid addresses
+  lea xdi, cServerRemoteAddr
+  invoke GetDlgItemText, [xsi].hWnd, IDC_CBO_SERVER_REMOTE_ADDR, xdi, lengthof cServerRemoteAddr
+  invoke StrLRTrim, xdi, xdi
 
   ;Read server remote port
-  invoke GetDlgItemInt, [xsi].hWnd, IDC_EDT_SERVER_REMOTE_PORT, addr dSucceeded, FALSE
-  .if dSucceeded != FALSE && ax > 0 && ax <= 0FFFFh
-    invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_SERVER_REMOTE_PORT, \
-                           addr cServerRemoteServiceName, lengthof cServerRemoteServiceName
-  .else
+  lea xdi, cServerRemoteServiceName
+  invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_SERVER_REMOTE_PORT, xdi, lengthof cServerRemoteServiceName
+  invoke StrLRTrim, xdi, xdi
+  invoke dec2dword, xdi
+  .if SDWORD ptr eax <= 0 || SDWORD ptr eax > 0FFFFh
     invoke MessageBox, [xsi].hWnd, $OfsCStr("Incorrect server remote port number"), \
                        addr cError, MB_OK or MB_ICONERROR
     xor eax, eax
@@ -321,7 +324,7 @@ Method Application.CtlsGet, uses xdi xbx xsi
   lea xcx, [xbx].$Obj(NetComSrpsProtocol).ServerRemoteAddr
   invoke MemClone, xcx, [xax].ADDRINFOT.ai_addr, DWORD ptr [xax].ADDRINFOT.ai_addrlen
   invoke FreeAddrInfo, pResult                          ;Free memory
-  
+
   mov dRetValue, TRUE
   DbgNetComAddrIPV4 [xbx].$Obj(NetComSrpsProtocol).ServerRemoteAddr, "Application.CtlsGet - Server Remote Address"
 
@@ -342,7 +345,7 @@ Method Application.CtlsSet, uses xbx xdi xsi
 
   DbgText "Application.CtlsSet"
   SetObject xsi
-  
+
   ;Set "Client local address" and "Server local address" comboboxes
   mov hComboClientLocalAddr, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_CLIENT_LOCAL_ADDR)
   mov hComboServerLocalAddr, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_SERVER_LOCAL_ADDR)
@@ -431,7 +434,7 @@ Method Application.CtlsSet, uses xbx xdi xsi
     .endif
     MemFree pAdapter                                    ;Free allocated memory buffer
   .endif
-  
+
   ;Add known neighbor IPs
   invoke GetIpNetTable2, AF_INETX, addr pMibTable
   .if eax == NO_ERROR
@@ -450,7 +453,7 @@ Method Application.CtlsSet, uses xbx xdi xsi
     .endw
     invoke FreeMibTable, pMibTable
   .endif
-  
+
   invoke SendMessage, hComboServerRemoteAddr, CB_SETCURSEL, 0, 0
 
   ;Enable/disable "Server local port" edit control
@@ -514,12 +517,13 @@ Method Application.Init, uses xbx xsi
     OCall $ObjTmpl(NetComSrpsProtocol)::NetComSrpsProtocol.Init, xsi
     .if eax != 0
       lea xbx, cBuffer
-      WriteF xbx, "\`¦ST\` failed to initialize the Reverse Proxy protocol\:", offset szAppTitle ;Prepare error message
+      WriteF xbx, "\`¦ST\` failed to initialize the Reverse Proxy protocol\:", offset szAppTitle
       invoke MessageBox, 0, addr cBuffer, addr cError, MB_OK or MB_ICONERROR or MB_TASKMODAL
       invoke ExitProcess, 1                               ;Exit program with failure
     .endif
   .endif
-  OCall [xsi].RevProxy::NetComEngine.Init, xsi, 50, 1000, MSS_ETHERNET_IPVX ;Init network engine
+  OCall [xsi].RevProxy::NetComEngine.Init, xsi, offset $ObjTmpl(SRPS_Supervisor), \
+                                           50, 1000, MSS_ETHERNET_IPVX ;Init network engine
   .if eax != 0
     invoke MessageBox, [xsi].hWnd, $OfsCStr("Failed to start the NetCom engine"), \
                        addr cError, MB_OK or MB_ICONERROR ;Show error
@@ -527,7 +531,7 @@ Method Application.Init, uses xbx xsi
   .endif
 
   invoke SetWindowText, [xsi].hWnd, offset szAppTitle
-  invoke SetTimer, [xsi].hWnd, TIMER_ID, 1000, NULL
+  invoke SetTimer, [xsi].hWnd, TIMER_ID, 500, NULL
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -560,7 +564,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDC_BTN_STOP
     OCall [xsi].RevProxy::NetComEngine.StopListening
-    OCall [xsi].RevProxy::NetComEngine.ConnectionsDestroy
+    OCall [xsi].RevProxy::NetComEngine.ConnectionsDestroy      ;§§§§§ this doesnt work
     OCall [xsi].RevProxy::NetComEngine.ConnectionsClose
     BitClr [xsi].dFlags, APF_RUNNING                    ;Clear running flag
     OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
@@ -599,12 +603,13 @@ MethodEnd
 ; Arguments:  Arg1: -> MSG_INFO.
 ;             Arg2: Dummy.
 ; Return:     Nothing.
+; Note:       The callie must free the passed memory.
 
 Method Application.OnShowMsg, uses xbx, pMsgInfo:WPARAM, lParam:LPARAM
   SetObject xcx
   mov xbx, pMsgInfo
   invoke MessageBox, [xcx].hWnd, [xbx].MSG_INFO.pMessage, [xbx].MSG_INFO.pCaption, [xbx].MSG_INFO.dType
-  MemFree xbx  
+  MemFree xbx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -612,7 +617,7 @@ MethodEnd
 ; Purpose:    Event procedure for WM_TIMER message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
-; Return:     eax = Zero if handled.
+; Return:     eax = Zero (handled).
 
 Method Application.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[1024]:CHR
@@ -620,11 +625,15 @@ Method Application.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Set application caption
-  lea xdi, cBuffer
   lea xbx, [xsi].RevProxy
-  WriteF xdi, "¦ST - ¦UD/¦UD", offset szAppTitle, \
-                              [xbx].$Obj(NetComEngine).Connections.dCount, \
-                              [xbx].$Obj(NetComEngine).IOSockJobs.dCount   
-
-  invoke SetWindowText, [xsi].hWnd, addr cBuffer
+  mov eax, [xbx].$Obj(NetComEngine).ConnectionPool.dCount
+  mov ecx, [xbx].$Obj(NetComEngine).IOSockJobPool.dCount
+  .if eax != [xsi].dConnectionCount || ecx != [xsi].dIOSockJobCount
+    mov [xsi].dConnectionCount, eax
+    mov [xsi].dIOSockJobCount, ecx
+    lea xdi, cBuffer
+    WriteF xdi, "¦ST - ¦UD/¦UD", offset szAppTitle, [xsi].dConnectionCount, [xsi].dIOSockJobCount
+    invoke SetWindowText, [xsi].hWnd, addr cBuffer
+  .endif
+  xor eax, eax
 MethodEnd

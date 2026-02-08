@@ -17,17 +17,31 @@ if IMPLEMENT
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     NetComIOSockJobPool.Done
+; Purpose:    Finalize the NetComIOSockJobPool object.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method NetComIOSockJobPool.Done, uses xsi
+;  DbgText "NetComIOSockJobPool.Done"
+  SetObject xsi
+  ACall xsi.Done
+  invoke DeleteCriticalSection, addr [xsi].CritSect
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.FreeItem
-; Purpose:    Release memory of a specified IO_SOCKJOB.
-; Arguments:  Arg1: -> IO_SOCKJOB.
+; Purpose:    Release the memory used by the IO_SOCKJOB.
+; Arguments:  Arg1: -> IO_SOCKJOB to release.
 ; Return:     Nothing.
 
 Method NetComIOSockJobPool.FreeItem, uses xsi, pIOSockJob:PIO_SOCKJOB
   SetObject xsi
-  LockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
+;  DbgText "NetComIOSockJobPool.FreeItem"
+  invoke EnterCriticalSection, addr [xsi].CritSect
   dec [xsi].dCount
   ACall xsi.FreeItem, pIOSockJob                        ;Return it to the DataPool
-  UnlockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
+  invoke LeaveCriticalSection, addr [xsi].CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -38,29 +52,34 @@ MethodEnd
 ;             Arg3: Buffer size of each NetComIOJob. Usually MSS_ETHERNET_IPVX (MTU - Header size).
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComIOSockJobPool.Init,, pOwner:POINTER, dInitJobCount:DWORD, dBufferSize:DWORD
-  SetObject xcx
-  mrm [xcx].dBufferSize, dBufferSize, eax
+Method NetComIOSockJobPool.Init, uses xsi, pOwner:POINTER, dInitJobCount:DWORD, dBufferSize:DWORD
+  SetObject xsi
+  invoke InitializeCriticalSection, addr [xsi].CritSect
+  
+  mrm [xsi].dBufferSize, dBufferSize, eax
   add eax, sizeof(IO_SOCKJOB)                           ;Add the header size to the payload size
-  ACall xcx.Init, pOwner, eax, dInitJobCount, 1         ;We need an alignment of 1
+  ACall xsi.Init, pOwner, eax, dInitJobCount, 1         ;We need an alignment of 1
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.NewItem
 ; Purpose:    Allocate a new IO_SOCKJOB from DataPool.
 ; Arguments:  Arg1: Operation type.
-; Return:     eax -> New IO_SOCKJOB or NULL if failed.
+; Return:     xax -> New IO_SOCKJOB or NULL if failed.
 
-Method NetComIOSockJobPool.NewItem, uses xsi, wOperation:WORD
+Method NetComIOSockJobPool.NewItem, uses xbx xsi, wOperation:WORD
   SetObject xsi
-  LockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
+;  DbgText "NetComIOSockJobPool.NewItem"
+  invoke EnterCriticalSection, addr [xsi].CritSect
   ACall xsi.NewItem
   .if xax != NULL
     inc [xsi].dCount
-    UnlockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
+    mov xbx, xax
     OCall xsi.ResetIOJob, xax, wOperation
+    invoke LeaveCriticalSection, addr [xsi].CritSect
+    mov xax, xbx
   .else
-    UnlockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
+    invoke LeaveCriticalSection, addr [xsi].CritSect
     OCall xsi.ErrorReport, NULL, NCJP_OUT_OF_MEMORY
     xor eax, eax
   .endif
@@ -74,8 +93,10 @@ MethodEnd
 
 Method NetComIOSockJobPool.Reset, uses xsi
   SetObject xsi
+  invoke EnterCriticalSection, addr [xsi].CritSect
   ACall xsi.Reset
   mov [xsi].dCount, 0
+  invoke LeaveCriticalSection, addr [xsi].CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

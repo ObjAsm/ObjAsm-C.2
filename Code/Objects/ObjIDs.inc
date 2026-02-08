@@ -428,8 +428,9 @@ NetComConnectionID                equ     0000012103
 NetComConnectionPoolID            equ     0000012104
 NetComEngineID                    equ     0000012105
 NetComProtocolID                  equ     0000012106
-NetComFileID                      equ     0000012107
-NetComFileEventsID                equ     0000012108
+NetComSupervisorID                equ     0000012107
+NetComFileID                      equ     0000012108
+NetComFileEventsID                equ     0000012109
 
 ;ACE
 AsmDevEnvID                       equ     0000012200

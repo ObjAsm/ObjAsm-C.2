@@ -1,0 +1,25 @@
+//RC-file created by Inc2RC from NetComStressClient_Shared.inc on 2026-02-08, 13:30:14.36
+
+#define APP_TITLE "NetCom Stress Test Client"
+#define ABOUT_TEXT "NetComStressTestClient"
+#define COPYRIGHT "G. Friedrich   October 2017"
+#define VER_FILEVERSION 1,0,0,0
+#define VER_FILEVERSION_STR "1.0"
+#define VER_PRODUCTVERSION 1,0,0,0
+#define VER_PRODUCTVERSION_STR "1.0"
+#define BUILD_NUMBER 5
+#define BUILD_DATE_STR "2026-02-08"
+#define BUILD_BITNESS 64
+#define BUILD_MODE RLS
+#define IDM_SEND 1000
+#define IDM_EXIT 1001
+#define IDM_HELP 1100
+#define IDM_ABOUT 1101
+#define IDD_DLG_SEND 1000
+#define IDC_BTN_CONNECT 1       ;Required for CANCEL to work properly
+#define IDC_BTN_DISCONNECT 1002
+#define IDC_CBO_ADDR 1005
+#define IDC_EDT_PORT 1007
+#define IDC_UDN_PORT 1008
+#define BUILD_BIN_FORMAT EXE
+#define BUILD_BIN_SUFFIX_STR ""

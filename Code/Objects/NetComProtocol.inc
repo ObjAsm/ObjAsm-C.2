@@ -16,6 +16,20 @@ if IMPLEMENT
 ;    NetComProtocol implementation
 ; ==================================================================================================
 
+DbgSetWindowName macro
+  if DEBUGGING
+    local pDbgWndNameW:PSTRINGW
+
+    mov xax, pConnection
+    .if xax != NULL
+      lea xcx, [xax].$Obj(NetComConnection).wName
+    .else
+      lea xcx, szDbgSrc
+    .endif
+    mov pDbgWndNameW, xcx
+  endif
+endm
+
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.Allocate
 ; Purpose:    Allocate a memory chunk for management data on a per Connection basis.
@@ -25,7 +39,9 @@ if IMPLEMENT
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComProtocol.Allocate,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.Allocate", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.Allocate", pDbgWndNameW
   xor eax, eax
 MethodEnd
 
@@ -89,7 +105,9 @@ MethodEnd
 
 Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
                                         pIOSockJob:PIO_SOCKJOB
-;  DbgHex pConnection, "NetComProtocol.IsDataComplete?", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.IsDataComplete?", pDbgWndNameW
   xor eax, eax
 MethodEnd
 
@@ -100,6 +118,7 @@ MethodEnd
 ; Return:     eax = Found condition (TRUE/FALSE).
 ;             ecx = Index in the range [0..Count]. If the ListEntry is not found, ecx is set to the
 ;                   index where the ListEntry would be placed if inserted.
+; ToDo:       Add CIDR matching.
 
 Method NetComProtocol.IsBlackListed?,, pAddr:PNETCOMADDR
   SetObject xcx
@@ -111,11 +130,12 @@ MethodEnd
 ; Method:     NetComProtocol.OnAccepted
 ; Purpose:    An inbound connection 'accept' has completed.
 ; Arguments:  Arg1: -> NetComConnection.
-; Return:     eax = Command (PROT_CMD_ACCEPT_CONNECTION or PROT_CMD_REJECT_CONNECTION).
+; Return:     Nothing.
 
 Method NetComProtocol.OnAccepted,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnAccepted", "&PROTOCOL_WND_NAME"
-  mov eax, PROT_CMD_ACCEPT_CONNECTION
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.OnAccepted", pDbgWndNameW
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -126,7 +146,9 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnClosed,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnClosed", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.OnClosed", pDbgWndNameW
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -136,7 +158,12 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnConnected,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnConnected", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.OnConnected", pDbgWndNameW
+
+  ;Queue a read to recognize a remote disconnect
+  OCall pConnection::NetComConnection.QueueReceive
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -144,10 +171,14 @@ MethodEnd
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
 ;             Arg2: Disconnect direction = SD_SEND/SD_RECEIVE/SD_BOTH
+;             Arg3: Operation result.
 ; Return:     Nothing.
 
-Method NetComProtocol.OnDisconnected,, pConnection:$ObjPtr(NetComConnection), dDirection:DWORD
-;  DbgHex pConnection, "NetComProtocol.OnDisconnected", "&PROTOCOL_WND_NAME"
+Method NetComProtocol.OnDisconnected,, pConnection:$ObjPtr(NetComConnection), \
+                                       dDirection:DWORD, dResult:DWORD
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.OnDisconnected", pDbgWndNameW
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -156,12 +187,13 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection.
 ;             Arg2: -> IOSockJob.
 ;             Arg3: Error code.
-; Return:     eax = Command (PROT_CMD_REJECT_CONNECTION, PROT_CMD_CLOSE, ...)
+; Return:     eax = Command (PROT_CMD_NONE, PROT_CMD_DESTROY, ...)
 
 Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJob:PIO_SOCKJOB, \
                                 dError:DWORD
-;  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
-;  DbgDec dError, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgDec dError, "NetComProtocol.OnError", pDbgWndNameW
   mov xcx, pIOSockJob
   .if xcx == NULL
     xor eax, eax
@@ -186,10 +218,12 @@ MethodEnd
 ; Method:     NetComProtocol.OnTimeouted
 ; Purpose:    A connection timeout occurs.
 ; Arguments:  Arg1: -> NetComConnection.
-; Return:     eax = PROT_CMD_CONTINUE or PROT_CMD_DISCONNECT.
+; Return:     eax = PROT_CMD_NONE, PROT_CMD_DISCONNECT, PROT_CMD_DESTROY.
 
 Method NetComProtocol.OnTimeouted,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.OnTimeouted", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.OnTimeouted", pDbgWndNameW
   mov eax, PROT_CMD_DISCONNECT
 MethodEnd
 
@@ -201,7 +235,9 @@ MethodEnd
 ; Return:     eax = Number of processed bytes.
 
 Method NetComProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection), dDelimiterIndex:DWORD
-;  DbgHex pConnection, "NetComProtocol.ProcessData", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.ProcessData", pDbgWndNameW
   mov eax, dDelimiterIndex
 MethodEnd
 
@@ -213,7 +249,9 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.Release,, pConnection:$ObjPtr(NetComConnection)
-;  DbgHex pConnection, "NetComProtocol.Release", "&PROTOCOL_WND_NAME"
+  DbgSetWindowName
+
+;  DbgText "NetComProtocol.Release", pDbgWndNameW
 MethodEnd
 
 endif

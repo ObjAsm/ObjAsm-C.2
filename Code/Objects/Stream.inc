@@ -110,21 +110,21 @@ Object Stream, StreamID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  $ObjMthd(StrWrite) textequ $ObjMthd(StrWriteA)
+  $ObjMtd(StrWrite) textequ $ObjMtd(StrWriteA)
 else
-  $ObjMthd(StrWrite) textequ $ObjMthd(StrWriteW)
+  $ObjMtd(StrWrite) textequ $ObjMtd(StrWriteW)
 endif
 
 if TARGET_BITNESS eq 32
-  $ObjMthd(BinReadX)  textequ $ObjMthd(BinRead32)
-  $ObjMthd(BinWriteX) textequ $ObjMthd(BinWrite32)
+  $ObjMtd(BinReadX)  textequ $ObjMtd(BinRead32)
+  $ObjMtd(BinWriteX) textequ $ObjMtd(BinWrite32)
 else
-  $ObjMthd(BinReadX)  textequ $ObjMthd(BinRead64)
-  $ObjMthd(BinWriteX) textequ $ObjMthd(BinWrite64)
+  $ObjMtd(BinReadX)  textequ $ObjMtd(BinRead64)
+  $ObjMtd(BinWriteX) textequ $ObjMtd(BinWrite64)
 endif
 
-$ObjMthd(StrReadA) textequ $ObjMthd(StrRead)
-$ObjMthd(StrReadW) textequ $ObjMthd(StrRead)
+$ObjMtd(StrReadA) textequ $ObjMtd(StrRead)
+$ObjMtd(StrReadW) textequ $ObjMtd(StrRead)
 
 STM_BEGIN   equ FILE_BEGIN
 STM_CURRENT equ FILE_CURRENT

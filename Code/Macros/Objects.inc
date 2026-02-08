@@ -2,7 +2,7 @@
 ; Title:      Objects.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.7
-; Purpose:    ObjAsm object support using MASM compatible assembers (UASM, ASMC, JWASM, ML)
+; Purpose:    ObjAsm object support using MASM compatible assemblers (UASM, ASMC, JWASM, ML)
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;             Version C.1.1, September 2019
@@ -12,7 +12,7 @@
 ;               - $MethodAddr can handle addresses of embedded objects.
 ;             Version C.1.3, May 2021
 ;               - vararg stack correction bug corrected.
-;               - dup spacing issue coorected.
+;               - dup spacing issue corrected.
 ;             Version C.1.4, August 2022
 ;               - Mitigation measures against multiple inclusion of object definition files.
 ;             Version C.1.5, September 2022
@@ -154,13 +154,13 @@ $ObjInst macro Expression:req
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      $ObjMthd
+; Macro:      $ObjMtd
 ; Purpose:    Return the mangled object method name.
 ; Arguments:  Arg1: Object name.
 ; Example:    .data
 ;               MyObject $ObjMtd(pop)
 
-$ObjMthd macro MtdName:req
+$ObjMtd macro MtdName:req
   exitm @CatStr(%??MtdPfx, MtdName)
 endm
 
