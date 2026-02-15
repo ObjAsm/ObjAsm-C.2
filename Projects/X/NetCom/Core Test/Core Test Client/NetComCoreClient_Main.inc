@@ -39,11 +39,12 @@ Object SendDlg,, DialogModal
   RedefineMethod    OnCommand,      WPARAM, LPARAM      ;Command event handler
   VirtualMethod     UpdateDataGrp
 
+  DefineVariable    dComboIndex,    DWORD,      0       ;Last Selected ComboServerAddr index
   DefineVariable    dConnections,   DWORD,      1       ;Number of parallel connections
   DefineVariable    dRepetitions,   DWORD,      1       ;Number of send repetitions
   DefineVariable    cText,          CHRA,       BUFFERSIZE dup(0) ;Payload text buffer
 
-  Embed   ActiveConns,    Collection                    ;Holds all active NetComConnection objects
+;  Embed   ActiveConns,    Collection                    ;Holds all active NetComConnection objects
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -381,13 +382,20 @@ MethodEnd
 ; Return:     TRUE if all values are valid, otherwise FALSE.
 
 Method SendDlg.CtlsGet, uses xdi xsi
-  local dRetValue:DWORD, cAddress[100]:CHR, cServiceName[100]:CHR, Hints:ADDRINFOT, pResult:PADDRINFOT
+  local dRetValue:DWORD, cAddress[100]:CHR, Hints:ADDRINFOT, pResult:PADDRINFOT
+  local hComboServerAddr:HANDLE, cServiceName[100]:CHR
 
   SetObject xsi                                         ;Bind object context
   mov dRetValue, FALSE
+
+  mov hComboServerAddr, $invoke(GetDlgItem, [xsi].hWnd, IDC_CBO_ADDR)
   lea xdi, cAddress
-  invoke GetDlgItemText, [xsi].hWnd, IDC_CBO_ADDR, xdi, lengthof cAddress
+  invoke GetWindowText, hComboServerAddr, xdi, lengthof cAddress
   invoke StrLRTrim, xdi, xdi
+  
+  invoke SendMessage, hComboServerAddr, CB_GETCURSEL, 0, 0
+  mov [xsi].dComboIndex, eax
+  
   lea xdi, cServiceName
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_PORT, xdi, lengthof cServiceName
   invoke StrLRTrim, xdi, xdi
@@ -492,7 +500,7 @@ Method SendDlg.CtlsSet, uses xbx xsi
     invoke FreeMibTable, pMibTable
   .endif
 
-  invoke SendMessage, hComboServerAddr, CB_SETCURSEL, 0, 0
+  invoke SendMessage, hComboServerAddr, CB_SETCURSEL, [xsi].dComboIndex, 0
 
   ;Set port and up/down control
   invoke htons, $ObjTmpl(NetComCoreClientProtocol).ServerRemoteAddr.wPort
@@ -532,7 +540,7 @@ MethodEnd
 
 Method SendDlg.Done, uses xsi
   SetObject xsi
-  OCall [xsi].ActiveConns::Collection.Done
+;  OCall [xsi].ActiveConns::Collection.Done
   ACall xsi.Done
 MethodEnd
 
@@ -546,7 +554,7 @@ MethodEnd
 Method SendDlg.Init, uses xsi, pOwner:POINTER, hParent:HWND
   SetObject xsi
   ACall xsi.Init, pOwner, hParent, IDD_DLG_SEND
-  OCall [xsi].ActiveConns::Collection.Init, xsi, 10, 10, COL_MAX_CAPACITY
+;  OCall [xsi].ActiveConns::Collection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -569,15 +577,8 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if the command is handled, otherwise non-zero.
 
-DisconnectAndDestroy proc uses xsi pConnection:$ObjPtr(NetComConnection), Unused1:XWORD, Unused2:XWORD
-  OCall pConnection::NetComConnection.Disconnect, SD_SEND
-  OCall pConnection::NetComConnection.QueueDestroy
-  OCall pConnection::NetComConnection.Close, FALSE
-  ret
-DisconnectAndDestroy endp
-
 Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[BUFFERSIZE + 20]:CHRA, pProc:POINTER
+  local pItem:PSDLL_ITEM, cBuffer[BUFFERSIZE + 20]:CHRA, dSize:DWORD
 
   SetObject xsi
   mov xdi, [xsi].pOwner                                 ;xdi -> NetComCoreClient
@@ -594,9 +595,6 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
                                          offset $ObjTmpl(NetComCoreClientProtocol), \
                                          addr $ObjTmpl(NetComCoreClientProtocol).ServerRemoteAddr, \
                                          addr $ObjTmpl(NetComCoreClientProtocol).ClientLocalAddr
-        .if xax != NULL 
-          OCall [xsi].ActiveConns::Collection.Insert, xax ;Store connection in collection
-        .endif
         dec ebx
       .endw
     .endif
@@ -605,19 +603,29 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ;Handle Send button
   .elseif eax == IDC_BTN_SEND
     .if $OCall(xsi.CtlsGet) != FALSE
-      lea xdi, cBuffer
-      m2m pProc, $MethodAddr(NetComConnection.QueueSend), xcx  ;Store write procedure
       xor ebx, ebx
       .while ebx < [xsi].dRepetitions
         inc ebx
+        lea xdi, cBuffer
         invoke udword2decA, xdi, ebx                    ;Convert repetition count to string
         lea xcx, [xdi + xax*sizeof(CHRA) - sizeof(CHRA)]
         FillTextA [xcx], < - >
         add xcx, ??StrSize
-        invoke StrECopyA, xcx, addr [xsi].cText
+        invoke StrECopyA, xcx, addr [xsi].cText         ;Copy text payload
         sub xax, xdi                                    ;Calculate length
         inc eax                                         ;Include ZTC
-        OCall [xsi].ActiveConns::Collection.ForEach, pProc, xdi, xax ;Send data over all connections
+        mov dSize, eax
+        mov xcx, [xsi].pOwner                           ;xcx -> NetComCoreClient
+        lea xdi, [xcx].$Obj(NetComCoreClient).Client.ConnectionChain
+        SDLL_GetFirst xdi, xax
+        .while !ZERO?
+          mov pItem, xax
+          lea xdx, cBuffer
+          lea xcx, [xax - offset $Obj(NetComConnection).ChainItem] 
+          OCall xcx::NetComConnection.QueueSend, xdx, dSize
+          mov xax, pItem
+          SDLL_GetNext xax, xdi
+        .endw
       .endw
     .endif
     xor eax, eax                                        ;Indicate handled
@@ -625,14 +633,24 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ;Handle Disconnect button
   .elseif eax == IDC_BTN_DISCONNECT
     OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
-    OCall [xsi].ActiveConns::Collection.ForEach, offset DisconnectAndDestroy, 0, 0 ;Disconnect all
-    OCall [xsi].ActiveConns::Collection.DeleteAll       ;Clear all connections
+    mov xcx, [xsi].pOwner                               ;xcx -> NetComCoreClient
+    lea xbx, [xcx].$Obj(NetComCoreClient).Client
+    OCall xbx::NetComEngine.ConnectionsDisconnect
+    OCall xbx::NetComEngine.ConnectionsDestroy
+    OCall xbx::NetComEngine.ConnectionsClose
+    lea xcx, [xbx].$Obj(NetComEngine).ConnectionChain
+    SDLL_Init xcx
     xor eax, eax                                        ;Indicate handled
 
   ;Handle Cancel button
   .elseif eax == IDCANCEL
-    OCall [xsi].ActiveConns::Collection.ForEach, offset DisconnectAndDestroy, 0, 0 ;Disconnect all
-    OCall [xsi].ActiveConns::Collection.DeleteAll       ;Clear all connections
+    mov xcx, [xsi].pOwner                               ;xcx -> NetComCoreClient
+    lea xbx, [xcx].$Obj(NetComCoreClient).Client
+    OCall xbx::NetComEngine.ConnectionsDisconnect
+    OCall xbx::NetComEngine.ConnectionsDestroy
+    OCall xbx::NetComEngine.ConnectionsClose
+    lea xcx, [xbx].$Obj(NetComEngine).ConnectionChain
+    SDLL_Init xcx
     OCall xsi.DestroyDialog, wParam                     ;Close dialog
     xor eax, eax                                        ;Indicate handled
 

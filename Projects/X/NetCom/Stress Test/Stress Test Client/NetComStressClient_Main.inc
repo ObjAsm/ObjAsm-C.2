@@ -535,11 +535,10 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method SendDlg.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
-  DbgText "SendDlg.OnCommand"
+;  DbgText "SendDlg.OnCommand"
   SetObject xsi                                         ;Bind object context
   mov xdi, [xsi].pOwner                                 ;Parent object
   LoWord wParam                                         ;Get command ID
-  DbgDec eax
   .if eax == IDC_BTN_CONNECT
     .if $OCall(xsi.CtlsGet) != FALSE                    ;Get input values
       OCall [xdi].$Obj(NetComStressClient).Client::NetComEngine.ConnectTo, \

@@ -58,7 +58,7 @@ PROTOCOL_WND_NAME           textequ <Client Stress Protocol>  ;Debug/protocol wi
 INTERNET_PROTOCOL_VERSION   equ 4                       ;Select IP version (4 or 6)
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;ObjAsm model macros and setup
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)           ;Initialize OOP model
+SysSetup OOP, WIN64, ANSI_STRING;, DEBUG(WND)           ;Initialize OOP model
 
 % include &MacPath&fMath.inc                            ;Floating-point math helpers
 % include &MacPath&SDLL.inc                             ;Linked list support macros

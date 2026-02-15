@@ -140,7 +140,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=8
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -175,24 +175,24 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,10164
-1=0,0,0,0,3582
+2=0,0,0,0,5699
+1=0,0,0,0,2208
 6=0,0,0,0,44924
 4=0,0,0,0,0
 31=0,0,1213,691,5916
 8=0,0,460,538,3728
-5=0,0,0,0,16275
-9=0,0,458,581,7145
+5=0,0,0,0,24537
+9=0,0,458,581,8150
 7=0,0,458,581,4338
-14=0,0,755,592,17212
-13=0,0,458,581,19929
-12=0,0,0,0,3078
-11=0,0,0,0,2417
+14=0,0,755,592,20447
+13=0,0,458,581,10826
+12=0,0,0,0,2667
+11=0,0,0,0,2349
 15=0,0,795,423,125992
 17=0,0,0,0,0
 3=0,0,0,0,0
 16=0,0,0,0,9718
-18=0,0,0,0,11549
+18=0,0,0,0,11622
 10=0,0,0,0,4380
 19=0,0,0,0,752
 20=0,0,0,0,0
@@ -222,24 +222,24 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [Find]
-1="NetComStressServer.Init"
-2=" NetComStressServer.Init "
-3="int 3"
-4="NetComServer"
-5="NetComServerProtocol.OnDisconnect"
-6="OnDisconnected"
-7="NetComConnection.OnReceived - dBytesConsumed = 0"
-8="NetComConnection.Disconnect"
-9="NetComConnection.DoReceive"
-10="NetComConnection.OnReceived"
+1="InitializeCriticalSection"
+2="OCall xsi.Disconnect, SD_RECEIVE"
+3="DoRcvIOJob"
+4="DoSndIOJob"
+5="OCall xsi.DoSndIOJob, pItem"
+6="lea xax, [xsi].RcvIOJobChain"
+7=".elseif eax == OPERATION_SOCK_RECV"
+8="NetComStressServer.Init"
+9=" NetComStressServer.Init "
+10="int 3"
 [Collapse]
-13=269238656,268460032,
+13=269238272,268443648,
 2=
 1=
 3=
 11=
 17=
-9=65063
+9=65031
 14=
 12=
 7=2146959360,18305
@@ -265,7 +265,7 @@ ProductVer4Range=0
 31=
 30=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,13,9,14,5,11,12
 [RADebugBP]
 1=
 18=
@@ -292,6 +292,6 @@ AutoLoad=1,2
 11=
 27=
 [PTimer]
-PTimer=1070533279
+PTimer=1085428357
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

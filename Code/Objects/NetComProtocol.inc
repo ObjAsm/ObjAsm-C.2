@@ -103,8 +103,7 @@ MethodEnd
 ;                   Zero               - We need more data.
 ; Note:       Zero length packets are NOT passed from the connection to the protocol.
 
-Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
-                                        pIOSockJob:PIO_SOCKJOB
+Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), pIOJob:PIOJOB
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.IsDataComplete?", pDbgWndNameW
@@ -170,7 +169,7 @@ MethodEnd
 ; Method:     NetComProtocol.OnDisconnected
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
-;             Arg2: Disconnect direction = SD_SEND/SD_RECEIVE/SD_BOTH
+;             Arg2: Disconnect direction = SD_RECEIVE(0)/SD_SEND(1)/SD_BOTH(2)
 ;             Arg3: Operation result.
 ; Return:     Nothing.
 
@@ -189,25 +188,24 @@ MethodEnd
 ;             Arg3: Error code.
 ; Return:     eax = Command (PROT_CMD_NONE, PROT_CMD_DESTROY, ...)
 
-Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJob:PIO_SOCKJOB, \
-                                dError:DWORD
+Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOJob:PIOJOB, dError:DWORD
   DbgSetWindowName
 
 ;  DbgDec dError, "NetComProtocol.OnError", pDbgWndNameW
-  mov xcx, pIOSockJob
+  mov xcx, pIOJob
   .if xcx == NULL
     xor eax, eax
     ExitMethod
   .endif
 
-  movzx eax, [xcx].IO_SOCKJOB.wOperation
-  .if eax == OPERATION_SOCK_ACCEPT
+  movzx eax, [xcx].IOJOB.wOperation
+  .if eax == IOJOB_ACCEPT
     mov eax, PROT_CMD_DESTROY
-  .elseif eax == OPERATION_SOCK_CONNECT
+  .elseif eax == IOJOB_CONNECT
     mov eax, PROT_CMD_DESTROY
-  .elseif eax == OPERATION_SOCK_SEND
+  .elseif eax == IOJOB_SEND
     mov eax, PROT_CMD_DESTROY
-  .elseif eax == OPERATION_SOCK_RECV
+  .elseif eax == IOJOB_RECV
     mov eax, PROT_CMD_DESTROY
   .else
     mov eax, PROT_CMD_DESTROY

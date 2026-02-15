@@ -87,11 +87,11 @@ Object Image, ImageID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  $ObjMthd(LoadFromFile) textequ $ObjMthd(LoadFromFileA)
-  $ObjMthd(LoadFromRes)  textequ $ObjMthd(LoadFromResA)
+  $ObjMtd(LoadFromFile) textequ $ObjMtd(LoadFromFileA)
+  $ObjMtd(LoadFromRes)  textequ $ObjMtd(LoadFromResA)
 else
-  $ObjMthd(LoadFromFile) textequ $ObjMthd(LoadFromFileW)
-  $ObjMthd(LoadFromRes)  textequ $ObjMthd(LoadFromResW)
+  $ObjMtd(LoadFromFile) textequ $ObjMtd(LoadFromFileW)
+  $ObjMtd(LoadFromRes)  textequ $ObjMtd(LoadFromResW)
 endif
 
 

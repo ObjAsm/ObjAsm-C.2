@@ -421,7 +421,7 @@ OutlookHostID                     equ     0000012062
 PowerPointHostID                  equ     0000012063
 
 ;NetCom
-NetComIOSockJobPoolID             equ     0000012100
+NetComIOJobPoolID                 equ     0000012100
 NetComIOFileJobPoolID             equ     0000012101
 NetComIOMsgPoolID                 equ     0000012102
 NetComConnectionID                equ     0000012103

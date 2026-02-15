@@ -241,3 +241,44 @@ SDLL_GetPrev macro RefReg:req, SnlReg:req, RetReg:=<>
     cmp SnlReg, RetReg
   endif
 endm
+
+; --------------------------------------------------------------------------------------------------
+; Macro:      .SDLL_ForEach
+; Purpose:    Loop through all items of the list.
+; Arguments:  Arg1: Non volatile Register -> Sentinel structure.
+;             Arg2: Optional POINTER variable/non volatile register. Can not be xax!
+; Return:     Nothing.
+; Note:       On each loop xax -> List item.
+; Example:    lea xbx, MyList
+;             .SDLL_ForEach xbx              
+;               DbgHex [xax].$Obj(Primer).pOwner
+;             .SDLL_Next
+
+.SDLL_ForEach macro SnlReg:req, IndexReg
+  ??SDLL_ForEach_ID = ??SDLL_ForEach_ID + 1
+  ifb <IndexReg>
+    @CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID) textequ GetMemBSS(@WordSize)
+  else
+    @CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID) textequ <IndexReg>
+  endif
+  mov xax, [SnlReg].SDLL_SENTINEL.pFirstItem
+  .while xax != SnlReg
+    mov @CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID), xax
+endm
+
+; --------------------------------------------------------------------------------------------------
+; Macro:      .SDLL_Next
+; Purpose:    Move to the next list item.
+; Arguments:  None
+; Return:     Nothing.
+
+.SDLL_Next macro
+    if opattr(@CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID)) & OAT_REGISTER
+      mov xax, [@CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID)].SDLL_ITEM.pNextItem
+    else
+      mov xax, @CatStr(<??SDLL_ForEach_Pointer_>, %??SDLL_ForEach_ID)
+      mov xax, [xax].SDLL_ITEM.pNextItem
+    endif
+  .endw
+  ??SDLL_ForEach_ID = ??SDLL_ForEach_ID - 1
+endm

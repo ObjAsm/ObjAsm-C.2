@@ -9,10 +9,10 @@ Ver.rc=1
 Debug=1
 
 [Files]
-1=NetComCoreServer1.asm
+1=NetComCoreServer.asm
 2=NetComCoreServer_Main.inc
 3=NetComCoreServer_Globals.inc
-4=NetComCoreServer1.rc
+4=NetComCoreServer.rc
 5=..\..\..\..\..\..\ObjAsm\Code\Macros\Model.inc
 6=..\..\..\..\..\..\ObjAsm\Code\Macros\System.inc
 7=..\..\..\..\..\..\ObjAsm\Code\Objects\NetComEngine.inc
@@ -39,19 +39,19 @@ Debug=1
 28=..\..\..\..\..\Code\Objects\StopWatch.inc
 
 [MakeFiles]
-0=NetComCoreServer1.rap
-1=NetComCoreServer1.rc
-2=NetComCoreServer1.asm
-3=NetComCoreServer1.obj
-4=NetComCoreServer1.res
-5=NetComCoreServer1.exe
-6=NetComCoreServer1.def
-7=NetComCoreServer1.dll
-8=NetComCoreServer1.txt
-9=NetComCoreServer1.lib
-10=NetComCoreServer1.mak
-11=NetComCoreServer1.hla
-12=NetComCoreServer1.com
+0=NetComCoreServer.rap
+1=NetComCoreServer.rc
+2=NetComCoreServer.asm
+3=NetComCoreServer.obj
+4=NetComCoreServer.res
+5=NetComCoreServer.exe
+6=NetComCoreServer.def
+7=NetComCoreServer.dll
+8=NetComCoreServer.txt
+9=NetComCoreServer.lib
+10=NetComCoreServer.mak
+11=NetComCoreServer.hla
+12=NetComCoreServer.com
 
 [MakeDef]
 Menu=1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
@@ -132,7 +132,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=8
+MilestoneOnDateDate=9
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -251,7 +251,7 @@ ProductVer4Range=0
 27=,
 28=
 [AutoLoad]
-AutoLoad=1,2,7,18,14,4,24
+AutoLoad=1,2,18,14,4,24,7
 [RADebugBP]
 1=
 18=
@@ -275,6 +275,6 @@ AutoLoad=1,2,7,18,14,4,24
 25=
 20=
 [PTimer]
-PTimer=931173998
+PTimer=942849935
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

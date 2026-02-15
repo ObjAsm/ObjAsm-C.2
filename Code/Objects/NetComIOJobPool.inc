@@ -1,8 +1,8 @@
 ; ==================================================================================================
-; Title:      NetComIOSockJobPool.inc
+; Title:      NetComIOJobPool.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of NetComIOSockJobPool objects.
+; Purpose:    ObjAsm support of NetComIOJobPool objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ; ==================================================================================================
@@ -13,63 +13,63 @@
 if IMPLEMENT
 
 ; ==================================================================================================
-;    NetComIOSockJobPool implementation
+;    NetComIOJobPool implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.Done
-; Purpose:    Finalize the NetComIOSockJobPool object.
+; Method:     NetComIOJobPool.Done
+; Purpose:    Finalize the NetComIOJobPool object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method NetComIOSockJobPool.Done, uses xsi
-;  DbgText "NetComIOSockJobPool.Done"
+Method NetComIOJobPool.Done, uses xsi
+;  DbgText "NetComIOJobPool.Done"
   SetObject xsi
   ACall xsi.Done
   invoke DeleteCriticalSection, addr [xsi].CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.FreeItem
-; Purpose:    Release the memory used by the IO_SOCKJOB.
-; Arguments:  Arg1: -> IO_SOCKJOB to release.
+; Method:     NetComIOJobPool.FreeItem
+; Purpose:    Release the memory used by the IOJOB.
+; Arguments:  Arg1: -> IOJOB to release.
 ; Return:     Nothing.
 
-Method NetComIOSockJobPool.FreeItem, uses xsi, pIOSockJob:PIO_SOCKJOB
+Method NetComIOJobPool.FreeItem, uses xsi, pIOJob:PIOJOB
   SetObject xsi
-;  DbgText "NetComIOSockJobPool.FreeItem"
+;  DbgText "NetComIOJobPool.FreeItem"
   invoke EnterCriticalSection, addr [xsi].CritSect
   dec [xsi].dCount
-  ACall xsi.FreeItem, pIOSockJob                        ;Return it to the DataPool
+  ACall xsi.FreeItem, pIOJob                        ;Return it to the DataPool
   invoke LeaveCriticalSection, addr [xsi].CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.Init
-; Purpose:    Initialize the NetComIOSockJobPool object.
+; Method:     NetComIOJobPool.Init
+; Purpose:    Initialize the NetComIOJobPool object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: Initial allocated NetComIOJobs.
 ;             Arg3: Buffer size of each NetComIOJob. Usually MSS_ETHERNET_IPVX (MTU - Header size).
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComIOSockJobPool.Init, uses xsi, pOwner:POINTER, dInitJobCount:DWORD, dBufferSize:DWORD
+Method NetComIOJobPool.Init, uses xsi, pOwner:POINTER, dInitJobCount:DWORD, dBufferSize:DWORD
   SetObject xsi
-  invoke InitializeCriticalSection, addr [xsi].CritSect
+  invoke InitializeCriticalSectionEx, addr [xsi].CritSect, 4000, 0
   
   mrm [xsi].dBufferSize, dBufferSize, eax
-  add eax, sizeof(IO_SOCKJOB)                           ;Add the header size to the payload size
+  add eax, sizeof(IOJOB)                           ;Add the header size to the payload size
   ACall xsi.Init, pOwner, eax, dInitJobCount, 1         ;We need an alignment of 1
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.NewItem
-; Purpose:    Allocate a new IO_SOCKJOB from DataPool.
+; Method:     NetComIOJobPool.NewItem
+; Purpose:    Allocate a new IOJOB from DataPool.
 ; Arguments:  Arg1: Operation type.
-; Return:     xax -> New IO_SOCKJOB or NULL if failed.
+; Return:     xax -> New IOJOB or NULL if failed.
 
-Method NetComIOSockJobPool.NewItem, uses xbx xsi, wOperation:WORD
+Method NetComIOJobPool.NewItem, uses xbx xsi, wOperation:WORD
   SetObject xsi
-;  DbgText "NetComIOSockJobPool.NewItem"
+;  DbgText "NetComIOJobPool.NewItem"
   invoke EnterCriticalSection, addr [xsi].CritSect
   ACall xsi.NewItem
   .if xax != NULL
@@ -86,12 +86,12 @@ Method NetComIOSockJobPool.NewItem, uses xbx xsi, wOperation:WORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.Reset
+; Method:     NetComIOJobPool.Reset
 ; Purpose:    Restores initial state, releasing the complete allocated memory.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method NetComIOSockJobPool.Reset, uses xsi
+Method NetComIOJobPool.Reset, uses xsi
   SetObject xsi
   invoke EnterCriticalSection, addr [xsi].CritSect
   ACall xsi.Reset
@@ -100,30 +100,30 @@ Method NetComIOSockJobPool.Reset, uses xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     NetComIOSockJobPool.ResetIOJob
-; Purpose:    Reset an IO_SOCKJOB.
-; Arguments:  Arg1: -> IO_SOCKJOB.
+; Method:     NetComIOJobPool.ResetIOJob
+; Purpose:    Reset an IOJOB.
+; Arguments:  Arg1: -> IOJOB.
 ;             Arg2: Operation type.
-; Return:     eax -> IO_SOCKJOB.
+; Return:     eax -> IOJOB.
 
-Method NetComIOSockJobPool.ResetIOJob,, pIOSockJob:PIO_SOCKJOB, wOperation:WORD
+Method NetComIOJobPool.ResetIOJob,, pIOJob:PIOJOB, wOperation:WORD
   SetObject xcx
-  ?mov xdx, pIOSockJob
+  ?mov xdx, pIOJob
   mov xax, xdx
-  add xdx, sizeof IO_SOCKJOB
-  mov [xax].IO_SOCKJOB.WSABuf.buf, xdx
-  m2m [xax].IO_SOCKJOB.WSABuf.len, [xcx].dBufferSize, edx
+  add xdx, sizeof IOJOB
+  mov [xax].IOJOB.WSABuf.buf, xdx
+  m2m [xax].IOJOB.WSABuf.len, [xcx].dBufferSize, edx
   xor ecx, ecx
-  m2m [xax].IO_SOCKJOB.wOperation, wOperation, dx
-  mov [xax].IO_SOCKJOB.pNextItem, xcx
-  mov [xax].IO_SOCKJOB.pPrevItem, xcx
-  mov [xax].IO_SOCKJOB.dBytesConsumed, ecx
-  mov [xax].IO_SOCKJOB.wFlags, cx
-  mov [xax].IO_SOCKJOB.Ovl.Internal, xcx
-  mov [xax].IO_SOCKJOB.Ovl.InternalHigh, xcx
-  mov [xax].IO_SOCKJOB.Ovl.Offset_, ecx
-  mov [xax].IO_SOCKJOB.Ovl.OffsetHigh, ecx
-  mov [xax].IO_SOCKJOB.Ovl.hEvent, xcx
+  m2m [xax].IOJOB.wOperation, wOperation, dx
+  mov [xax].IOJOB.pNextItem, xcx
+  mov [xax].IOJOB.pPrevItem, xcx
+  mov [xax].IOJOB.dBytesConsumed, ecx
+  mov [xax].IOJOB.wFlags, cx
+  mov [xax].IOJOB.Ovl.Internal, xcx
+  mov [xax].IOJOB.Ovl.InternalHigh, xcx
+  mov [xax].IOJOB.Ovl.Offset_, ecx
+  mov [xax].IOJOB.Ovl.OffsetHigh, ecx
+  mov [xax].IOJOB.Ovl.hEvent, xcx
 MethodEnd
 
 endif

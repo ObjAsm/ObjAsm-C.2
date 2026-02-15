@@ -214,81 +214,81 @@ endm
 ??ListForEach_ID = 0
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      .ListForEach
-; Purpose:    Loop through all items of the collection.
+; Macro:      .LDLL_ForEach
+; Purpose:    Loop through all items of the list.
 ; Arguments:  Arg1: First member of the list.
 ;             Arg2: Optional POINTER variable/register. Can not be xax!
 ; Return:     Nothing.
-; Note:       On each loop xax -> List item.
-; Example:    .ListForEach MyList
+; Note:       On each loop xax -> LDLL_ item.
+; Example:    .LDLL_ForEach MyList
 ;               DbgHex [xax].$Obj(Primer).pOwner
-;             .ListNext
+;             .LDLL_Next
 
-.ListForEach macro pFirstMember:req, IndexReg
-  ??ListForEach_ID = ??ListForEach_ID + 1
+.LDLL_ForEach macro pFirstMember:req, IndexReg
+  ??LDLL_ForEach_ID = ??LDLL_ForEach_ID + 1
   ifb <IndexReg>
-    @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID) textequ GetMemBSS(@WordSize)
+    @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID) textequ GetMemBSS(@WordSize)
   else
-    @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID) textequ <IndexReg>
+    @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID) textequ <IndexReg>
   endif
   mov xax, pFirstMember
   .while xax != NULL 
-    mov @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID), xax
+    mov @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID), xax
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      .ListNext
+; Macro:      .LDLL_Next
 ; Purpose:    Move to the next list item.
 ; Arguments:  None
 ; Return:     Nothing.
 
-.ListNext macro
-    if opattr(@CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)) & OAT_REGISTER
-      mov xax, [@CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)].LDLL_MEMBER.pLinkFwrd
+.LDLL_Next macro
+    if opattr(@CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)) & OAT_REGISTER
+      mov xax, [@CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)].LDLL_MEMBER.pLinkFwrd
     else
-      mov xax, @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)
+      mov xax, @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)
       mov xax, [xax].LDLL_MEMBER.pLinkFwrd
     endif
   .endw
-  ??ListForEach_ID = ??ListForEach_ID - 1
+  ??LDLL_ForEach_ID = ??LDLL_ForEach_ID - 1
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      .ListForEachRev
-; Purpose:    Loop through all items of the List in reverse order.
+; Macro:      .LDLL_ForEachRev
+; Purpose:    Loop through all items of the list in reverse order.
 ; Arguments:  Arg1: Last member of the list.
 ;             Arg2: Optional POINTER variable/register. Can not be xax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> List item.
-; Example:    .ListForEachRev MyList
+; Example:    .LDLL_ForEachRev MyList
 ;               DbgHex [xax].$Obj(Primer).pOwner
-;             .ListPrev
+;             .LDLL_Prev
 
-.ListForEachRev macro pLastMember:req, IndexReg
-  ??ListForEach_ID = ??ListForEach_ID + 1
+.LDLL_ForEachRev macro pLastMember:req, IndexReg
+  ??LDLL_ForEach_ID = ??LDLL_ForEach_ID + 1
   ifb <IndexReg>
-    @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID) textequ GetMemBSS(@WordSize)
+    @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID) textequ GetMemBSS(@WordSize)
   else
-    @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID) textequ <IndexReg>
+    @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID) textequ <IndexReg>
   endif
   mov xax, pLastMember
   .while xax != NULL 
-    mov @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID), xax
+    mov @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID), xax
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      .ListPrev
+; Macro:      .LDLL_Prev
 ; Purpose:    Move to the next List item.
 ; Arguments:  None
 ; Return:     Nothing.
 
-.ListPrev macro
-    if opattr(@CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)) & OAT_REGISTER
-      mov xax, [@CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)].LDLL_MEMBER.pLinkBack
+.LDLL_Prev macro
+    if opattr(@CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)) & OAT_REGISTER
+      mov xax, [@CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)].LDLL_MEMBER.pLinkBack
     else
-      mov xax, @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID)
+      mov xax, @CatStr(<??LDLL_ForEach_Pointer_>, %??LDLL_ForEach_ID)
       mov xax, [xax].LDLL_MEMBER.pLinkBack
     endif
   .endw
-  ??ListForEach_ID = ??ListForEach_ID - 1
+  ??LDLL_ForEach_ID = ??LDLL_ForEach_ID - 1
 endm

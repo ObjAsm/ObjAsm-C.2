@@ -659,7 +659,7 @@ SysInit macro Arg1, Arg2
     mov hProcessHeap, $invoke(GetProcessHeap)           ;;Get and save the process heap HANDLE
 
     if DEBUGGING
-      invoke InitializeCriticalSection, addr DbgCritSect
+      invoke InitializeCriticalSectionEx, addr DbgCritSect, 4000, 0
       if TARGET_OOP eq OOP_ENABLED
         m2m pObjErrTableStart, ??ObjErrTableStart, xax
         mov dObjErrTableCount, ??ObjErrTableCount

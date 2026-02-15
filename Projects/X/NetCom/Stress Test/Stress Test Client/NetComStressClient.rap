@@ -148,7 +148,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=8
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,8 +183,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1669,631,236
-1=0,0,0,0,5042
+2=0,0,1669,631,24515
+1=0,0,0,0,3166
 6=0,0,0,0,90797
 4=0,0,0,0,0
 31=0,0,1213,691,2401
@@ -219,16 +219,16 @@ ProductVer4Range=0
 36=0,0,0,0,1301
 30=0,0,0,0,0
 [Find]
-1="QueueSend"
-2="hNewBmp"
-3="NetComClient"
-4="GetAdaptersAddresses"
-5="htons"
-6="dPendingIOJobs"
-7="int 3"
-8="IDCANCEL"
-9="cAddrStr"
-10="CtlsEnable"
+1="SendDlg.OnCommand"
+2="QueueSend"
+3="hNewBmp"
+4="NetComClient"
+5="GetAdaptersAddresses"
+6="htons"
+7="dPendingIOJobs"
+8="int 3"
+9="IDCANCEL"
+10="cAddrStr"
 [Collapse]
 17=,
 14=2147483143,1048575
@@ -281,7 +281,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,20
 [PTimer]
-PTimer=786625419
+PTimer=787024841
 [GroupExpand]
 GroupExpand=1,1,1,1,0,0,1,1,0
 [RADebugBP]

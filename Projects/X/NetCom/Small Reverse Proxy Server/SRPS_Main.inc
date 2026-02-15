@@ -73,7 +73,7 @@ Object Application,, DlgApp
 
   ;Used to update the application caption
   DefineVariable    dConnectionCount, DWORD,          -1
-  DefineVariable    dIOSockJobCount,  DWORD,          -1
+  DefineVariable    dIOJobCount,  DWORD,          -1
 
   Embed  RevProxy,  NetComEngine                        ;Embedded reverse proxy engine
 ObjectEnd
@@ -564,8 +564,6 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDC_BTN_STOP
     OCall [xsi].RevProxy::NetComEngine.StopListening
-    OCall [xsi].RevProxy::NetComEngine.ConnectionsDestroy      ;§§§§§ this doesnt work
-    OCall [xsi].RevProxy::NetComEngine.ConnectionsClose
     BitClr [xsi].dFlags, APF_RUNNING                    ;Clear running flag
     OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
     xor eax, eax                                        ;Return zero
@@ -628,11 +626,11 @@ Method Application.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   lea xbx, [xsi].RevProxy
   mov eax, [xbx].$Obj(NetComEngine).ConnectionPool.dCount
   mov ecx, [xbx].$Obj(NetComEngine).IOSockJobPool.dCount
-  .if eax != [xsi].dConnectionCount || ecx != [xsi].dIOSockJobCount
+  .if eax != [xsi].dConnectionCount || ecx != [xsi].dIOJobCount
     mov [xsi].dConnectionCount, eax
-    mov [xsi].dIOSockJobCount, ecx
+    mov [xsi].dIOJobCount, ecx
     lea xdi, cBuffer
-    WriteF xdi, "¦ST - ¦UD/¦UD", offset szAppTitle, [xsi].dConnectionCount, [xsi].dIOSockJobCount
+    WriteF xdi, "¦ST - ¦UD/¦UD", offset szAppTitle, [xsi].dConnectionCount, [xsi].dIOJobCount
     invoke SetWindowText, [xsi].hWnd, addr cBuffer
   .endif
   xor eax, eax

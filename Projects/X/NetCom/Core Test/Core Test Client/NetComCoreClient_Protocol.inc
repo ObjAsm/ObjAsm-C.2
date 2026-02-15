@@ -45,7 +45,7 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     Nothing.
 
-Method NetComCoreClientProtocol.OnClosed, uses xbx xsi, pConnection:$ObjPtr(NetComConnection)
+Method NetComCoreClientProtocol.OnClosed, uses xsi, pConnection:$ObjPtr(NetComConnection)
 ;  DbgHex pConnection, "NetComCoreClientProtocol.OnClose", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xax, [xsi].pOwner
@@ -78,8 +78,8 @@ MethodEnd
 ;             Arg3: Operation result.
 ; Return:     Nothing.
 
-Method NetComCoreClientProtocol.OnDisconnected, uses xbx xsi, pConnection:$ObjPtr(NetComConnection), \
-                                                              dDirection:DWORD, dResult:DWORD
+Method NetComCoreClientProtocol.OnDisconnected, uses xsi, pConnection:$ObjPtr(NetComConnection), \
+                                                          dDirection:DWORD, dResult:DWORD
 ;  DbgHex pConnection, "NetComCoreClientProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xax, [xsi].pOwner
@@ -101,7 +101,7 @@ Method NetComCoreClientProtocol.OnError, uses xbx xsi, pConnection:$ObjPtr(NetCo
   SetObject xsi
   mov xbx, [xsi].pOwner
   OCall [xbx].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
-  OCall [xbx].$Obj(NetComCoreClient).SndDlg.ActiveConns::Collection.Delete, pConnection 
+;  OCall [xbx].$Obj(NetComCoreClient).SndDlg.ActiveConns::Collection.Delete, pConnection 
   ACall xsi.OnError, pConnection, pIOSockJob, dError
 MethodEnd
 

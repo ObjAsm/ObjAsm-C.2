@@ -35,7 +35,7 @@
 ;             so we are tagging messages with host ids. This allows us to associate a message with
 ;             an individual remote host.
 ;
-;             Configure your firewalls according to the "dynamic client port range" (49152 - 65535).
+;             Configure your firewalls according to the "ephemeral port range".
 ;
 ;             ServiceNames: look at %WINDIR%\system32\drivers\etc\services
 ;
@@ -73,7 +73,7 @@
 ;            |                              -----------------|---
 ;            |                                               |   |
 ;            |           --------------------                |   |    -------------------
-;            |       -->|NetComConnectionPool|        -------|------>|NetComIOSockJobPool|- - -
+;            |       -->|NetComConnectionPool|        -------|------>|  NetComIOJobPool  |- - -
 ;            |      |   |--------------------|       |       |   |   |-------------------|     |
 ;             ------|---| pOwner             |       |       |    ---| pOwner            |
 ;                   |   |     pIOSockJobPool |-------        |       | dBufferSize       |     |
@@ -83,7 +83,7 @@
 ;                   |                                        |                                 |
 ;                   |                                        |
 ;                   |           -------------------          |        -------------------      |
-;                   |          | NetComConnection  |< - - - -|- - - -|  NetComIOSockJob  |< - -
+;                   |          | NetComConnection  |< - - - -|- - - -|    NetComIOJob    |< - -
 ;                   |          |-------------------||        |       |-------------------||
 ;                    ----------| pOwner            |||       |       |                   |||
 ;                              |         pProtocol |||-------        |                   ||||
@@ -103,10 +103,10 @@ SO_CONNECT_TIME             equ   0700Ch
 ;SO_EXCLUSIVEADDRUSE
 
 ;IO socket operations
-OPERATION_SOCK_ACCEPT       equ   1h
-OPERATION_SOCK_CONNECT      equ   2h
-OPERATION_SOCK_RECV         equ   3h
-OPERATION_SOCK_SEND         equ   4h
+IOJOB_ACCEPT                equ   1h
+IOJOB_CONNECT               equ   2h
+IOJOB_RECV                  equ   3h
+IOJOB_SEND                  equ   4h
 
 ;IO Job Flag
 IOF_JOB_COMPLETED           equ   BIT00     ;Completed
@@ -171,7 +171,7 @@ AddErrMsg NCE_LISTENER_DOESNT_LISTEN,       "Listening socked failed to listen"
 AddErrMsg NCE_LISTENER_IOCP_BIND_FAILED,    "Failed to bind the listener socket to the IOCP"
 
 AddErrMsg NCCP_OUT_OF_MEMORY,               "Out of memory in NetComConnectionPool"
-AddErrMsg NCJP_OUT_OF_MEMORY,               "Out of memory in NetComIOSockJobPool"
+AddErrMsg NCJP_OUT_OF_MEMORY,               "Out of memory in NetComIOJobPool"
 
 AddErrMsg NCCN_OUT_OF_MEMORY,               "Out of memory in NetComConnection"
 AddErrMsg NCCN_DISCONNECTED,                "NetComConnection disconnected"
@@ -186,6 +186,8 @@ WSAID_CONNECTEX            GUID {025A207B9h,0DDF3h,04660h,{08Eh,0E9h,076h,0E5h,0
 ;WSAID_TRANSMITFILE         GUID {0B5367DF0h,0CBACh,011CFh,{095h,0CAh,000h,080h,05Fh,048h,0A1h,092h}}
 ;WSAID_TRANSMITPACKETS      GUID {0D9689DA0h,01F90h,011D3h,{099h,071h,000h,0C0h,04Fh,068h,0C8h,076h}}
 ;WSAID_WSARECVMSG           GUID {0F689D7C8h,06F1Fh,0436Bh,{08Ah,053h,0E5h,04Fh,0E3h,051h,0C3h,022h}}
+;WSAID_WSASENDMSG           GUID {0F689D7C8h,06F1Fh,0436Bh,{08Ah,053h,0E5h,04Fh,0E3h,051h,0C3h,022h}}
+;WSAID_POLL                 GUID {0D21A53D0h,04C1Ch,011D1h,{085h,010h,000h,0C0h,04Fh,0D7h,0C7h,0C0h}}
 
 SIO_GET_EXTENSION_FUNCTION_POINTER  equ IOC_INOUT or IOC_WS2 or 6
 
@@ -193,7 +195,7 @@ SO_UPDATE_ACCEPT_CONTEXT      equ   700Bh
 SO_UPDATE_CONNECT_CONTEXT     equ   7010h
 
 _NETCOMADDR_ struc                          ;Auxiliar structure to get the total size
-  union
+  union                                     
     SOCKADDR                  {}            ;IPv4
     SOCKADDR_IN               {}            ;IPv4 only
     SOCKADDR_IN6              {}            ;IPv6 only
@@ -201,7 +203,7 @@ _NETCOMADDR_ struc                          ;Auxiliar structure to get the total
   ends
 _NETCOMADDR_ ends
 
-NETCOMADDR struc                            ;Universal address structure
+NETCOMADDR struc           ;Universal address structure
   wFamily   WORD  ?
   wPort     WORD  ?
   Address   BYTE  sizeof(_NETCOMADDR_) - 2*sizeof(WORD) dup(?)
@@ -214,24 +216,24 @@ LISTENER struc 4
 LISTENER ends
 PLISTENER typedef ptr LISTENER
 
-;This structure is not integrated into IO_SOCKJOB to be able to calculate some offsets
-IO_HEADER struc 2
+;This structure is not integrated into IOJOB to be able to calculate some offsets
+IOJOB_HEADER struc 2
   Ovl             OVERLAPPED  {}            ;Must be always the first structure member!
-  wOperation      WORD        ?             ;Operation ID, i.e. OPERATION_SOCK_RECV
+  wOperation      WORD        ?             ;Operation ID, i.e. IOJOB_RECV
   wFlags          WORD        ?             ;Flags: IOF_JOB_????
   dBytesConsumed  DWORD       ?             ;#bytes currently placed in the buffer
-IO_HEADER ends
-IO_HEADER_SIZE equ sizeof(IO_HEADER)
+IOJOB_HEADER ends
+IOJOB_HEADER_SIZE equ sizeof(IOJOB_HEADER)
 
-IO_SOCKJOB struc 4
-                  IO_HEADER   {}
+IOJOB struc 4
+                  IOJOB_HEADER {}
                   SDLL_ITEM   {}            ;Linked list to hold buffers together
   WSABuf          WSABUF      {}
   DataBuffer      BYTE        0 dup(?)      ;The data buffer is placed here
-IO_SOCKJOB ends                             ;  Minimal size of the buffer must
-PIO_SOCKJOB typedef ptr IO_SOCKJOB          ;  be sizeof ACCEPT_DATA
+IOJOB ends                                  ;  Minimal size of the buffer must
+PIOJOB typedef ptr IOJOB                    ;  be sizeof ACCEPT_DATA
 
-;IO_SOCKJOB databuffer structure for an OPERATION_SOCK_ACCEPT operation
+;IOJOB databuffer structure for an IOJOB_ACCEPT operation
 ACCEPT_DATA struct 4
   LocalAddr       BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;16 BYTEs added, see AcceptEx
   RemoteAddr      BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;  documentation
@@ -390,18 +392,18 @@ TX_HIGH_WM_DEFAULT      equ (4*1024*1024)   ;4 MiB Watermark
 TX_LOW_WM_DEFAULT       equ (2*1024*1024)   ;2 MiB Watermark
 
 ; --------------------------------------------------------------------------------------------------
-; Object:  NetComIOSockJobPool
+; Object:  NetComIOJobPool
 ; Purpose: Implement a DataPool of IOSockJobs. An IOSockJob is a memory chunk with a header structure
-;          called IO_SOCKJOB followed by a data buffer.
+;          called IOJOB followed by a data buffer.
 
-Object NetComIOSockJobPool, NetComIOSockJobPoolID, DataPool
+Object NetComIOJobPool, NetComIOJobPoolID, DataPool
   RedefineMethod  Done
   RedefineMethod  Init,               POINTER, DWORD, DWORD
 
   RedefineMethod  NewItem,            WORD
-  RedefineMethod  FreeItem,           PIO_SOCKJOB
+  RedefineMethod  FreeItem,           PIOJOB
   RedefineMethod  Reset
-  VirtualMethod   ResetIOJob,         PIO_SOCKJOB, WORD
+  VirtualMethod   ResetIOJob,         PIOJOB, WORD
 
   DefineVariable  dBufferSize,        DWORD,            0     ;Payload size of each Item in BYTEs
   DefineVariable  dCount,             DWORD,            0     ;Control value
@@ -431,28 +433,28 @@ Object NetComConnection, NetComConnectionID, Primer
   VirtualMethod   QueueSend,          POINTER, DWORD          ;-> Data, Size
 
   ;Methods to marshal completion notifications
-  VirtualMethod   OnAccepted,         PIO_SOCKJOB
-  VirtualMethod   OnConnected,        PIO_SOCKJOB
-  VirtualMethod   OnError,            PIO_SOCKJOB, DWORD      ;-> IO_SockJob, dError
-  VirtualMethod   OnReceived,         PIO_SOCKJOB
-  VirtualMethod   OnSent,             PIO_SOCKJOB
+  VirtualMethod   OnAccepted,         PIOJOB
+  VirtualMethod   OnConnected,        PIOJOB
+  VirtualMethod   OnError,            PIOJOB, DWORD      ;-> IO_SockJob, dError
+  VirtualMethod   OnReceived,         PIOJOB
+  VirtualMethod   OnSent,             PIOJOB
 
   ;Methods to (re)issue send/recv jobs
-  VirtualMethod   DoRcvIOJob,         PIO_SOCKJOB
-  VirtualMethod   DoSndIOJob,         PIO_SOCKJOB
+  VirtualMethod   DoRcvIOJob,         PIOJOB
+  VirtualMethod   DoSndIOJob,         PIOJOB
 
   ;Networking stuff
   DefineVariable  dFlags,             DWORD,            NCC_DISCONNECTED_LOCAL
   DefineVariable  ChainItem,          SDLL_ITEM,        {NULL, NULL} ;Link to other Connections
   DefineVariable  dPendingIOJobs,     DWORD,            0     ;Pending IO jobs
-  DefineVariable  dCompletedIOJobs,   DWORD,            0     ;Completed IO jobs
+  DefineVariable  dCompletedIOJobs,   DWORD,            0     ;Completed IO jobs, may overflow!
   DefineVariable  RcvIOJobChain,      SDLL_SENTINEL,    {NULL, NULL}  ;Recieve IOSockJob chain
   DefineVariable  dRcvLstElpsdTime,   DWORD,            0     ;Last elapsed time we recieved data (secs)
   DefineVariable  pProtocol,          POINTER,          NULL
   DefineVariable  hSocket,            SOCKET,           INVALID_SOCKET
   DefineVariable  LocalAddr,          NETCOMADDR,       {AF_INETX}  ;IP + Port
   DefineVariable  RemoteAddr,         NETCOMADDR,       {AF_INETX}  ;IP + Port
-  DefineVariable  ConnStartTime,      SYSTEMTIME,       {}
+  DefineVariable  ConnStartTime,      FILETIME,         {}
 
   ;Backpressure Metric
   DefineVariable  dSndQueuedIOJobs,   DWORD,            0     ;Total queued (in-flight + pending) IOJobs
@@ -481,7 +483,7 @@ Object NetComConnectionPool, NetComConnectionPoolID, DataPool
   RedefineMethod  Reset
 
   DefineVariable  dCount,             DWORD,            0     ;Control value
-  DefineVariable  pIOSockJobPool,     $ObjPtr(NetComIOSockJobPool),  NULL
+  DefineVariable  pIOSockJobPool,     $ObjPtr(NetComIOJobPool),  NULL
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
 ObjectEnd
 
@@ -515,13 +517,13 @@ Object NetComProtocol, NetComProtocolID, Primer
   VirtualMethod   AddToBlackList,     PNETCOMADDR                   ;-> NETCOMADDR
   RedefineMethod  Done
   RedefineMethod  Init,               POINTER                       ;-> Owner
-  VirtualMethod   IsDataComplete?,    $ObjPtr(NetComConnection), PIO_SOCKJOB
+  VirtualMethod   IsDataComplete?,    $ObjPtr(NetComConnection), PIOJOB
   VirtualMethod   IsBlackListed?,     PNETCOMADDR                   ;-> NETCOMADDR
   VirtualMethod   OnAccepted,         $ObjPtr(NetComConnection)
   VirtualMethod   OnClosed,           $ObjPtr(NetComConnection)
   VirtualMethod   OnConnected,        $ObjPtr(NetComConnection)
   VirtualMethod   OnDisconnected,     $ObjPtr(NetComConnection), DWORD, DWORD
-  VirtualMethod   OnError,            $ObjPtr(NetComConnection), PIO_SOCKJOB, DWORD
+  VirtualMethod   OnError,            $ObjPtr(NetComConnection), PIOJOB, DWORD
   VirtualMethod   OnTimeouted,        $ObjPtr(NetComConnection)
   VirtualMethod   ProcessData,        $ObjPtr(NetComConnection), DWORD ;-> NetComConnection, Index
   VirtualMethod   Release,            $ObjPtr(NetComConnection)
@@ -573,7 +575,7 @@ Object NetComEngine, NetComEngineID, Primer
   DefineVariable  pLocalHostName,     PSTRING,        NULL
 
   Embed ConnectionPool, NetComConnectionPool            ;Pool of NetComConnections
-  Embed IOSockJobPool,  NetComIOSockJobPool             ;IOSockJob Pool
+  Embed IOSockJobPool,  NetComIOJobPool             ;IOSockJob Pool
   Embed Listeners,      DataCollection                  ;DataCollection of listening sockets
   Embed Workers,        XWCollection                    ;Collection of Worker thread HANDLEs
 ObjectEnd
@@ -841,13 +843,13 @@ endm
 
 ; ==================================================================================================
 
-include NetComAddrCollection.inc   ;Collection for handling of NETCOMADDR structures
-include NetComProtocol.inc         ;Base object for handling of Network Events
-include NetComIOSockJobPool.inc    ;Object for recycling of NetComIOJob objects
-include NetComConnection.inc       ;This object represents one TCP/IP network session
-include NetComConnectionPool.inc   ;Object for recycling of NetComConnections
-include NetComEngine.inc           ;The main IOCP object, and IOCP message handler thread
-include NetComSupervisor.inc       ;
+include NetComAddrCollection.inc    ;Collection for handling of NETCOMADDR structures
+include NetComProtocol.inc          ;Base object for handling of Network Events
+include NetComIOJobPool.inc         ;Object for recycling of NetComIOJob objects
+include NetComConnection.inc        ;This object represents one TCP/IP network session
+include NetComConnectionPool.inc    ;Object for recycling of NetComConnections
+include NetComEngine.inc            ;The main IOCP object, and IOCP message handler thread
+include NetComSupervisor.inc        ;
 
 ; ==================================================================================================
 
