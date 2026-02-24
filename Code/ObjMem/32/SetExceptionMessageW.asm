@@ -204,6 +204,7 @@ FinalExceptionHandlerW proc uses ebx edi esi pExceptInfo:ptr EXCEPTION_POINTERS
       invoke StrCopyW, eax, ebx                       ;Copy string to memory
       call GlobalUnlock
       invoke OpenClipboard, 0
+      invoke EmptyClipboard
       push CF_UNICODETEXT
       call SetClipboardData
       invoke CloseClipboard
@@ -218,12 +219,12 @@ FinalExceptionHandlerW endp
 ; Procedure: SetExceptionMessageW
 ; Purpose:   Install a final exception handler that displays a messagebox showing detailed exception
 ;            information and a user text.
-; Arguments: Arg1: -> User wide message string.
+; Arguments: Arg1: -> User WIDE message string.
 ;            Arg2: -> Messagebox WIDE title string.
 ;            Arg3: -> Callback procedure fired when an exception reaches the final handler.
 ;                  If the callback returns zero, the messagebox is displayed, otherwise
 ;                  EXCEPTION_EXECUTE_HANDLER is passed to the OS without showing the messagebox.
-;                  If this parameter is NULL, the messgebox is always displayed.
+;                  If this parameter is NULL, the messgebox is displayed.
 ; Return:    Nothing.
 
 align ALIGN_CODE

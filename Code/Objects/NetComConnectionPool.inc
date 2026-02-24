@@ -57,9 +57,9 @@ MethodEnd
 ;             Arg3: -> NetComIOJobPool.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComConnectionPool.Init, uses xsi, pOwner:POINTER, dMaxClients:DWORD, pIOSockJobPool:POINTER
+Method NetComConnectionPool.Init, uses xsi, pOwner:POINTER, dMaxClients:DWORD, pIOJobPool:POINTER
   SetObject xsi
-  m2m [xsi].pIOSockJobPool, pIOSockJobPool, xax
+  m2m [xsi].pIOJobPool, pIOJobPool, xax
   invoke InitializeCriticalSectionEx, addr [xsi].CritSect, 4000, 0
   ACall xsi.Init, pOwner, sizeof($Obj(NetComConnection)), dMaxClients, 1
 MethodEnd

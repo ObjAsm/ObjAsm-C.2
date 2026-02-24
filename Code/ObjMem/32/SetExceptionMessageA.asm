@@ -204,6 +204,7 @@ FinalExceptionHandlerA proc uses ebx edi esi pExceptInfo:ptr EXCEPTION_POINTERS
       invoke StrCopyA, eax, ebx                       ;Copy string to memory
       call GlobalUnlock
       invoke OpenClipboard, 0
+      invoke EmptyClipboard
       push CF_TEXT
       call SetClipboardData
       invoke CloseClipboard
@@ -223,7 +224,7 @@ FinalExceptionHandlerA endp
 ;             Arg3: -> Callback procedure fired when an exception reaches the final handler.
 ;                   If the callback returns zero, the messagebox is displayed, otherwise
 ;                   EXCEPTION_EXECUTE_HANDLER is passed to the OS without showing the messagebox.
-;                   If this parameter is NULL, the messgebox is always displayed.
+;                   If this parameter is NULL, the messgebox is displayed.
 ; Return:     Nothing.
 
 align ALIGN_CODE

@@ -13,7 +13,7 @@
 ;               - if the window is minimized, MoveChildWnd is skipped.
 ;             Version C.2.0, January 2022
 ;               - Flags modified and functionality extended.
-;               - Width and height calculation corrected in GetChildInfo. 
+;               - Width and height calculation corrected in GetChildInfo.
 ;             Version C.2.1, September 2025
 ;               - MoveChildWnd rewritten using MulDiv to avoid on overflow.
 ; ==================================================================================================

@@ -144,13 +144,13 @@ ObjectEnd
 
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  $ObjMthd(DrawStr)   textequ   $ObjMthd(DrawStrA)
+  $ObjMtd(DrawStr)   textequ   $ObjMtd(DrawStrA)
   LoadFile  textequ   <LoadFileA>
   SaveFile  textequ   <SaveFileA>
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  $ObjMthd(DrawStr)   textequ   $ObjMthd(DrawStrW)
-  $ObjMthd(LoadFile)  textequ   $ObjMthd(LoadFileW)
-  $ObjMthd(SaveFile)  textequ   $ObjMthd(SaveFileW)
+  $ObjMtd(DrawStr)   textequ   $ObjMtd(DrawStrW)
+  $ObjMtd(LoadFile)  textequ   $ObjMtd(LoadFileW)
+  $ObjMtd(SaveFile)  textequ   $ObjMtd(SaveFileW)
 else
   echo <Warning: incompatible TARGET_STR_TYPE>
 endif

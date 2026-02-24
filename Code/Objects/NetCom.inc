@@ -30,7 +30,7 @@
 ;             Our typical TCP streaming connections use the 'session global' copy of the
 ;             RemoteAddr field, stored in NetComConnection. The newly-supported SOCK_SEQPACKET
 ;             will also use that. But the SOCK_DGRAM, SOCK_RDM and SOCK_RAW will use the
-;             'session local' copy of the RemoteAddr field, stored in IOSockJob.
+;             'session local' copy of the RemoteAddr field, stored in IOJob.
 ;             This is because these socket types typically communicate with multiple remote hosts,
 ;             so we are tagging messages with host ids. This allows us to associate a message with
 ;             an individual remote host.
@@ -76,7 +76,7 @@
 ;            |       -->|NetComConnectionPool|        -------|------>|  NetComIOJobPool  |- - -
 ;            |      |   |--------------------|       |       |   |   |-------------------|     |
 ;             ------|---| pOwner             |       |       |    ---| pOwner            |
-;                   |   |     pIOSockJobPool |-------        |       | dBufferSize       |     |
+;                   |   |     pIOJobPool     |-------        |       | dBufferSize       |     |
 ;                   |   |                    |               |       |                   |
 ;                   |    --------------------                |        -------------------      |
 ;                   |                                        |
@@ -116,19 +116,9 @@ ERROR_USER_QUIT             equ   -2
 
 ;Protocol commands
 PROT_CMD_NONE               equ   0
-PROT_CMD_DISCONNECT         equ   1         ;Connection teardown
-PROT_CMD_CLOSE              equ   2         ;Connection cut
+PROT_CMD_DISCONNECT         equ   1         ;Connection disconnect
+PROT_CMD_CLOSE              equ   2         ;Connection teardown
 PROT_CMD_DESTROY            equ   3         ;Destroy connection object
-
-;NetComConnection state
-NCS_NONE                    equ   0
-NCS_CREATED                 equ   1
-NCS_BOUND                   equ   2
-NCS_LISTENING               equ   3
-NCS_CONNECTING              equ   4
-NCS_CONNECTED               equ   5
-NCS_CLOSING                 equ   6
-NCS_CLOSED                  equ   7
 
 ;NetComConnection flags
 NCC_SHUTDOWN_RCV_REMOTE     equ   BIT00
@@ -148,10 +138,13 @@ NCC_QUEUE_ACCEPT            equ   BIT06
 NCC_ACCEPTED                equ   BIT07
 NCC_QUEUE_CONNECT           equ   BIT08
 NCC_CONNECTED               equ   BIT09
+NCC_BIND                    equ   BIT10
+NCC_BOUND                   equ   BIT11
+NCC_DONE                    equ   BIT12
 
 ;Backpressure control
-NCC_RCV_PAUSED              equ   BIT12
-NCC_SND_PAUSED              equ   BIT13
+NCC_RCV_PAUSED              equ   BIT24
+NCC_SND_PAUSED              equ   BIT25
 
 ;NetCom Error states
 NCE_ACCEPT                  equ   BIT27     ;Error happend while accepting
@@ -195,7 +188,7 @@ SO_UPDATE_ACCEPT_CONTEXT      equ   700Bh
 SO_UPDATE_CONNECT_CONTEXT     equ   7010h
 
 _NETCOMADDR_ struc                          ;Auxiliar structure to get the total size
-  union                                     
+  union
     SOCKADDR                  {}            ;IPv4
     SOCKADDR_IN               {}            ;IPv4 only
     SOCKADDR_IN6              {}            ;IPv6 only
@@ -204,9 +197,9 @@ _NETCOMADDR_ struc                          ;Auxiliar structure to get the total
 _NETCOMADDR_ ends
 
 NETCOMADDR struc           ;Universal address structure
-  wFamily   WORD  ?
-  wPort     WORD  ?
-  Address   BYTE  sizeof(_NETCOMADDR_) - 2*sizeof(WORD) dup(?)
+  wFamily         WORD  ?
+  wPort           WORD  ?
+  Address         BYTE  sizeof(_NETCOMADDR_) - 2*sizeof(WORD) dup(?)
 NETCOMADDR ends
 PNETCOMADDR typedef ptr NETCOMADDR
 
@@ -276,8 +269,8 @@ COMPLETION_KEY_KILL_WORKER    equ   -2
 COMPLETION_KEY_SOCK_ACCEPTED  equ   -3
 
 AcceptEx proto WIN_STD_CALL_CONV :SOCKET,:SOCKET,:PVOID,:DWORD,:DWORD,:DWORD,:LPDWORD,:LPOVERLAPPED
-TYPE_Connectex typedef proto :HANDLE, :POINTER, :DWORD, :POINTER, :DWORD, :POINTER, :LPOVERLAPPED
-PTO_CONNECTEX typedef ptr TYPE_Connectex
+TYPE_CONNECTEX typedef proto :HANDLE, :POINTER, :DWORD, :POINTER, :DWORD, :POINTER, :LPOVERLAPPED
+PTYP_CONNECTEX typedef ptr TYPE_CONNECTEX
 
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -388,12 +381,12 @@ endm
 DEFAULT_LISTENING_PORT  equ $htons(25773)
 
 ;Defaults (can be changed at runtime via your UI/init paths)
-TX_HIGH_WM_DEFAULT      equ (4*1024*1024)   ;4 MiB Watermark
-TX_LOW_WM_DEFAULT       equ (2*1024*1024)   ;2 MiB Watermark
+TX_HIGH_WM_DEFAULT      equ 1024
+TX_LOW_WM_DEFAULT       equ 512
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:  NetComIOJobPool
-; Purpose: Implement a DataPool of IOSockJobs. An IOSockJob is a memory chunk with a header structure
+; Purpose: Implement a DataPool of IOJobs. An IOJob is a memory chunk with a header structure
 ;          called IOJOB followed by a data buffer.
 
 Object NetComIOJobPool, NetComIOJobPoolID, DataPool
@@ -435,7 +428,7 @@ Object NetComConnection, NetComConnectionID, Primer
   ;Methods to marshal completion notifications
   VirtualMethod   OnAccepted,         PIOJOB
   VirtualMethod   OnConnected,        PIOJOB
-  VirtualMethod   OnError,            PIOJOB, DWORD      ;-> IO_SockJob, dError
+  VirtualMethod   OnError,            PIOJOB, DWORD           ;-> IOJob, dError
   VirtualMethod   OnReceived,         PIOJOB
   VirtualMethod   OnSent,             PIOJOB
 
@@ -444,30 +437,29 @@ Object NetComConnection, NetComConnectionID, Primer
   VirtualMethod   DoSndIOJob,         PIOJOB
 
   ;Networking stuff
-  DefineVariable  dFlags,             DWORD,            NCC_DISCONNECTED_LOCAL
+  DefineVariable  dFlags,             DWORD,            0
   DefineVariable  ChainItem,          SDLL_ITEM,        {NULL, NULL} ;Link to other Connections
   DefineVariable  dPendingIOJobs,     DWORD,            0     ;Pending IO jobs
   DefineVariable  dCompletedIOJobs,   DWORD,            0     ;Completed IO jobs, may overflow!
-  DefineVariable  RcvIOJobChain,      SDLL_SENTINEL,    {NULL, NULL}  ;Recieve IOSockJob chain
-  DefineVariable  dRcvLstElpsdTime,   DWORD,            0     ;Last elapsed time we recieved data (secs)
+  DefineVariable  RcvIOJobChain,      SDLL_SENTINEL,    {NULL, NULL}  ;Recieve IOJob chain
   DefineVariable  pProtocol,          POINTER,          NULL
   DefineVariable  hSocket,            SOCKET,           INVALID_SOCKET
   DefineVariable  LocalAddr,          NETCOMADDR,       {AF_INETX}  ;IP + Port
   DefineVariable  RemoteAddr,         NETCOMADDR,       {AF_INETX}  ;IP + Port
-  DefineVariable  ConnStartTime,      FILETIME,         {}
+  DefineVariable  StartTime,          FILETIME,         {}
+  DefineVariable  LastTime,           FILETIME,         {}
 
   ;Backpressure Metric
-  DefineVariable  dSndQueuedIOJobs,   DWORD,            0     ;Total queued (in-flight + pending) IOJobs
   DefineVariable  dSndHighWtrMrk,     DWORD,            TX_HIGH_WM_DEFAULT
   DefineVariable  dSndLowWtrMrk,      DWORD,            TX_LOW_WM_DEFAULT
-;  DefineVariable  dSndBlocked,        DWORD,            0     ;Boolean: window full reached at least once
-;  DefineVariable  dRcvPaused,         DWORD,            0     ;Boolean: do not post new WSARecv
+  DefineVariable  dSndQueuedIOJobs,   DWORD,            0     ;Total queued (in-flight + pending) IOJobs
+  DefineVariable  dSndPaused,         DWORD,            FALSE ;Boolean: window full reached at least once
   DefineVariable  dRcvQueuedIOJobs,   DWORD,            0     ;Number of posted Recv operations (0/1)
+  DefineVariable  dRcvPaused,         DWORD,            FALSE ;Boolean: do not post new WSARecv
 
   ;Management
   DefineVariable  pData,              POINTER,          NULL  ;-> Data managed by the protocol
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
-;  DefineVariable  ObjLock,            OBJECT_LOCK,      {}
   DefineVariable  wName,              CHRW,             28 dup(?) ;Used for DebugCenter Wnd Caption
 ObjectEnd
 
@@ -483,7 +475,7 @@ Object NetComConnectionPool, NetComConnectionPoolID, DataPool
   RedefineMethod  Reset
 
   DefineVariable  dCount,             DWORD,            0     ;Control value
-  DefineVariable  pIOSockJobPool,     $ObjPtr(NetComIOJobPool),  NULL
+  DefineVariable  pIOJobPool,         $ObjPtr(NetComIOJobPool),  NULL
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
 ObjectEnd
 
@@ -514,11 +506,11 @@ ObjectEnd
 
 Object NetComProtocol, NetComProtocolID, Primer
   VirtualMethod   Allocate,           $ObjPtr(NetComConnection)
-  VirtualMethod   AddToBlackList,     PNETCOMADDR                   ;-> NETCOMADDR
+  VirtualMethod   AddToBlackList,     PNETCOMADDR             ;-> NETCOMADDR
   RedefineMethod  Done
-  RedefineMethod  Init,               POINTER                       ;-> Owner
+  RedefineMethod  Init,               POINTER                 ;-> Owner
   VirtualMethod   IsDataComplete?,    $ObjPtr(NetComConnection), PIOJOB
-  VirtualMethod   IsBlackListed?,     PNETCOMADDR                   ;-> NETCOMADDR
+  VirtualMethod   IsBlackListed?,     PNETCOMADDR             ;-> NETCOMADDR
   VirtualMethod   OnAccepted,         $ObjPtr(NetComConnection)
   VirtualMethod   OnClosed,           $ObjPtr(NetComConnection)
   VirtualMethod   OnConnected,        $ObjPtr(NetComConnection)
@@ -533,12 +525,12 @@ Object NetComProtocol, NetComProtocolID, Primer
   DefineVariable  ListeningAddr,      NETCOMADDR, {AF_INETX, DEFAULT_LISTENING_PORT}
 
   ;Timeout in msecs, 0 means no timeout
-  DefineVariable  dTimeoutAcp,        DWORD,      0     ;Accept - not implementd yet
-  DefineVariable  dTimeoutCon,        DWORD,      0     ;Connect - not implementd yet
-  DefineVariable  dTimeoutRcv,        DWORD,      0     ;Recieve
-  DefineVariable  dTimeoutSnd,        DWORD,      0     ;Send - not implementd yet
+  DefineVariable  dTimeoutAcp,        DWORD,      0           ;Accept - not implementd yet
+  DefineVariable  dTimeoutCon,        DWORD,      0           ;Connect - not implementd yet
+  DefineVariable  dTimeoutRcv,        DWORD,      0           ;Recieve
+  DefineVariable  dTimeoutSnd,        DWORD,      0           ;Send - not implementd yet
 
-  Embed BlackList, NetComAddrCollection         ;List of addresses that are not allowed to connect
+  Embed BlackList, NetComAddrCollection                 ;Addr-List that are not allowed to connect
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -557,14 +549,14 @@ Object NetComEngine, NetComEngineID, Primer
   RedefineMethod  Init,               POINTER, POINTER, DWORD, DWORD, DWORD
   VirtualMethod   NewConnection,      $ObjPtr(NetComProtocol)
   VirtualMethod   NewAcceptor,        PLISTENER, $ObjPtr(NetComProtocol)
-  StaticMethod    Worker
+  StaticMethod    WorkerJob
   StaticMethod    Supervisor
   StaticMethod    Startup
   StaticMethod    Shutdown
   VirtualMethod   StartListening,     DWORD, $ObjPtr(NetComProtocol)
   VirtualMethod   StopListening
 
-  DefineVariable  hIOCP,              HANDLE,         0             ;IOCP HANDLE
+  DefineVariable  hIOCP,              HANDLE,         0       ;IOCP HANDLE
   DefineVariable  dWorkerCount,       DWORD,          0
   DefineVariable  pSupervisor,        POINTER,        NULL
   DefineVariable  ConnectionChain,    SDLL_SENTINEL,  {NULL, NULL}
@@ -575,7 +567,7 @@ Object NetComEngine, NetComEngineID, Primer
   DefineVariable  pLocalHostName,     PSTRING,        NULL
 
   Embed ConnectionPool, NetComConnectionPool            ;Pool of NetComConnections
-  Embed IOSockJobPool,  NetComIOJobPool             ;IOSockJob Pool
+  Embed IOJobPool,      NetComIOJobPool                 ;IOJob Pool
   Embed Listeners,      DataCollection                  ;DataCollection of listening sockets
   Embed Workers,        XWCollection                    ;Collection of Worker thread HANDLEs
 ObjectEnd
@@ -584,19 +576,19 @@ ObjectEnd
 ; Object:  NetComSupervisor
 ; Purpose: Controls overall status of the NetComEngine
 
+SUPERVISOR_WAITHANDLECOUNT equ 2
+
 Object NetComSupervisor, NetComSupervisorID, Primer
   RedefineMethod  Done
-  RedefineMethod  Init,               POINTER           ;-> NetComEngine
-  VirtualMethod   Worker
+  RedefineMethod  Init,               POINTER                 ;-> NetComEngine
+  VirtualMethod   WorkerJob
 
   DefineVariable  hWorker,            HANDLE,     0
-  DefineVariable  WorkerWaitHandles,  HANDLE,     3 dup(?)
+  DefineVariable  WaitHandles,        HANDLE,     SUPERVISOR_WAITHANDLECOUNT dup(0)
+  DefineVariable  dCycleTime,         DWORD,      250         ;ms
 
-  ;Timeout in msecs, 0 means no timeout
-  DefineVariable  dTimeoutAcp,        DWORD,      0     ;Accept - not implementd yet
-  DefineVariable  dTimeoutCon,        DWORD,      0     ;Connect - not implementd yet
-  DefineVariable  dTimeoutRcv,        DWORD,      0     ;Recieve
-  DefineVariable  dTimeoutSnd,        DWORD,      0     ;Send - not implementd yet
+  ;Timeout = 0 means no timeout
+  DefineVariable  dTimeout,           DWORD,      15*10000000 ;15s in 100ns units
 ObjectEnd
 
 

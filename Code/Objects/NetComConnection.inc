@@ -32,21 +32,21 @@ Method NetComConnection.Admit, uses xsi, dDecision:DWORD
     mov xax, [xcx].$Obj(NetComConnectionPool).pOwner    ;xax -> NetComEngine
     invoke CreateIoCompletionPort, [xsi].hSocket, [xax].$Obj(NetComEngine).hIOCP, xsi, 0
     .if eax != 0
-      invoke GetSystemTimeAsFileTime, addr [xsi].ConnStartTime
+      invoke GetSystemTimeAsFileTime, addr [xsi].StartTime
       OCall xsi.QueueReceive
     .else
       invoke WSAGetLastError
     .endif
   .else
     ;Connection rejected
-    OCall xsi.QueueDestroy                              ;Mark to free => close & free
+    OCall xsi.QueueDestroy                              ;Mark to be released => close & free
     OCall xsi.Close, FALSE
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.Close
-; Purpose:    Perform a graceful/abortive disconnection of a NetCom connection sending 
+; Purpose:    Perform a graceful/abortive disconnection of a NetCom connection sending
 ;             a FIN/RST to the remote endpoint.
 ; Arguments:  Arg1: Abortive flag (TRUE/FALSE).
 ; Return:     Nothing.
@@ -64,7 +64,7 @@ Method NetComConnection.Close, uses xsi, dAbortive:DWORD
     mov Linger.l_linger, 0                              ;Wait time = 0
     invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_LINGER, addr Linger, sizeof Linger
 ;    DbgCheckSockReturn "NetComConnection.Close - ERROR on SetSockOpt SO_LINGER",, addr [xsi].wName
-    xBitSet [xsi].dFlags, NCC_CLOSED                    ;Set marker
+    BitSet [xsi].dFlags, NCC_CLOSED                    ;Set marker before closesocket!
     invoke closesocket, [xsi].hSocket
     mov [xsi].hSocket, INVALID_SOCKET
     OCall [xsi].pProtocol::NetComProtocol.OnClosed, xsi
@@ -88,11 +88,11 @@ Method NetComConnection.Disconnect, uses xsi, dDirection:DWORD
     invoke shutdown, [xsi].hSocket, dDirection            ;Send FIN to the remote host
     .if eax == NO_ERROR
       .if dDirection == SD_RECEIVE
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RCV_LOCAL
+        BitSet [xsi].dFlags, NCC_SHUTDOWN_RCV_LOCAL
       .elseif dDirection == SD_SEND
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_SND_LOCAL
+        BitSet [xsi].dFlags, NCC_SHUTDOWN_SND_LOCAL
       .else
-        xBitSet [xsi].dFlags, NCC_SHUTDOWN_RCV_LOCAL or NCC_SHUTDOWN_SND_LOCAL
+        BitSet [xsi].dFlags, NCC_SHUTDOWN_RCV_LOCAL or NCC_SHUTDOWN_SND_LOCAL
       .endif
     .else
       invoke WSAGetLastError
@@ -112,17 +112,18 @@ MethodEnd
 
 Method NetComConnection.Done, uses xsi
   SetObject xsi
-;  DbgText "NetComConnection.Done *******************************************************", addr [xsi].wName
+;  DbgText "NetComConnection.Done ***********************************************", addr [xsi].wName
   invoke DeleteCriticalSection, addr [xsi].CritSect
+  BitSet [xsi].dFlags, NCC_DONE
   ACall xsi.Done
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.DoRcvIOJob
 ; Purpose:    Perform an asynchronious read operation.
-; Arguments:  Arg1: -> IOSockJob.
+; Arguments:  Arg1: -> IOJob.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
-; Note:       Appending the IOSockJob to the RcvIOJobChain MUST be done before calling WSARecv to
+; Note:       Appending the IOJob to the RcvIOJobChain MUST be done before calling WSARecv to
 ;             ensure proper sequence on an multithreaded environment!
 
 Method NetComConnection.DoRcvIOJob, uses xbx xdi xsi, pIOJob:PIOJOB
@@ -132,10 +133,9 @@ Method NetComConnection.DoRcvIOJob, uses xbx xdi xsi, pIOJob:PIOJOB
 ;  DbgText "NetComConnection.DoRcvIOJob", addr [xsi].wName
 
   mov xdi, pIOJob
-  invoke EnterCriticalSection, addr [xsi].CritSect      ;Lock for insertion
-  lea xcx, [xdi].IOJOB.pNextItem                   ;Get address of SDLL_ITEM
+  lea xcx, [xdi].IOJOB.pNextItem                        ;Get address of SDLL_ITEM
   lea xax, [xsi].RcvIOJobChain                          ;Get address of SDLL_SENTINEL
-  SDLL_Append xax, xcx                                  ;Link this IOSockJob to the IO list
+  SDLL_Append xax, xcx                                  ;Link this IOJob to the IO list
   mov dRcvFlags, 0
   invoke WSARecv, [xsi].hSocket, addr [xdi].IOJOB.WSABuf, 1, \
                   addr [xdi].IOJOB.dBytesConsumed, addr dRcvFlags, xdi, NULL
@@ -151,8 +151,6 @@ Method NetComConnection.DoRcvIOJob, uses xbx xdi xsi, pIOJob:PIOJOB
     inc [xsi].dRcvQueuedIOJobs
   .endif
   mov ebx, eax
-
-  invoke LeaveCriticalSection, addr [xsi].CritSect
 
   .if ebx != 0
     OCall xsi.OnError, xdi, ebx                         ;pIOJob
@@ -198,14 +196,14 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.FreeRessources
-; Purpose:    Free all ressources, including the gattered IOSockJobs.
+; Purpose:    Free all ressources, including the gattered IOJobs.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       This method works worhs together with Done to isolate the call DeleteCriticalSection.
 ;             At this point no pending IOJobs should exist!
 
 Method NetComConnection.FreeRessources, uses xbx xdi xsi
-  local pPrevItem:PSDLL_ITEM, pIOSockJobPool:$ObjPtr(NetComIOJobPool)
+  local pPrevItem:PSDLL_ITEM, pIOJobPool:$ObjPtr(NetComIOJobPool)
 
   SetObject xsi
 ;  DbgText "NetComConnection.FreeRessources", addr [xsi].wName
@@ -216,11 +214,11 @@ Method NetComConnection.FreeRessources, uses xbx xdi xsi
   ;Iterate the RcvIOJobChain Linked List in reverse order.
   lea xbx, [xsi].RcvIOJobChain
   mov xcx, [xsi].pOwner
-  m2m pIOSockJobPool, [xcx].$Obj(NetComConnectionPool).pIOSockJobPool, xax
-  mov xdi, [xbx].SDLL_SENTINEL.pLastItem                ;Get the last IOSockJob
+  m2m pIOJobPool, [xcx].$Obj(NetComConnectionPool).pIOJobPool, xax
+  mov xdi, [xbx].SDLL_SENTINEL.pLastItem                ;Get the last IOJob
   .while xdi != xbx                                     ;Check for end of chain
     m2m pPrevItem, [xdi].SDLL_ITEM.pPrevItem, xax       ;Save prev item in pItem
-    OCall pIOSockJobPool::NetComIOJobPool.FreeItem, addr [xdi - IOJOB_HEADER_SIZE]
+    OCall pIOJobPool::NetComIOJobPool.FreeItem, addr [xdi - IOJOB_HEADER_SIZE]
     mov xdi, pPrevItem                                  ;Move to previos item
   .endw
   SDLL_Init xbx                                         ;Reset the linked list
@@ -285,16 +283,7 @@ Method NetComConnection.Init, uses xsi, pOwner:POINTER, pProtocol:POINTER
       mov dOption, 1                                  ;1 means algo disabled
       invoke setsockopt, [xsi].hSocket, IPPROTO_TCP, TCP_NODELAY, addr dOption, sizeof dOption
       DbgCheckSockReturn "NetComConnection.Init - ERROR on SetSockOpt TCP_NODELAY = 1",, addr [xsi].wName
-
-      ;Set send buffer size to zero since we provide our own buffers
-;      m2z dOption
-;      invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_SNDBUF, addr dOption, sizeof dOption
-;      DbgCheckSockReturn "ERROR on SetSockOpt SO_SNDBUF = 0"
-;      invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_RCVBUF, addr dOption, sizeof dOption
-;      DbgCheckSockReturn "ERROR on SetSockOpt SO_RCVBUF = 0"
-
-      invoke MemZero, addr [xsi].ConnStartTime, sizeof FILETIME
-
+      invoke MemZero, addr [xsi].StartTime, sizeof FILETIME
       xor eax, eax
     .else
       invoke WSAGetLastError
@@ -305,61 +294,63 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnAccepted
-; Purpose:    Associates a newly accepted socket with the IOCP and queues an IOSockJob
+; Purpose:    Associates a newly accepted socket with the IOCP and queues an IOJob
 ;             of the "IOJOB_RECV" type.
-; Arguments:  Arg1: -> IOSockJob. It contains in the buffer the addresses of both endpoints.
+; Arguments:  Arg1: -> IOJob. It contains in the buffer the addresses of both endpoints.
 ; Return:     Nothing.
 
 Method NetComConnection.OnAccepted, uses xbx xdi xsi, pIOJob:PIOJOB
-  local dRcvLstElpsdTimeSize:DWORD
+;  local dRcvLstElpsdTimeSize:DWORD
 
   SetObject xsi
 ;  DbgText "NetComConnection.OnAccepted", addr [xsi].wName
 
-  xBitClr [xsi].dFlags, NCE_ACCEPT
-  xBitSet [xsi].dFlags, NCC_ACCEPTED
+  BitClr [xsi].dFlags, NCE_ACCEPT
+  BitSet [xsi].dFlags, NCC_ACCEPTED
 
-  ?mov xdx, pIOJob
   mov xcx, [xsi].pOwner                                 ;xcx -> NetComConnectionPool
   mov xdi, [xcx].$Obj(NetComConnectionPool).pOwner      ;xdi -> NetComEngine
 
-  mov xbx, [xdx].IOJOB.DataBuffer.ACCEPT_DATA.pListener
+  .ifBitClr [xsi].dFlags, NCC_QUEUE_DESTROY
+    mov xdx, pIOJob
+    mov xbx, [xdx].IOJOB.DataBuffer.ACCEPT_DATA.pListener
 
-  ;Updates the accepting socket with the context of the listening socket.
-  invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, \
-                     addr [xbx].LISTENER.hSocket, sizeof HANDLE
-  DbgCheckSockReturn "NetComConnection.OnAccepted - Error on SetSockOpt SO_UPDATE_ACCEPT_CONTEXT",, addr [xsi].wName
+    ;Updates the accepting socket with the context of the listening socket.
+    invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, \
+                       addr [xbx].LISTENER.hSocket, sizeof HANDLE
+    DbgCheckSockReturn "NetComConnection.OnAccepted - Error on SetSockOpt SO_UPDATE_ACCEPT_CONTEXT",, addr [xsi].wName
 
-  mov dRcvLstElpsdTimeSize, sizeof DWORD
-  invoke getsockopt, [xsi].hSocket, SOL_SOCKET, SO_CONNECT_TIME, \
-                     addr [xsi].dRcvLstElpsdTime, addr dRcvLstElpsdTimeSize
-  DbgCheckSockReturn "NetComConnection.OnAccepted - ERROR on OnReceived getsockopt SO_CONNECT_TIME",, addr [xsi].wName
+;    mov dRcvLstElpsdTimeSize, sizeof DWORD
+;    invoke getsockopt, [xsi].hSocket, SOL_SOCKET, SO_CONNECT_TIME, \
+;                       addr [xsi].dRcvLstElpsdTime, addr dRcvLstElpsdTimeSize
+;    DbgCheckSockReturn "NetComConnection.OnAccepted - ERROR on OnReceived getsockopt SO_CONNECT_TIME",, addr [xsi].wName
 
-  ;Get the address of the local endpoint
-  mov xcx, pIOJob
-  mov xdx, [xcx].IOJOB.WSABuf.buf
-  invoke MemClone, addr [xsi].LocalAddr, addr [xdx].ACCEPT_DATA.LocalAddr, sizeof NETCOMADDR
-;  DbgNetComAddrIPV4 [xsi].LocalAddr, "NetComConnection.OnAccepted - LocalAddr", addr [xsi].wName
+    ;Get the address of the local endpoint
+    mov xcx, pIOJob
+    mov xdx, [xcx].IOJOB.WSABuf.buf
+    invoke MemClone, addr [xsi].LocalAddr, addr [xdx].ACCEPT_DATA.LocalAddr, sizeof NETCOMADDR
+;    DbgNetComAddrIPV4 [xsi].LocalAddr, "NetComConnection.OnAccepted - LocalAddr", addr [xsi].wName
 
-  ;Get the address of the remote endpoint
-  mov xcx, pIOJob
-  mov xdx, [xcx].IOJOB.WSABuf.buf
-  invoke MemClone, addr [xsi].RemoteAddr, addr [xdx].ACCEPT_DATA.RemoteAddr, sizeof NETCOMADDR
-;  DbgNetComAddrIPV4 [xsi].RemoteAddr, "NetComConnection.OnAccepted - RemoteAddr", addr [xsi].wName
+    ;Get the address of the remote endpoint
+    mov xcx, pIOJob
+    mov xdx, [xcx].IOJOB.WSABuf.buf
+    invoke MemClone, addr [xsi].RemoteAddr, addr [xdx].ACCEPT_DATA.RemoteAddr, sizeof NETCOMADDR
+;    DbgNetComAddrIPV4 [xsi].RemoteAddr, "NetComConnection.OnAccepted - RemoteAddr", addr [xsi].wName
 
-  OCall [xdi].$Obj(NetComEngine).IOSockJobPool::NetComIOJobPool.FreeItem, pIOJob
+    ;Notify the NetComConnection's Protocol handler
+    OCall [xsi].pProtocol::NetComProtocol.OnAccepted, xsi
 
-  ;Notify the NetComConnection's Protocol handler
-  OCall [xsi].pProtocol::NetComProtocol.OnAccepted, xsi
+    ;Create a new acceptor
+    OCall xdi::NetComEngine.NewAcceptor, xbx, [xsi].pProtocol
+  .endif
 
-  ;Create a new acceptor
-  OCall xdi::NetComEngine.NewAcceptor, xbx, [xsi].pProtocol
+  OCall [xdi].$Obj(NetComEngine).IOJobPool::NetComIOJobPool.FreeItem, pIOJob
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnConnected
 ; Purpose:    A connect operation has finished.
-; Arguments:  Arg1: -> IOSockJob.
+; Arguments:  Arg1: -> IOJob.
 ; Return:     Nothing.
 
 Method NetComConnection.OnConnected, uses  xsi, pIOJob:PIOJOB
@@ -368,14 +359,14 @@ Method NetComConnection.OnConnected, uses  xsi, pIOJob:PIOJOB
   SetObject xsi
 ;  DbgText "NetComConnection.OnConnected", addr [xsi].wName
 
-  xBitClr [xsi].dFlags, NCE_CONNECT
-  xBitSet [xsi].dFlags, NCC_CONNECTED
+  BitClr [xsi].dFlags, NCE_CONNECT
+  BitSet [xsi].dFlags, NCC_CONNECTED
 
   mov xcx, [xsi].pOwner
-  OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, pIOJob
+  OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, pIOJob
   invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0
 ;  DbgCheckSockReturn "NetComConnection.OnConnected - ERROR on SetSockOpt SO_UPDATE_CONNECT_CONTEXT"
-  invoke GetSystemTimeAsFileTime, addr [xsi].ConnStartTime
+  invoke GetSystemTimeAsFileTime, addr [xsi].StartTime
   mov dSize, sizeof(NETCOMADDR)
   invoke getsockname, [xsi].hSocket, addr [xsi].LocalAddr, addr dSize
 ;  DbgCheckSockReturn "NetComConnection.OnConnected - getsockname",, addr [xsi].wName
@@ -402,48 +393,49 @@ Method NetComConnection.OnError, uses xbx xdi xsi, pIOJob:PIOJOB, dError:DWORD
 ;  DbgDec eax, "NetComConnection.OnError Operation";, addr [xsi].wName
   .if eax == IOJOB_ACCEPT
 ;    DbgOnSockError "NetComConnection.OnError - Accept", dError,, addr [xsi].wName
-    xBitSet [xsi].dFlags, NCE_ACCEPT
+    BitSet [xsi].dFlags, NCE_ACCEPT
     OCall [xsi].pProtocol::NetComProtocol.OnError, xsi, xbx, dError
     mov dProtocolCommand, eax
-    ;This IOSockJob must be freed before QueueDestroy
-    OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xbx
+    ;This IOJob must be freed before HandleProtocolCmd
+    OCall [xdi].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xbx
     OCall xsi.HandleProtocolCmd, dProtocolCommand
 
   .elseif eax == IOJOB_CONNECT
 ;    DbgOnSockError "NetComConnection.OnError - Connect", dError,, addr [xsi].wName
-    xBitSet [xsi].dFlags, NCE_CONNECT
+    BitSet [xsi].dFlags, NCE_CONNECT
     OCall [xsi].pProtocol::NetComProtocol.OnError, xsi, xbx, dError
     mov dProtocolCommand, eax
-    ;This IOSockJob must be freed before QueueDestroy
-    OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xbx
+    ;This IOJob must be freed before HandleProtocolCmd
+    OCall [xdi].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xbx
     OCall xsi.HandleProtocolCmd, dProtocolCommand
 
   .elseif eax == IOJOB_SEND
 ;    DbgOnSockError "NetComConnection.OnError - Send", dError,, addr [xsi].wName
-    xBitSet [xsi].dFlags, NCE_SEND
+    BitSet [xsi].dFlags, NCE_SEND
     OCall [xsi].pProtocol::NetComProtocol.OnError, xsi, xbx, dError
     mov dProtocolCommand, eax
-    ;This IOSockJob must be freed before QueueDestroy
-    OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xbx
+    ;This IOJob must be freed before HandleProtocolCmd
+    OCall [xdi].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xbx
     OCall xsi.HandleProtocolCmd, dProtocolCommand
 
   .elseif eax == IOJOB_RECV
 ;    DbgOnSockError "NetComConnection.OnError - Receive", dError,, addr [xsi].wName
-    xBitSet [xsi].dFlags, NCE_RECEIVE
+    BitSet [xsi].dFlags, NCE_RECEIVE
     OCall [xsi].pProtocol::NetComProtocol.OnError, xsi, xbx, dError
     mov dProtocolCommand, eax
 
-    ;Note: This IOSockJob is linked to the NetComConnection RcvIOJobChain.
-    ;      Remove the IOSockJob from the RcvIOJobChain and toss it into the pool.
-    lea xax, [xsi].RcvIOJobChain
-    SDLL_RemoveLast xax, xcx
-    OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xbx
+    ;Note: This IOJob is linked to the NetComConnection RcvIOJobChain.
+    ;      Remove the IOJob from the RcvIOJobChain and toss it into the pool.
+    mov xcx, pIOJob
+    lea xax, [xcx].IOJOB.pNextItem
+    SDLL_Remove xax, xcx, xdx
+    OCall [xdi].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xbx
     OCall xsi.HandleProtocolCmd, dProtocolCommand
 
   .else
-    DbgOnSockError "NetComConnection.OnError - Unknown operation", dError,, addr [xsi].wName
+;    DbgOnSockError "NetComConnection.OnError - Unknown operation", dError,, addr [xsi].wName
     DbgHex [xbx].IOJOB.wOperation, "NetComConnection.OnError", addr [xsi].wName
-    OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xbx
+    OCall [xdi].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xbx
 
   .endif
 MethodEnd
@@ -455,7 +447,7 @@ MethodEnd
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
-  local dConsumed:DWORD, dRcvLstElpsdTimeSize:DWORD
+  local dConsumed:DWORD;, dRcvLstElpsdTimeSize:DWORD
 
   SetObject xsi
   lock dec [xsi].dRcvQueuedIOJobs
@@ -463,12 +455,12 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
   mov xbx, [xsi].pOwner
 
   ;Check for special case of remote socket closure (remote sent a FIN) - end of stream
-  .if [xdx].IOJOB.dBytesConsumed == 0              ;Graceful remote shutdown send
+  .if [xdx].IOJOB.dBytesConsumed == 0                   ;Graceful remote shutdown send
 ;    DbgText "NetComConnection.OnReceived - FIN", addr [xsi].wName
     ;There is no other possibility to get a zero length payload => No need to pass it
     ;to any protocol handler
-    ;This IOSockJob remain in the RcvIOJobChain
-    xBitSet [xsi].dFlags, NCC_SHUTDOWN_SND_REMOTE       ;Remote shutdown send
+    ;This IOJob remain in the RcvIOJobChain
+    BitSet [xsi].dFlags, NCC_SHUTDOWN_SND_REMOTE        ;Remote shutdown send
     .ifBitClr [xsi].dFlags, NCC_CLOSED
       OCall xsi.Disconnect, SD_RECEIVE                  ;Local shutdown receive
     .endif
@@ -477,32 +469,32 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
 ;    DbgText "NetComConnection.OnReceived", addr [xsi].wName
     mov xdx, pIOJob
     ;We queue a new read for the one we recieve here
-    OCall [xbx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.NewItem, IOJOB_RECV
+    OCall [xbx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_RECV
     .if xax != NULL
-      OCall xsi.DoRcvIOJob, xax                          ;Increments pending IOJobs
+      OCall xsi.DoRcvIOJob, xax                         ;Increments pending IOJobs
     .else
 ;      DbgText "NetComConnection.OnReceived - DoRcvIOJob failed", addr [xsi].wName
     .endif
 
-    ;Return the number of seconds a socket has been connected.
-    mov dRcvLstElpsdTimeSize, sizeof DWORD
-    invoke getsockopt, [xsi].hSocket, SOL_SOCKET, SO_CONNECT_TIME, \
-                       addr [xsi].dRcvLstElpsdTime, addr dRcvLstElpsdTimeSize
+;    ;Return the number of seconds a socket has been connected.
+;    mov dRcvLstElpsdTimeSize, sizeof DWORD
+;    invoke getsockopt, [xsi].hSocket, SOL_SOCKET, SO_CONNECT_TIME, \
+;                       addr [xsi].dRcvLstElpsdTime, addr dRcvLstElpsdTimeSize
 ;    DbgCheckSockReturn "ERROR on OnReceived getsockopt SO_CONNECT_TIME",, addr [xsi].wName
 
     OCall [xsi].pProtocol::NetComProtocol.IsDataComplete?, xsi, pIOJob
     .if eax == ERROR_BAD_PROTOCOL || eax == ERROR_USER_QUIT
       OCall xsi.Disconnect, SD_BOTH
-      OCall [xbx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, pIOJob
+      OCall [xbx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, pIOJob
       OCall xsi.QueueDestroy
       OCall xsi.Close, TRUE
     .elseif eax != 0
-      OCall [xsi].pProtocol::NetComProtocol.ProcessData, xsi, eax   ;Return value is the #of BYTES that can be disposed
-      .if eax != 0                                        ;eax = byte count to free from IO_SOCKJOBs
-        ;eax = #bytes consumed, which should be removed.
-        ;Note this value could be larger than one IOSockJob buffer, meaning that it represents
-        ;several IOSockJobs. Also note that the total #bytes buffered could be larger than the
-        ;#bytes consumed meaning the last IOSockJob will contain some data that is not part of
+      OCall [xsi].pProtocol::NetComProtocol.ProcessData, xsi, eax
+      .if eax != 0                                      ;eax = # of BYTEs that can be disposed
+        ;eax = #BYTEs consumed, which must be removed.
+        ;Note this value could be larger than one IOJob buffer, meaning that it represents
+        ;several IOJobs. Also note that the total #BYTEs buffered could be larger than the
+        ;#BYTEs consumed meaning the last IOJob will contain some data that is not part of
         ;the complete receive and must remain buffered!
         mov dConsumed, eax
         lea xdi, [xsi].RcvIOJobChain                    ;Sentinel
@@ -513,13 +505,12 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
           .if edx <= dConsumed
             sub dConsumed, edx
             mov xcx, [xsi].pOwner
-            lea xax, [xbx - IOJOB_HEADER_SIZE]             ;xax -> IOSockJob
-            mov pIOJob, xax
+            lea xdx, [xbx - IOJOB_HEADER_SIZE]          ;xdx -> IOJob
+            OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xdx
             mov xbx, [xbx].SDLL_ITEM.pNextItem
-            OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, pIOJob
             .break .if dConsumed == 0
           .else
-            ;This is the last IOSockJob to be purged. We will be leaving some data in the buffer,
+            ;This is the last IOJob to be processed. We will leave some data in the buffer,
             ;so we'll need to move the buffer POINTER to the unconsumed data.
             mov ecx, dConsumed
             add [xbx - IOJOB_HEADER_SIZE].IOJOB.WSABuf.buf, xcx
@@ -543,20 +534,18 @@ MethodEnd
 Method NetComConnection.OnSent, uses xsi, pIOJob:PIOJOB
   SetObject xsi
 ;  DbgText "NetComConnection.OnSent", addr [xsi].wName
-
-  mov xdx, pIOJob
-  mov eax, [xdx].IOJOB.dBytesConsumed
-  lock sub [xsi].dSndQueuedIOJobs, eax
+  ?mov xdx, pIOJob
+  dec [xsi].dSndQueuedIOJobs
 
   ;If below Low-WM => clear block
   mov eax, [xsi].dSndQueuedIOJobs
   .if eax < [xsi].dSndLowWtrMrk
-    xBitClr [xsi].dFlags, NCC_SND_PAUSED
+    BitClr [xsi].dFlags, NCC_SND_PAUSED
   .endif
 
-  ;Toss the completed IOSockJob back in the IOJobPool
+  ;Toss the completed IOJob back in the IOJobPool
   mov xax, [xsi].pOwner
-  OCall [xax].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xdx
+  OCall [xax].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xdx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -571,10 +560,10 @@ Method NetComConnection.QueueAccept, uses xbx xdi xsi, pListener:PLISTENER
   SetObject xsi
 ;  DbgText "NetComConnection.QueueAccept", addr [xsi].wName
 
-  ;Allocate an IOSockJob to represent the accept IO operation
+  ;Allocate an IOJob to represent the accept IO operation
   mov xcx, [xsi].pOwner
-  OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.NewItem, IOJOB_ACCEPT
-  ;DbgHex xax, "NetComConnection.QueueAccept - Acceptor IOSockJob"
+  OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_ACCEPT
+  ;DbgHex xax, "NetComConnection.QueueAccept - Acceptor IOJob"
   .if xax == NULL
     OCall xsi.ErrorReport, NULL, WSA_NOT_ENOUGH_MEMORY
     mov eax, WSA_NOT_ENOUGH_MEMORY
@@ -624,7 +613,7 @@ MethodEnd
 Method NetComConnection.QueueDestroy, uses xsi
   SetObject xsi
 ;  DbgText "NetComConnection.QueueDestroy", addr [xsi].wName
-  xBitSet [xsi].dFlags, NCC_QUEUE_DESTROY
+  BitSet [xsi].dFlags, NCC_QUEUE_DESTROY
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -651,6 +640,7 @@ Method NetComConnection.QueueConnect, uses xbx xdi xsi, pRemoteAddr:PNETCOMADDR,
   ;Associate a local address with the socket
   .if pLocalAddr != NULL
     invoke MemClone, addr [xsi].LocalAddr, pLocalAddr, sizeof NETCOMADDR
+    BitSet [xsi].dFlags, NCC_BIND
     invoke bind, [xsi].hSocket, pLocalAddr, sizeof NETCOMADDR
     .if eax == SOCKET_ERROR
       invoke WSAGetLastError
@@ -658,13 +648,14 @@ Method NetComConnection.QueueConnect, uses xbx xdi xsi, pRemoteAddr:PNETCOMADDR,
       ;In this case, nothing is queued to the IOCP. ConnectEx would fail.
       ExitMethod
     .endif
+    BitSet [xsi].dFlags, NCC_BOUND
   .endif
 
 ;  DbgNetComAddrIPV4 [xsi].LocalAddr, "NetComConnection.QueueConnect - LocalAddr", addr [xsi].wName
-;  DbgNetComAddrIPV4 [xsi].RemoteAddr, "NetComConnection.QueueConnect - RemoteAddr", addr [xsi].wName
+;  DbgNetComAddrIPV4 [xsi].RemoteAddr,"NetComConnection.QueueConnect - RemoteAddr",addr [xsi].wName
 
-  mov xcx, [xsi].pOwner                               ;xcx -> NetComConnectionPool
-  OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.NewItem, IOJOB_CONNECT
+  mov xcx, [xsi].pOwner                                 ;xcx -> NetComConnectionPool
+  OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_CONNECT
   .if xax == NULL
     OCall xsi.ErrorReport, NULL, WSA_NOT_ENOUGH_MEMORY
     ExitMethod
@@ -673,10 +664,10 @@ Method NetComConnection.QueueConnect, uses xbx xdi xsi, pRemoteAddr:PNETCOMADDR,
 
   invoke EnterCriticalSection, addr [xsi].CritSect
 
-  m2z [xdi].IOJOB.WSABuf.len                 ;Size MUST be zero
+  m2z [xdi].IOJOB.WSABuf.len                            ;Size MUST be zero
   BitClr [xsi].dFlags, NCE_CONNECT
   BitSet [xsi].dFlags, NCC_QUEUE_CONNECT
-  invoke PTO_CONNECTEX ptr pConnectEx, [xsi].hSocket, pRemoteAddr, sizeof NETCOMADDR, \
+  invoke PTYP_CONNECTEX ptr pConnectEx, [xsi].hSocket, pRemoteAddr, sizeof NETCOMADDR, \
                                        NULL, 0, NULL, xdi
   .if eax != NO_ERROR                                   ;Did read IO complete synchronously?
     invoke WSAGetLastError                              ;No, check if it is a pending state
@@ -709,7 +700,7 @@ Method NetComConnection.QueueReceive, uses xsi
   SetObject xsi
 ;  DbgText "NetComConnection.QueueReceive", addr [xsi].wName
   mov xcx, [xsi].pOwner
-  OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.NewItem, IOJOB_RECV
+  OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_RECV
   .if xax == NULL
     OCall xsi.ErrorReport, NULL, NCCN_OUT_OF_MEMORY
   .else
@@ -722,34 +713,37 @@ MethodEnd
 ; Purpose:    Copy the information pointed to by pData to the send buffers and queue a
 ;             Send operation on each one.
 ; Arguments:  Arg1: -> Data buffer.
-;             Arg2: Data size.
-; Return:     eax = Data size not queued. Zero means all was sent.
+;             Arg2: Data size in BYTEs.
+; Return:     eax = Number of queued BYTEs.
 
 Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
   local dBufferSize:DWORD, pItem:PIOJOB
 
   SetObject xsi
 ;  DbgText "NetComConnection.QueueSend", addr [xsi].wName
-;  mov eax, dSize
-;  mov edx, [xsi].dSndHighWtrMrk
-;  sub edx, [xsi].dSndQueuedIOJobs
-;  .if SIGN? || ZERO?
-;    xBitSet [xsi].dFlags, NCC_SND_PAUSED
-;    ExitMethod                                        ;eax = dSize
-;  .endif
-;  mov edi, eax
-;  cmp edi, edx
-;  cmovg edi, edx
-
   mov edi, dSize
 
-  mov xcx, [xsi].pOwner                               ;xcx -> NetComConnectionPool
-  mov xdx, [xcx].$Obj(NetComConnectionPool).pIOSockJobPool  ;xdx -> NetComIOJobPool
+  mov xcx, [xsi].pOwner                                 ;xcx -> NetComConnectionPool
+  mov xdx, [xcx].$Obj(NetComConnectionPool).pIOJobPool  ;xdx -> NetComIOJobPool
   m2m dBufferSize, [xdx].$Obj(NetComIOJobPool).dBufferSize, eax
 
   .while edi != 0
-    mov xcx, [xsi].pOwner                             ;xcx -> NetComConnectionPool
-    OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.NewItem, IOJOB_SEND
+    mov eax, [xsi].dSndQueuedIOJobs
+    .if [xsi].dSndPaused == FALSE
+      .if eax >= [xsi].dSndHighWtrMrk
+        mov [xsi].dSndPaused, TRUE
+        DbgText "dSndPaused == TRUE"
+      .endif
+    .else
+      .if eax <= [xsi].dSndLowWtrMrk
+        mov [xsi].dSndPaused, FALSE
+      .endif
+    .endif
+
+;    .break .if [xsi].dSndPaused == TRUE
+
+    mov xcx, [xsi].pOwner                               ;xcx -> NetComConnectionPool
+    OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_SEND
     .if xax != NULL
       mov pItem, xax
       .if dBufferSize < edi
@@ -775,7 +769,8 @@ Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
       .break
     .endif
   .endw
-  mov eax, edi
+  mov eax, dSize
+  sub eax, edi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

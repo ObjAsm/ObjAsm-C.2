@@ -71,9 +71,9 @@ Object Application,, DlgApp
   DefineVariable    dFlags,           DWORD,          0 ;Runtime state flags
   DefineVariable    hTimer,           HANDLE,         0
 
-  ;Used to update the application caption
+  ;Used to update the application caption (last values)
   DefineVariable    dConnectionCount, DWORD,          -1
-  DefineVariable    dIOJobCount,  DWORD,          -1
+  DefineVariable    dIOJobCount,      DWORD,          -1
 
   Embed  RevProxy,  NetComEngine                        ;Embedded reverse proxy engine
 ObjectEnd
@@ -81,6 +81,7 @@ ObjectEnd
 
 include SRPS_Protocol.inc
 include SRPS_Supervisor.inc
+include SRPS_About.inc
 
 TIMER_ID  equ   126985
 
@@ -145,6 +146,10 @@ Method Application.CtlsEnable, uses xbx xsi, dEnable:DWORD
   invoke GetDlgItem, [xsi].hWnd, IDC_EDT_SERVER_REMOTE_PORT   ;Server remote port edit control
   invoke EnableWindow, xax, dEnable                           ;Enable/disable control
   invoke GetDlgItem, [xsi].hWnd, IDC_UDN_SERVER_REMOTE_PORT   ;Server remote port up/down control
+  invoke EnableWindow, xax, dEnable                           ;Enable/disable control
+  invoke GetDlgItem, [xsi].hWnd, IDC_EDT_INACTIVITY_TIMEOUT   ;Inactivity timeout edit control
+  invoke EnableWindow, xax, dEnable                           ;Enable/disable control
+  invoke GetDlgItem, [xsi].hWnd, IDC_UDN_INACTIVITY_TIMEOUT   ;Inactivity timeout up/down control
   invoke EnableWindow, xax, dEnable                           ;Enable/disable control
 
   ;Handle buttons - switch between Start and Stop
@@ -325,8 +330,22 @@ Method Application.CtlsGet, uses xdi xbx xsi
   invoke MemClone, xcx, [xax].ADDRINFOT.ai_addr, DWORD ptr [xax].ADDRINFOT.ai_addrlen
   invoke FreeAddrInfo, pResult                          ;Free memory
 
-  mov dRetValue, TRUE
   DbgNetComAddrIPV4 [xbx].$Obj(NetComSrpsProtocol).ServerRemoteAddr, "Application.CtlsGet - Server Remote Address"
+
+  ;Get inactivity timeout value ---------------------------
+  invoke GetDlgItemInt, [xsi].hWnd, IDC_EDT_INACTIVITY_TIMEOUT, addr dSucceeded, FALSE
+  .if dSucceeded == FALSE
+    invoke MessageBox, [xsi].hWnd, $OfsCStr("Incorrect timeout value.", CRLF, "Zero means no timeout."), \
+                       addr cError, MB_OK or MB_ICONERROR
+    xor eax, eax
+    ExitMethod
+  .endif
+  lea xbx, $ObjTmpl(NetComSrpsSupervisor)
+  mov ecx, 10000000                                     ;Convert into 100ns units
+  imul ecx
+  mov [xbx].$Obj(NetComSupervisor).dTimeout, eax
+
+  mov dRetValue, TRUE
 
 @@Exit:
   mov eax, dRetValue
@@ -341,7 +360,7 @@ MethodEnd
 Method Application.CtlsSet, uses xbx xdi xsi
   local dSize:DWORD, pAdapter:POINTER, dPort:DWORD, pMibTable:PMIB_IPNET_TABLE2
   local hComboClientLocalAddr:HANDLE, hComboServerLocalAddr:HANDLE, hComboServerRemoteAddr:HANDLE
-  local cBuffer[100]:CHR, dBufferLength:DWORD
+  local cBuffer[100]:CHR, dBufferLength:DWORD, dTimeout:DWORD
 
   DbgText "Application.CtlsSet"
   SetObject xsi
@@ -474,6 +493,21 @@ Method Application.CtlsSet, uses xbx xdi xsi
   invoke SendMessage, xdi, UDM_SETBASE, 10, 0
   invoke SendMessage, xdi, UDM_SETRANGE32, 1, 0FFFFh
   invoke SendMessage, xdi, UDM_SETPOS32, 0, dPort
+
+  ;Set timeout edit control
+  lea xbx, $ObjTmpl(NetComSrpsSupervisor)
+  mov eax, [xbx].$Obj(NetComSupervisor).dTimeout
+  cdiv 10000000
+  mov dTimeout, edx
+  DbgDec dTimeout
+  invoke SetDlgItemInt, [xsi].hWnd, IDC_EDT_INACTIVITY_TIMEOUT, dTimeout, FALSE
+
+  ;Set timeout up/down control limits and value
+  mov xdi, $invoke(GetDlgItem, [xsi].hWnd, IDC_UDN_INACTIVITY_TIMEOUT)
+  invoke SendMessage, xdi, UDM_SETBASE, 10, 0
+  invoke SendMessage, xdi, UDM_SETRANGE32, 0, 07FFFFFFFh
+  invoke SendMessage, xdi, UDM_SETPOS32, 0, dTimeout
+  
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -522,7 +556,7 @@ Method Application.Init, uses xbx xsi
       invoke ExitProcess, 1                               ;Exit program with failure
     .endif
   .endif
-  OCall [xsi].RevProxy::NetComEngine.Init, xsi, offset $ObjTmpl(SRPS_Supervisor), \
+  OCall [xsi].RevProxy::NetComEngine.Init, xsi, offset $ObjTmpl(NetComSrpsSupervisor), \
                                            50, 1000, MSS_ETHERNET_IPVX ;Init network engine
   .if eax != 0
     invoke MessageBox, [xsi].hWnd, $OfsCStr("Failed to start the NetCom engine"), \
@@ -542,7 +576,9 @@ MethodEnd
 ; Return:     eax = If an application processes this message, it should return zero.
 
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+  local AboutDlg:$Obj(DialogAbout)
 
+  ANNOTATION use:lParam
   SetObject xsi
   mov xax, wParam
 
@@ -567,6 +603,13 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     BitClr [xsi].dFlags, APF_RUNNING                    ;Clear running flag
     OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
     xor eax, eax                                        ;Return zero
+
+  .elseif ax == IDC_BTN_ABOUT
+    New AboutDlg::DialogAbout
+    OCall AboutDlg::DialogAbout.Init, xsi, [xsi].hWnd
+    OCall AboutDlg::DialogAbout.Show
+    OCall AboutDlg::DialogAbout.Done
+    xor eax, eax
 
   .elseif ax == IDCANCEL
     .ifBitSet [xsi].dFlags, APF_RUNNING
@@ -604,6 +647,7 @@ MethodEnd
 ; Note:       The callie must free the passed memory.
 
 Method Application.OnShowMsg, uses xbx, pMsgInfo:WPARAM, lParam:LPARAM
+  ANNOTATION use:lParam
   SetObject xcx
   mov xbx, pMsgInfo
   invoke MessageBox, [xcx].hWnd, [xbx].MSG_INFO.pMessage, [xbx].MSG_INFO.pCaption, [xbx].MSG_INFO.dType
@@ -618,6 +662,7 @@ MethodEnd
 ; Return:     eax = Zero (handled).
 
 Method Application.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
   local cBuffer[1024]:CHR
 
   SetObject xsi
@@ -625,7 +670,7 @@ Method Application.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ;Set application caption
   lea xbx, [xsi].RevProxy
   mov eax, [xbx].$Obj(NetComEngine).ConnectionPool.dCount
-  mov ecx, [xbx].$Obj(NetComEngine).IOSockJobPool.dCount
+  mov ecx, [xbx].$Obj(NetComEngine).IOJobPool.dCount
   .if eax != [xsi].dConnectionCount || ecx != [xsi].dIOJobCount
     mov [xsi].dConnectionCount, eax
     mov [xsi].dIOJobCount, ecx

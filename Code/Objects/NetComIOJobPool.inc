@@ -55,7 +55,7 @@ MethodEnd
 Method NetComIOJobPool.Init, uses xsi, pOwner:POINTER, dInitJobCount:DWORD, dBufferSize:DWORD
   SetObject xsi
   invoke InitializeCriticalSectionEx, addr [xsi].CritSect, 4000, 0
-  
+
   mrm [xsi].dBufferSize, dBufferSize, eax
   add eax, sizeof(IOJOB)                           ;Add the header size to the payload size
   ACall xsi.Init, pOwner, eax, dInitJobCount, 1         ;We need an alignment of 1

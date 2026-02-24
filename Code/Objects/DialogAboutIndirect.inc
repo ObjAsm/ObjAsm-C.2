@@ -58,7 +58,7 @@ ICON            "ICON_APP", IDC_DAB_ICON, 13,9,32,32
 CONTROL         NULL, -1, "Static", SS_BLACKFRAME or SS_SUNKEN, 45,68,143,1
 HYPERLINK       "ICON_MAIL|Send us an Email|mailto:objasm@gmx.net", \
                 IDC_DAB_MAIL, 10,74,100,14, WS_TABSTOP
-HYPERLINK       "ICON_LINK|Visit our Homepage|http://objasm.x10host.com/", \
+HYPERLINK       "ICON_LINK|Visit our Homepage|http://objasm.x10host.com", \
                 IDC_DAB_LINK, 10,87,100,14, WS_TABSTOP
 
 .code

@@ -35,7 +35,7 @@ PDEF_HYPERLINK  textequ <PDEF_BUTTON>
 ;  "Icon Resource Name ¦ String Resource ID"
 ;
 ; Example:
-;  "ICON_LINK|Visit our Homepage|http://objasm.x10host.com//index.htm"
+;  "ICON_LINK|Visit our Homepage|http://objasm.x10host.com"
 ;  "ICON_MAIL|Send us an Email|mailto:objasm@gmx.net"
 ;   mailto protocol: https://msdn.microsoft.com/de-de/library/aa767737.aspx
 

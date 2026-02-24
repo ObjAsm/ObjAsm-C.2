@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=24
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -245,9 +245,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,79070
+2=0,0,806,424,37034
 3=0,0,2127,589,2283
-1=0,0,694,487,2727
+1=0,0,694,487,3646
 4=0,0,706,573,10606
 1001=0,0,0,0,460
 5=0,0,0,0,41964
@@ -255,7 +255,7 @@ ProductVer4Range=0
 7=0,0,0,0,20739
 8=0,0,0,0,10569
 11=0,0,706,600,660
-10=0,0,0,0,9508
+10=0,0,0,0,4693
 9=0,0,0,0,2776
 12=0,0,848,586,2109
 13=0,0,738,582,120951
@@ -279,7 +279,7 @@ ProductVer4Range=0
 37=0,0,0,0,91943
 40=0,0,0,0,484
 29=0,0,0,0,878
-34=0,0,0,0,2010
+34=0,0,0,0,6651
 33=0,0,0,0
 32=0,0,0,0,29985
 31=0,0,0,0,0
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="SYSTRAYMENU"
-2="XMenu.ChangeLanguage"
-3="ChangeLanguage"
-4="Convert"
-5="CONTEXTMENU"
-6="XMenu"
-7="hMenuContext"
-8="TrackPopupMenu"
-9="TrackPopupMenuEx"
-10="OnContextMenu"
+1="index"
+2="IImgCtx"
+3="sIID_IImgCtx"
+4="SYSTRAYMENU"
+5="XMenu.ChangeLanguage"
+6="ChangeLanguage"
+7="Convert"
+8="CONTEXTMENU"
+9="XMenu"
+10="hMenuContext"
 "
 [Collapse]
 7=,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,34,10
 [PTimer]
-PTimer=895992823
+PTimer=896963994
 [RADebugBP]
 5=
 2=

@@ -2,7 +2,7 @@
 ; Title:      SRPS_Protocol.inc
 ; Author:     G. Friedrich
 ; Version:    See SRPS.asm
-; Purpose:    Protocol for a bidirectional Smart Reverse Proxy Server.
+; Purpose:    Protocol for a bidirectional Small Reverse Proxy Server.
 ; Note:       Minimal TCP reverse proxy (forwarding) using NetCom.
 ; ==================================================================================================
 
@@ -78,7 +78,7 @@ if IMPLEMENT
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComSrpsProtocol.Allocate
-; Purpose:    Allocates a memory block for management data on a per connection basis.
+; Purpose:    Allocates a memory block for management data for each connection.
 ;             Additional resources can be reserved here.
 ; Arguments:  Arg1: -> NetComConnection
 ; Return:     Zero if succeeded, otherwise an error code.
@@ -104,8 +104,8 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection
 ; Return:     eax = This many bytes are valid buffer information.
 
-Method NetComSrpsProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
-                                            pIOJob:PIOJOB
+Method NetComSrpsProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), pIOJob:PIOJOB
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComSrpsProtocol.IsDataComplete?", pDbgWndNameW
@@ -121,11 +121,12 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComSrpsProtocol.OnAccepted, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection)
-  local dAdmitance:DWORD
+  local dResult:DWORD
   DbgSetWindowName
 
   SetObject xsi
-  mov dAdmitance, FALSE
+@@Retry:
+  mov dResult, FALSE
   mov xbx, pConnection
   .if [xbx].$Obj(NetComConnection).pData == NULL
     ExitMethod
@@ -142,31 +143,35 @@ Method NetComSrpsProtocol.OnAccepted, uses xbx xdi xsi, pConnection:$ObjPtr(NetC
   invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
   OCall xdi::NetComConnection.QueueConnect, addr [xsi].ServerRemoteAddr, addr [xsi].ServerLocalAddr
   .if eax != NO_ERROR
-    int 3
     ;If we have an error here, nothing was queued, so we can dispose our connection safely
     OCall xdi::NetComConnection.FreeRessources          ;Socket is closed here
     invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-    mov xbx, [xdi].$Obj(NetComConnection).pOwner
     OCall xdi::NetComConnection.Done
-    OCall xbx::NetComConnectionPool.FreeItem, xdi
+    OCall [xdi].$Obj(NetComConnection).pOwner::NetComConnectionPool.FreeItem, xdi
+
+    ;Acceptor teardown
+    OCall xbx::NetComConnection.Disconnect, SD_SEND
+    OCall xbx::NetComConnection.QueueDestroy
+    OCall xbx::NetComConnection.Close, TRUE
     ExitMethod
   .endif
 
-  ;Link connections
+  ;Connect was successfuly queued
+  ;Link connections, xbx = Client connection, xdi, server connection
   mov xdx, [xbx].$Obj(NetComConnection).pData       ;This is != NULL
   mov [xdx].SRPS_CONNECTION_DATA.pPeerConnection, xdi
   mov xdx, [xdi].$Obj(NetComConnection).pData
   .if xdx != NULL
     mov [xdx].SRPS_CONNECTION_DATA.pPeerConnection, xbx
-    mov dAdmitance, TRUE
+    mov dResult, TRUE
   .endif
-  invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
 
-  .if dAdmitance == FALSE
+  .if dResult == FALSE
     OCall xdi::NetComConnection.Disconnect, SD_SEND
     OCall xdi::NetComConnection.QueueDestroy
     OCall xdi::NetComConnection.Close, TRUE
   .endif
+  invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
 
 MethodEnd
 
@@ -176,7 +181,7 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     Nothing.
 
-Method NetComSrpsProtocol.OnConnected, uses xbx, pConnection:$ObjPtr(NetComConnection)
+Method NetComSrpsProtocol.OnConnected, uses xbx xdi, pConnection:$ObjPtr(NetComConnection)
   DbgSetWindowName
 
 ;  DbgText "NetComSrpsProtocol.OnConnected", pDbgWndNameW
@@ -186,18 +191,30 @@ Method NetComSrpsProtocol.OnConnected, uses xbx, pConnection:$ObjPtr(NetComConne
   .if xax != NULL
     mov xbx, [xax].SRPS_CONNECTION_DATA.pPeerConnection   ;xbx -> peer connection
     .if xbx != NULL
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      OCall xbx::NetComConnection.Admit, TRUE
-      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      OCall pConnection::NetComConnection.QueueReceive
+      .while TRUE
+        invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+        .break .if eax != FALSE
+        invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+        invoke Sleep, 10
+        invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+      .endw      
+      .ifBitClr [xbx].$Obj(NetComConnection).dFlags, NCC_QUEUE_DESTROY
+        OCall xbx::NetComConnection.Admit, TRUE
+        OCall xdi::NetComConnection.QueueReceive
+      .else
+        OCall xbx::NetComConnection.Admit, FALSE
+        OCall xdi::NetComConnection.Disconnect, SD_SEND
+        OCall xdi::NetComConnection.QueueDestroy
+        OCall xdi::NetComConnection.Close, TRUE
+      .endif
+      invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
       ExitMethod
     .endif
   .endif
 
-  OCall pConnection::NetComConnection.Disconnect, SD_SEND
-  OCall pConnection::NetComConnection.QueueDestroy
-  OCall pConnection::NetComConnection.Close, TRUE
-
+  OCall xdi::NetComConnection.Disconnect, SD_SEND
+  OCall xdi::NetComConnection.QueueDestroy
+  OCall xdi::NetComConnection.Close, TRUE
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -209,8 +226,8 @@ MethodEnd
 ;             Arg3: Operation result.
 ; Return:     Nothing.
 
-Method NetComSrpsProtocol.OnDisconnected, uses xbx xdi, pConnection:$ObjPtr(NetComConnection), \
-                                                        dDirection:DWORD, dResult:DWORD
+Method NetComSrpsProtocol.OnDisconnected, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection), \
+                                                            dDirection:DWORD, dResult:DWORD
   DbgSetWindowName
 
 ;  DbgText "NetComSrpsProtocol.OnDisconnected", pDbgWndNameW
@@ -221,18 +238,21 @@ Method NetComSrpsProtocol.OnDisconnected, uses xbx xdi, pConnection:$ObjPtr(NetC
     mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
     .if xbx != NULL
       ;Break links on both connections to avoid recursion
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      mov xax, [xbx].$Obj(NetComConnection).pData
-      .if xax != NULL
-        mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
+      .while TRUE
+        invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+        invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+        .break .if eax != FALSE
+        invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+        invoke Sleep, 10
+      .endw
+      mov xsi, [xbx].$Obj(NetComConnection).pData
+      .if xsi != NULL
+        mov [xsi].SRPS_CONNECTION_DATA.pPeerConnection, NULL
       .endif
-  ;    DbgHex xbx, "NetComSrpsProtocol.OnDisconnected - Peer disconnect - Connection", pDbgWndNameW
-      ;Cut peer connection
-      ;Calling Disconnect(SD_SEND) will trigger a sequence of actions.
-      ;First it calls disconnect and then triggers OnDisconnected for the peer connection again,
-      ;what starts its seldfestruction.
-      
-      invoke EnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+      ;Peer connection teardown
+      ;Calling Disconnect(SD_SEND) will trigger a sequence of actions:
+      ;  First it calls disconnect and then triggers OnDisconnected for the peer connection again,
+      ;  what starts its seldfestruction.
       OCall xbx::NetComConnection.Disconnect, SD_SEND   ;Initiate a graceful disconnect
       invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
       invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
@@ -254,13 +274,12 @@ MethodEnd
 ; Method:     NetComSrpsProtocol.OnError
 ; Purpose:    Error notification handler.
 ; Arguments:  Arg1: -> NetComConnection.
-;             Arg2: -> IOSockJob.
+;             Arg2: -> IOJob.
 ;             Arg3: WSA Error code.
 ; Return:     eax = Command (PROT_CMD_NONE, PROT_CMD_DESTROY, ...).
 
 Method NetComSrpsProtocol.OnError, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection), \
-                                                     pIOJob:PIOJOB, \
-                                                     dError:DWORD
+                                                     pIOJob:PIOJOB, dError:DWORD
   local cBuffer[1024]:CHR
   DbgSetWindowName
 
@@ -278,75 +297,83 @@ Method NetComSrpsProtocol.OnError, uses xbx xdi xsi, pConnection:$ObjPtr(NetComC
 
     .elseif eax == IOJOB_CONNECT
 ;      DbgText "NetComSrpsProtocol.OnError - Connect", pDbgWndNameW
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
       mov xax, [xdi].$Obj(NetComConnection).pData
       .if xax != NULL
-        mov xbx, [xax].SRPS_CONNECTION_DATA.pPeerConnection   ;xbx -> peer connection
+        mov xbx, [xax].SRPS_CONNECTION_DATA.pPeerConnection ;xbx -> peer connection
         .if xbx != NULL
 ;          DbgText "NetComSrpsProtocol.OnError - Connect: destroy peer", pDbgWndNameW
 ;          DbgDec dError, "NetComSrpsProtocol.OnError", pDbgWndNameW
           ;Break links on both connections to avoid recursion
           mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
-          invoke EnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+          .while TRUE
+            invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+            .break .if eax != FALSE
+            invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+            invoke Sleep, 10
+            invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+          .endw
           mov xax, [xbx].$Obj(NetComConnection).pData
           .if xax != NULL
             mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
+            OCall xbx::NetComConnection.Admit, TRUE     ;Admit it to allow a graceful disconnection
+            OCall xbx::NetComConnection.Disconnect, SD_SEND
           .endif
           invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
-;          OCall xbx::NetComConnection.QueueDestroy    ;Cut peer connection
-;          mov xax, [xsi].pOwner
-;          invoke PostQueuedCompletionStatus, [xax].$Obj(Application).RevProxy.hIOCP, 0, COMPLETION_KEY_VOID, NULL
-          OCall xbx::NetComConnection.FreeRessources
-          OCall xbx::NetComConnection.Done
-          OCall [xbx].$Obj(NetComConnection).pOwner::NetComConnectionPool.FreeItem, xbx
         .endif
       .endif
-      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      mov eax, PROT_CMD_DESTROY                       ;Destroy itself
+      mov eax, PROT_CMD_DESTROY                         ;Destroy itself
 
     .elseif eax == IOJOB_SEND
 ;      DbgText "NetComSrpsProtocol.OnError - Send", pDbgWndNameW
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
       mov xax, [xdi].$Obj(NetComConnection).pData
       .if xax != NULL
         mov xbx, [xax].SRPS_CONNECTION_DATA.pPeerConnection   ;xbx -> peer connection
         .if xbx != NULL
           ;Break links on both connections to avoid recursion
           mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
-          invoke EnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+          .while TRUE
+            invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+            .break .if eax != FALSE
+            invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+            invoke Sleep, 10
+            invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+          .endw
           mov xax, [xbx].$Obj(NetComConnection).pData
           .if xax != NULL
             mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
           .endif
           invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
-          OCall xbx::NetComConnection.QueueDestroy    ;Cut peer connection
+          OCall xbx::NetComConnection.QueueDestroy      ;Peer connection teardown
           OCall xbx::NetComConnection.Close, TRUE
         .endif
       .endif
-      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      mov eax, PROT_CMD_DESTROY                       ;Destroy itself
+      mov eax, PROT_CMD_DESTROY                         ;Destroy itself
 
     .elseif eax == IOJOB_RECV
 ;      DbgText "NetComSrpsProtocol.OnError - Receive", pDbgWndNameW
-      invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
       mov xax, [xdi].$Obj(NetComConnection).pData
       .if xax != NULL
         mov xbx, [xax].SRPS_CONNECTION_DATA.pPeerConnection   ;xbx -> peer connection
         .if xbx != NULL
           ;Break links on both connections to avoid recursion
           mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
-          invoke EnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+          .while TRUE
+            invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+            .break .if eax != FALSE
+            invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+            invoke Sleep, 10
+            invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+          .endw
           mov xax, [xbx].$Obj(NetComConnection).pData
           .if xax != NULL
             mov [xax].SRPS_CONNECTION_DATA.pPeerConnection, NULL
           .endif
           invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
-          OCall xbx::NetComConnection.QueueDestroy    ;Cut peer connection
+          OCall xbx::NetComConnection.QueueDestroy      ;Peer connection
           OCall xbx::NetComConnection.Close, TRUE
         .endif
       .endif
-      invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-      mov eax, PROT_CMD_DESTROY                       ;Destroy itself
+      mov eax, PROT_CMD_DESTROY                         ;Destroy itself
 
     .else
       DbgWarning "NetComSrpsProtocol.OnError - Unknown operation", pDbgWndNameW
@@ -375,7 +402,7 @@ MethodEnd
 ; Purpose:    Forwards received data to the paired connection.
 ; Arguments:  Arg1: -> NetComConnection
 ;             Arg2: Transmission length
-; Return:     Positive INT32 - bytes processed.
+; Return:     Positive INT32 - BYTEs processed.
 
 Method NetComSrpsProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(NetComConnection), \
                                                          TransmitionLength:DWORD
@@ -411,37 +438,37 @@ Method NetComSrpsProtocol.ProcessData, uses xbx xdi xsi, pConnection:$ObjPtr(Net
     .break .if ZERO?                                    ;Chain empty?
 
     ;Check if the IOJob was completed
-    lea xsi, [xax - IOJOB_HEADER_SIZE]                     ;xsi -> IOJOB
+    lea xsi, [xax - IOJOB_HEADER_SIZE]                  ;xsi -> IOJOB
     test [xsi].IOJOB.wFlags, IOF_JOB_COMPLETED
     .break .if ZERO?                                    ;IOJob receive pending?
 
     OCall xdi::NetComConnection.QueueSend, addr [xsi].IOJOB.DataBuffer, [xsi].IOJOB.dBytesConsumed
-    ;The retured value is the number of not queued bytes, what may be different than TransmitionLength
-    mov edx, [xsi].IOJOB.dBytesConsumed
-    sub edx, eax                                        ;edx = queued bytes
+    ;The retured value is the number of queued bytes, that may be different than TransmitionLength
+    .break .if eax == 0                                 ;Transmission paused
     sub dRemainingBytes, eax
-    .if eax != 0
+    .if eax != [xsi].IOJOB.dBytesConsumed
       ;Move the pointer inside IOJob
       mov ecx, [xsi].IOJOB.dBytesConsumed
       sub ecx, eax
-      add xcx, [xsi].IOJOB.WSABuf.buf
-      mov [xsi].IOJOB.WSABuf.buf, xcx
-      mov [xsi].IOJOB.dBytesConsumed, eax
+      mov [xsi].IOJOB.dBytesConsumed, ecx
+      add xax, [xsi].IOJOB.WSABuf.buf
+      mov [xsi].IOJOB.WSABuf.buf, xax
       .break
     .endif
 
-    ;Remove from receive chain
+    ;A full DataBuffer was consumed => remove it from the receive chain
     mov xax, [xbx].SDLL_SENTINEL.pFirstItem
     mov xdx, [xax].SDLL_ITEM.pNextItem
     mov [xbx].SDLL_SENTINEL.pFirstItem, xdx
     mov [xdx].SDLL_ITEM.pPrevItem, xbx
 
-    ;Toss the received IOSockJob back in the IOJobPool
+    ;Toss the received IOJob back in the IOJobPool
     mov xax, [xdi].$Obj(NetComConnection).pOwner
-    OCall [xax].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOJobPool.FreeItem, xsi
+    OCall [xax].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xsi
   .endw
 
-  xor eax, eax                                          ;Dont touch the receive chain
+  ;Since we processed the IOJobs here, return zero to avoid any further processing.
+  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

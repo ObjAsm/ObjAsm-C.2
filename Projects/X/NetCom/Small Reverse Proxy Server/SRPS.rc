@@ -13,7 +13,11 @@
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Dialogs -----------------------------------------------------------------------------------------
-#include "Res/MainWndDlg.rc"
+#include "Res\SRPS_MainDlg.rc"
+#include "Res\SRPS_AboutDlg.rc"
 
 // Icons ------------------------------------------------------------------------------------------
-ICON_APP  ICON DISCARDABLE "ICO\OA.ico"
+ICON_APP  ICON DISCARDABLE "Res\SRPS.ico"
+
+// Images -----------------------------------------------------------------------------------------
+PNG_SRPS  IMAGE DISCARDABLE   "Res\SRPS_100x100.png"

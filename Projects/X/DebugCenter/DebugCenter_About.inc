@@ -192,7 +192,7 @@ Method DialogAbout.OnNotify, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
     .if [xdi].NMHDR.code == TVNMC_APP_MOUSEUP
       .if [xdi].TVNM_APP.dID == APP_VISIT_OBJASM
         invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), \
-                             $OfsCStr("http://objasm.x10host.com/index.htm"), \
+                             $OfsCStr("http://objasm.x10host.com"), \
                              NULL, NULL, SW_SHOW
       .elseif [xdi].TVNM_APP.dID == APP_EMAIL
         invoke ShellExecute, [xsi].hWnd, $OfsCStr("open"), \

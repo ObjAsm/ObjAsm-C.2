@@ -39,6 +39,7 @@ endm
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComProtocol.Allocate,, pConnection:$ObjPtr(NetComConnection)
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.Allocate", pDbgWndNameW
@@ -94,7 +95,7 @@ MethodEnd
 ;             derived Object examines the received data looking to find a valid Delimiter and doing
 ;             protocol enforcement.
 ; Arguments:  Arg1: -> NetComConnection.
-;             Arg2: -> IO_SOCkJOB
+;             Arg2: -> IOJOB
 ; Return:     eax = ERROR_BAD_PROTOCOL - The buffer content is not following our protocol -
 ;                                        the client will get booted for this offence.
 ;                   ERROR_USER_QUIT    - The user sent a nice QUIT message using our protocol -
@@ -104,6 +105,7 @@ MethodEnd
 ; Note:       Zero length packets are NOT passed from the connection to the protocol.
 
 Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), pIOJob:PIOJOB
+  ANNOTATION use:pConnection pIOJob
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.IsDataComplete?", pDbgWndNameW
@@ -132,6 +134,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnAccepted,, pConnection:$ObjPtr(NetComConnection)
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.OnAccepted", pDbgWndNameW
@@ -145,6 +148,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnClosed,, pConnection:$ObjPtr(NetComConnection)
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.OnClosed", pDbgWndNameW
@@ -175,6 +179,7 @@ MethodEnd
 
 Method NetComProtocol.OnDisconnected,, pConnection:$ObjPtr(NetComConnection), \
                                        dDirection:DWORD, dResult:DWORD
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.OnDisconnected", pDbgWndNameW
@@ -184,11 +189,12 @@ MethodEnd
 ; Method:     NetComProtocol.OnError
 ; Purpose:    Error notification handler.
 ; Arguments:  Arg1: -> NetComConnection.
-;             Arg2: -> IOSockJob.
+;             Arg2: -> IOJob.
 ;             Arg3: Error code.
 ; Return:     eax = Command (PROT_CMD_NONE, PROT_CMD_DESTROY, ...)
 
 Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOJob:PIOJOB, dError:DWORD
+  ANNOTATION use:pConnection dError
   DbgSetWindowName
 
 ;  DbgDec dError, "NetComProtocol.OnError", pDbgWndNameW
@@ -219,6 +225,7 @@ MethodEnd
 ; Return:     eax = PROT_CMD_NONE, PROT_CMD_DISCONNECT, PROT_CMD_DESTROY.
 
 Method NetComProtocol.OnTimeouted,, pConnection:$ObjPtr(NetComConnection)
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.OnTimeouted", pDbgWndNameW
@@ -233,6 +240,7 @@ MethodEnd
 ; Return:     eax = Number of processed bytes.
 
 Method NetComProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection), dDelimiterIndex:DWORD
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.ProcessData", pDbgWndNameW
@@ -247,6 +255,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.Release,, pConnection:$ObjPtr(NetComConnection)
+  ANNOTATION use:pConnection
   DbgSetWindowName
 
 ;  DbgText "NetComProtocol.Release", pDbgWndNameW

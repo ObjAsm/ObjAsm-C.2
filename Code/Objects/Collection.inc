@@ -16,11 +16,11 @@
 
 
 ; --------------------------------------------------------------------------------------------------
-; Summary:    
-;   A dynamic, thread-safe container for storing and managing object pointers. Supports insertion, 
-;   deletion, retrieval, and iteration of items with customizable limits and growth factors. 
+; Summary:
+;   A dynamic, thread-safe container for storing and managing object pointers. Supports insertion,
+;   deletion, retrieval, and iteration of items with customizable limits and growth factors.
 ;   Provides serialization/deserialization to streams and allows callback-based traversal through
-;   ForEach/ForEachRev/FirstThat/LastThat methods. 
+;   ForEach/ForEachRev/FirstThat/LastThat methods.
 ;   Designed as a base object for more specialized collections (e.g., SortedCollections,
 ;   StrCollections, DataCollections) while ensuring memory management and object lifecycle through
 ;   Dispose methods. NULL items are not allowed.

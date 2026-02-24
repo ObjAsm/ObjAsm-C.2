@@ -7,28 +7,30 @@
 
 ;General information
 APP_TITLE                     textequ   <SRPS>
-ABOUT_TEXT                    textequ   <Smart Reverse Proxy Server>
+ABOUT_TEXT                    textequ   <Small Reverse Proxy Server>
 COPYRIGHT                     textequ   <G. Friedrich   December 2025> 
-VER_FILEVERSION               equ       2,0,0,0
-VER_FILEVERSION_STR           textequ   <2.0>
-VER_PRODUCTVERSION            equ       2,0,0,0
-VER_PRODUCTVERSION_STR        equ       <2.0>
+VER_FILEVERSION               equ       2,1,0,0
+VER_FILEVERSION_STR           textequ   <2.1>
+VER_PRODUCTVERSION            equ       2,1,0,0
+VER_PRODUCTVERSION_STR        equ       <2.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       59
-BUILD_DATE_STR                textequ   <2026-02-14>
+BUILD_NUMBER                  equ       5
+BUILD_DATE_STR                textequ   <2026-02-24>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       DBG
+BUILD_MODE                    equ       RLS
 
 
 BUILD_BIN_FORMAT              equ       EXE
 BUILD_BIN_SUFFIX_STR          textequ   <>
 
-;Res\MainDlgDlg.rc
+
+;Res\SRPS_MainDlg.rc
 IDD_DLG_MAIN                  equ       1000
 IDC_BTN_START                 equ       1001
 IDC_BTN_STOP                  equ       1002
-IDC_STC_BACKGROUND            equ       1003
+IDC_BTN_ABOUT                 equ       1003
+IDC_STC_BACKGROUND            equ       1004
 
 IDC_GRP_CLIENT                equ       1100
 IDC_STC_CLIENT_LOCAL_ADDR     equ       1101
@@ -49,3 +51,13 @@ IDC_CBO_SERVER_REMOTE_ADDR    equ       1208
 IDC_STC_SERVER_REMOTE_PORT    equ       1209
 IDC_EDT_SERVER_REMOTE_PORT    equ       1210
 IDC_UDN_SERVER_REMOTE_PORT    equ       1211
+
+IDC_GRP_TIMING                equ       1300
+IDC_STC_INACTIVITY_TIMEOUT    equ       1301
+IDC_EDT_INACTIVITY_TIMEOUT    equ       1302
+IDC_UDN_INACTIVITY_TIMEOUT    equ       1303
+IDC_STC_INACTIVITY_UNIT       equ       1304
+
+;Res\SRPS_AboutDlg.rc
+IDD_ABOUT                     equ       2000
+
