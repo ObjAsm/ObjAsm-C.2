@@ -14,6 +14,9 @@ BUFFERSIZE  equ   2048
 
 DEFAULT_SERVER_LISTENING_PORT equ $htons(25773)
 
+SDF_ERROR         equ  BIT00
+SDF_CTRLS_ENABLED equ  BIT01
+
 ; --------------------------------------------------------------------------------------------------
 ; Object:     SendDlg
 ; Purpose:    Modal dialog used to configure and control outbound connections and
@@ -39,12 +42,11 @@ Object SendDlg,, DialogModal
   RedefineMethod    OnCommand,      WPARAM, LPARAM      ;Command event handler
   VirtualMethod     UpdateDataGrp
 
+  DefineVariable    dFlags,         DWORD,      SDF_CTRLS_ENABLED   ;Dialog flags
   DefineVariable    dComboIndex,    DWORD,      0       ;Last Selected ComboServerAddr index
   DefineVariable    dConnections,   DWORD,      1       ;Number of parallel connections
   DefineVariable    dRepetitions,   DWORD,      1       ;Number of send repetitions
-  DefineVariable    cText,          CHRA,       BUFFERSIZE dup(0) ;Payload text buffer
-
-;  Embed   ActiveConns,    Collection                    ;Holds all active NetComConnection objects
+  DefineVariable    cText,          CHRA,       BUFFERSIZE dup(0)   ;Payload text buffer
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -147,6 +149,7 @@ Method NetComCoreClient.Init, uses xsi
   OCall [xsi].Client::NetComEngine.Init, xsi, offset $ObjTmpl(NetComSupervisor), \
                                               5, 5, MSS_ETHERNET_IPVX
   OCall $ObjTmpl(NetComCoreClientProtocol)::NetComCoreClientProtocol.Init, xsi
+  mov $ObjTmpl(NetComSupervisor).dInactivityTimeout, 60*10000000  ;60 seconds
 
   ;Set the transmitted text
   lea xdx, [xsi].SndDlg
@@ -258,7 +261,7 @@ Method NetComCoreClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax             ;Draw text
 
   YPOS = YPOS + 30
-  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Client.IOSockJobPool.dCount
+  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Client.IOJobPool.dCount
   invoke StrLength, xdi
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax             ;Draw text
 
@@ -325,6 +328,20 @@ MethodEnd
 
 Method SendDlg.CtlsEnable, uses xbx xdi xsi, dEnable:DWORD
   SetObject xsi                                         ;Bind object context
+  
+  .if dEnable == FALSE
+    .ifBitSet [xsi].dFlags, SDF_CTRLS_ENABLED
+      BitClr [xsi].dFlags, SDF_CTRLS_ENABLED
+    .else
+      ExitMethod
+    .endif
+  .else
+    .ifBitClr [xsi].dFlags, SDF_CTRLS_ENABLED
+      BitSet [xsi].dFlags, SDF_CTRLS_ENABLED
+    .else
+      ExitMethod
+    .endif
+  .endif
 
   ;Handle inner controls - enable/disable them
   invoke GetDlgItem, [xsi].hWnd, IDC_CBO_ADDR           ;Get address edit control
@@ -586,11 +603,15 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Handle Connect button
   .if eax == IDC_BTN_CONNECT
+    BitClr [xsi].dFlags, SDF_ERROR
     .if $OCall(xsi.CtlsGet) != FALSE                    ;If input is valid
       OCall xsi.CtlsEnable, FALSE                       ;Disable controls during connection
       mov ebx, [xsi].dConnections
       test ebx, ebx
       .while !ZERO?
+        .ifBitSet [xsi].dFlags, SDF_ERROR
+          .break
+        .endif 
         OCall [xdi].$Obj(NetComCoreClient).Client::NetComEngine.ConnectTo, \
                                          offset $ObjTmpl(NetComCoreClientProtocol), \
                                          addr $ObjTmpl(NetComCoreClientProtocol).ServerRemoteAddr, \
@@ -602,9 +623,13 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Handle Send button
   .elseif eax == IDC_BTN_SEND
+    BitClr [xsi].dFlags, SDF_ERROR
     .if $OCall(xsi.CtlsGet) != FALSE
       xor ebx, ebx
       .while ebx < [xsi].dRepetitions
+        .ifBitSet [xsi].dFlags, SDF_ERROR
+          .break
+        .endif 
         inc ebx
         lea xdi, cBuffer
         invoke udword2decA, xdi, ebx                    ;Convert repetition count to string
@@ -615,31 +640,39 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         sub xax, xdi                                    ;Calculate length
         inc eax                                         ;Include ZTC
         mov dSize, eax
+
+        mov xcx, [xsi].pOwner                           ;xcx -> NetComCoreClient
+        invoke EnterCriticalSection, addr [xcx].$Obj(NetComCoreClient).Client.ConnectionPool.CritSect
+
         mov xcx, [xsi].pOwner                           ;xcx -> NetComCoreClient
         lea xdi, [xcx].$Obj(NetComCoreClient).Client.ConnectionChain
         SDLL_GetFirst xdi, xax
         .while !ZERO?
+          .ifBitSet [xsi].dFlags, SDF_ERROR
+            .break
+          .endif 
           mov pItem, xax
-          lea xdx, cBuffer
           lea xcx, [xax - offset $Obj(NetComConnection).ChainItem] 
-          OCall xcx::NetComConnection.QueueSend, xdx, dSize
+          OCall xcx::NetComConnection.QueueSend, addr cBuffer, dSize
           mov xax, pItem
           SDLL_GetNext xax, xdi
         .endw
+
+        mov xcx, [xsi].pOwner                           ;xcx -> NetComCoreClient
+        invoke LeaveCriticalSection, addr [xcx].$Obj(NetComCoreClient).Client.ConnectionPool.CritSect
       .endw
     .endif
     xor eax, eax                                        ;Indicate handled
 
   ;Handle Disconnect button
   .elseif eax == IDC_BTN_DISCONNECT
-    OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
     mov xcx, [xsi].pOwner                               ;xcx -> NetComCoreClient
     lea xbx, [xcx].$Obj(NetComCoreClient).Client
     OCall xbx::NetComEngine.ConnectionsDisconnect
     OCall xbx::NetComEngine.ConnectionsDestroy
     OCall xbx::NetComEngine.ConnectionsClose
-    lea xcx, [xbx].$Obj(NetComEngine).ConnectionChain
-    SDLL_Init xcx
+    OCall xsi.CtlsEnable, TRUE                          ;Re-enable controls
+
     xor eax, eax                                        ;Indicate handled
 
   ;Handle Cancel button
@@ -649,12 +682,10 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall xbx::NetComEngine.ConnectionsDisconnect
     OCall xbx::NetComEngine.ConnectionsDestroy
     OCall xbx::NetComEngine.ConnectionsClose
-    lea xcx, [xbx].$Obj(NetComEngine).ConnectionChain
-    SDLL_Init xcx
     OCall xsi.DestroyDialog, wParam                     ;Close dialog
     xor eax, eax                                        ;Indicate handled
 
-  ;Handle Cancel button
+  ;Update data group label
   .elseif eax == IDC_EDT_DATA
     HiWord wParam                                       ;Extract command ID
     .if eax == EN_UPDATE
@@ -662,7 +693,6 @@ Method SendDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax                                        ;Indicate handled
 
-  ;Handle other commands
   .else
     xor eax, eax
     inc eax                                             ;Indicate not handled

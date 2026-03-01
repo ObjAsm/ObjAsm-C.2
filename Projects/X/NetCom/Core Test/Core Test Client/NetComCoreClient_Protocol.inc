@@ -11,7 +11,7 @@ Object NetComCoreClientProtocol,, NetComProtocol
   RedefineMethod  OnClosed,           $ObjPtr(NetComConnection)
   RedefineMethod  OnConnected,        $ObjPtr(NetComConnection)
   RedefineMethod  OnDisconnected,     $ObjPtr(NetComConnection), DWORD, DWORD
-  RedefineMethod  OnError,            $ObjPtr(NetComConnection), PIO_SOCKJOB, DWORD
+  RedefineMethod  OnError,            $ObjPtr(NetComConnection), PIOJOB, DWORD
 
   DefineVariable  ClientLocalAddr,    NETCOMADDR, {AF_INETX, 0}   ;Setup Server IP + Port
   DefineVariable  ServerRemoteAddr,   NETCOMADDR, {AF_INETX, DEFAULT_SERVER_LISTENING_PORT}
@@ -45,11 +45,14 @@ MethodEnd
 ; Arguments:  Arg1: -> NetComConnection.
 ; Return:     Nothing.
 
-Method NetComCoreClientProtocol.OnClosed, uses xsi, pConnection:$ObjPtr(NetComConnection)
+Method NetComCoreClientProtocol.OnClosed, uses xbx xsi, pConnection:$ObjPtr(NetComConnection)
 ;  DbgHex pConnection, "NetComCoreClientProtocol.OnClose", "&PROTOCOL_WND_NAME"
   SetObject xsi
-  mov xax, [xsi].pOwner
-  OCall [xax].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
+  mov xbx, [xsi].pOwner
+  lea xax, [xbx].$Obj(NetComCoreClient).Client.ConnectionChain
+  .if [xax].SDLL_SENTINEL.pFirstItem == xax
+    OCall [xbx].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
+  .endif
   ACall xsi.OnClosed, pConnection
 MethodEnd
 
@@ -78,12 +81,15 @@ MethodEnd
 ;             Arg3: Operation result.
 ; Return:     Nothing.
 
-Method NetComCoreClientProtocol.OnDisconnected, uses xsi, pConnection:$ObjPtr(NetComConnection), \
-                                                          dDirection:DWORD, dResult:DWORD
+Method NetComCoreClientProtocol.OnDisconnected, uses xbx xsi, pConnection:$ObjPtr(NetComConnection), \
+                                                              dDirection:DWORD, dResult:DWORD
 ;  DbgHex pConnection, "NetComCoreClientProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   SetObject xsi
-  mov xax, [xsi].pOwner
-  OCall [xax].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
+  mov xbx, [xsi].pOwner
+  lea xax, [xbx].$Obj(NetComCoreClient).Client.ConnectionChain
+  .if [xax].SDLL_SENTINEL.pFirstItem == xax
+    OCall [xbx].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
+  .endif
   ACall xsi.OnDisconnected, pConnection, dDirection, dResult
 MethodEnd
 
@@ -96,12 +102,14 @@ MethodEnd
 ; Return:     eax = Command.
 
 Method NetComCoreClientProtocol.OnError, uses xbx xsi, pConnection:$ObjPtr(NetComConnection), \
-                                                   pIOSockJob:PIO_SOCKJOB, dError:DWORD
+                                                       pIOSockJob:PIOJOB, dError:DWORD
 ;  DbgHex pConnection, "NetComCoreClientProtocol.OnError", "&PROTOCOL_WND_NAME"
   SetObject xsi
   mov xbx, [xsi].pOwner
-  OCall [xbx].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
-;  OCall [xbx].$Obj(NetComCoreClient).SndDlg.ActiveConns::Collection.Delete, pConnection 
+  .ifBitClr [xbx].$Obj(NetComCoreClient).SndDlg.dFlags, SDF_ERROR
+    BitSet [xbx].$Obj(NetComCoreClient).SndDlg.dFlags, SDF_ERROR
+    OCall [xbx].$Obj(NetComCoreClient).SndDlg::SendDlg.CtlsEnable, TRUE
+  .endif
   ACall xsi.OnError, pConnection, pIOSockJob, dError
 MethodEnd
 

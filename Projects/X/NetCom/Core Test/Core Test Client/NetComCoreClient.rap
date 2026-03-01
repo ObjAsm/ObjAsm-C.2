@@ -152,7 +152,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=14
+MilestoneOnDateDate=28
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -187,18 +187,18 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1202,620,17607
+2=0,0,1202,620,14595
 1=0,0,1377,901,638
 6=0,0,0,0,44274
 4=0,0,0,0,604
 31=0,0,1213,691,2401
 8=0,0,0,0,11171
 5=0,0,0,0,1681
-9=0,0,1838,628,16679
-7=0,0,1262,635,20647
-14=0,0,1297,620,3571
+9=0,0,1838,628,16078
+7=0,0,1262,635,27160
+14=0,0,1297,620,410
 13=0,0,894,619,188
-12=0,0,0,0,2490
+12=0,0,0,0,3069
 11=0,0,1251,559,48747
 15=0,0,670,591,3197
 17=0,0,0,0,16020
@@ -207,7 +207,7 @@ ProductVer4Range=0
 18=0,0,1202,620
 10=0,0,0,0,18866
 19=0,0,0,0,10263
-20=0,0,0,0,4967
+20=0,0,0,0,2354
 23=0,0,0,0,4261
 22=0,0,0,0,0
 26=0,0,834,619,7606
@@ -221,17 +221,18 @@ ProductVer4Range=0
 34=0,0,0,0,1064
 35=0,0,0,0,2266
 36=
+38=0,0,1096,620,5084
 [Find]
-1="DbgDec eax"
-2="DbgHex xbx"
-3="hComboServerAddr"
-4="CB_SETCURSEL"
-5="ConnectionsClose"
-6="offset ConnectionChain"
-7="ActiveConns"
-8="OCall [xbx].$Obj(NetComCoreClient).SndDlg.ActiveConns::Collection.Delete, pConnection "
-9="NetComClient"
-10="NetComClientProtocol"
+1="SDF_CTRLS_ENABLED"
+2="dTimeout"
+3="CtlsEnable"
+4="SDF_STOP"
+5="ConnectionsDisconnect"
+6="NetComConnection.OnError Operation"
+7="DbgDec eax"
+8="DbgHex xbx"
+9="hComboServerAddr"
+10="CB_SETCURSEL"
 [Collapse]
 17=,
 14=,
@@ -265,6 +266,7 @@ ProductVer4Range=0
 33=
 34=
 35=
+38=
 [BookMark]
 0=
 1=
@@ -279,9 +281,9 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=2,7,23,35,9,20,14
+AutoLoad=2,20
 [PTimer]
-PTimer=768391838
+PTimer=809147901
 [GroupExpand]
 GroupExpand=1,1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -313,3 +315,4 @@ GroupExpand=1,1,1,1,0,0,1,1,0
 6=
 17=
 8=
+38=

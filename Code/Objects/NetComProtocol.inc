@@ -76,14 +76,12 @@ MethodEnd
 ; Method:     NetComProtocol.Init
 ; Purpose:    Initialize this object.
 ; Arguments:  Arg1: -> Owner object.
-;             Arg2: -> String representing the service or the port number as a string.
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
-Method NetComProtocol.Init, uses xsi, pOwner:POINTER;, pServiceName:PSTRING
+Method NetComProtocol.Init, uses xsi, pOwner:POINTER
   SetObject xsi
   ?mov xdx, pOwner
   ACall xsi.Init, xdx
-;  mov [xsi].pLocalHostSrvName, $invoke(StrNew, pServiceName)
   OCall [xsi].BlackList::NetComAddrCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
   xor eax, eax
 MethodEnd

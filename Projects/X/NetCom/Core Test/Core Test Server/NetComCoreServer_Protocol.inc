@@ -84,9 +84,9 @@ Method NetComCoreServerProtocol.IsDataComplete?, uses xbx xdi xsi, pConnection:$
   xor eax, eax
   .while (xbx != pRcvIOChain)
     ;Stop on first non ready buffer
-    mov xdi, [xbx - IO_HEADER_SIZE].IO_SOCKJOB.WSABuf.buf
+    mov xdi, [xbx - IOJOB_HEADER_SIZE].IOJOB.WSABuf.buf
     xor ecx, ecx
-    .while ecx < [xbx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed
+    .while ecx < [xbx - IOJOB_HEADER_SIZE].IOJOB.dBytesConsumed
       inc edx
       .if CHRA ptr [xdi] == 0
         mov eax, edx
@@ -155,6 +155,7 @@ MethodEnd
 Method NetComCoreServerProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection), \
                                           dDelimiterIndex:dword
 ;  DbgHex pConnection, "NetComCoreServerProtocol.ProcessData", "&PROTOCOL_WND_NAME"
+  ;Do nothing other than disposing the received data
   mov eax, dDelimiterIndex
 MethodEnd
 

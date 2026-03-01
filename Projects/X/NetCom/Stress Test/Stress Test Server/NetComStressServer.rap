@@ -19,7 +19,7 @@ Debug=1
 8=..\..\..\..\..\Code\Macros\SDLL.inc
 9=..\..\..\..\..\Code\Objects\NetComProtocol.inc
 10=..\..\..\..\..\Code\Macros\Debug.inc
-11=..\..\..\..\..\Code\Objects\NetComIOSockJobPool.inc
+11=..\..\..\..\..\Code\Objects\NetComIOJobPool.inc
 12=..\..\..\..\..\Code\Objects\NetComConnectionPool.inc
 13=..\..\..\..\..\Code\Objects\NetComConnection.inc
 14=..\..\..\..\..\Code\Objects\NetCom.inc
@@ -140,7 +140,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=10
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -175,8 +175,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,5699
-1=0,0,0,0,2208
+2=0,0,0,0,3564
+1=0,0,0,0,1736
 6=0,0,0,0,44924
 4=0,0,0,0,0
 31=0,0,1213,691,5916
@@ -184,15 +184,15 @@ ProductVer4Range=0
 5=0,0,0,0,24537
 9=0,0,458,581,8150
 7=0,0,458,581,4338
-14=0,0,755,592,20447
-13=0,0,458,581,10826
+14=0,0,755,592,12424
+13=0,0,458,581,22210
 12=0,0,0,0,2667
 11=0,0,0,0,2349
 15=0,0,795,423,125992
 17=0,0,0,0,0
 3=0,0,0,0,0
 16=0,0,0,0,9718
-18=0,0,0,0,11622
+18=0,0,0,0,2829
 10=0,0,0,0,4380
 19=0,0,0,0,752
 20=0,0,0,0,0
@@ -206,6 +206,7 @@ ProductVer4Range=0
 22=0,0,0,0,11925
 29=0,0,0,0,1384
 30=0,0,0,0,0
+32=0,0,1577,631,1185
 
 
 [BookMark]
@@ -222,16 +223,16 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [Find]
-1="InitializeCriticalSection"
-2="OCall xsi.Disconnect, SD_RECEIVE"
-3="DoRcvIOJob"
-4="DoSndIOJob"
-5="OCall xsi.DoSndIOJob, pItem"
-6="lea xax, [xsi].RcvIOJobChain"
-7=".elseif eax == OPERATION_SOCK_RECV"
-8="NetComStressServer.Init"
-9=" NetComStressServer.Init "
-10="int 3"
+1="IO_HEADER_SIZE"
+2="InitializeCriticalSection"
+3="OCall xsi.Disconnect, SD_RECEIVE"
+4="DoRcvIOJob"
+5="DoSndIOJob"
+6="OCall xsi.DoSndIOJob, pItem"
+7="lea xax, [xsi].RcvIOJobChain"
+8=".elseif eax == OPERATION_SOCK_RECV"
+9="NetComStressServer.Init"
+10=" NetComStressServer.Init "
 [Collapse]
 13=269238272,268443648,
 2=
@@ -264,8 +265,9 @@ ProductVer4Range=0
 29=
 31=
 30=
+32=
 [AutoLoad]
-AutoLoad=1,2,13,9,14,5,11,12
+AutoLoad=18
 [RADebugBP]
 1=
 18=
@@ -291,7 +293,8 @@ AutoLoad=1,2,13,9,14,5,11,12
 16=
 11=
 27=
+32=
 [PTimer]
-PTimer=1085428357
+PTimer=1105707060
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

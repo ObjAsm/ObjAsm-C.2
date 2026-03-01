@@ -215,7 +215,7 @@ Method NetComStressServer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax
 
   YPOS = YPOS + 30
-  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Server.IOSockJobPool.dCount
+  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Server.IOJobPool.dCount
   invoke StrLength, xdi
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax
 

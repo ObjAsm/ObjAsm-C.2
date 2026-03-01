@@ -40,11 +40,11 @@ xLSLL_ITEM struc
   pLinkFwrd     PxLSLL_ITEM   ?                         ;-> Next member
 xLSLL_ITEM ends
 
-PxLSLL_Control typedef ptr xLSLL_Control
-xLSLL_Control struc
+PxLSLL_CONTROL typedef ptr xLSLL_CONTROL
+xLSLL_CONTROL struc
   pFirstMember  PxLSLL_ITEM   ?                         ;-> First member
   dLock         DWORD         ?                         ;List lock     
-xLSLL_Control ends
+xLSLL_CONTROL ends
 
 ; ==================================================================================================
 
@@ -61,7 +61,7 @@ xLSLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<>
 @@:
   mov AuxReg, 1
   xor eax, eax
-  lock cmpxchg [RefReg].xLSLL_Control.dLock, AuxReg
+  lock cmpxchg [RefReg].xLSLL_CONTROL.dLock, AuxReg
   ht                                                    ;;Hint taken
   je @F
   invoke Sleep, 0
@@ -69,7 +69,7 @@ xLSLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<>
 @@:
   m2m [NewReg].xLSLL_ITEM.pLinkFwrd, [RefReg].xLSLL_ITEM.pLinkFwrd, AuxReg
   mov [RefReg].xLSLL_ITEM.pLinkFwrd, NewReg
-  dec [RefReg].xLSLL_Control.dLock
+  lock dec [RefReg].xLSLL_CONTROL.dLock
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ xLSLL_RemoveAfter macro RefReg:req, AuxReg:=<rcx>
 @@:
   mov AuxReg, 1
   xor eax, eax
-  lock cmpxchg [RefReg].xLSLL_Control.dLock, AuxReg
+  lock cmpxchg [RefReg].xLSLL_CONTROL.dLock, AuxReg
   ht                                                    ;;Hint taken
   je @F
   invoke Sleep, 0
@@ -91,5 +91,5 @@ xLSLL_RemoveAfter macro RefReg:req, AuxReg:=<rcx>
 @@:
   mov AuxReg, [RefReg].xLSLL_ITEM.pLinkFwrd
   m2m [RefReg].xLSLL_ITEM.pLinkFwrd, [AuxReg].xLSLL_ITEM.pLinkFwrd, AuxReg
-  dec [RefReg].xLSLL_Control.dLock
+  lock dec [RefReg].xLSLL_CONTROL.dLock
 endm

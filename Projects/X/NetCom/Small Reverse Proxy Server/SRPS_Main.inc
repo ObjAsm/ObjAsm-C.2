@@ -343,7 +343,7 @@ Method Application.CtlsGet, uses xdi xbx xsi
   lea xbx, $ObjTmpl(NetComSrpsSupervisor)
   mov ecx, 10000000                                     ;Convert into 100ns units
   imul ecx
-  mov [xbx].$Obj(NetComSupervisor).dTimeout, eax
+  mov [xbx].$Obj(NetComSupervisor).dInactivityTimeout, eax
 
   mov dRetValue, TRUE
 
@@ -496,7 +496,7 @@ Method Application.CtlsSet, uses xbx xdi xsi
 
   ;Set timeout edit control
   lea xbx, $ObjTmpl(NetComSrpsSupervisor)
-  mov eax, [xbx].$Obj(NetComSupervisor).dTimeout
+  mov eax, [xbx].$Obj(NetComSupervisor).dInactivityTimeout
   cdiv 10000000
   mov dTimeout, edx
   DbgDec dTimeout

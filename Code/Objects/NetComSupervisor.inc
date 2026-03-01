@@ -71,16 +71,17 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComSupervisor.WorkerJob
 ; Purpose:    This thread is responsible making all administrative work on the engine.
+;             It handles connection closing, destruction and timeout.  
 ; Arguments:  None.
 ; Return:     Nothing.
 
 Method NetComSupervisor.WorkerJob, uses xbx xdi xsi
-  local dConnectionTime:DWORD, dConnectionTimeSize:DWORD
-  local pConnection:$ObjPtr(NetComConnection), TimeNow:FILETIME, dDirection:DWORD
+  local dConnectionTime:DWORD, dConnectionTimeSize:DWORD, TimeNow:FILETIME
+  local dDirection:DWORD
 
   SetObject xsi
   mov dConnectionTimeSize, sizeof dConnectionTime
-  mov dDirection, FALSE
+  mov dDirection, TRUE
 
   .while TRUE
     invoke WaitForMultipleObjects, SUPERVISOR_WAITHANDLECOUNT, addr [xsi].WaitHandles, \
@@ -92,9 +93,9 @@ Method NetComSupervisor.WorkerJob, uses xbx xdi xsi
     invoke EnterCriticalSection, addr [xbx].$Obj(NetComEngine).ConnectionPool.CritSect
 
     lea xdi, [xbx].$Obj(NetComEngine).ConnectionChain
-    
-    ;Traverse the list from alternating directions
-    .if dDirection == TRUE
+
+    ;Traverse the list in alternating directions
+    .if dDirection != FALSE
       mov xbx, [xdi].SDLL_SENTINEL.pFirstItem
       mov dDirection, FALSE
     .else
@@ -102,20 +103,26 @@ Method NetComSupervisor.WorkerJob, uses xbx xdi xsi
       mov dDirection, TRUE
     .endif
 
-    .while xbx != xdi                                   ;Check for end of chain
-      lea xbx, [xbx - offset $Obj(NetComConnection).ChainItem]    ;xbx -> NetComConnection instance
-      mov pConnection, xbx
+    .while TRUE
+      mov xcx, [xsi].pOwner
+      lea xdx, [xcx].$Obj(NetComEngine).ConnectionChain
+      .break .if xbx == xdx                                     ;Check for end of chain
+
+      lea xbx, [xbx - offset $Obj(NetComConnection).ChainItem]  ;xbx -> NetComConnection
 
       .ifBitClr [xbx].$Obj(NetComConnection).dFlags, NCC_QUEUE_ACCEPT or NCC_ACCEPTED
         ;Skip acceptors
-        .if [xsi].dTimeout != 0                         ;0 means no timeout
-          invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
-          .if eax == FALSE
-            mov xcx, [xsi].pOwner
-            invoke LeaveCriticalSection, addr [xcx].$Obj(NetComEngine).ConnectionPool.CritSect
-            invoke Sleep, 10
-            jmp @@Retry
-          .endif
+
+        invoke TryEnterCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
+        .if eax == FALSE
+          mov xcx, [xsi].pOwner
+          invoke LeaveCriticalSection, addr [xcx].$Obj(NetComEngine).ConnectionPool.CritSect
+          invoke Sleep, 10
+          jmp @@Retry
+        .endif
+
+        ;Handle connection timeout
+        .if [xsi].dInactivityTimeout != 0                         ;0 means no timeout
           .if ([xbx].$Obj(NetComConnection).LastTime.FILETIME.dwLowDateTime != 0 || \
                [xbx].$Obj(NetComConnection).LastTime.FILETIME.dwLowDateTime != 0)
             invoke GetSystemTimeAsFileTime, addr TimeNow
@@ -123,19 +130,21 @@ Method NetComSupervisor.WorkerJob, uses xbx xdi xsi
             sub eax, [xbx].$Obj(NetComConnection).LastTime.FILETIME.dwLowDateTime
             mov edx, TimeNow.FILETIME.dwHighDateTime
             sbb edx, [xbx].$Obj(NetComConnection).LastTime.FILETIME.dwHighDateTime
-            sub eax, [xsi].dTimeout
+            sub eax, [xsi].dInactivityTimeout
             sbb edx, 0
             .if SDWORD ptr edx >= 0
 ;              DbgWarning "Connection Timeout"
-;              DbgConnection xbx, "Connection Timeout" 
+;              DbgConnection xbx, "Connection Timeout"
               OCall xbx::NetComConnection.Disconnect, SD_SEND
               OCall xbx::NetComConnection.QueueDestroy
               OCall xbx::NetComConnection.Close, TRUE
             .endif
           .endif
-          invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
         .endif
+
+        invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
       .endif
+
 
       ;If the connection is flagged for destruction, proceed ONLY if the
       ;connection has no pending IOJobs
@@ -152,16 +161,30 @@ Method NetComSupervisor.WorkerJob, uses xbx xdi xsi
           invoke LeaveCriticalSection, addr [xbx].$Obj(NetComConnection).CritSect
           OCall xbx::NetComConnection.Done
           mov xcx, [xsi].pOwner
-          mov xbx, POINTER ptr [xbx + offset $Obj(NetComConnection).ChainItem]  ;-> Next connection
-          OCall [xcx].$Obj(NetComEngine).ConnectionPool::NetComConnectionPool.FreeItem, pConnection
+          mov xdx, xbx
+
+          ;Get next connection
+          .if dDirection == FALSE                       ;Inverted logic, we switched the direction
+            mov xbx, [xbx + offset $Obj(NetComConnection).ChainItem].SDLL_ITEM.pNextItem
+          .else
+            mov xbx, [xbx + offset $Obj(NetComConnection).ChainItem].SDLL_ITEM.pPrevItem
+          .endif
+          OCall [xcx].$Obj(NetComEngine).ConnectionPool::NetComConnectionPool.FreeItem, xdx
           .continue
         .endif
       .endif
-      
-      mov xbx, POINTER ptr [xbx + offset $Obj(NetComConnection).ChainItem]
+
+    @@Next:
+      ;Get next connection
+      .if dDirection == FALSE                           ;Inverted logic, we switched the direction
+        mov xbx, [xbx + offset $Obj(NetComConnection).ChainItem].SDLL_ITEM.pNextItem
+      .else
+        mov xbx, [xbx + offset $Obj(NetComConnection).ChainItem].SDLL_ITEM.pPrevItem
+      .endif
     .endw
-    mov xbx, [xsi].pOwner
-    invoke LeaveCriticalSection, addr [xbx].$Obj(NetComEngine).ConnectionPool.CritSect
+
+    mov xcx, [xsi].pOwner
+    invoke LeaveCriticalSection, addr [xcx].$Obj(NetComEngine).ConnectionPool.CritSect
   .endw
 MethodEnd
 

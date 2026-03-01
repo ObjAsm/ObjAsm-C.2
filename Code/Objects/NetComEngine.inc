@@ -100,7 +100,7 @@ MethodEnd
 
 Method NetComEngine.ConnectionsClose, uses xbx xdi xsi
   SetObject xsi
-  LockObjectAccess [xsi].ConnectionPool                 ;ConnectionChain should not change!
+  invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
   lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
   mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first item
   .while xbx != xdi                                     ;Empty?
@@ -108,7 +108,7 @@ Method NetComEngine.ConnectionsClose, uses xbx xdi xsi
     mov xbx, [xbx].SDLL_ITEM.pNextItem                  ;Move to next item
     OCall xcx::NetComConnection.Close, FALSE
   .endw
-  UnlockObjectAccess [xsi].ConnectionPool
+  invoke LeaveCriticalSection, addr [xsi].ConnectionPool.CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ Method NetComEngine.ConnectionsDestroy, uses xbx xdi xsi
   local pConnection:$ObjPtr(NetComConnection)
 
   SetObject xsi
-  LockObjectAccess [xsi].ConnectionPool                 ;ConnectionChain should not change!
+  invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
   lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
   mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first item
   .while xbx != xdi                                     ;Empty?
@@ -131,7 +131,7 @@ Method NetComEngine.ConnectionsDestroy, uses xbx xdi xsi
     mov xbx, [xbx].SDLL_ITEM.pNextItem                  ;Move to next item
     OCall pConnection::NetComConnection.QueueDestroy
   .endw
-  UnlockObjectAccess [xsi].ConnectionPool
+  invoke LeaveCriticalSection, addr [xsi].ConnectionPool.CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ MethodEnd
 
 Method NetComEngine.ConnectionsDisconnect, uses xbx xdi xsi
   SetObject xsi
-  LockObjectAccess [xsi].ConnectionPool                 ;ConnectionChain should not change!
+  invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
   lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
   mov xdx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first Item
   .while xdx != xdi
@@ -152,7 +152,7 @@ Method NetComEngine.ConnectionsDisconnect, uses xbx xdi xsi
     OCall xcx::NetComConnection.Disconnect, SD_SEND
     mov xdx, xbx
   .endw
-  UnlockObjectAccess [xsi].ConnectionPool
+  invoke LeaveCriticalSection, addr [xsi].ConnectionPool.CritSect
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -203,8 +203,10 @@ Method NetComEngine.Done, uses xbx xdi xsi
   ;Close listener sockets and release DataCollection structures
   OCall [xsi].Listeners::DataCollection.Done
 
-  mov xax, [xsi].pSupervisor  
-  invoke SetEvent, [xax].$Obj(NetComSupervisor).WaitHandles[NCS_EVENT_INDEX_RUN*sizeof(HANDLE)]
+  mov xax, [xsi].pSupervisor
+  .if xax != NULL
+    invoke SetEvent, [xax].$Obj(NetComSupervisor).WaitHandles[NCS_EVENT_INDEX_RUN*sizeof(HANDLE)]
+  .endif
 
   ;Tell NetComEngine worker to die, and wait for the death. Then shutdown the supervisor thread.
   DbgText "NetComEngine.Done - Closing Workers"
@@ -244,7 +246,9 @@ Method NetComEngine.Done, uses xbx xdi xsi
 
   OCall [xsi].Workers::XWCollection.Done
 
-  OCall [xsi].pSupervisor::NetComSupervisor.Done
+  .if [xsi].pSupervisor != NULL
+    OCall [xsi].pSupervisor::NetComSupervisor.Done
+  .endif
 
   ;Destroy IOCP
   invoke CloseHandle, [xsi].hIOCP
@@ -309,7 +313,9 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, pSupervisor:POINTER, \
   .endif
 
   ;Initialize supervisor and worker thread
-  OCall pSupervisor::NetComSupervisor.Init, xsi
+  .if pSupervisor != NULL
+    OCall pSupervisor::NetComSupervisor.Init, xsi
+  .endif
 
   ;Create a Worker Thread per available "logical" cpu
   mov ebx, [xsi].dWorkerCount
@@ -583,7 +589,7 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
 
         .if dOvrResult != FALSE
           ;Operation succeeded *****************************************************************
-          ;Each of the following connection handlers must manage the IOSockJob themselves
+          ;Each of the following connection handlers must manage the IOJob themselves
           movzx eax, [xbx].IOJOB.wOperation
           .if eax == IOJOB_RECV
             mrm [xbx].IOJOB.dBytesConsumed, dBytesConsumed, edx
@@ -614,18 +620,20 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
 
       .endif
 
-;     NOTE: this code was moved to the supervisor thread
-;      ;If the connection is flagged for destruction, proceed ONLY if the
-;      ;connection has no pending IOJobs
-;      .ifBitSet [xdi].$Obj(NetComConnection).dFlags, NCC_QUEUE_DESTROY
-;        .if [xdi].$Obj(NetComConnection).dPendingIOJobs == 0
-;          OCall xdi::NetComConnection.FreeRessources    ;Socket is closed here
-;          invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
-;          OCall xdi::NetComConnection.Done
-;          OCall [xsi].ConnectionPool::NetComConnectionPool.FreeItem, xdi
-;          .continue
-;        .endif
-;      .endif
+      ;NOTE: this code was moved to the supervisor thread, but if not presend, do the disposal here
+      .if [xsi].pSupervisor == NULL
+        ;If the connection is flagged for destruction, proceed ONLY if the
+        ;connection has no pending IOJobs
+        .ifBitSet [xdi].$Obj(NetComConnection).dFlags, NCC_QUEUE_DESTROY
+          .if [xdi].$Obj(NetComConnection).dPendingIOJobs == 0
+            OCall xdi::NetComConnection.FreeRessources    ;Socket is closed here
+            invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
+            OCall xdi::NetComConnection.Done
+            OCall [xsi].ConnectionPool::NetComConnectionPool.FreeItem, xdi
+            .continue
+          .endif
+        .endif
+      .endif
 
       invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
     .endif

@@ -26,9 +26,9 @@
 ;   - dMemSize: expected total transmission size (from first DWORD of client payload)
 
 SRVPROTDATA struc
-  dTotRcvBytes    DWORD         ?     ;Total recieved byte count up to the last served IOJob
-  pLastIOJob      PIO_SOCKJOB   ?     ;Last served IOJob
-  dMemSize        DWORD         ?     ;Required TX length
+  dTotRcvBytes    DWORD     ?     ;Total recieved byte count up to the last served IOJob
+  pLastIOJob      PIOJOB    ?     ;Last served IOJob
+  dMemSize        DWORD     ?     ;Required TX length
 SRVPROTDATA ends
 
 ; --------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ SRVPROTDATA ends
 
 Object NetComStressServerProtocol,, NetComProtocol
   RedefineMethod  Allocate,           $ObjPtr(NetComConnection)
-  RedefineMethod  IsDataComplete?,    $ObjPtr(NetComConnection), PIO_SOCKJOB
+  RedefineMethod  IsDataComplete?,    $ObjPtr(NetComConnection), PIOJOB
   RedefineMethod  OnAccepted,         $ObjPtr(NetComConnection)
   RedefineMethod  OnDisconnected,     $ObjPtr(NetComConnection), DWORD, DWORD
   RedefineMethod  ProcessData,        $ObjPtr(NetComConnection), DWORD   ;-> Connection, Delimiter
@@ -102,7 +102,7 @@ MethodEnd
 ;                   Zero               - More data needed.
 
 Method NetComStressServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr(NetComConnection), \
-                                                       pIOSockJob:PIO_SOCKJOB
+                                                       pIOSockJob:PIOJOB
   local pRcvIOChain:PSDLL_SENTINEL
 
 ;  DbgHex pConnection, "NetComStressServerProtocol.IsDataComplete?", "&PROTOCOL_WND_NAME"
@@ -115,10 +115,10 @@ Method NetComStressServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr
   ; First IOJob: read total transmission size from client
   ; ----------------------------------------------------------------------
   .if [xsi].SRVPROTDATA.pLastIOJob == NULL
-    mov xdx, [xcx].SDLL_SENTINEL.pFirstItem             ;First IO_SOCKJOB
-    .ifBitSet [xdx - IO_HEADER_SIZE].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
-      .if [xdx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed >= 4
-        mov xcx, [xdx - IO_HEADER_SIZE].IO_SOCKJOB.WSABuf.buf
+    mov xdx, [xcx].SDLL_SENTINEL.pFirstItem             ;First IOJOB
+    .ifBitSet [xdx - IOJOB_HEADER_SIZE].IOJOB.wFlags, IOF_JOB_COMPLETED
+      .if [xdx - IOJOB_HEADER_SIZE].IOJOB.dBytesConsumed >= 4
+        mov xcx, [xdx - IOJOB_HEADER_SIZE].IOJOB.WSABuf.buf
         mrm [xsi].SRVPROTDATA.dMemSize, DWORD ptr [xcx], eax    ;Store TX length
       .else
         xor eax, eax                                    ;Need more data
@@ -135,19 +135,19 @@ Method NetComStressServerProtocol.IsDataComplete?, uses xsi, pConnection:$ObjPtr
   ; ----------------------------------------------------------------------
   .if [xsi].SRVPROTDATA.pLastIOJob == NULL
     mov xcx, pRcvIOChain
-    lea xdx, [xcx - IO_HEADER_SIZE]
+    lea xdx, [xcx - IOJOB_HEADER_SIZE]
   .else
     mov xdx, [xsi].SRVPROTDATA.pLastIOJob
   .endif
 
   mov eax, [xsi].SRVPROTDATA.dMemSize
   .while TRUE
-    mov xdx, [xdx].IO_SOCKJOB.pNextItem                 ;Next IO_SOCKJOB
+    mov xdx, [xdx].IOJOB.pNextItem                      ;Next IOJOB
     .break .if xdx == pRcvIOChain                       ;End of chain
-    sub xdx, IO_HEADER_SIZE                             ;Correct pointer to structure
-    test [xdx].IO_SOCKJOB.wFlags, IOF_JOB_COMPLETED
+    sub xdx, IOJOB_HEADER_SIZE                             ;Correct pointer to structure
+    test [xdx].IOJOB.wFlags, IOF_JOB_COMPLETED
     .break .if ZERO?
-    mov ecx, [xdx].IO_SOCKJOB.dBytesConsumed
+    mov ecx, [xdx].IOJOB.dBytesConsumed
     add [xsi].SRVPROTDATA.dTotRcvBytes, ecx             ;Update total received
     mov [xsi].SRVPROTDATA.pLastIOJob, xdx
     .break .if eax <= [xsi].SRVPROTDATA.dTotRcvBytes    ;Complete packet received?
@@ -220,6 +220,7 @@ Method NetComStressServerProtocol.ProcessData, uses xbx xdi xsi, pConnection:$Ob
   local dConsumed:DWORD, pMemory:POINTER, dRetval:DWORD
   local hNewBmp:HBITMAP, hPrvBmp:HBITMAP, hScreenDC:HDC, hMemDC:HANDLE
   local dSizeX:DWORD, dSizeY:DWORD, pBuffer:POINTER, wCaptionDC[100]:CHRW
+  local dCummulated:DWORD
 
 ;  DbgHex pConnection, "NetComStressServerProtocol.ProcessData", "&PROTOCOL_WND_NAME"
   SetObject xsi, NetComConnection, pConnection
@@ -236,17 +237,17 @@ Method NetComStressServerProtocol.ProcessData, uses xbx xdi xsi, pConnection:$Ob
   lea xdi, [xsi].RcvIOJobChain
   mov xbx, [xdi].SDLL_SENTINEL.pFirstItem
   .while xbx != xdi && dConsumed != 0
-    mov eax, [xbx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed
+    mov eax, [xbx - IOJOB_HEADER_SIZE].IOJOB.dBytesConsumed
     .if eax <= dConsumed
       sub dConsumed, eax
-      lea xdx, [xbx - IO_HEADER_SIZE]
-      mov xbx, [xbx].SDLL_ITEM.pNextItem
+      lea xdx, [xbx - IOJOB_HEADER_SIZE]
+      mov xbx, [xbx].SDLL_ITEM.pNextItem                ;xbx -> next linked item
       mov xcx, pMemory
       add pMemory, xax
-      invoke MemClone, xcx, [xdx].IO_SOCKJOB.WSABuf.buf, eax
+      invoke MemClone, xcx, [xdx].IOJOB.WSABuf.buf, eax
     .else
-      lea xdx, [xbx - IO_HEADER_SIZE]
-      invoke MemClone, pMemory, [xdx].IO_SOCKJOB.WSABuf.buf, dConsumed
+      lea xdx, [xbx - IOJOB_HEADER_SIZE]
+      invoke MemClone, pMemory, [xdx].IOJOB.WSABuf.buf, dConsumed
       .break
     .endif
   .endw

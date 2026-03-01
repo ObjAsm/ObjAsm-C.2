@@ -447,7 +447,7 @@ MethodEnd
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
-  local dConsumed:DWORD;, dRcvLstElpsdTimeSize:DWORD
+  local dConsumed:DWORD
 
   SetObject xsi
   lock dec [xsi].dRcvQueuedIOJobs
@@ -506,8 +506,8 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
             sub dConsumed, edx
             mov xcx, [xsi].pOwner
             lea xdx, [xbx - IOJOB_HEADER_SIZE]          ;xdx -> IOJob
+            mov xbx, [xbx].SDLL_ITEM.pNextItem          ;xbx -> next linked item
             OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.FreeItem, xdx
-            mov xbx, [xbx].SDLL_ITEM.pNextItem
             .break .if dConsumed == 0
           .else
             ;This is the last IOJob to be processed. We will leave some data in the buffer,
@@ -521,6 +521,7 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
         mov [xdi].SDLL_SENTINEL.pFirstItem, xbx
         mov [xbx].SDLL_ITEM.pPrevItem, xdi
       .endif
+      xor eax, eax
     .endif
   .endif
 MethodEnd
@@ -728,19 +729,10 @@ Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
   m2m dBufferSize, [xdx].$Obj(NetComIOJobPool).dBufferSize, eax
 
   .while edi != 0
-    mov eax, [xsi].dSndQueuedIOJobs
-    .if [xsi].dSndPaused == FALSE
-      .if eax >= [xsi].dSndHighWtrMrk
-        mov [xsi].dSndPaused, TRUE
-        DbgText "dSndPaused == TRUE"
-      .endif
-    .else
-      .if eax <= [xsi].dSndLowWtrMrk
-        mov [xsi].dSndPaused, FALSE
-      .endif
+    ;Check if we are allowed to send
+    .ifBitSet [xsi].dFlags, NCC_SND_PAUSED
+      .break
     .endif
-
-;    .break .if [xsi].dSndPaused == TRUE
 
     mov xcx, [xsi].pOwner                               ;xcx -> NetComConnectionPool
     OCall [xcx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_SEND
@@ -771,21 +763,6 @@ Method NetComConnection.QueueSend, uses xdi xsi, pData:POINTER, dSize:DWORD
   .endw
   mov eax, dSize
   sub eax, edi
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     NetComConnection.TryQueueReceive
-; Purpose:    Tries to resume the receiving IOJobs.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method NetComConnection.TryQueueReceive, uses xsi
-  SetObject xsi
-  .ifBitClr [xsi].dFlags, NCC_RCV_PAUSED
-    .if [xsi].dRcvQueuedIOJobs == 0
-      OCall xsi.QueueReceive
-    .endif
-  .endif
 MethodEnd
 
 endif

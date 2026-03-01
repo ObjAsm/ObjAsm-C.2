@@ -22,7 +22,10 @@ CStr szNetComStressClient, "OAC_NetComStressClient"     ;Creates szNetComStressC
 ;             uses a timer event to drive periodic data transmission.
 ; --------------------------------------------------------------------------------------------------
 
-SDF_STOP equ  BIT00
+SDF_ERROR         equ  BIT00
+SDF_CTRLS_ENABLED equ  BIT01
+SDF_STOP          equ  BIT02
+
 
 Object SendDlg,, DialogModal
   VirtualMethod     CtlsEnable,     DWORD               ;Enable/disable UI controls
@@ -35,8 +38,8 @@ Object SendDlg,, DialogModal
   VirtualEvent      OnTimer,        WM_TIMER            ;Timer event handler
 
   DefineVariable    ServerAddr,     NETCOMADDR, {}      ;Remote server network address
-  DefineVariable    pConnection,    $ObjPtr(NetComConnection),  NULL ;Pointer to connection object
-  DefineVariable    dFlags,         DWORD,      SDF_STOP;Dialog flags
+  DefineVariable    pConnection,    $ObjPtr(NetComConnection),  NULL ;-> NetComConnection
+  DefineVariable    dFlags,         DWORD,      SDF_CTRLS_ENABLED or SDF_STOP   ;Dialog flags
   DefineVariable    dFrameCount,    DWORD,      0
   DefineVariable    hWorker,        HANDLE,     0
 ObjectEnd
@@ -291,7 +294,7 @@ Method NetComStressClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax             ;Draw text
 
   YPOS = YPOS + 30
-  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Client.IOSockJobPool.dCount
+  invoke wsprintf, xdi, $OfsCStr("#IOJobs = %lu            "), [xsi].Client.IOJobPool.dCount
   invoke StrLength, xdi
   invoke TextOut, xbx, XPOS, YPOS, xdi, eax             ;Draw text
 
@@ -358,6 +361,20 @@ MethodEnd
 
 Method SendDlg.CtlsEnable, uses xbx xsi, dEnable:DWORD
   SetObject xsi                                         ;Bind object context
+
+  .if dEnable == FALSE
+    .ifBitSet [xsi].dFlags, SDF_CTRLS_ENABLED
+      BitClr [xsi].dFlags, SDF_CTRLS_ENABLED
+    .else
+      ExitMethod
+    .endif
+  .else
+    .ifBitClr [xsi].dFlags, SDF_CTRLS_ENABLED
+      BitSet [xsi].dFlags, SDF_CTRLS_ENABLED
+    .else
+      ExitMethod
+    .endif
+  .endif
 
   ;Handle inner controls - enable/disable them
   invoke GetDlgItem, [xsi].hWnd, IDC_CBO_ADDR           ;Get address edit control
@@ -441,7 +458,7 @@ MethodEnd
 ; Return:     Nothing.
 ; Note:       dServerAddr and dServerAddr have to convert back to little endian.
 
-Method SendDlg.CtlsSet, uses xbx xsi
+Method SendDlg.CtlsSet, uses xbx xdi xsi
   local cBuffer[100]:CHR, dBufferLength:DWORD, pMibTable:PMIB_IPNET_TABLE2
   local hComboServerAddr:HANDLE, dSize:DWORD, dPort:DWORD, pAdapter:POINTER, cPortStr[20]:CHR
 
@@ -541,12 +558,12 @@ Method SendDlg.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   LoWord wParam                                         ;Get command ID
   .if eax == IDC_BTN_CONNECT
     .if $OCall(xsi.CtlsGet) != FALSE                    ;Get input values
+      BitClr [xsi].dFlags, SDF_STOP or SDF_ERROR 
       OCall [xdi].$Obj(NetComStressClient).Client::NetComEngine.ConnectTo, \
                                         offset $ObjTmpl(NetComStressClientProtocol), \
                                         offset $ObjTmpl(NetComStressClientProtocol).ServerRemoteAddr, \
                                         offset $ObjTmpl(NetComStressClientProtocol).ClientLocalAddr
       mov [xsi].pConnection, xax                        ;Store connection
-      BitClr [xsi].dFlags, SDF_STOP
       mov [xsi].hWorker, $invoke(CreateThread, NULL, 0, $MethodAddr(SendDlg.Worker), xsi, 0, NULL)
       OCall xsi.CtlsEnable, FALSE                       ;Disable controls
     .endif
@@ -555,7 +572,7 @@ Method SendDlg.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif eax == IDC_BTN_DISCONNECT
     .if [xsi].pConnection != NULL
       BitSet [xsi].dFlags, SDF_STOP
-      invoke WaitForSingleObject, [xsi].hWorker, 4000
+      invoke WaitForSingleObject, [xsi].hWorker, 4000   ;Stop sending
       OCall [xsi].pConnection::NetComConnection.Disconnect, SD_SEND
       OCall [xsi].pConnection::NetComConnection.QueueDestroy   ;Free connection object
       OCall [xsi].pConnection::NetComConnection.Close, FALSE   ;Free connection object
@@ -647,17 +664,24 @@ Method SendDlg.Worker, uses xbx xdi xsi
       mov BMI.bmiHeader.biCompression, BI_RGB
       mov xcx, pMem
       add xcx, sizeof DWORD
-      invoke MemClone, xcx, xbx, sizeof BMI             ;Copy BITMAPINFO to memory
+      invoke MemClone, xcx, xbx, sizeof(BMI)            ;Copy BITMAPINFO to memory
 
       .while TRUE
         .ifBitSet [xsi].dFlags, SDF_STOP
           .break
         .endif
+        
+        ;Wait until no more IOJobs are on the wire
+        .if [xdi].$Obj(NetComConnection).dSndQueuedIOJobs != 0
+          invoke Sleep, 100
+          .continue
+        .endif
+
         inc [xsi].dFrameCount
 
         invoke BitBlt, hMemDC, 0, 0, dSizeX, dSizeY, hScreenDC, 0, 0, SRCCOPY ;Copy screen to mem DC
         mov xax, pMem
-        add xax, sizeof DWORD + sizeof BMI
+        add xax, sizeof(DWORD) + sizeof(BMI)            ;Size of BYTE count and BMI header
         ;Retrieve bitmap bits
         invoke GetDIBits, hMemDC, hNewBmp, 0, BMI.bmiHeader.biHeight, xax, xbx, DIB_RGB_COLORS
         OCall xdi::NetComConnection.QueueSend, pMem, dMemSize  ;Send image

@@ -115,7 +115,7 @@ ERROR_BAD_PROTOCOL          equ   -1
 ERROR_USER_QUIT             equ   -2
 
 ;Protocol commands
-PROT_CMD_NONE               equ   0
+PROT_CMD_NONE               equ   0         ;Do nothing
 PROT_CMD_DISCONNECT         equ   1         ;Connection disconnect
 PROT_CMD_CLOSE              equ   2         ;Connection teardown
 PROT_CMD_DESTROY            equ   3         ;Destroy connection object
@@ -415,7 +415,6 @@ Object NetComConnection, NetComConnectionID, Primer
   RedefineMethod  Init,               POINTER, POINTER        ;-> Owner, -> NetComProtocol
   VirtualMethod   HandleProtocolCmd,  DWORD                   ;Command
   VirtualMethod   FreeRessources
-  VirtualMethod   TryQueueReceive
 
   VirtualMethod   QueueDestroy
 
@@ -453,9 +452,7 @@ Object NetComConnection, NetComConnectionID, Primer
   DefineVariable  dSndHighWtrMrk,     DWORD,            TX_HIGH_WM_DEFAULT
   DefineVariable  dSndLowWtrMrk,      DWORD,            TX_LOW_WM_DEFAULT
   DefineVariable  dSndQueuedIOJobs,   DWORD,            0     ;Total queued (in-flight + pending) IOJobs
-  DefineVariable  dSndPaused,         DWORD,            FALSE ;Boolean: window full reached at least once
   DefineVariable  dRcvQueuedIOJobs,   DWORD,            0     ;Number of posted Recv operations (0/1)
-  DefineVariable  dRcvPaused,         DWORD,            FALSE ;Boolean: do not post new WSARecv
 
   ;Management
   DefineVariable  pData,              POINTER,          NULL  ;-> Data managed by the protocol
@@ -520,7 +517,7 @@ Object NetComProtocol, NetComProtocolID, Primer
   VirtualMethod   ProcessData,        $ObjPtr(NetComConnection), DWORD ;-> NetComConnection, Index
   VirtualMethod   Release,            $ObjPtr(NetComConnection)
 
-  ;If ClientLocalAddr is set to INADDR_ANY, the server listens on all available network interfaces
+  ;If ListeningAddr is set to INADDR_ANY, the server listens on all available network interfaces
   ;Supported service strings are listed here: %WINDIR%\system32\drivers\etc\services
   DefineVariable  ListeningAddr,      NETCOMADDR, {AF_INETX, DEFAULT_LISTENING_PORT}
 
@@ -587,8 +584,8 @@ Object NetComSupervisor, NetComSupervisorID, Primer
   DefineVariable  WaitHandles,        HANDLE,     SUPERVISOR_WAITHANDLECOUNT dup(0)
   DefineVariable  dCycleTime,         DWORD,      250         ;ms
 
-  ;Timeout = 0 means no timeout
-  DefineVariable  dTimeout,           DWORD,      15*10000000 ;15s in 100ns units
+  ;Connetion inactivity timeout = 0 means no timeout
+  DefineVariable  dInactivityTimeout, DWORD,      10*10000000 ;10 seconds in 100ns units
 ObjectEnd
 
 
