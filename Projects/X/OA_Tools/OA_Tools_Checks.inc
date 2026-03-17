@@ -1076,9 +1076,9 @@ Method OAT_Child.CheckPrcArg, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	OAT_Child.CheckPrcLoc
-; Purpose:  	Verify the use of procedure local variables in the currently opened stream.
-; Arguments:	None.
+; Method:     OAT_Child.CheckPrcLoc
+; Purpose:    Verify the use of procedure local variables in the currently opened stream.
+; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
 Method OAT_Child.CheckPrcLoc, uses xbx xdi xsi
@@ -1166,9 +1166,9 @@ Method OAT_Child.CheckPrcLoc, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	OAT_Child.CheckPrcReg
-; Purpose:  	Verify the use and preservation of non volatile registers on object methods.
-; Arguments:	None.
+; Method:     OAT_Child.CheckPrcReg
+; Purpose:    Verify the use and preservation of non volatile registers on object methods.
+; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
 Method OAT_Child.CheckPrcReg, uses xbx xdi xsi
@@ -1367,9 +1367,9 @@ Method OAT_Child.CheckMacArg, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	OAT_Child.CheckMacLoc
-; Purpose:  	Verify the use of procedure local variables in the currently opened stream.
-; Arguments:	None.
+; Method:     OAT_Child.CheckMacLoc
+; Purpose:    Verify the use of procedure local variables in the currently opened stream.
+; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
 Method OAT_Child.CheckMacLoc, uses xbx xdi xsi

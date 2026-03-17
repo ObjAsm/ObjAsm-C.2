@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of Splash objects.
 ; Notes:      Version C.1.0, November 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

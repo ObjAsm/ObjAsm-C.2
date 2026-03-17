@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm hooking support of the "Import Address Table".
 ; Notes:      Version C.1.0, August 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

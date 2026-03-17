@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of Lua Host objects.
 ; Notes:      Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1 June 2025
 ;               - Caller has to dispose the script string.
 ;               - Run/Execute changed.

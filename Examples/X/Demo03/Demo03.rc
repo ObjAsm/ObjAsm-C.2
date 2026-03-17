@@ -1,22 +1,28 @@
 ; ==================================================================================================
 ; Title:      Demo03.rc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm resource file.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Resource script for ObjAsm demonstration application Demo03.
+; Version:    See Demo03.asm
+;
+; Description:
+;   This file defines the resource entries used by the Demo03 ObjAsm application.
+;   It is processed by the Resource Compiler (RC.EXE) to generate a .res file that
+;   becomes part of the final executable. The script provides the metadata, version
+;   information, and application icon required for proper identification within
+;   the Windows environment.
+;
 ; ==================================================================================================
 
 
-#include "Resource.h"               //Windows resource definitions
-#include "Demo03_Shared.rc"         //Application shared definitions
-#include "VER\Version.rc"           //Application version definition
-#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+#include "Resource.h"                                   ; Windows resource definitions
+#include "Demo03_Shared.rc"                             ; Application shared definitions
+#include "VER\Version.rc"                               ; Application version definition
+#include "MFT\Manifest_Invoker.rc"                      ; Application manifest definition
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 
-// Icons ------------------------------------------------------------------------------------------
+; Icons --------------------------------------------------------------------------------------------
 ICON_APP     ICON DISCARDABLE "ICO\OA.ico"
 ICON_GIFT    ICON DISCARDABLE "ICO\Window_16x16_04.ico"
 ICON_OPEN    ICON DISCARDABLE "ICO\Open_16x16_04.ico"
@@ -28,11 +34,11 @@ ICON_COPY    ICON DISCARDABLE "ICO\Copy_16x16_04.ico"
 ICON_PASTE   ICON DISCARDABLE "ICO\Paste_16x16_04.ico"
 
 
-// Bitmaps ----------------------------------------------------------------------------------------
+; Bitmaps ------------------------------------------------------------------------------------------
 BMP_BACKGROUND  BITMAP "BMP\WndBkgnd.bmp"
 
 
-// Dialogs ----------------------------------------------------------------------------------------
+; Dialogs ------------------------------------------------------------------------------------------
 #include "DLG\DialogAbout.rc"
 
 DIALOG1 DIALOG DISCARDABLE  0, 0, 190, 95
@@ -51,7 +57,7 @@ BEGIN
 END
 
 
-// Menus ------------------------------------------------------------------------------------------
+; Menus --------------------------------------------------------------------------------------------
 MENU_APP MENUEX DISCARDABLE
 BEGIN
   POPUP "&File", 0, MFT_STRING, MFS_ENABLED

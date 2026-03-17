@@ -1,10 +1,14 @@
 ; ==================================================================================================
 ; Title:      Demo06_Globals.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 6.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Global definitions for ObjAsm demonstration application Demo06.
+; Version:    See Demo06.asm
+;
+; Description:
+;   This file defines global constants, shared strings, and metadata used throughout the Demo06
+;   application. These definitions are included by the main application modules and provide common
+;   resources such as application titles, version text, and build information.
+;
 ; ==================================================================================================
 
 

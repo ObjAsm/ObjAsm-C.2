@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm compilation file for Windows Benchmark Application.
 ; Notes:      Version C.2.0, January 2023
-;             - First release.
+;             - Initial release.
 ; Note:       Gabriele Paoloni. 2010. How to Benchmark Code Execution Times on Intel IA-32 and IA-64
 ;             Instruction Set Architectures. Retrieved May 26, 2022, from
 ;             http://www.intel.com/content/dam/www/public/us/en/documents/white-papers/

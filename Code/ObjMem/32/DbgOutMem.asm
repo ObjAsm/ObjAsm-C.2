@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1 June 2022
 ;               - Bitness and Platform independent code.
 ;               - UEFI adaptation and addition of UI64, I64, H64.

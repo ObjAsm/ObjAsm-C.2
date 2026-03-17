@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for GridView object.
 ; Notes:      Version C.1.1, May 2020
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

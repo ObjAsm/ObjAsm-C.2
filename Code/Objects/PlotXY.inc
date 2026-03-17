@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of PlotXY objects.
 ; Notes:      Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

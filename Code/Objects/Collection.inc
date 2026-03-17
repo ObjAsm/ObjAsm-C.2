@@ -2,42 +2,42 @@
 ; Title:      Collection.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.3
-; Purpose:    ObjAsm support of Collection objects.
+; Purpose:    ObjAsm implementation of Collection objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, September 2023
-;               - Mem-Leak in Load method corrected.
+;               - Memory leak in the Load method corrected.
 ;             Version C.1.2, October 2023
 ;               - .ColForEach, .ColForEachRev and .ColNext macros added.
 ;               - Removed "private" from SetLimit.
 ;             Version C.1.3, December 2025
-;               - ColForEach_Step assignment error spotted by HSE.
+;               - ColForEach_Step assignment error identified by HSE.
 ; ==================================================================================================
 
 
 ; --------------------------------------------------------------------------------------------------
-; Summary:
+; Description:
 ;   A dynamic, thread-safe container for storing and managing object pointers. Supports insertion,
-;   deletion, retrieval, and iteration of items with customizable limits and growth factors.
-;   Provides serialization/deserialization to streams and allows callback-based traversal through
-;   ForEach/ForEachRev/FirstThat/LastThat methods.
-;   Designed as a base object for more specialized collections (e.g., SortedCollections,
-;   StrCollections, DataCollections) while ensuring memory management and object lifecycle through
-;   Dispose methods. NULL items are not allowed.
+;   deletion, retrieval, and iteration of items with configurable limits and growth factors.
+;   Provides serialization and deserialization through Streamable, enabling persistence with any
+;   Stream-derived object. Supports callback-based traversal (ForEach/ForEachRev/FirstThat/LastThat),
+;   and serves as the base object for more specialized collection types such as SortedCollections,
+;   StrCollections, and DataCollections. NULL items are not allowed.
 ; --------------------------------------------------------------------------------------------------
+
 
 ; --------------------------------------------------------------------------------------------------
 ; GLOBAL INVARIANTS / SAFETY RULES
 ;   - pItems is either NULL or points to a contiguous array of POINTER-sized entries.
 ;   - dCount <= dLimit <= dMaxCapacity at all times.
-;   - All stored items are NON-NULL object pointers.
-;   - Collection does NOT automatically own items unless Dispose* methods are used.
-;   - Thread safety is guaranteed ONLY when using OA object locking conventions.
-;   - While iterating (ForEach / ForEachRev / ColForEach macros),
-;     the collection MUST NOT be structurally modified:
-;       * no Insert / InsertAt
-;       * no Delete / DeleteAt / DeleteAll
-;       * no SetLimit
+;   - All stored items are valid, non-NULL object pointers.
+;   - Collection does NOT implicitly own items unless Dispose* methods are used.
+;   - Thread-safety is guaranteed ONLY when OA locking conventions are used.
+;   - During iteration (ForEach / ForEachRev / ColForEach / ColForEachRev):
+;       The collection MUST NOT be structurally modified:
+;         - no Insert / InsertAt
+;         - no Delete / DeleteAt / DeleteAll
+;         - no SetLimit
 ; --------------------------------------------------------------------------------------------------
 
 
@@ -47,16 +47,16 @@ PColProc  typedef proto :POINTER, :XWORD, :XWORD  ;Pointer type to a procedure c
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Collection
-; Purpose:    Implement a collection of objects called items.
+; Purpose:    Implements a collection of objects called items.
 ;             The concept of a Collection is more general than the traditional array or list. A
-;             Collection object can size itself dynamically at run time and is the base object for
+;             Collection object can size itself dynamically at runtime and is the base object for
 ;             many other specialized objects, such as SortedCollections, StrCollections,
 ;             DataCollections, etc. In addition to methods for adding and deleting items, the
 ;             Collection object offers several iteration methods that call a procedure for each
 ;             item in the collection.
 ; Notes:      - Since this object inherits from Streamable, it is able to store and recall its items
 ;               to any type of Stream descendant object.
-;             - This object and all descendants are thread safe using the OA multithreading support.
+;             - This object and all descendants are thread-safe using the OA multithreading support.
 ;             - NULL items are not supported.
 
 Object Collection, CollectionID, Streamable
@@ -76,7 +76,7 @@ Object Collection, CollectionID, Streamable
   VirtualMethod     ForEachRev,     POINTER, XWORD, XWORD       ;-> Proc, 2 x Parameter, reverse order
   DynamicMethod     GetItem,        $ObjPtr(Stream), PDESER_INFO
   VirtualMethod     IndexOf,        POINTER                     ;-> Item
-  RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Incr., Max Capa.
+  RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Incr., Max Capacity
   VirtualMethod     Insert,         POINTER                     ;-> Item
   VirtualMethod     InsertAt,       DWORD, POINTER              ;Index, -> Item
   VirtualMethod     ItemAt,         DWORD                       ;Index in range [0..Count-1]
@@ -107,11 +107,11 @@ ObjectEnd
 ; Macro:      .ColForEach
 ; Purpose:    Loops through all items of the collection.
 ; Arguments:  Arg1: Collection.
-;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+;             Arg2: Optional 32 bit index variable/register. Cannot be eax!
 ; Return:     Nothing.
 ; Note:       - On each loop xax -> collection item.
-;             - If Arg1 is a POINTER, load it in a non used register and pass [reg] as argument.
-;             - break and .continue can be used.
+;             - If Arg1 is a POINTER, load it in an unused register and pass [reg] as argument.
+;             - break and .continue may be used.
 ; Example 1:  .ColForEach MyColl
 ;               DbgHex [xax].$Obj(Primer).pOwner
 ;             .ColNext
@@ -152,7 +152,7 @@ endm
 ; Macro:      .ColForEachRev
 ; Purpose:    Loops through all items of the collection in reverse order.
 ; Arguments:  Arg1: Collection.
-;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+;             Arg2: Optional 32 bit index variable/register. Cannot be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> collection item.
 
@@ -226,7 +226,7 @@ MethodEnd
 ; Method:     Collection.DeleteAt
 ; Purpose:    Deletes the POINTER to Item(Index) from the collection.
 ; Arguments:  Arg1: Index value.
-; Return:     xax -> Deleted item or NULL if failed.
+; Return:     xax -> Deleted item, or NULL if the operation failed.
 
 Method Collection.DeleteAt, uses xdi xsi, dIndex:DWORD
   ArgReg dIndex:edx
@@ -375,7 +375,7 @@ Method Collection.Done, uses xsi
     OCall xsi.DisposeAll                                ;Dispose all items safely
     MemFree [xsi].pItems                                ;Free the item array
   .endif
-  ACall xsi.Done                                        ;Call base object Done
+  ACall xsi.Done                                        ;Calls base object Done
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ MethodEnd
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
 ;             Arg2-3: Parameters to be used by the callee.
 ; Return:     xax -> Item or NULL if not found.
-; Note:       The coding praxis has shown, that max 2 args must be passed to the callee.
+; Note:       The coding experience has shown, that max 2 args must be passed to the callee.
 
 Method Collection.FirstThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, xArg2:XWORD
   ArgReg pTestFunc:rdx
@@ -533,7 +533,7 @@ MethodEnd
 ;             and a maximum size (dMaxCapacity).
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: Initial capacity of the collection (#items).
-;             Arg3: Growing factor of the collection (#items).
+;             Arg3: Growth factor of the collection (#items).
 ;             Arg4: Maximum capacity of the collection (#items).
 ;                   Use COL_MAX_CAPACITY to indicate no limit.
 ; Return:     eax = Error code.
@@ -596,7 +596,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.InsertAt
-; Purpose:    Inserts an item at index position shifting the remaining items.
+; Purpose:    Inserts an item at index position shifting the remaining items upward.
 ; Arguments:  Arg1: Index value [0..Count].
 ;             Arg2: -> New item. This argument should never be NULL.
 ; Return:     xax -> Inserted item or NULL if failed.
@@ -835,8 +835,8 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.SetLimit
-; Purpose:    Sets the collection limit, allocating the necessary memory on the heap to hold
-;             the item POINTER table.
+; Purpose:    Sets the collection limit, allocating the required heap memory to hold the internal
+;             item POINTER table.
 ; Arguments:  Arg1: New limit (count).
 ; Return:     eax = Error code.
 

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm NUI Template.
 ; Notes:      Version C.1.0, January 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

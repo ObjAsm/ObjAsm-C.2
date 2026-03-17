@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of OleContainer Interface for COM OcxContainer objects.
 ; Notes:      Version C.1.0, June 2009
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

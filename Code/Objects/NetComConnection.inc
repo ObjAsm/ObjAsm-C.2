@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of NetComConnection objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -310,14 +310,14 @@ Method NetComConnection.OnAccepted, uses xbx xdi xsi, pIOJob:PIOJOB
 
   mov xcx, [xsi].pOwner                                 ;xcx -> NetComConnectionPool
   mov xdi, [xcx].$Obj(NetComConnectionPool).pOwner      ;xdi -> NetComEngine
+  mov xbx, pIOJob
 
   .ifBitClr [xsi].dFlags, NCC_QUEUE_DESTROY
-    mov xdx, pIOJob
-    mov xbx, [xdx].IOJOB.DataBuffer.ACCEPT_DATA.pListener
+    mov xax, [xbx].IOJOB.DataBuffer.ACCEPT_DATA.pListener
 
     ;Updates the accepting socket with the context of the listening socket.
     invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, \
-                       addr [xbx].LISTENER.hSocket, sizeof HANDLE
+                       addr [xax].LISTENER.hSocket, sizeof HANDLE
     DbgCheckSockReturn "NetComConnection.OnAccepted - Error on SetSockOpt SO_UPDATE_ACCEPT_CONTEXT",, addr [xsi].wName
 
 ;    mov dRcvLstElpsdTimeSize, sizeof DWORD
@@ -326,25 +326,21 @@ Method NetComConnection.OnAccepted, uses xbx xdi xsi, pIOJob:PIOJOB
 ;    DbgCheckSockReturn "NetComConnection.OnAccepted - ERROR on OnReceived getsockopt SO_CONNECT_TIME",, addr [xsi].wName
 
     ;Get the address of the local endpoint
-    mov xcx, pIOJob
-    mov xdx, [xcx].IOJOB.WSABuf.buf
-    invoke MemClone, addr [xsi].LocalAddr, addr [xdx].ACCEPT_DATA.LocalAddr, sizeof NETCOMADDR
+    invoke MemClone, addr [xsi].LocalAddr, addr [xbx].IOJOB.DataBuffer.ACCEPT_DATA.LocalAddr, sizeof NETCOMADDR
 ;    DbgNetComAddrIPV4 [xsi].LocalAddr, "NetComConnection.OnAccepted - LocalAddr", addr [xsi].wName
 
     ;Get the address of the remote endpoint
-    mov xcx, pIOJob
-    mov xdx, [xcx].IOJOB.WSABuf.buf
-    invoke MemClone, addr [xsi].RemoteAddr, addr [xdx].ACCEPT_DATA.RemoteAddr, sizeof NETCOMADDR
+    invoke MemClone, addr [xsi].RemoteAddr, addr [xbx].IOJOB.DataBuffer.ACCEPT_DATA.RemoteAddr, sizeof NETCOMADDR
 ;    DbgNetComAddrIPV4 [xsi].RemoteAddr, "NetComConnection.OnAccepted - RemoteAddr", addr [xsi].wName
 
     ;Notify the NetComConnection's Protocol handler
     OCall [xsi].pProtocol::NetComProtocol.OnAccepted, xsi
 
     ;Create a new acceptor
-    OCall xdi::NetComEngine.NewAcceptor, xbx, [xsi].pProtocol
+    OCall xdi::NetComEngine.NewAcceptor, [xbx].IOJOB.DataBuffer.ACCEPT_DATA.pListener, [xsi].pProtocol
   .endif
 
-  OCall [xdi].$Obj(NetComEngine).IOJobPool::NetComIOJobPool.FreeItem, pIOJob
+  OCall [xdi].$Obj(NetComEngine).IOJobPool::NetComIOJobPool.FreeItem, xbx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -574,15 +570,16 @@ Method NetComConnection.QueueAccept, uses xbx xdi xsi, pListener:PLISTENER
 
   invoke EnterCriticalSection, addr [xsi].CritSect
 
+  invoke MemZero, addr [xdi].IOJOB.DataBuffer.ACCEPT_DATA.LocalAddr, sizeof(ACCEPT_DATA.LocalAddr)
+  invoke MemZero, addr [xdi].IOJOB.DataBuffer.ACCEPT_DATA.RemoteAddr, sizeof(ACCEPT_DATA.RemoteAddr)
   mrm [xdi].IOJOB.DataBuffer.ACCEPT_DATA.pListener, pListener, xcx   ;xcx -> LISTENER
   mov [xdi].IOJOB.DataBuffer.ACCEPT_DATA.pConnection, xsi
   BitClr [xsi].dFlags, NCE_ACCEPT
   BitSet [xsi].dFlags, NCC_QUEUE_ACCEPT
   ;if ReceiveDataLength = 0, AcceptEx completes as soon as a connection arrives,
-  ;without waiting for any data. Local and remote addresses are written into the buffer§
+  ;without waiting for any data. Local and remote addresses are written into the buffer
   invoke AcceptEx, [xcx].LISTENER.hSocket, [xsi].hSocket, [xdi].IOJOB.WSABuf.buf, 0, \
-                   sizeof ACCEPT_DATA.LocalAddr, \
-                   sizeof ACCEPT_DATA.RemoteAddr, \
+                   sizeof ACCEPT_DATA.LocalAddr, sizeof ACCEPT_DATA.RemoteAddr, \
                    addr dBytesRecieved, xdi
   .if eax != NO_ERROR                                   ;Did read IO complete synchronously?
     invoke WSAGetLastError                              ;No, check if it is a pending state

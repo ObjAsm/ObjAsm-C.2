@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm Progress dialog.
 ; Notes:      Version C.1.1, February 2020
-;             - First release.
+;             - Initial release.
 ;             - Single worker implementation.
 ;             - The task information is arranged as a header followed by n TaskSetup structures.
 ; ==================================================================================================

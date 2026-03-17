@@ -3,7 +3,7 @@
 ; Author:     Héctor S. Enrique (HSE) / G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2024
-;               - First release.
+;               - Initial release.
 ;               - Original idea from HSE - https://masm32.com/board/index.php?topic=12321.0
 ; ==================================================================================================
 

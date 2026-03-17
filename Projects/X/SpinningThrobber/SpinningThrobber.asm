@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Spinning Throbber.
 ; Notes:      Version C.1.0, August 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

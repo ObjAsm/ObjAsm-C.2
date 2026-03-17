@@ -1,21 +1,39 @@
 ; ==================================================================================================
 ; Title:      Demo01A.rc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm resource file.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Resource script for ObjAsm application Demo01A.
+; Version:    See Demo01A.asm
+;
+; Description:
+;   This file defines the resource entries used by the Demo01A ObjAsm application.
+;   It is processed by the Resource Compiler (RC.EXE) to generate a .res file that
+;   becomes part of the final executable. The script provides the metadata, version
+;   information, and application icon required for proper identification within
+;   the Windows environment.
+;
 ; ==================================================================================================
 
 
-#include "Resource.h"               //Windows resource definitions
-#include "Demo01A_Shared.rc"        //Application shared definitions
-#include "VER\Version.rc"           //Application version definition
-#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+#include "Resource.h"               ; Standard Windows resource definitions (IDs, macros)
+#include "Demo01A_Shared.rc"        ; Application-specific shared resource definitions
+#include "VER\Version.rc"           ; Version information block (file version, product name, etc.)
+#include "MFT\Manifest_Invoker.rc"  ; Application manifest (specifies OS compatibility, privileges)
+
+
+; Language ----------------------------------------------------------------------------------------
+; LANGUAGE determines how string tables and dialogs interpret character sets.
+; LANG_NEUTRAL and SUBLANG_NEUTRAL make the resource language-independent.
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
-// Icons ------------------------------------------------------------------------------------------
+; Icons -------------------------------------------------------------------------------------------
+; Syntax:
+;    <ID>   ICON   [DISCARDABLE]   "filename.ico"
+;
+; Explanation:
+;   ICON_APP       Symbolic resource ID used in the application
+;   ICON           Resource type
+;   DISCARDABLE    Resource may be unloaded when not needed (legacy hint)
+;   "ICO\OA.ico"   Path to the icon file
+
 ICON_APP  ICON DISCARDABLE "ICO\OA.ico"
-
-

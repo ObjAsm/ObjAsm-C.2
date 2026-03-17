@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for MovingThrobber object.
 ; Notes:      Version C.1.0, April 2020
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

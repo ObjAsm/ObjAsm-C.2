@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm compilation file for Dictionary object.
 ; Notes:      Version C.1.1, March 2022
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

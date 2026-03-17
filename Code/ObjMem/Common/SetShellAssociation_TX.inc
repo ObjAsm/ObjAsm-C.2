@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017.
-;               - First release.
+;               - Initial release.
 ;               - Character and bitness neutral code.
 ; Links:      https://docs.microsoft.com/en-us/windows/desktop/shell/fa-sample-scenarios
 ;             https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/cc144156(v=vs.85)

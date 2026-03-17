@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for ConsoleApp object.
 ; Notes:      Version C.1.0, April 2024
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

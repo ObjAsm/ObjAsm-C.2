@@ -5,7 +5,7 @@
 ; Notes:      Version C.1.1, August 2022
 ;               - Char shifting bug detected by HSE.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Bitness and platform independent code.
 ; ==================================================================================================
 

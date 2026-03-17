@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Asynchronous file IO via NetCom's IOCP Engine.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Read/Write Completion Methods are Mutexed (ObjLock) within
 ;                 NetComEngine.WorkerThread
 ;               - This protects internal counters from being corrupted by simultaneous completions.

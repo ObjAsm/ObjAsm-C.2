@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of DataPool objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2026
 ;               - Safety check to detect multiple added Free operations on the same item added
 ;                 to FreeItem in DEBUG modus.

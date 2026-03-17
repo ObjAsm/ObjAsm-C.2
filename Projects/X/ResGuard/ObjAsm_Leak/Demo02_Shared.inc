@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm demonstration program 2.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

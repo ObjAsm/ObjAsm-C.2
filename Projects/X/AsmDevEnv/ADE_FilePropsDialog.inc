@@ -12,8 +12,8 @@ IDC_EDT_DISPNAME                equ 1002
 IDC_STC_FILENAME                equ 1003
 IDC_EDT_FILENAME                equ 1004
 IDC_BTN_SEARCHFILE              equ 1005
-IDC_STC_ACTION									equ 1006
-IDC_CBO_ACTION									equ 1007
+IDC_STC_ACTION                  equ 1006
+IDC_CBO_ACTION                  equ 1007
 IDC_BTN_OK                      equ 1
 IDC_BTN_CANCEL                  equ 2
 

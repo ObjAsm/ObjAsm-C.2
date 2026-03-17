@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm ScriptHost Application.
 ; Notes:      Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

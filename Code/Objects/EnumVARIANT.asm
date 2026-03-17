@@ -4,7 +4,7 @@
 ; Version: C.1.1
 ; Purpose: ObjAsm compilation file for EnumVARIANT object.
 ; Version: Version 1.0.0, April 2007
-;            - First release.
+;            - Initial release.
 ;          Version C.1.1, December 2020
 ;            - Ported to ObjAsm.
 ; =================================================================================================

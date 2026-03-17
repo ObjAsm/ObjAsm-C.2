@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm application.
 ; Notes:      Version C.2.0
-;               - First release.
+;               - Initial release.
 ;               - Implements a service host framework.
 ;               - Services can be managed via MMC (services.msc) with administrative privileges.
 ;               - In debug mode, start DebugCenter manually before the services launch.

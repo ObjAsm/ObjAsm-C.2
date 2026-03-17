@@ -108,7 +108,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=16
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -143,16 +143,16 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,251
+2=0,0,1096,620,1167
 3=0,0,0,0,220
-1=0,0,0,0,1327
+1=0,0,0,0,4014
 4=0,0,0,0,11761
 5=0,0,694,587,226
 6=0,0,0,0,885
 8=0,0,0,0,840
 7=0,0,0,0,149
 9=0,0,0,0,2615
-10=0,0,0,0,662
+10=0,0,0,0,187
 11=
 12=
 16=
@@ -177,16 +177,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="_Init"
-2="shape"
-3="Shape_1"
-4="pShape_1"
-5="DCHRA ptr HexCharTableA[2*rax]"
-6="DCHRW ptr HexCharTableW[4*rax]"
-7="a private method can not be called from this context."
-8="OCall ma"
-9="New ma"
-10="??ObjIDTableCount + 1"
+1="1A"
+2="_Init"
+3="shape"
+4="Shape_1"
+5="pShape_1"
+6="DCHRA ptr HexCharTableA[2*rax]"
+7="DCHRW ptr HexCharTableW[4*rax]"
+8="a private method can not be called from this context."
+9="OCall ma"
+10="New ma"
 [Collapse]
 1=
 4=1
@@ -205,9 +205,9 @@ ProductVer4Range=0
 13=
 8=
 [AutoLoad]
-AutoLoad=1,9,2,10
+AutoLoad=
 [PTimer]
-PTimer=140658369
+PTimer=141108807
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0
 [RADebugBP]

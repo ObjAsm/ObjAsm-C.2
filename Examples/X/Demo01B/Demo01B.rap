@@ -112,7 +112,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=15
+MilestoneOnDateDate=16
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -147,16 +147,16 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,219
-3=0,0,0,0,3925
-1=0,0,1783,588,195
-4=0,0,0,0,24150
-5=0,0,694,587,8571
+2=0,0,0,0,194
+3=0,0,0,0,10694
+1=0,0,1783,588,258
+4=0,0,0,0,19283
+5=0,0,694,587,76240
 6=0,0,0,0,885
 8=0,0,0,0,840
 7=0,0,0,0,5933
-9=0,0,0,0,1280
-10=0,0,0,0,0
+9=0,0,763,589,3666
+10=0,0,763,589,3853
 11=
 12=
 16=
@@ -181,23 +181,23 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="DBG_COLOR_DEFAULTPRE_CON"
-2="??ObjIDTableCount + 1"
-3="??ObjIDTableStart"
-4="pObjIDTableStart"
-5="_IMT"
-6="_Interface"
-7="_VMT"
-8="_Virtual"
-9="_Struc"
-10="TPL"
+1="$$DbgArgs"
+2="hDbgDev"
+3=" ;"
+4=" ; "
+5="ConInput"
+6="DBG_COLOR_DEFAULTPRE_CON"
+7="??ObjIDTableCount + 1"
+8="??ObjIDTableStart"
+9="pObjIDTableStart"
+10="_IMT"
 [Collapse]
 1=
-4=1
+4=
 5=,,
 6=
 2=
-3=,
+3=,,,
 7=
 12=
 11=
@@ -209,9 +209,9 @@ ProductVer4Range=0
 13=
 8=
 [AutoLoad]
-AutoLoad=9,10,4
+AutoLoad=9,3,4,10
 [PTimer]
-PTimer=332554242
+PTimer=364550821
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0
 [RADebugBP]
@@ -223,3 +223,4 @@ GroupExpand=0,1,1,0,0,1,1,0
 2=
 7=
 9=
+10=

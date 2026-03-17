@@ -5,7 +5,7 @@
 ; Purpose:    Detection of resource leakages using ObjAsm ResGuardxx.dll.
 ; Notes:      http://www.microsoft.com/msj/0498/hood0498.aspx
 ;             Version C.1.0, August 2023
-;               - First release.
+;               - Initial release.
 ; Links:      https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
 ;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk
 ;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64

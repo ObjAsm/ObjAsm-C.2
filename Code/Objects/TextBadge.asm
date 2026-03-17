@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm compilation file for TextBadge object.
 ; Notes:      Version C.2.0, November 2025
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

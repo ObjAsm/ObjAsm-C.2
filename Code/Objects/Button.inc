@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of Button objects.
 ; Notes:      Version C.1.0, November 2017
-;               - First release.
+;               - Initial release.
 ; Links:      https://docs.microsoft.com/en-us/windows/win32/w8cookbook/high-contrast-mode
 ;             https://docs.microsoft.com/en-us/windows/win32/winauto/high-contrast-parameter
 ; ==================================================================================================

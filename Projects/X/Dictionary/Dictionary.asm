@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Dictionary demonstration application.
 ; Notes:      Version C.1.0, January 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

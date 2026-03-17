@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of RegExA objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -87,11 +87,11 @@ Method RegExA.Exec, uses xsi, pSubject:POINTER, dLength:DWORD, dStartOffset:DWOR
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	RegExA.GetConfig
-; Purpose:  	Return info about what features are configured.
-; Arguments:	Arg1: What information is required.
-;           	Arg2: -> where to put the information.
-; Return:   	eax = 0 if data returned, negative on error.
+; Method:     RegExA.GetConfig
+; Purpose:    Return info about what features are configured.
+; Arguments:  Arg1: What information is required.
+;             Arg2: -> where to put the information.
+; Return:     eax = 0 if data returned, negative on error.
 
 Method RegExA.GetConfig,, dWhat:DWORD, pWhere:POINTER
   invoke pcre_config, dWhat, pWhere

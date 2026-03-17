@@ -37,11 +37,11 @@ Method FindInfoDlg.CtlsSet, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	FindInfoDlg.Init
-; Purpose:  	Initializes a modeless dialog object.
-; Arguments:	Arg1: -> Owner object.
-;           	Arg2: Parent window handle.
-; Return:   	Nothing.
+; Method:     FindInfoDlg.Init
+; Purpose:    Initializes a modeless dialog object.
+; Arguments:  Arg1: -> Owner object.
+;             Arg2: Parent window handle.
+; Return:     Nothing.
 
 Method FindInfoDlg.Init, uses xsi, pOwner:POINTER, hParent:HANDLE
   SetObject xsi

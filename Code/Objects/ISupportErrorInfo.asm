@@ -4,7 +4,7 @@
 ; Version:    1.0.1
 ; Purpose:    ObjAsm compilation file for ISupportErrorInfo object.
 ; Version:    Version 1.0.0, September 2006
-;               - First release.
+;               - Initial release.
 ;             Version 1.0.1, August 2008
 ;               - SysSetup introduced.
 ; ==================================================================================================

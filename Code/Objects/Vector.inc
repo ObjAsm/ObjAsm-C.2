@@ -2,42 +2,74 @@
 ; Title:      Vector.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of Vector base object.
+; Purpose:    ObjAsm support for the Vector base object.
 ; Notes:      Version C.1.0, February 2024
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Vector
-; Purpose:    Vector is a base object for descendants like DWordVector.
+; Purpose:    Base object.
+;
+; Description:
+;   This module implements the ObjAsm Vector base object together with a set of generic iteration
+;   macros. The Vector object provides the foundation for all typed vector classes (such as 
+;   DWordVector, ByteVector, XWordVector, etc.) by defining a common interface for indexed
+;   collections of homogeneous items.
+;
+;   The Vector object supplies abstract methods for:
+;     - Element insertion, deletion, and indexed access
+;     - Forward and reverse enumeration through user-provided callbacks
+;     - Predicate-based search (FirstThat / LastThat and their negated variants)
+;     - Storage operations for persistence via Stream and DiskStream objects
+;
+;   Derived classes are responsible for:
+;     - Providing the concrete item size and item type
+;     - Implementing storage, deletion, and allocation logic
+;     - Managing the growth strategy defined by dDelta and dLimit
+;
+;   In addition to the object definition, this module provides:
+;     - .VecForEach      Macro to iterate through all items in forward order
+;     - .VecForEachRev   Macro to iterate through all items in reverse order
+;     - .VecNext         Macro to advance the enumeration loop
+;
+;   These macros work with any Vector-derived object and expand into efficient assembly code that
+;   resolves item addresses using the vector’s internal metadata. They abstract loop handling while
+;   ensuring optimal runtime performance through direct pointer arithmetic.
+;
+;   The Vector.Load and Vector.Store methods implement the serialization contract defined by the
+;   Streamable interface. They save and restore the vector header (count, limit, capacity, delta)
+;   while delegating allocation logic to SetLimit, allowing each derived class to determine how
+;   memory is allocated and sized.
+
 
 Object Vector, VectorID, Streamable
-  VirtualAbstract   Delete,         POINTER               ;pItem
-  VirtualAbstract   DeleteAt,       DWORD                 ;Index in range [0..Count-1]
+  VirtualAbstract   Delete,         POINTER               ; pItem
+  VirtualAbstract   DeleteAt,       DWORD                 ; Index in range [0..Count-1]
   VirtualAbstract   DeleteAll
-  VirtualAbstract   FirstThat,      POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualAbstract   FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualAbstract   ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
-  VirtualAbstract   ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
-  VirtualAbstract   IndexOf,        POINTER               ;pItem
-  VirtualAbstract   Insert,         POINTER               ;pItem
-  VirtualAbstract   InsertAt,       DWORD, POINTER        ;Index, pItem
-  VirtualAbstract   ItemAt,         DWORD                 ;Index in range [0..Count-1]
-  VirtualAbstract   LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualAbstract   LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  VirtualAbstract   FirstThat,      POINTER, XWORD, XWORD ; -> Func, 2 x Parameter
+  VirtualAbstract   FirstThatNot,   POINTER, XWORD, XWORD ; -> Func, 2 x Parameter
+  VirtualAbstract   ForEach,        POINTER, XWORD, XWORD ; -> Proc, 2 x Parameter
+  VirtualAbstract   ForEachRev,     POINTER, XWORD, XWORD ; -> Proc, 2 x Parameter, reverse order
+  VirtualAbstract   IndexOf,        POINTER               ; pItem
+  VirtualAbstract   Insert,         POINTER               ; pItem
+  VirtualAbstract   InsertAt,       DWORD, POINTER        ; Index, pItem
+  VirtualAbstract   ItemAt,         DWORD                 ; Index in range [0..Count-1]
+  VirtualAbstract   LastThat,       POINTER, XWORD, XWORD ; -> Func, 2 x Parameter
+  VirtualAbstract   LastThatNot,    POINTER, XWORD, XWORD ; -> Func, 2 x Parameter
   RedefineMethod    Load,           $ObjPtr(Stream), PDESER_INFO
-  VirtualAbstract   PutAt,          DWORD, POINTER        ;Index, ;pItem
-  RedefineMethod    Store,          $ObjPtr(Stream)       ;-> Stream
+  VirtualAbstract   PutAt,          DWORD, POINTER        ; Index, pItem
+  RedefineMethod    Store,          $ObjPtr(Stream)       ;  -> Stream
   Private
-  VirtualAbstract   SetLimit,       DWORD                 ;Set new limit (private method)
+  VirtualAbstract   SetLimit,       DWORD                 ; Set new limit (private method)
 
   DefineVariable    pItems,         POINTER,      NULL
   DefineVariable    dCount,         DWORD,        0
   DefineVariable    dLimit,         DWORD,        0
   DefineVariable    dDelta,         DWORD,        0
   DefineVariable    dMaxCapacity,   DWORD,        0
-  DefineVariable    ObjLock,        OBJECT_LOCK,  {}    ;Locking structure for multithreaded access
+  DefineVariable    ObjLock,        OBJECT_LOCK,  {}      ; Locking struct for multithreaded access
 ObjectEnd
 
 
@@ -67,13 +99,13 @@ ObjectEnd
 
   PreParseExpr Expression
 
-  ;;Get ??MtdExpr
+  ;; Get ??MtdExpr
   if ??Pos3 ne 0
     @Err <.VecForEach Error: method Expression not allowed>
     exitm
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
@@ -92,7 +124,7 @@ ObjectEnd
     endif
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   endif
@@ -136,7 +168,7 @@ ObjectEnd
   else
     @Err <.VecForEach Error: undefined object Expression>
   endif
-endm                                                    ;;xax -> allocated object instance
+endm                                                    ;; xax -> allocated object instance
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      .VecForEachRev
@@ -268,14 +300,14 @@ Method Vector.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER
 
   SetObject xsi
   ACall xsi.Load, $ArgReg(pStream), $ArgReg(pDeserInfo)
-  OCall pStream::Stream.BinRead32                       ;Read count
-  mov edi, eax                                          ;edi = Count
-  OCall pStream::Stream.BinRead32                       ;Read dLimit
+  OCall pStream::Stream.BinRead32                       ; Read count
+  mov edi, eax                                          ; edi = Count
+  OCall pStream::Stream.BinRead32                       ; Read dLimit
   mov ebx, eax
 
-  OCall pStream::Stream.BinRead32                       ;Read dDelta
+  OCall pStream::Stream.BinRead32                       ; Read dDelta
   mov [xsi].dDelta, eax
-  OCall pStream::Stream.BinRead32                       ;Read dMaxCapacity
+  OCall pStream::Stream.BinRead32                       ; Read dMaxCapacity
   mov [xsi].dMaxCapacity, eax
 
   xor eax, eax
@@ -283,7 +315,7 @@ Method Vector.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER
   mov [xsi].dCount, eax
   mov [xsi].dLimit, eax
   OCall xsi.SetLimit, ebx
-  test eax, eax                                         ;Test for OBJ_OK
+  test eax, eax                                         ; Test for OBJ_OK
   jne @@Error
   mov [xsi].dCount, edi
 

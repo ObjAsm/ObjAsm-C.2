@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Assembler Development Environment. (ASM DevSuite Pro)
 ; Notes:      Version 1.0.0, November 2024
-;               - First release.
+;               - Initial release.
 ; Features:
 ;   - Syntax highlighting
 ;   - Text highlighting of selected word

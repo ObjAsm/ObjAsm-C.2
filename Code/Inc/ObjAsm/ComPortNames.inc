@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm implementation to handle connected COM Ports.
 ; Notes:      Version C.1.1, October 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

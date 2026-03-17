@@ -4,7 +4,7 @@
 ; Version     2.3.0
 ; Purpose:    ObjAsm DebugCenter application.
 ; Notes:      Version 1.1.0, October 2017
-;               - First release. Ported to BNC.
+;               - Initial release. Ported to BNC.
 ;             Version 2.1.0, October 2019
 ;               - Added more color and font customization by HSE.
 ;             Version 2.1.1, October 2021

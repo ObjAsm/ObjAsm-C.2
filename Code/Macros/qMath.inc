@@ -9,7 +9,7 @@
 ;             http://www.groupsrv.com/computers/post-561737.html
 ;             http://en.wikipedia.org/wiki/Methods_of_computing_square_roots
 ; Note:       Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -285,7 +285,7 @@ endm
 ; Purpose:    Compute the sqrt of st(0) value.
 ; Arguments:  Arg1: Number of iterations [0..3]. -1 means using the fpu equivalent instructions.
 ;             Arg2: temporary DWORD value.
-; Return:     1/sqrt in st(0).
+; Return:     sqrt in st(0).
 
 qSqrt macro Iterations:=<3>, Aux:=<qMathAux>    ;;Nothing better atm :(
   if Iterations eq -1

@@ -728,11 +728,11 @@ Method ObjPropWnd.GatherVariables, uses xsi, pInfo:POBJECTINFORMATION
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	ObjPropWnd.ShowInheritance
-; Purpose:  	Method that is called recursively to output an inheritance path.
-; Arguments:	Arg1: -> OBJECTINFORMATION.
-;           	Arg2: Flag to signal if the current item should generate a link.
-; Return:   	Nothing.
+; Method:     ObjPropWnd.ShowInheritance
+; Purpose:    Method that is called recursively to output an inheritance path.
+; Arguments:  Arg1: -> OBJECTINFORMATION.
+;             Arg2: Flag to signal if the current item should generate a link.
+; Return:     Nothing.
 
 Method ObjPropWnd.ShowInheritance, uses xbx xsi, pObjectInfo:POBJECTINFORMATION, dLink:DWORD
   local cNumBuffer[20]:CHR

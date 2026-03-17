@@ -1,10 +1,22 @@
 ; ==================================================================================================
 ; Title:      Demo08_Main.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm DlgApp demo application.
-; Notes:      Version C.1.0, September 2021
-;               - First release.
+; Purpose:    Main implementation module for the ObjAsm Demo08 dialog-based application.
+; Version:    See Demo08.asm
+;
+; Description:
+;   This module defines the Demo08 Application object, implemented as a dialog-based
+;   application using the DlgApp framework. Unlike the MDI or SDI models shown in earlier
+;   demos, Demo08 demonstrates how a dialog can work as the primary application window.
+;
+;   The module includes:
+;     - Application object derived from DlgApp
+;     - Initialization and dialog-construction logic
+;     - Control setup (CtlsSet) for populating dialog text and resources
+;     - Event handlers for:
+;       - WM_COMMAND           (OK/Cancel handling and dialog termination)
+;       - WM_CTLCOLORSTATIC    (custom static-control background painting)
+;
 ; ==================================================================================================
 
 
@@ -35,7 +47,7 @@ CStr Message, CRLF, "Hello", CRLF, CRLF, \
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.CtlsSet
-; Purpose:    Set dialog controls.
+; Purpose:    Sets dialog controls.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -46,7 +58,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
-; Purpose:    Initialize the application object.
+; Purpose:    Initializes the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 

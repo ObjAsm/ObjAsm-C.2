@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm globals for chart demonstration program.
 ; Notes:      Version C.1.0, August 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

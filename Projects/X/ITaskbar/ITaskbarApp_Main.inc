@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm ITaskbar Demo.
 ; Notes:      Version C.1.0, January 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

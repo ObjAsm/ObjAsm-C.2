@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm compilation file for Database cluster objects.
 ; Notes:      Version C.1.1, August 2019
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

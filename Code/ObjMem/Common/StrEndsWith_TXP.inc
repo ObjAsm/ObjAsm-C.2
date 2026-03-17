@@ -5,7 +5,7 @@
 ; Notes:      Version C.1.2, December 2020.
 ;               - xbx preservation added by HSE.
 ;             Version C.1.1, April 2020.
-;               - First release.
+;               - Initial release.
 ;               - Character, bitness and platform independent code.
 ; ==================================================================================================
 

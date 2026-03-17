@@ -8,7 +8,7 @@
 ;             K32B.inc first written by Bryant Keller, 2005 and
 ;             modified by EvilHomer, 2005 (100% Relative, no hardcoded addresses generated)
 ; Notes:      Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

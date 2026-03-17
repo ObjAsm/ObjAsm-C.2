@@ -7,7 +7,7 @@
 ;             It excludes the RECTs used by the child windows to avoid repetitive drawing over
 ;             the same area resulting in unwanted flicker.
 ; Notes:      Version C.1.0, Mai 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, August 2022
-;               - First release.
+;               - Initial release.
 ;               - Character independant code.
 ;               - https://docs.microsoft.com/en-us/windows/win32/com/com-error-codes
 ; ==================================================================================================

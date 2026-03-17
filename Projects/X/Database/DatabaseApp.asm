@@ -4,7 +4,7 @@
 ; Version:    1.1.0
 ; Purpose:    ObjAsm Database Application.
 ; Notes:      Version 1.1.0, August 2019
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

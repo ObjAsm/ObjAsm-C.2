@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm DOM-XML Test.
 ; Notes:      Version C.1.0, November 2024
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

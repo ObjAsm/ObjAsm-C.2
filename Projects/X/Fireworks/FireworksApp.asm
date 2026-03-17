@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Fireworks demo.
 ; Notes:      Version 1.0.0, July 2006
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

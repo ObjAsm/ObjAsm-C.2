@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of Linear Doubly Linked List (LDLL) objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -13,9 +13,9 @@
 
 PLINKED_NODE typedef ptr LINKED_NODE
 LINKED_NODE struc
-	pLinkFwrd   PLINKED_NODE  ?   ;-> Next Node
-	pLinkBack   PLINKED_NODE  ?   ;-> Previous Node
- 	pObject     POINTER       ?   ;-> Payload object
+  pLinkFwrd   PLINKED_NODE  ?   ;-> Next Node
+  pLinkBack   PLINKED_NODE  ?   ;-> Previous Node
+   pObject     POINTER       ?   ;-> Payload object
 LINKED_NODE ends
 
 

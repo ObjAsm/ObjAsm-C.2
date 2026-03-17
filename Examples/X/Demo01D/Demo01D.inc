@@ -2,182 +2,210 @@
 ; Title:      Demo01D.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm demonstration application 1D.
+; Purpose:    ObjAsm Objects for ObjAsm application Demo01D.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
+;
+; Description:
+;   This file defines the Shape class hierarchy for Demo01D, extended with streaming support.
+;   All classes derive from OA:Streamable, enabling runtime object serialization and deserialization
+;   via Stream and DiskStream.
+;
+;   Implemented features:
+;     - Load and Store methods for binary persistence
+;     - Abstract and overridden methods (GetArea)
+;     - Additional methods specific to Rectangle (GetPerimeter / TestFunction / IsQuad)
+;
 ; ==================================================================================================
 
 
-ShapeID      equ     0002                       ;Shape object ID
-TriangleID   equ     0003                       ;Triangle object ID
-RectangleID  equ     0004                       ;Rectangle object ID
+; -----------------------------------------
+; Class Identification Numbers
+; -----------------------------------------
+
+ShapeID      equ     0002                       ; Shape class ID
+TriangleID   equ     0003                       ; Triangle class ID
+RectangleID  equ     0004                       ; Rectangle class ID
+
 
 ; ==================================================================================================
-;     Object definitions
+;     Object Definitions
 ; ==================================================================================================
 
-ObjNamespace Shapes
+ObjNamespace Shapes                             ; Declare Shapes as namespace
 
-Object Shape, ShapeID, OA:Streamable            ;Start Shape definition, inherided from Streamable!
-  VirtualAbstract   GetArea                     ;Define an abstract static method.
-  RedefineMethod    Init,       DWORD, DWORD    ;Base, Height
-  RedefineMethod    Load,       $ObjPtr(OA:Stream), POINTER  ;-> Stream, -> Owner
-  RedefineMethod    Store,      $ObjPtr(OA:Stream)           ;-> Stream
+; --------------------------------------------------------------------------------------------------
+; Shape (base class, streamable)
+; --------------------------------------------------------------------------------------------------
+
+Object Shape, ShapeID, OA:Streamable            ; Shape inherits from Streamable (supports Load/Store)
+  VirtualAbstract   GetArea                     ; Abstract method: must be implemented by derived classes
+
+  RedefineMethod    Init,   DWORD, DWORD        ; Parameters: Base, Height
+  RedefineMethod    Load,   $ObjPtr(OA:Stream), POINTER   ; Load(stream, owner)
+  RedefineMethod    Store,  $ObjPtr(OA:Stream)            ; Store(stream)
+
   Private
-  VirtualMethod     PrivateMtd                  ;Private static method
+  VirtualMethod     PrivateMtd                  ; Private helper method
 
-  DefineVariable    dBase,      DWORD,    100   ;Set dBase to 0
-  DefineVariable    dHeight,    DWORD,    200   ;Set dHeight to 0
+  DefineVariable    dBase,   DWORD, 100         ; Instance variable: Base value
+  DefineVariable    dHeight, DWORD, 200         ; Instance variable: Height
 ObjectEnd
+
 
 ; --------------------------------------------------------------------------------------------------
-
-Object Triangle, TriangleID, Shape              ;Start Triangle def., inherited from Shape
-  RedefineMethod    GetArea                     ;Define shape's abstract method.
-ObjectEnd
-
+; Triangle (derived from Shape)
 ; --------------------------------------------------------------------------------------------------
 
-Object Rectangle, RectangleID, Shape            ;Start Rectangle def., inherited from Shape
-  RedefineMethod    GetArea                     ;Define shape's abstract method.
-  VirtualMethod     GetPerimeter                ;Define a new static method.
-  DynamicMethod     TestFunction                ;Define a dynamic method
+Object Triangle, TriangleID, Shape
+  RedefineMethod    GetArea                     ; Override abstract GetArea
 ObjectEnd
 
+
+; --------------------------------------------------------------------------------------------------
+; Rectangle (derived from Shape)
+; --------------------------------------------------------------------------------------------------
+
+Object Rectangle, RectangleID, Shape
+  RedefineMethod    GetArea                     ; Override triangle/shape area method
+  VirtualMethod     GetPerimeter                ; Additional method
+  DynamicMethod     TestFunction                ; Dynamically overridable method
+ObjectEnd
 
 
 ; ==================================================================================================
-;     Shape implementation
+;     Shape Implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Init
-; Purpose:    Set object variables.
-; Arguments:  Arg1: Base.
-;             Arg2: Height.
+; Purpose:    Initialize instance variables dBase and dHeight.
+; Arguments:  Arg1: Base value to assign.
+;             Arg2: Height value to assign.
 ; Return:     Nothing.
 
 Method Shape.Init,, dBase:DWORD, dHeight:DWORD
-    DbgText "Method: Shape.Init"
-    SetObject xcx
-    m2m [xcx].dBase, dBase, eax                 ;Store dBase in instance data
-    m2m [xcx].dHeight, dHeight, edx             ;Store dHeight in instance data
-    OCall xcx.PrivateMtd                        ;Test the private method
+  DbgText "Method: Shape.Init"
+  SetObject xcx
+  m2m [xcx].dBase,   dBase,   eax               ; Store Base
+  m2m [xcx].dHeight, dHeight, edx               ; Store Height
+  OCall xcx.PrivateMtd                          ; Call private helper
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     Shape.PrivateMtd
-; Purpose:    Set object variables.
-; Arguments:  Arg1: Base.
-;             Arg2: Height.
+; Method:     Shape.PrivMethod
+; Purpose:    Internal helper method used to validate calls during initialization.
+; Arguments:  None.
 ; Return:     Nothing.
 
 Method Shape.PrivateMtd
-    DbgText "Method: Shape.Private"
+  DbgText "Method: Shape.Private"
 MethodEnd
+
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Load
-; Purpose:    Load an object from a stream.
-; Arguments:  Arg1: -> Stream
-;             Arg2: -> Owner
+; Purpose:    Load object data from a stream.
+; Arguments:  Arg1: -> Stream object.
+;             Arg2: -> Owner object.
 ; Return:     Nothing.
 
 Method Shape.Load, uses xsi, pStream:$ObjPtr(OA:Stream), pOwner:POINTER
-    SetObject xsi
-    ACall xsi.Init, pOwner
-    OCall pStream::OA:Stream.BinRead, addr [xsi].dBase, sizeof(DWORD)
-    OCall pStream::OA:Stream.BinRead, addr [xsi].dHeight, sizeof(DWORD)
+  SetObject xsi
+  ACall xsi.Init, pOwner                       ; Initialize after loading
+  OCall pStream::OA:Stream.BinRead, addr [xsi].dBase,   sizeof(DWORD)
+  OCall pStream::OA:Stream.BinRead, addr [xsi].dHeight, sizeof(DWORD)
 MethodEnd
+
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Store
-; Purpose:    Store an object into a stream.
-; Arguments:  Arg1: -> Stream
-;             Arg2: -> Owner
+; Purpose:    Store object data into a stream.
+; Arguments:  Arg1: -> Stream object
 ; Return:     Nothing.
 
 Method Shape.Store, uses xsi, pStream:$ObjPtr(OA:Stream)
-    SetObject xsi
-    OCall pStream::OA:Stream.BinWrite, addr [xsi].dBase, sizeof(DWORD)
-    OCall pStream::OA:Stream.BinWrite, addr [xsi].dHeight, sizeof(DWORD)
+  SetObject xsi
+  OCall pStream::OA:Stream.BinWrite, addr [xsi].dBase,   sizeof(DWORD)
+  OCall pStream::OA:Stream.BinWrite, addr [xsi].dHeight, sizeof(DWORD)
 MethodEnd
 
 
+
 ; ==================================================================================================
-;     Triangle implementation
+;     Triangle Implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Triangle.GetArea
-; Purpose:    Calculate the triangle area.
+; Purpose:    Compute the triangle area using formula: (Base * Height) / 2.
 ; Arguments:  None.
 ; Return:     eax = Triangle area.
 
 Method Triangle.GetArea
-    DbgText "Method: Triangle.GetArea"
-    SetObject xcx
-    mov eax, [xcx].dBase                        ;Get dBase from instance data
-    mul [xcx].dHeight                           ;Multiply by dHeight from instance data
-    shr eax, 1                                  ;eax = Base * Height / 2
+  DbgText "Method: Triangle.GetArea"
+  SetObject xcx
+  mov eax, [xcx].dBase                        ; Load Base
+  mul [xcx].dHeight                           ; Multiply by Height
+  shr eax, 1                                  ; Divide by 2
 MethodEnd
 
 
 ; ==================================================================================================
-;     Rectangle implementation
+;     Rectangle Implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.GetArea
-; Purpose:    Calculate the rectangle area.
+; Purpose:    Compute rectangle area: Base*Height.
 ; Arguments:  None.
 ; Return:     eax = Rectangle area.
 
 Method Rectangle.GetArea
-    DbgText "Method: Rectangle.GetArea"
-    SetObject xcx
-    mov eax, [xcx].dBase                        ;Get dBase from instance data
-    mul [xcx].dHeight                           ;Multiply by dHeight from instance data
+  DbgText "Method: Rectangle.GetArea"
+  SetObject xcx
+  mov eax, [xcx].dBase
+  mul [xcx].dHeight
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.GetPerimeter
-; Purpose:    Calculate the rectangle perimeter.
+; Purpose:    Compute rectangle perimeter = 2*(Base + Height).
 ; Arguments:  None.
 ; Return:     eax = Rectangle perimeter.
 
 Method Rectangle.GetPerimeter
-    DbgText "Method: Rectangle.GetPerimeter"
-    SetObject xcx
-    mov eax, [xcx].dBase                        ;Get dBase from instance data
-    add eax, [xcx].dHeight                      ;Add dHeight from instance data
-    shl eax, 1                                  ;eax = 2 * (Base + Height)
+  DbgText "Method: Rectangle.GetPerimeter"
+  SetObject xcx
+  mov eax, [xcx].dBase
+  add eax, [xcx].dHeight
+  shl eax, 1                                   ; Multiply by 2
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.TestFunction
-; Purpose:    By default, return TRUE.
+; Purpose:    Default implementation returns TRUE. Used to demonstrate dynamic overrides.
 ; Arguments:  None.
-; Return:     rax = TRUE.
+; Return:     eax = TRUE.
 
 Method Rectangle.TestFunction
-    DbgText "Method: Rectangle.TestFunction"
-    mov xax, TRUE
+  DbgText "Method: Rectangle.TestFunction"
+  mov xax, TRUE
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     IsQuad
-; Purpose:    Check if the rectangle has equal sides.
+; Method:     Rectangle.IsQuad
+; Purpose:    Check whether the rectangle has equal sides (i.e., is a square).
 ; Arguments:  None.
-; Return:     eax = TRUE or FALSE.
+; Return:     eax = TRUE if square, FALSE otherwise.
 
 Method Rectangle.IsQuad
-    DbgText "Method: IsQuad"
-    SetObject xcx
-    mov eax, [xcx].dBase                        ;Get dBase from instance data
-    .if eax == [xcx].dHeight                    ;Compare with dHeight from instance data
-      mov xax, TRUE                             ;if equal => xax = TRUE
-    .else
-      xor eax, eax                              ;if not equal => xax = FALSE
-    .endif
+  DbgText "Method: Rectangle.IsQuad"
+  SetObject xcx
+  mov eax, [xcx].dBase                          ; Load Base
+  .if eax == [xcx].dHeight                      ; Compare Base and Height
+    mov eax, TRUE                               ; Equal => TRUE (square)
+  .else
+    xor eax, eax                                ; Not equal => FALSE
+  .endif
 MethodEnd

@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of INI-File objects.
 ; Links:      - http://msdn.microsoft.com/en-us/library/ms724345(VS.85).aspx
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -5,7 +5,7 @@
 ; Purpose:    Include to simplify the development of applications that don't have an import section.
 ; Notes:      First written by Bryant Keller, 2005; modified by EvilHomer, 2005
 ;             Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ;
 ;             The code relocation is based on the calculation of addresses on the fly.
 ;             For this purpose, the generated code calculates the address of any object as:

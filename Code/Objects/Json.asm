@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm compilation file for Json object.
 ; Version:    Version 1.0.0, December 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 % include Objects.cop

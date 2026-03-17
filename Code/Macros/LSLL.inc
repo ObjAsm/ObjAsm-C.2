@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of "Linear Simply Linked List" macros.
 ; Notes:      No sanity checks are performed by this set of macros!
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2023
 ;               - .ListForEach/.ListNext macros added. 
 ; ==================================================================================================

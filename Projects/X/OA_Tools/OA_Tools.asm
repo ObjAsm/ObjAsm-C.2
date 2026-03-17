@@ -6,7 +6,7 @@
 ; Notes:      Version 1.0.1, July, 2024
 ;               - Detection and handling of "using" in MASM64 SDK added by HSE.
 ;             Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

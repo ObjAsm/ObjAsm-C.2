@@ -2,11 +2,12 @@
 ; Title:      Primer.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.1
-; Purpose:    ObjAsm support for Primer objects.
+; Purpose:    ObjAsm support for the Primer base object.
 ; Notes:      Version C.1.1, October 2022
-;               - ErrorSet and ErrorReport return the error value; bug in ErrorReport corrected.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - ErrorSet and ErrorReport now return the error value.
+;               - Corrected a bug in ErrorReport.
+;             Version C.1.0, October 2017
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -17,15 +18,15 @@
 ; Notes:      The Done destructor MUST always be the first method in the virtual method table (VMT).
 
 Object Primer, PrimerID
-  VirtualMethod     Done                                ;Must be first virtual method!
-  VirtualMethod     Init,           POINTER             ;-> Owner object.
-  VirtualMethod     ErrorClear                          ;Reset dErrorCode
-  VirtualMethod     ErrorReport,    POINTER, DWORD      ;-> Calling object, ErrorCode
-  VirtualMethod     ErrorSet,       DWORD               ;ErrorCode
+  VirtualMethod     Done                                ; Must be first virtual method!
+  VirtualMethod     Init,           POINTER             ; -> Owner object.
+  VirtualMethod     ErrorClear                          ; Reset dErrorCode
+  VirtualMethod     ErrorReport,    POINTER, DWORD      ; -> Calling object, ErrorCode
+  VirtualMethod     ErrorSet,       DWORD               ; ErrorCode
 
-  DefineVariable    pOwner,         POINTER,    NULL    ;-> Owner object
-  DefineVariable    dErrorCode,     DWORD,      OBJ_OK  ;No error
-  DefineVariable    pErrorCaller,   POINTER,    NULL    ;-> Object that calls ErrorReport
+  DefineVariable    pOwner,         POINTER,    NULL    ; -> Owner object
+  DefineVariable    dErrorCode,     DWORD,      OBJ_OK  ; No error
+  DefineVariable    pErrorCaller,   POINTER,    NULL    ; -> Object that calls ErrorReport
 ObjectEnd
 
 
@@ -53,8 +54,8 @@ MethodEnd
 
 Method Primer.ErrorClear, uses xsi
   SetObject xsi
-  .if [xsi].pErrorCaller != NULL                        ;Stop recursion if caller = NULL
-    .if [xsi].pErrorCaller != xsi                       ;  or if caller = pSelf
+  .if [xsi].pErrorCaller != NULL                        ; Stop recursion if caller = NULL
+    .if [xsi].pErrorCaller != xsi                       ; or if caller = pSelf
       OCall [xsi].pErrorCaller::Primer.ErrorClear
     .endif
     m2z [xsi].pErrorCaller
@@ -64,17 +65,16 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorReport
-; Purpose:    Error handling method. Sets dErrorCode member and propagates the error by invoking the
-;             ErrorSet method of the owner object. If it can take a corrective action, it must reset
-;             the error condition using the ErrorClear method.
-; Arguments:  Arg1: -> Instance that invokes the procedure (may be NULL).
+; Purpose:    Error handling method. Sets dErrorCode and propagates the error by invoking the
+;             ErrorSet method of the owner object. The owner may clear the error using ErrorClear.
+; Arguments:  Arg1: -> Instance that invoked the procedure (may be NULL).
 ;             Arg2: Error code.
 ; Return:     eax = Error code.
-; Note:       The object that first reports an error must set pErrorCaller to pSelf or NULL!
+; Note:       The object that reports an error first must set pErrorCaller to pSelf or NULL!
 
 Method Primer.ErrorReport, uses xsi, pErrorCaller:POINTER, dErrorCode:DWORD
   SetObject xsi
-  OCall xsi.ErrorSet, dErrorCode                        ;On return, eax = Error code
+  OCall xsi.ErrorSet, dErrorCode                        ; On return, eax = Error code
   m2m [xsi].pErrorCaller, pErrorCaller, xcx
   .if [xsi].pOwner != NULL
     OCall [xsi].pOwner::Primer.ErrorReport, xsi, eax
@@ -86,7 +86,7 @@ MethodEnd
 ; Purpose:    Sets the error code and takes no further action.
 ; Arguments:  Arg1: Error code.
 ; Return:     eax = Error code.
-; Note:       If compiled with the DEBUGGING switch enabled, this method outputs error information.
+; Note:       If DEBUGGING is enabled, this method outputs diagnostic information.
 
 if DEBUGGING
 
@@ -100,13 +100,13 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
     invoke GetObjectID, xsi
     mov edi, eax
 
-    ;Output Object ID
+    ; Output Object ID
     invoke wsprintfA, xbx, $OfsCStrA("Object ID = %I32ut"), eax
     invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         offset(szDbgObjErr)
     mov eax, edi
 
-    ;Search the object name using the object ID (xax) and if found, output it
+    ; Search the object name using the object ID (xax) and output it if found
     mov xdi, pObjIDTableStart
     xor ecx, ecx
     .while ecx < dObjIDTableCount
@@ -116,16 +116,16 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
                             offset(szDbgObjErr)
         .break
       .endif
-      add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object type ID + PSTRING
+      add xdi, sizeof(DWORD) + sizeof(POINTER)          ; Object type ID + PSTRING
       inc ecx
     .endw
 
-    ;Output the error code
+    ; Output the error code
     invoke wsprintfA, xbx, $OfsCStrA(", Error Code = %I32ut"), [xsi].dErrorCode
     invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         offset(szDbgObjErr)
 
-    ;Search the error code description and if found, output it
+    ; Search for error code description and output it if found
     mov xdi, pObjErrTableStart
     xor ecx, ecx
     mov eax, [xsi].dErrorCode
@@ -136,12 +136,12 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
                             offset(szDbgObjErr)
         .break
       .endif
-      add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object error ID + PSTRING
+      add xdi, sizeof(DWORD) + sizeof(POINTER)          ; Error ID + PSTRING
       inc ecx
     .endw
 
-    invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, \
-                        offset(szDbgObjErr)
+    invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, \
+                        DBG_EFFECT_NORMAL, offset(szDbgObjErr)
   endif
   mov eax, dErrorCode
 MethodEnd

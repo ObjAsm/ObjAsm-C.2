@@ -1,10 +1,17 @@
 ; ==================================================================================================
 ; Title:      Demo08_Shared.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm CUDA demo application.
-; Notes:      Version C.1.0, September 2021
-;               - First release.
+; Purpose:    Shared definitions for ObjAsm demonstration application Demo08.
+; Version:    See Demo08.asm
+
+; Description:
+;   This file provides project metadata and build information for Demo08.
+;   The definitions here are included by the resource script (.rc) and may also be referenced by
+;   the application framework.
+;
+;   Several values (e.g., BUILD_NUMBER, BUILD_DATE_STR) are automatically updated during the build
+;   process by "Inc2RC.cmd" to ensure consistent version tracking across all compiled components.
+
 ; ==================================================================================================
 
 
@@ -18,8 +25,8 @@ VER_PRODUCTVERSION            equ       2,0,0,0
 VER_PRODUCTVERSION_STR        equ       <2.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       85
-BUILD_DATE_STR                textequ   <2025-12-20>
+BUILD_NUMBER                  equ       2
+BUILD_DATE_STR                textequ   <17.03.2026>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 

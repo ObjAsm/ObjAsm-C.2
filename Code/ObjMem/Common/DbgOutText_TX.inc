@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, November 2023
 ;               - Internet communication added.
 ; ==================================================================================================
@@ -34,7 +34,7 @@ ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEff
 
   mov eax, dDbgDev
   .if eax == DBG_DEV_WIN_LOG
-    .if $invoke(DbgOpenLog)
+    .if $32($invoke(DbgOpenLog))
       invoke StrSize, pString
       sub eax, sizeof(CHR)
       invoke WriteFile, hDbgDev, pString, eax, NULL, NULL
@@ -45,7 +45,7 @@ ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEff
     mov dResult, TRUE
 
   .elseif eax == DBG_DEV_WIN_CON
-    .if $invoke(DbgOpenCon)
+    .if $32($invoke(DbgOpenCon))
       invoke RGB24To16ColorIndex, dForeColor
       invoke SetConsoleTextAttribute, hDbgDev, ax
       invoke StrLength, pString
@@ -58,7 +58,7 @@ ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEff
     mov dResult, TRUE
 
   .elseif eax == DBG_DEV_WIN_DC
-    .if $invoke(DbgOpenWnd)
+    .if $32($invoke(DbgOpenWnd))
       invoke DbgBuildStrMsg, pString, dForeColor, dBackColor, dEffects, pDest
       .if xax != NULL                                   ;Continue if memory allocation succeeded
         mov CDS.dwData, DGB_MSG_ID                      ;Set DebugCenter identifier

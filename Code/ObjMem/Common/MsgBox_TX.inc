@@ -9,7 +9,7 @@
 ;             Version C.1.3, February 2021
 ;               - TextView internal update changes. GetExtent replaced.
 ;             Version C.1.2, May 2020
-;               - First release.
+;               - Initial release.
 ;               - The arguments passed to the function are almost the same es the original API.
 ;               - If an icon is specified, e.g MB_ICONERROR, a text indentation of 65px is
 ;                 recommended.

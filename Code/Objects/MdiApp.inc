@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm support of Windows MDI application objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2020
 ;               - MdiApp.OnNCDestroy moved to WinApp.
 ;             Version C.1.2, March 2025

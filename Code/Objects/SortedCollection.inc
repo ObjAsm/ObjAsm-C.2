@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of SortedCollection objects.
 ; Notes:      Version C.1.0, September 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, September 2020
 ;               - Sort bugs corrected: edi -> xdi, insert indirection.
 ;               - Sort method optimized: first item is skiped on first iteration.

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    General purpose routines needed for Script initialization.
 ; Notes:      Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

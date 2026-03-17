@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.2
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1 August 2023
 ;               - Proc frame bug corrected.
 ;             Version C.1.2 March 2024

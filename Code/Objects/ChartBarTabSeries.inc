@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of ChartBarTabSeries objects.
 ; Notes:      Version 1.0.0, August 2021
-;               - First release.
+;               - Initial release.
 ;               - https://devblogs.microsoft.com/oldnewthing/20190221-00/?p=101062
 ; ==================================================================================================
 

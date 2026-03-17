@@ -4,7 +4,7 @@
 ; Version:    C.1.3
 ; Purpose:    ObjAsm support of memory streaming objects.
 ; Notes:      Version C.1.2, December 2020
-;               - First release.
+;               - Initial release.
 ;             Version C.1.3, October 2025
 ;               - BinWriteXXX update dCurrSize bug corrected.
 ; ==================================================================================================

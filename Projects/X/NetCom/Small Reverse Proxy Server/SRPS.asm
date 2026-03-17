@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm Small Reverse Proxy Server.
 ; Notes:      Version C.2.0, December 2025
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -41,7 +41,7 @@ INCL_WINSOCK_API_PROTOTYPES equ 1                       ;Enable WinSock API prot
 INTERNET_PROTOCOL_VERSION   equ 4                       ;Select IP version (4 or 6)
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, ANSI_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
 
 % include &MacPath&ConstDiv.inc                         ;Division by constant helper
 % include &MacPath&fMath.inc                            ;Floating-point math helpers

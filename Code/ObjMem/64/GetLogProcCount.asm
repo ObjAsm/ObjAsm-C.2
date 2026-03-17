@@ -8,7 +8,7 @@
 ;               - http://www.koders.com/cpp/fid3BC912972A64FC64C38645FD079927D1081454F9.aspx
 ;               - http://software.intel.com/en-us/articles/multi-core-detect
 ;            Version 1.0.0, October 2017.
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

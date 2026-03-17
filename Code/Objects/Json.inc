@@ -11,7 +11,7 @@
 ;             https://jsonformatter.curiousconcept.com/#
 ; References: RFC8259, RFC7159, RFC4627, EMCA-404
 ; Notes:      Version C.1.0, December 2020.
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, June 2021.
 ;               - Booleans were saved now in double quotes.
 ;               - Comments added.

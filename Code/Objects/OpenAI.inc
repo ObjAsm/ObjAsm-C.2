@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of OpenAI objects.
 ; Links:      https://platform.openai.com/docs/api-reference/authentication
 ; Notes:      Version C.1.0, September 2025
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

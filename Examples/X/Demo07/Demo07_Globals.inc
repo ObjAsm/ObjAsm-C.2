@@ -1,10 +1,14 @@
 ; ==================================================================================================
 ; Title:      Demo07_Globals.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm globals for demonstration program 7.
-; Notes:      Version C.1.0, August 2021
-;               - First release.
+; Purpose:    Global definitions for ObjAsm demonstration application Demo07.
+; Version:    See Demo07.asm
+;
+; Description:
+;   This file defines global constants, shared strings, and metadata used throughout the Demo07
+;   application. These definitions are included by the main application modules and provide common
+;   resources such as application titles, version text, and build information.
+;
 ; ==================================================================================================
 
 

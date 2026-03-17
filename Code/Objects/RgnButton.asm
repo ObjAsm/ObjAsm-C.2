@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for RgnButton object.
 ; Notes:      Version C.1.0, November 2017
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm support of TVector object template.
 ; Notes:      Version C.1.0, September 2021
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, October 2023
 ;               - .VecForEach, .VecForEachRev and .VecNext macros added.
 ;             Version C.1.2, January 2024

@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm support of Excel Host objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.2.0, February 2023
 ;               - PrintSheet added.
 ; ==================================================================================================

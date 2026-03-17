@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Based con Hutch's code.
+;               - Initial release. Based con Hutch's code.
 ; ==================================================================================================
 
 

@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, March 2024.
-;               - First release.
+;               - Initial release.
 ;               - Platform independent code.
 ;               - Inspired llshl.asm (nt5src-master).
 ; ==================================================================================================

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Cursor and Icon structure definitions not found in MS header files.
 ; Notes:      Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ; Links:      https://devblogs.microsoft.com/oldnewthing/20120720-00/?p=7083
 ;             https://devblogs.microsoft.com/oldnewthing/20231025-00/?p=108925
 ; ==================================================================================================

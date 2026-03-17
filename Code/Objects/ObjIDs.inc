@@ -7,7 +7,7 @@
 ;             User Object IDs should be defined in an independant file and the values should be
 ;             above 80000000h.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

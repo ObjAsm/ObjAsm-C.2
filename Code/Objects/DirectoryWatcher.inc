@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of Windows directory watching objects.
 ; Notes:      Version C.1.0, February 2025
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, February 2025
 ;               - Shutdown sequence corrected.
 ;               - ProcessChanges loop offset calculation corrected.

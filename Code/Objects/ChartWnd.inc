@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of ChartWnd objects.
 ; Notes:      Version C.1.0, August 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

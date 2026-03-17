@@ -4,11 +4,24 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm demonstration program 4.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
+;
+; Description:
+;   This module implements the main application object for Demo04. It demonstrates:
+;     - Use of embedded container objects (QContainer, DContainer, WContainer, BContainer,
+;       XContainer) to showcase dynamic storage and management of various data types
+;     - Initialization and finalization of all embedded containers
+;     - Handling of core Windows messages (WM_COMMAND, WM_CLOSE, WM_PAINT)
+;     - A simplified SDI-style application structure
+;
+;   This file works together with:
+;     - Demo04.asm          Application entry point and runtime startup
+;     - Demo04_Globals.inc  Global constants, menu identifiers, resource names
+;
 ; ==================================================================================================
 
 
-Object Application, ApplicationID, SdiApp                    ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                ; Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup
@@ -16,7 +29,7 @@ Object Application, ApplicationID, SdiApp                    ;Single Document In
   VirtualEvent      OnCommand,  WM_COMMAND
   VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
   VirtualEvent      OnPaint,    WM_PAINT
-  
+
 if TARGET_BITNESS eq 64
   Embed   QCont,  QContainer
 endif
@@ -24,7 +37,6 @@ endif
   Embed   WCont,  WContainer
   Embed   BCont,  BContainer
   Embed   XCont,  XContainer
-
 ObjectEnd
 
 
@@ -43,6 +55,7 @@ CStr szAppClassName, "OAC_Application"
 
 Method Application.Done, uses xsi
   SetObject xsi
+
 if TARGET_BITNESS eq 64
   OCall [xsi].QCont::QContainer.Done
 endif
@@ -50,6 +63,7 @@ endif
   OCall [xsi].WCont::WContainer.Done
   OCall [xsi].BCont::BContainer.Done
   OCall [xsi].XCont::XContainer.Done
+
   ACall xsi.Done
 MethodEnd
 
@@ -64,38 +78,42 @@ Method Application.Init, uses xsi
 
   SetObject xsi
   ACall xsi.Init
-  mov dWndWidth, 500                                    ;Default creation width
-  mov dWndHeight, 350                                   ;Default creation height
-  
+
+  mov dWndWidth, 500                                     ; Default window width
+  mov dWndHeight, 350                                    ; Default window height
+
   mov dWndPosX, $32($invoke(CenterForm, dWndWidth,  $32($invoke(GetSystemMetrics, SM_CXSCREEN))))
   mov dWndPosY, $32($invoke(CenterForm, dWndHeight, $32($invoke(GetSystemMetrics, SM_CYSCREEN))))
 
   invoke CreateWindowEx, WS_EX_LEFT or WS_EX_APPWINDOW, \
                          offset szAppClassName, offset szAppTitle, WS_OVERLAPPEDWINDOW, \
-                         dWndPosX, dWndPosY, dWndWidth, dWndHeight, NULL, NULL, hInstance, pSelf
+                         dWndPosX, dWndPosY, dWndWidth, dWndHeight, \
+                         NULL, NULL, hInstance, pSelf
 
-  invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
-  invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
+  invoke ShowWindow,  [xsi].hWnd, SW_SHOWNORMAL           ; Show window
+  invoke UpdateWindow, [xsi].hWnd                        ; Ensure window is updated
 
 if TARGET_BITNESS eq 64
   OCall [xsi].QCont::QContainer.Init, xsi
-  DbgHex xax
+  DbgDec rax
 endif
+
   OCall [xsi].DCont::DContainer.Init, xsi
-  DbgHex xax
+  DbgDec eax
   OCall [xsi].WCont::WContainer.Init, xsi
-  DbgHex xax
+  DbgDec ax
   OCall [xsi].BCont::BContainer.Init, xsi
-  DbgHex xax
+  DbgDec al
   OCall [xsi].XCont::XContainer.Init, xsi
-  DbgHex xax
+  DbgDec xax
+
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
+; Arguments:  Arg1 = wParam
+;             Arg2 = lParam
 ; Return:     eax = Zero if handled.
 
 Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
@@ -103,6 +121,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   mov xax, wParam
+
   .if ax == IDM_EXIT
     invoke SendMessage, [xsi].hWnd, WM_SYSCOMMAND, SC_CLOSE, NULL
     xor eax, eax
@@ -117,8 +136,9 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
-                                     addr cBuffer, lengthof(cBuffer)
+    invoke ExpandEnvironmentStrings, \
+           $OfsCStr("%OBJASM_PATH%\\Help\\ObjAsm_Reference_Volume-I.pdf"), \
+           addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
 
@@ -130,14 +150,16 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
+; Arguments:  Arg1 = wParam
+;             Arg2 = lParam
 ; Return:     eax = Zero if handled.
 
 Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
-                     MB_YESNO or MB_ICONQUESTION
+
+  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure?"), \
+                     $OfsCStr("Application exit"), MB_YESNO or MB_ICONQUESTION
+
   .if eax == IDNO
     xor eax, eax
   .else
@@ -148,14 +170,15 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
+; Arguments:  Arg1 = wParam
+;             Arg2 = lParam
 ; Return:     eax = Zero if handled.
 
 Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
+
   mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)
 
   invoke GetClientRect, [xsi].hWnd, addr Rct
@@ -167,7 +190,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
-; Purpose:    Register the Application window class with the operating system.
+; Purpose:    Register the application window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -180,11 +203,14 @@ Method Application.Startup
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
+
   invoke LoadBitmap, hInstance, $OfsCStr("BMP_BACKGROUND")
   mov WC.hbrBackground, $invoke(CreatePatternBrush, xax)
-  c2m WC.lpszMenuName, $OfsCStr("MENU_APP"), r8
+
+  c2m WC.lpszMenuName,  $OfsCStr("MENU_APP"), r8
   c2m WC.lpszClassName, offset szAppClassName, r8
-  mov WC.hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+
+  mov WC.hIcon,   $invoke(LoadIcon, hInstance, offset szIcoName)
   mov WC.hCursor, $invoke(LoadCursor, 0, IDC_ARROW)
   m2z WC.hIconSm
 

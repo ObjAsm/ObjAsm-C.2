@@ -2,69 +2,73 @@
 ; Title:      Stream.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of streaming objects.
+; Purpose:    ObjAsm support for streaming objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     DesLUT
-; Purpose:    Implement a deserialization lookup table.
-; Notes:      - This object and all descendants are thread safe using the OA multithreading support.
+; Purpose:    Implements a deserialization lookup table.
+; Notes:      - This object and all descendants are thread-safe using OA multithreading support.
+;
 ; Example:
 ;
-;  local MyVec:$Obj(Vector), MyDiskStream:$Obj(DiskStream)
-;  local DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO
+;   local MyVec:$Obj(Vector), MyDiskStream:$Obj(DiskStream)
+;   local DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO
 ;
-;  ...
+;   ...
 ;
-;  ;Storage
-;  New MyDiskStream::DiskStream
-;  OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;   ; Storage
+;   New MyDiskStream::DiskStream
+;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
 ;                                       NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-;  OCall MyVec::Vector.Store, addr MyDiskStream
-;  OCall MyDiskStream::DiskStream.Done
+;   OCall MyVec::Vector.Store, addr MyDiskStream
+;   OCall MyDiskStream::DiskStream.Done
 ;
-;  ...
+;   ...
 ;
-;  ;Recovery
-;  New DLUT::DesLUT
-;  lea xcx, DLUT
-;  mov DeserInfo.pDesLUT, xcx
-;  OCall xcx::DesLUT.Init, NULL, 10, 10, 0FFFFFFFFh/sizeof(POINTER)
+;   ; Recovery
+;   New DLUT::DesLUT
+;   lea xcx, DLUT
+;   mov DeserInfo.pDesLUT, xcx
+;   OCall xcx::DesLUT.Init, NULL, 10, 10, 0FFFFFFFFh/sizeof(POINTER)
 ;
-;  New MyDiskStream::DiskStream
-;  OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;   New MyDiskStream::DiskStream
+;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
 ;                                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
-;  OCall MyVec::Vector.Load, addr MyDiskStream, addr DeserInfo
-;  OCall MyDiskStream::DiskStream.Done
-;  OCall DLUT::DesLUT.Done
+;   OCall MyVec::Vector.Load, addr MyDiskStream, addr DeserInfo
+;   OCall MyDiskStream::DiskStream.Done
+;   OCall DLUT::DesLUT.Done
+
 
 Object DesLUT, DesLUTID, Primer
   RedefineMethod    Done
   VirtualMethod     Find,           XWORD
-  VirtualMethod     ForEach,        POINTER, XWORD, XWORD         ;-> Proc, 2 x Parameter
-  RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD  ;-> Owner, Count, Increment, Limit
+  VirtualMethod     ForEach,        POINTER, XWORD, XWORD         ; -> Proc, 2 parameters
+  RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD  ; -> Owner, Count, Increment, Limit
   VirtualMethod     Insert,         XWORD, XWORD
   Private
-  StaticMethod      SetLimit,       DWORD               ;Set new limit (private method)
+  StaticMethod      SetLimit,       DWORD                         ; Set new limit (private)
 
   DefineVariable    pItems,         POINTER,      NULL
   DefineVariable    dCount,         DWORD,        0
   DefineVariable    dLimit,         DWORD,        0
   DefineVariable    dDelta,         DWORD,        0
   DefineVariable    dMaxCapacity,   DWORD,        0
-  DefineVariable    ObjLock,        OBJECT_LOCK,  {}    ;Locking structure for multithreaded access
+  DefineVariable    ObjLock,        OBJECT_LOCK,  {}              ; Locking structure for multithreaded access
 ObjectEnd
 
-; DESER_INFO structure can be extended by descendant objects to pass additional information
-; for the deserialization process.
+
+; DESER_INFO structure may be extended by descendant objects to pass additional information
+; needed during deserialization.
 
 DESER_INFO struc
   pDesLUT $ObjPtr(DesLUT)  ?
 DESER_INFO ends
 PDESER_INFO typedef ptr DESER_INFO
+
 
 DLT_ENTRY struc
   xOldItem   XWORD  ?
@@ -78,26 +82,30 @@ DLT_MEM_PAGE      equ PAGESIZE / sizeof(DLT_ENTRY)
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Stream
-; Purpose:    Stream is a base object providing polymorphic I/O to and from a storage device with
-;             a maximum capacity of 2^64 bytes. You can create your own derived stream objects by
-;             overriding the following methods: BinRead, BinWrite, GetPos, GetSize, Seek and
-;             Truncate.
-; Notes:      - For buffered derived streams, you must also override the Flush method.
+; Purpose:    Stream is a base object providing polymorphic I/O to and from a storage device
+;             with a maximum capacity of 2^64 bytes. 
+;
+;             Derived stream objects can implement specialized I/O by redefining:
+;               - BinRead / BinWrite (raw byte I/O)
+;               - GetPos / GetSize (positioning)
+;               - Seek / Truncate  (navigation)
+;
+; Notes:      - Buffered stream implementations must also override the Flush method.
 
 Object Stream, StreamID, Primer
-  VirtualAbstract     BinRead,      POINTER, DWORD      ;-> Buffer, Count
+  VirtualAbstract     BinRead,      POINTER, DWORD      ; -> Buffer, Count
   VirtualAbstract     BinRead8
   VirtualAbstract     BinRead16
   VirtualAbstract     BinRead32
   VirtualAbstract     BinRead64
-  VirtualAbstract     BinWrite,     POINTER, DWORD      ;-> Buffer, Count
+  VirtualAbstract     BinWrite,     POINTER, DWORD      ; -> Buffer, Count
   VirtualAbstract     BinWrite8,    BYTE
   VirtualAbstract     BinWrite16,   WORD
   VirtualAbstract     BinWrite32,   DWORD
   VirtualAbstract     BinWrite64,   QWORD
   VirtualMethod       CopyFrom,     POINTER, DWORD
   VirtualMethod       Get,          PDESER_INFO
-  VirtualMethod       GetPreAlloc,  POINTER, DWORD, PDESER_INFO ;Address, Obj. type ID, ...
+  VirtualMethod       GetPreAlloc,  POINTER, DWORD, PDESER_INFO ; Address, TypeID, ...
   VirtualAbstract     GetPos
   VirtualAbstract     GetSize
   VirtualAbstract     Flush
@@ -108,6 +116,7 @@ Object Stream, StreamID, Primer
   VirtualMethod       StrWriteW,    PSTRINGW
   VirtualAbstract     Truncate
 ObjectEnd
+
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   $ObjMtd(StrWrite) textequ $ObjMtd(StrWriteA)
@@ -133,18 +142,20 @@ STM_END     equ FILE_END
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Streamable
-; Purpose:    Streamable is a base object with 4 methods that need a redefinition to extend their
-;             functionality in descendant objects. This approach is useful to provide polymorphic
-;             access to these methods called from stream objects via the Put or Get methods.
-;             Serialize and Deserialize methods implement the way object members are serialized to
-;             and deserialized from a stream.
-;             The call sequence should be
+; Purpose:    Base class defining the protocol for objects that can be serialized into a Stream.
 ;
-;               1. Serialize (convert data)
-;               2. Store (write data to a Stream)
-;                  ...
-;               3. Load (read data from Stream)
-;               4. Deserialize (convert data back)
+;             These four methods must be redefined by derived classes when custom behavior
+;             is required:
+;               - Serialize     Prepare object state for writing
+;               - Store         Write state to a Stream
+;               - Load          Read state from a Stream
+;               - Deserialize   Restore object references and post-processing
+;
+;             Order of operations:
+;               1. Serialize
+;               2. Store
+;               3. Load
+;               4. Deserialize
 
 Object Streamable, StreamableID, Primer
   VirtualMethod     Deserialize,  PDESER_INFO
@@ -157,15 +168,14 @@ ObjectEnd
 if IMPLEMENT
 
 ; ==================================================================================================
-;  DesLUT
+;  DesLUT implementation
 ; ==================================================================================================
 
-PDesLUTProc  typedef proto :POINTER, :POINTER, :QWORD, :QWORD
-
+PDesLUTProc typedef proto :POINTER, :POINTER, :QWORD, :QWORD
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Done
-; Purpose:    Delete and dispose all items in the collection.
+; Purpose:    Deletes and releases all items in the collection.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -181,13 +191,14 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Init
-; Purpose:    Initialize the collection with a limit (dLimit), an increasing step (dDelta)
-;             and a maximum size (dMaxCapacity).
+; Purpose:    Initializes the collection with:
+;               - dLimit:       initial capacity
+;               - dDelta:       growth step
+;               - dMaxCapacity: maximum allowed size
 ; Arguments:  Arg1: -> Owner object.
-;             Arg2: Initial capacity of the collection (#items).
-;             Arg3: Growing factor of the collection (#items).
-;             Arg4: Maximum capacity of the collection (#items).
-;                   Use COL_MAX_CAPACITY to indicate no limit.
+;             Arg2: Initial capacity.
+;             Arg3: Growth step.
+;             Arg4: Maximum capacity (use COL_MAX_CAPACITY for "no limit").
 ; Return:     eax = Error code.
 
 Method DesLUT.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dMaxCapacity:DWORD
@@ -199,6 +210,7 @@ Method DesLUT.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dMaxCapacity:DW
   mov [xcx].dLimit, eax
   mov [xcx].dErrorCode, OBJ_OK
   m2m [xcx].dDelta, dDelta, edx
+
   .if eax != dMaxCapacity
     mov edx, dMaxCapacity
   .else
@@ -212,7 +224,7 @@ Method DesLUT.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dMaxCapacity:DW
     .if eax != OBJ_OK
       OCall ErrorReport, NULL, eax
     .else
-      OCall Insert, NULL, NULL                          ;Register the NULL POINTER
+      OCall Insert, NULL, NULL      ; register NULL mapping
     .endif
   .else
     OCall xcx.ErrorReport, NULL, DLT_SETUP_ERROR
@@ -221,10 +233,10 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Find
-; Purpose:    Searches for a XWORD value.
+; Purpose:    Searches for an old item value.
 ; Arguments:  Arg1: Old item to search for.
 ; Return:     eax = Status code.
-;             xcx = New item that replaces to the old one.
+;             xcx = New item associated with the old one.
 
 Method DesLUT.Find,, xSearchItem:XWORD
   SetObject xcx
@@ -237,7 +249,7 @@ Method DesLUT.Find,, xSearchItem:XWORD
   .while xax < xcx
     .if [xax].DLT_ENTRY.xOldItem == xdx
       mov xcx, [xax].DLT_ENTRY.xNewItem
-      xor eax, eax                                      ;OBJ_OK
+      xor eax, eax    ; OBJ_OK
       ExitMethod
     .endif
     add xax, sizeof(DLT_ENTRY)
@@ -246,12 +258,12 @@ Method DesLUT.Find,, xSearchItem:XWORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:       DesLUT.ForEach
-; Purpose:      Call "pProc" for each item in the DesLUT.
-; Arguments:    Arg1: -> Processing procedure (static address).
-;               Arg2-3: (Optional) Parameters to be used by the processing procedure.
-; Return:       Nothing.
-; Note:         While the loop is running, no item should be deleted!
+; Method:     DesLUT.ForEach
+; Purpose:    Calls the procedure pProc for each item in the lookup table.
+; Arguments:  Arg1: -> Callback procedure.
+;             Arg2, Arg3: optional parameters.
+; Return:     Nothing.
+; Note:       Items must not be deleted during iteration.
 
 Method DesLUT.ForEach, uses xbx xdi xsi, pProc:POINTER, Arg1:XWORD, Arg2:XWORD
   SetObject xsi
@@ -268,12 +280,10 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Insert
-; Purpose:    Insert item information in the lookup table. Only the owner of the item should insert
-;             this information. Multiple entries containing the same info MUST be avoided. No
-;             integrity check is performed.
-; Arguments:  Arg1: -> Old item.
-;             Arg2: -> New item.
-; Return:     xax -> New Item.
+; Purpose:    Inserts a new mapping into the lookup table.
+; Arguments:  Arg1: Old item.
+;             Arg2: New item.
+; Return:     xax -> new item.
 
 Method DesLUT.Insert, uses xsi, xOldItem:XWORD, xNewItem:XWORD
   SetObject xsi
@@ -285,23 +295,22 @@ Method DesLUT.Insert, uses xsi, xOldItem:XWORD, xNewItem:XWORD
   OCall xsi.SetLimit, edx
   .if eax == 0
     mov edx, [xsi].dCount
-  @@:
+@@:
     inc [xsi].dCount
     mov xax, [xsi].pItems
     shl xdx, $Log2(sizeof(DLT_ENTRY))
     lea xcx, [xax + xdx]
     m2m [xcx].DLT_ENTRY.xOldItem, xOldItem, xdx
-    m2m [xcx].DLT_ENTRY.xNewItem, xNewItem, xax         ;xax -> Item (return value)
+    m2m [xcx].DLT_ENTRY.xNewItem, xNewItem, xax
   .else
     OCall xsi.ErrorReport, NULL, eax
-    xor eax, eax                                        ;Return NULL
+    xor eax, eax
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.SetLimit
-; Purpose:    Set the collection limit, allocating the necessary memory on the heap to hold
-;             the item POINTER table.
+; Purpose:    Sets the collection limit, allocating or resizing memory as needed.
 ; Arguments:  Arg1: New limit.
 ; Return:     eax = Error code.
 
@@ -309,29 +318,29 @@ Method DesLUT.SetLimit, uses xbx xdi xsi, dNewLimit:DWORD
   SetObject xsi
   mov ebx, dNewLimit
   mov eax, [xsi].dCount
-  cmp eax, ebx                                          ;dNewLimit
-  ja @@1                                                ;NewLimit can not be less than dCount!
+  cmp eax, ebx
+  ja @@1                   ; NewLimit < dCount not allowed
   mov eax, [xsi].dMaxCapacity
-  cmp eax, ebx                                          ;NewLimit can not be > than dMaxCapacity!
-  ht                                                    ;Hint taken
+  cmp eax, ebx
+  ht
   jae @@2
-  @@1:
-  mov ebx, eax                                          ;Limit the new table size
-  @@2:
+@@1:
+  mov ebx, eax
+@@2:
   mov ecx, [xsi].dLimit
   cmp ecx, ebx
   .if ZERO?
-    xor eax, eax                                        ;eax = OBJ_OK
+    xor eax, eax
   .else
-    test ebx, ebx                                       ;dNewLimit = 0 ?
+    test ebx, ebx
     .if ZERO?
       MemFree [xsi].pItems, MEM_SAFE_FREE
-      xor eax, eax                                      ;eax = OBJ_OK
-      mov [xsi].pItems, xax                             ;NULL
-      mov [xsi].dLimit, eax                             ;0
+      xor eax, eax
+      mov [xsi].pItems, xax
+      mov [xsi].dLimit, eax
     .else
       mov xax, xbx
-      shl xax, $Log2(sizeof(DLT_ENTRY))                 ;xcx*sizeof(DLT_ENTRY)
+      shl xax, $Log2(sizeof(DLT_ENTRY))
       mov xdi, [xsi].pItems
       test xdi, xdi
       .if ZERO?
@@ -339,32 +348,31 @@ Method DesLUT.SetLimit, uses xbx xdi xsi, dNewLimit:DWORD
       .else
         MemReAlloc xdi, xax
       .endif
-      test xax, xax                                     ;Function failed?
+      test xax, xax
       jz @@Error
       mov [xsi].pItems, xax
-      mov [xsi].dLimit, ebx                             ;dNewLimit
-      xor eax, eax                                      ;eax = OBJ_OK (return value)
+      mov [xsi].dLimit, ebx
+      xor eax, eax
     .endif
   .endif
   ret
 
 @@Error:
-  mov eax, DLT_OUT_OF_MEMORY                            ;Return value
+  mov eax, DLT_OUT_OF_MEMORY
 MethodEnd
 
 
 ; ==================================================================================================
-;  Stream
+;  Stream implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.CopyFrom
-; Purpose:    Copy count bytes from the specified stream into the current stream and move the
-;             current position by Count bytes. The operation is performed in data chuncks of max.
-;             1024 bytes.
+; Purpose:    Copies a specified number of bytes from another stream into this one.
+;             Data is copied in chunks of up to 1024 bytes.
 ; Arguments:  Arg1: -> Stream object.
 ;             Arg2: Number of bytes to copy.
-; Return:     eax = Number of copied bytes.
+; Return:     eax = Number of bytes copied.
 
 Method Stream.CopyFrom, uses xbx xdi xsi, pStream:POINTER, dCount:DWORD
   local bBuffer[1024]:BYTE
@@ -386,27 +394,20 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.Get
-; Purpose:    Read a streamable object from the stream. The object must have been
-;             previously written to the stream by Put.
-;             - Get first reads an Object ID (32 bits) from the stream.
-;             - Then it finds the corresponding Object type by comparing the IDs in the
-;               Object Metadata chain, starting at ??1stOMD.
-;             - It finally calls the Load method of that object type to create and restore
-;               the object.
-;             If the Object type ID read from the stream is zero, Get returns NULL.
-;             If the Object type ID can not be found, Get calls ErrorReport and returns NULL.
-; Arguments:  Arg1: -> DesLUT passed to the "Streamable.Load" method.
-; Return:     xax -> New created object or NULL.
+; Purpose:    Reads and instantiates a Streamable object previously stored with Put.
+;             Reads the object type ID, constructs the instance, then calls Load.
+; Arguments:  Arg1: -> DESER_INFO.
+; Return:     xax -> Newly created object or NULL.
 
 Method Stream.Get, uses xbx xsi, pDeserInfo:PDESER_INFO
   SetObject xsi
-  OCall xsi.BinRead32                                   ;eax = Object type ID
+  OCall xsi.BinRead32
   .if eax != 0
-    invoke NewObjInst, eax                              ;Create a new object instance from ID
+    invoke NewObjInst, eax
     .if xax != NULL
       mov xbx, xax
       OCall xax::Streamable.Load, xsi, pDeserInfo
-      mov xax, xbx                                      ;xax -> Object instance
+      mov xax, xbx
     .else
       OCall xsi.ErrorReport, NULL, STM_OUT_OF_MEMORY
       xor eax, eax
@@ -419,16 +420,15 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.GetPreAlloc
-; Purpose:    Read a streamable object from the stream into a preallocated memory buffer.
-; Arguments:  Arg1: Address where the object instance will be loaded.
-;             Arg2: Expected object type ID. Zero means don't care.
-;             Arg3: Parameter passed to the "Streamable.Load" method.
+; Purpose:    Reads a Streamable object into a preallocated memory block.
+; Arguments:  Arg1: Preallocated storage address.
+;             Arg2: Expected Object Type ID (0 = any).
+;             Arg3: -> DESER_INFO.
 ; Return:     eax = Error code.
-; Note:       Useful for embedded or static objects.
 
 Method Stream.GetPreAlloc, uses xsi, pObject:POINTER, TypeID:DWORD, pDeserInfo:PDESER_INFO
   SetObject xsi
-  OCall xsi.BinRead32                                   ;eax = Object type ID from stream
+  OCall xsi.BinRead32
   mov ecx, TypeID
   .if ecx == 0 || ecx == eax
     OCall pObject::Streamable.Load, xsi, pDeserInfo
@@ -439,7 +439,8 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.Put
-; Purpose:    Put a streamable object in a stream. First writes the object type ID.
+; Purpose:    Writes a Streamable object to the stream.
+;             First writes the object type ID, then calls Store.
 ; Arguments:  Arg1: -> Streamable object.
 ; Return:     Nothing.
 
@@ -447,7 +448,7 @@ Method Stream.Put,, pStreamable:POINTER
   .if pStreamable == NULL
     OCall ErrorReport, NULL, STM_INVALID_OBJECT
   .else
-    invoke GetObjectID, pStreamable                     ;eax = Object type ID
+    invoke GetObjectID, pStreamable
     .if eax == 0
       OCall ErrorReport, NULL, STM_REGISTRATION_ERROR
     .else
@@ -459,25 +460,24 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrRead
-; Purpose:    Read a zero terminated string from the current position of the stream and allocate
-;             it on the heap.
+; Purpose:    Reads a zero-terminated string from the stream and allocates it on the heap.
 ; Arguments:  None.
-; Return:     xax -> Zero terminated string or NULL (ANSI or WIDE).
+; Return:     xax -> Allocated string or NULL.
 
 Method Stream.StrRead, uses xbx xsi
   SetObject xsi
-  OCall xsi.BinRead32                                   ;Total string size, including ZTC
+  OCall xsi.BinRead32
   .if eax != 0
-    mov ebx, eax                                        ;Save string size in ebx
+    mov ebx, eax
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      invoke GlobalAlloc, 0, eax                        ;Strings use global memory
+      invoke GlobalAlloc, 0, eax
     elseif TARGET_PLATFORM eq PLATFORM_UEFI
       MemAlloc eax
     endif
     .if xax != NULL
       mov xdx, xax
-      xchg xbx, xax                                      ;xax -> allocated block
-      OCall xsi.BinRead, xdx, eax                        ;Returns read bytes in eax
+      xchg xbx, xax
+      OCall xsi.BinRead, xdx, eax
       mov xax, xbx
     .endif
   .endif
@@ -485,8 +485,8 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrWriteA
-; Purpose:    Write a zero terminated string to the stream at the current position.
-; Arguments:  Arg1: -> Zero terminated ANSI string.
+; Purpose:    Writes a zero-terminated ANSI string to the stream.
+; Arguments:  Arg1: -> ANSI string.
 ; Return:     Nothing.
 
 Method Stream.StrWriteA, uses xdi xsi, pStr:PSTRINGA
@@ -494,17 +494,17 @@ Method Stream.StrWriteA, uses xdi xsi, pStr:PSTRINGA
   .if pStr == NULL
     OCall xsi.BinWrite32, 0
   .else
-    invoke StrSizeA, pStr                               ;StrSize includes the ZTC, allowing the
-    mov edi, eax                                        ;differentiation between an empty and a
-    OCall xsi.BinWrite32, eax                           ;NULL-String
+    invoke StrSizeA, pStr
+    mov edi, eax
+    OCall xsi.BinWrite32, eax
     OCall xsi.BinWrite, pStr, edi
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrWriteW
-; Purpose:    Write a zero terminated string to the stream at the current position.
-; Arguments:  Arg1: -> Zero terminated WIDE string.
+; Purpose:    Writes a zero-terminated WIDE string to the stream.
+; Arguments:  Arg1: -> WIDE string.
 ; Return:     Nothing.
 
 Method Stream.StrWriteW, uses xdi xsi, pStr:PSTRINGW
@@ -512,21 +512,21 @@ Method Stream.StrWriteW, uses xdi xsi, pStr:PSTRINGW
   .if pStr == NULL
     OCall xsi.BinWrite32, 0
   .else
-    invoke StrSizeW, pStr                               ;StrSize includes the ZTC, allowing the
-    mov edi, eax                                        ;differentiation between an empty and a
-    OCall xsi.BinWrite32, eax                           ;NULL-String
+    invoke StrSizeW, pStr
+    mov edi, eax
+    OCall xsi.BinWrite32, eax
     OCall xsi.BinWrite, pStr, edi
   .endif
 MethodEnd
 
 
 ; ==================================================================================================
-;  Streamable
+;  Streamable implementation
 ; ==================================================================================================
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Deserialize
-; Purpose:    Convert serialized members.
+; Purpose:    Restores serialized references using the lookup table.
 ; Arguments:  Arg1: -> DESER_INFO.
 ; Return:     Nothing.
 
@@ -540,8 +540,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Load
-; Purpose:    Load and initialize the streamable instance from a stream object. Descendant objects
-;             must redefine this method to load new members.
+; Purpose:    Loads and initializes the instance from a Stream.
 ; Arguments:  Arg1: -> Stream object.
 ;             Arg2: -> DESER_INFO.
 ; Return:     eax = Status code.
@@ -550,16 +549,15 @@ Method Streamable.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PD
   SetObject xsi
   mov xdi, pStream
   mov xbx, pDeserInfo
-  OCall xdi::Stream.BinReadX                           ;Old pSelf
+  OCall xdi::Stream.BinReadX                           ; Old pSelf
   OCall [xbx].DESER_INFO.pDesLUT::DesLUT.Insert, xax, xsi
 
-  OCall xdi::Stream.BinReadX                           ;Old pOwner
+  OCall xdi::Stream.BinReadX                           ; Old pOwner
   .if $OCall([xbx].DESER_INFO.pDesLUT::DesLUT.Find, xax) == OBJ_OK
     mov [xsi].pOwner, xcx
     OCall xdi::Stream.BinRead32
     mov [xsi].dErrorCode, eax
 
-    ;This POINTER must be deserialized, since the information may not be present at this moment
     mov [xsi].pErrorCaller, $OCall(xdi::Stream.BinReadX)
     xor eax, eax
   .endif
@@ -567,9 +565,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Serialize
-; Purpose:    Get an unique identifier and store it in pSelf. In case of thread concurrency, an
-;             atomic process warranties unique IDs. Descendant objects should redefine this method
-;             and serialize all members that need special handling like pointers.
+; Purpose:    Assigns a unique ID and serializes members that need special handling.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -578,8 +574,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Store
-; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
-;             this method and store new members.
+; Purpose:    Stores the Streamable instance into a Stream.
 ; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 

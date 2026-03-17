@@ -6,7 +6,7 @@
 ; Notes:      User error codes should have Bit 29 set.
 ;             See http://msdn.microsoft.com/en-us/library/ms679360(v=vs.85).aspx
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

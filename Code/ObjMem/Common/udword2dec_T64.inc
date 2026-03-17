@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, May 2022
-;               - First release.
+;               - Initial release.
 ;               - Character neutral code.
 ; links:      https://publik.tuwien.ac.at/files/publik_287602.pdf
 ;             https://calc.penjee.com/  128 hex calculator

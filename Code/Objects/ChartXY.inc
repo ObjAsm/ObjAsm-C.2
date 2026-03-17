@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm cluster to support XY-chart objects and their setup.
 ; Notes:      Version C.1.0, August 2021
-;               - First release.
+;               - Initial release.
 ;                 Line clipping is implemented using the Liang-Barsky algorithm.
 ;                 https://www.skytopia.com/project/articles/compsci/clipping.html
 ;                 https://arxiv.org/pdf/1908.01350.pdf

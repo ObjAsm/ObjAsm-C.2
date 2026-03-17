@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Author:     G. Friedrich
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -209,7 +209,7 @@ UI_COLLECTIONCHANGE_REMOVE        equ 1
 UI_COLLECTIONCHANGE_REPLACE       equ 2
 UI_COLLECTIONCHANGE_RESET         equ 3
 
-UI_COLLECTION_INVALIDINDEX	      equ 0FFFFFFFFh
+UI_COLLECTION_INVALIDINDEX        equ 0FFFFFFFFh
 
 COM_INTERFACE_BEG IUICollectionChangedEvent, IUnknown, <6502AE91-A14D-44B5-BBD0-62AACC581D52>
   COM_MTD_STD   OnChanged,                :DWORD, :DWORD, :POINTER, :DWORD, :POINTER

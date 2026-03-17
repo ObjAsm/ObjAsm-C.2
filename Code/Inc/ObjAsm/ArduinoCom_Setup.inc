@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Arduino Communication demonstration program.
 ; Notes:      Version C.1.0, October 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

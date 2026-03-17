@@ -1,10 +1,22 @@
 ; ==================================================================================================
 ; Title:      Demo07_Main.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 7.
-; Notes:      Version C.1.0, August 2021
-;               - First release.
+; Purpose:    Main implementation module for ObjAsm demonstration program Demo07.
+; Version:    See Demo07.asm
+;
+; Description:
+;   This module defines the core objects and behavior used in Demo07, an ObjAsm MDI application
+;   showcasing advanced charting, window management, and dynamic GUI control. 
+;   This file contains:
+;       - Application object implementing the MDI frame logic
+;       - ClientWnd object (MDI client window)
+;       - ChildWnd object (MDI child window) integrating the ChartWnd control
+;       - Toolbar, Statusbar, Rebar, menu, and icon configuration
+;       - Event handlers for creation, sizing, painting, mouse wheel, and chart operations
+;
+;   Demo07 expands on earlier examples by embedding chart controls, demonstrating multi-axis
+;   scaling, dynamic series creation, and live updates synchronized with the MDI interface.
+;
 ; ==================================================================================================
 
 
@@ -34,19 +46,19 @@ ToolbarWindow DEF_TOOLBAR {IDC_TOOLBARWINDOW, TB_STYLE, TBSTYLE_EX_MIXEDBUTTONS,
 AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
   DEF_STATUSBAR_PART {220, 100, 3, SBT_NOBORDERS, NULL}
   DEF_STATUSBAR_PART {120,  20, 1, SBT_SUNKEN,    NULL}
-  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ;Spring
+  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ; Spring
   DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN,    NULL}
 
 CloseEnumProc    proto :HWND, :LPARAM
 
-CStr szApplication,   "OAC_Application"                 ;Used by Startup and Shutdown
-CStr szChildWnd,      "OAC_ChildWnd"                    ;Used by Startup and Shutdown
+CStr szApplication,   "OAC_Application"                 ; Used by Startup and Shutdown
+CStr szChildWnd,      "OAC_ChildWnd"                    ; Used by Startup and Shutdown
 
 ; --------------------------------------------------------------------------------------------------
 
-Object ChildWnd, , MdiChildWnd                          ;MDI child window.
+Object ChildWnd, , MdiChildWnd                          ; MDI child window.
   RedefineMethod    Done
-  RedefineMethod    Init,               POINTER, PSTRING  ;-> Owner, -> Caption
+  RedefineMethod    Init,               POINTER, PSTRING  ; -> Owner, -> Caption
   RedefineMethod    OnGetMinMaxInfo,    WPARAM, LPARAM
   RedefineMethod    OnSize,             WPARAM, LPARAM
   StaticMethod      Startup
@@ -59,24 +71,24 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object ClientWnd, ClientWndID, MdiClientWnd           ;MDI client window.
+Object ClientWnd, ClientWndID, MdiClientWnd             ; MDI client window.
   RedefineMethod    Done
-  RedefineMethod    Init,               POINTER         ;-> Owner
+  RedefineMethod    Init,               POINTER         ; -> Owner
 
   VirtualEvent      OnPaint,            WM_PAINT
 
-  DefineVariable    hBGBrush,           HBRUSH,     0   ;Background brush
+  DefineVariable    hBGBrush,           HBRUSH,     0   ; Background brush
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object Application, , MdiApp                            ;MDI application = Frame window.
+Object Application, , MdiApp                            ; MDI application = Frame window.
   RedefineMethod    Done
-  VirtualMethod     EnableActions,      DWORD           ;TRUE/FALSE
+  VirtualMethod     EnableActions,      DWORD           ; TRUE/FALSE
   RedefineMethod    Init
   RedefineMethod    OnSize,             WPARAM, LPARAM
-  StaticMethod      StatusbarHelp,      POINTER         ;-> Help string
+  StaticMethod      StatusbarHelp,      POINTER         ; -> Help string
   StaticMethod      Startup
 
 ;  VirtualEvent      OnClose,            WM_CLOSE, WM_QUERYENDSESSION
@@ -108,7 +120,7 @@ ObjectEnd
 .code
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
-; Purpose:    Finalize the SDI application object.
+; Purpose:    Finalizes the MDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -126,7 +138,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
-; Purpose:    Enable or disable MDI child actions.
+; Purpose:    Enables or disables MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
@@ -143,7 +155,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Init
-; Purpose:   Initialize the SDI application object.
+; Purpose:   Initializes the MDI application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
@@ -153,11 +165,11 @@ Method Application.Init, uses xbx xdi xsi
   SetObject xsi
   ACall xsi.Init
 
-  ;Startup
+  ; Startup
   mov [xsi].pCommandLine, $invoke(GetCommandLine)
-  invoke LoadCommonControls, ICC_COOL_CLASSES or ICC_BAR_CLASSES  ;Rebar + Statusbar
+  invoke LoadCommonControls, ICC_COOL_CLASSES or ICC_BAR_CLASSES  ; Rebar + Statusbar
 
-  ;Load application & menu icons
+  ; Load application and menu icons
   mov xbx, $New(MaskedImageList)
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 1
   mov [xsi].pIconImageList, xbx
@@ -176,13 +188,13 @@ Method Application.Init, uses xbx xdi xsi
 
   mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("MDIACCEL"))
 
-  ;Obtain handles for possible menus and submenus
+  ; Obtain handles for possible menus and submenus
   mov [xsi].hMenuInit, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUINIT"))
 
   mov [xsi].hMenuChild, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUCHILD"))
   mov [xsi].hMenuChildWnd, $invoke(GetSubMenu, [xsi].hMenuChild, 1)
 
-  ;Create the MDI Frame window
+  ; Create the MDI Frame window
   mov dWndWidth, 600
   mov dWndHeight, 450
   mov dWndPosX, $32($invoke(CenterForm, dWndWidth, $32($invoke(GetSystemMetrics, SM_CXSCREEN))))
@@ -192,11 +204,11 @@ Method Application.Init, uses xbx xdi xsi
          offset szApplication, offset szAppTitle, WS_OVERLAPPEDWINDOW or WS_CLIPCHILDREN, \
          dWndPosX, dWndPosY, dWndWidth, dWndHeight, 0, [xsi].hMenuInit, hInstance, pSelf
   .if xax != 0
-    ;Create Client window (subclass MDICLIENT)
+    ; Create Client window (subclass MDICLIENT)
     mov [xsi].pClientWnd, $New(ClientWnd)
     OCall xax::ClientWnd.Init, xsi
 
-    ;Create XMenu
+    ; Create XMenu
     mov [xsi].pXMenu, $New(XMenu)
     mov xdi, [xsi].pClientWnd
     OCall [xsi].pXMenu::XMenu.Init, xsi, [xsi].hWnd, [xdi].$Obj(ClientWnd).hWnd, \
@@ -220,7 +232,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov dMsg, eax
   mov xbx, [xsi].pClientWnd
-  .if [xbx].$Obj(ClientWnd).dChildCount == 0            ;Ask only if a child window is open
+  .if [xbx].$Obj(ClientWnd).dChildCount == 0            ; Ask only if a child window is open
     invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(ClientWnd).hWnd, dMsg, wParam, lParam
   .else
     invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
@@ -247,7 +259,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
-  .if ax == IDM_FILE_NEW                                ;Create a child window
+  .if ax == IDM_FILE_NEW                                ; Create a new child window
     inc [xsi].dChildNumber
     invoke MemClone, addr cBuffer, $OfsCStr("Child "), 7*sizeof CHR
     invoke dword2dec, addr cNumber, [xsi].dChildNumber
@@ -273,15 +285,15 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     invoke DestroyIcon, hIcon
     xor eax, eax
 
-  .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ;Close the active window
+  .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ; Close the active MDI child window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
     invoke SendMessage, hChildWnd, WM_CLOSE, 0, 0
 
-  .elseif ax == SC_RESTORE                              ;Restore the active window
+  .elseif ax == SC_RESTORE                              ; Restore the active MDI child window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIRESTORE, hChildWnd, 0
 
-  .elseif ax == SC_MINIMIZE                             ;Minimize the active window
+  .elseif ax == SC_MINIMIZE                             ; Minimize the active MDI child window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
     invoke ShowWindow, xax, SW_MINIMIZE
     xor eax, eax
@@ -289,7 +301,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_FILE_EXIT
     invoke SendMessage, [xsi].hWnd, WM_CLOSE, 0, 0
 
-  ;Messages for arranging windows
+  ; Messages for arranging windows
   .elseif ax == IDM_WINDOW_TILE_HOR
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDITILE, MDITILE_HORIZONTAL, 0
   .elseif ax == IDM_WINDOW_TILE_VER
@@ -298,12 +310,12 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDICASCADE, 0, 0
   .elseif ax == IDM_WINDOW_ARRANGE
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIICONARRANGE, 0, 0
-  .elseif ax == IDM_WINDOW_CLOSEALL                     ;Attempt to close all windows
+  .elseif ax == IDM_WINDOW_CLOSEALL                     ; Attempt to close all windows
     invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, addr CloseEnumProc, \
                              [xbx].$Obj(ClientWnd).hWnd
     xor eax, eax
 
-  ;Pass to active child
+  ; Pass to active child
   .else
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, xax, WM_COMMAND, wParam, lParam
@@ -315,7 +327,7 @@ MethodEnd
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
-; Return:     eax = Zero to continue creation of the window, otherwise -1 to abort.
+; Return:     eax = Zero to continue window creation, otherwise -1 to abort.
 
 Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
@@ -416,12 +428,12 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     .endif
   .endif
 
-  xor eax, eax                                          ;Return zero
+  xor eax, eax                                          ; Return zero
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
-; Purpose:    Close all open child windows.
+; Purpose:    Closes all open child windows.
 ; Arguments:  Arg1: Child window handle.
 ;             Arg2: Parameter passed to the enumeration procedure.
 ; Return:     eax = Exit code passed to PostQuitMessage.
@@ -431,13 +443,13 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
   .if xax == lParam
     invoke SendMessage, hWnd, WM_CLOSE, 0, 0
   .endif
-  mov eax, TRUE                                         ;TRUE => next window
+  mov eax, TRUE                                         ; TRUE => next window
   ret
 CloseEnumProc endp
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
-; Purpose:    Display a help string on panel 0 of the statusbar.
+; Purpose:    Displays a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
 ; Return:     Nothing.
 
@@ -448,7 +460,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
-; Purpose:    Register the object with the OS.
+; Purpose:    Registers the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -479,7 +491,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Done
-; Purpose:    Finalize the ClientWnd object.
+; Purpose:    Finalizes the ClientWnd object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -491,7 +503,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Init
-; Purpose:    Initialize the MdiClientWnd object.
+; Purpose:    Initializes the MdiClientWnd object.
 ; Arguments:  Arg1 -> Owner object.
 ; Return:     Nothing.
 
@@ -535,7 +547,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Done
-; Purpose:    Finalize the ChildWnd object.
+; Purpose:    Finalizes the ChildWnd object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -549,7 +561,7 @@ Method ChildWnd.Done, uses xbx xdi xsi
     OCall xbx::Application.EnableActions, FALSE
     invoke SendMessage, [xdi].$Obj(ClientWnd).hWnd, WM_MDISETMENU, \
                         [xbx].$Obj(Application).hMenuInit, NULL
-    invoke DrawMenuBar, [xbx].$Obj(Application).hWnd    ;Redraw the new menu bar
+    invoke DrawMenuBar, [xbx].$Obj(Application).hWnd    ; Redraw the new menu bar
   .endif
 
   OCall [xsi].Chart::ChartWnd.Done
@@ -558,14 +570,14 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Init
-; Purpose:    Initialize the ChildWnd object.
+; Purpose:    Initializes the ChildWnd object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> Title string.
 ; Return:     Nothing.
 
 Method ChildWnd.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING
   SetObject xsi
-  ACall xsi.Init, pOwner, NULL                          ;hWnd is set in WndProc
+  ACall xsi.Init, pOwner, NULL                          ; hWnd is set in WndProc
 
   mov xdi, pOwner
   inc [xdi].$Obj(ClientWnd).dChildCount
@@ -575,13 +587,13 @@ Method ChildWnd.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING
                           [xdi].$Obj(ClientWnd).hWnd, hInstance, pSelf
   mov xbx, [xdi].$Obj(ClientWnd).pOwner
   .if xax != NULL
-    ;Manage the main Menu
-    .if [xdi].$Obj(ClientWnd).dChildCount == 1          ;First child window ?
+    ; Manage the main Menu
+    .if [xdi].$Obj(ClientWnd).dChildCount == 1          ; First child window ?
       OCall xbx::Application.EnableActions, TRUE
       invoke SendMessage, [xdi].$Obj(ClientWnd).hWnd, WM_MDISETMENU, \
                           [xbx].$Obj(Application).hMenuChild, \
                           [xbx].$Obj(Application).hMenuChildWnd
-      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
+      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ; Redraw the new menu bar
     .endif
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
@@ -625,13 +637,13 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;  mov [xsi].Chart.Colors.Background,  $RGB(223,223,223)
 ;  mov [xsi].Chart.Colors.Scales,      $RGB(000,000,000)
 
-  ;Set paddings
+  ; Set paddings
   mov [xsi].Chart.Padding.left, 20
   mov [xsi].Chart.Padding.top, 20
   mov [xsi].Chart.Padding.right, 20
   mov [xsi].Chart.Padding.bottom, 20
 
-  ;Scale X axis
+  ; Scale X axis
   s2s [xsi].Chart.ScaleX.fSetupMax, $CFloat(1000.0), xax, xcx
   s2s [xsi].Chart.ScaleX.fSetupMin, $CFloat(0.0), xax, xcx
   s2s [xsi].Chart.ScaleX.fDataMax,  $CFloat(1000.0), xax, xcx
@@ -645,7 +657,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov [xsi].Chart.ScaleX.pDescription, $invoke(StrNew, $OfsCStr("Time"))
   mov [xsi].Chart.ScaleX.pUnit, $invoke(StrNew, $OfsCStr("sec."))
 
-  ;Scale Y1 axis
+  ; Scale Y1 axis
   s2s [xsi].Chart.ScaleY1.fSetupMax, $CFloat(1.5), xax, xcx
   s2s [xsi].Chart.ScaleY1.fSetupMin, $CFloat(-1.5), xax, xcx
   s2s [xsi].Chart.ScaleY1.fDataMax,  $CFloat(2.0), xax, xcx
@@ -661,7 +673,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   BitClr [xsi].Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
 
-  ;Scale Y2 axis
+  ; Scale Y2 axis
   s2s [xsi].Chart.ScaleY2.fSetupMax, $CFloat(6.0), xax, xcx
   s2s [xsi].Chart.ScaleY2.fSetupMin, $CFloat(-6.0), xax, xcx
   s2s [xsi].Chart.ScaleY2.fDataMax,  $CFloat(3.0), xax, xcx
@@ -677,7 +689,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   BitClr [xsi].Chart.ScaleY2.dFlags, CHT_SCALE_SHOW_MJR_GRID or CHT_SCALE_SHOW_MNR_GRID
 
-  ;Create first chart series 
+  ; Create first chart series 
   mov xdi, $New(ChartXYSeries)
   OCall xdi::ChartXYSeries.Init, addr [xsi].Chart.Data, DATAPOINTS
   mov [xdi].$Obj(ChartXYSeries).dDataFrom, 0 + 200
@@ -694,7 +706,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor ebx, ebx
   .while ebx < DATAPOINTS
     mov dDataBuff, ebx
-    OCall xdi::ChartXYSeries.ItemAt, 0, ebx             ;Return a pointer to a CHT_FLOAT (x-value)
+    OCall xdi::ChartXYSeries.ItemAt, 0, ebx             ; Return a pointer to a CHT_FLOAT (x-value)
     .if xax != NULL
       fild dDataBuff
       fstp CHT_FLOAT ptr [xax]
@@ -703,11 +715,11 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endw
 
   xor ebx, ebx
-  fld $CFloat(0.12566370614359)                         ;2*Pi/50
+  fld $CFloat(0.12566370614359)                         ; 2*Pi/50
   fldz
   fldz
   .while ebx < DATAPOINTS
-    OCall xdi::ChartXYSeries.ItemAt, 1, ebx             ;Return a pointer to a CHT_FLOAT (y-value)
+    OCall xdi::ChartXYSeries.ItemAt, 1, ebx             ; Return a pointer to a CHT_FLOAT (y-value)
     .if xax != NULL
       fsin
       fstp CHT_FLOAT ptr [xax]
@@ -719,7 +731,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   fUnload 3
 
 
-  ;Create second chart series 
+  ; Create second chart series 
   mov xdi, $New(ChartXYSeries)
   OCall xdi::ChartXYSeries.Init, addr [xsi].Chart.Data, DATAPOINTS/32
   mov [xdi].$Obj(ChartXYSeries).dDataFrom, 0
@@ -738,7 +750,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov ecx, ebx
     shl ecx, 5
     mov dDataBuff, ecx
-    OCall xdi::ChartXYSeries.ItemAt, 0, ebx             ;Return a pointer to a CHT_FLOAT (x-value)
+    OCall xdi::ChartXYSeries.ItemAt, 0, ebx             ; Return a pointer to a CHT_FLOAT (x-value)
     .if xax != NULL
       fild dDataBuff
       fstp CHT_FLOAT ptr [xax]
@@ -751,7 +763,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   fldz
   fldz
   .while ebx < DATAPOINTS/32
-    OCall xdi::ChartXYSeries.ItemAt, 1, ebx             ;Return a pointer to a CHT_FLOAT (y-value)
+    OCall xdi::ChartXYSeries.ItemAt, 1, ebx             ; Return a pointer to a CHT_FLOAT (y-value)
     .if xax != NULL
       fsqrt
       fstp CHT_FLOAT ptr [xax]
@@ -815,7 +827,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Startup
-; Purpose:    Register the object with the OS.
+; Purpose:    Registers the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -828,7 +840,7 @@ Method ChildWnd.Startup
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   mrm WC.hInstance, hInstance, xdx
-  mov WC.hbrBackground, 0                               ;No background drawing to avoid flickering
+  mov WC.hbrBackground, 0                               ; No background drawing to avoid flicker
   m2z WC.lpszMenuName
   c2m WC.lpszClassName, offset szChildWnd, xdx
   mov WC.hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP_CHILD"))

@@ -10,11 +10,11 @@
 ; SimpleInputDlg implementation
 ; ==================================================================================================
 
-IDD_DLG_SIMPLEINPUT							equ 5000
-IDC_STC_MESSAGE									equ 1001
-IDC_EDT_INPUT										equ 1002
-IDC_BTN_CANCEL									equ 2
-IDC_BTN_OK											equ 1
+IDD_DLG_SIMPLEINPUT              equ 5000
+IDC_STC_MESSAGE                  equ 1001
+IDC_EDT_INPUT                    equ 1002
+IDC_BTN_CANCEL                  equ 2
+IDC_BTN_OK                      equ 1
 
 .code
 ; --------------------------------------------------------------------------------------------------

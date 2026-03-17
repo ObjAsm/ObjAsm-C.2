@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of basic memory handling macros.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, June 2022
 ;               - UEFI support added.
 ; ==================================================================================================

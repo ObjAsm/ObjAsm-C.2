@@ -3,7 +3,7 @@
 ; Author:     AW @ http://masm32.com/board/index.php?topic=7406.0, G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, April 2020.
-;               - First release.
+;               - Initial release.
 ;               - Bitness neutral version.
 ; ==================================================================================================
 

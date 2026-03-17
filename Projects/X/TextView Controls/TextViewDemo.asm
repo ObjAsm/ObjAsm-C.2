@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm TextView Demo Application with Controls.
 ; Notes:      Version 1.0.0, April 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

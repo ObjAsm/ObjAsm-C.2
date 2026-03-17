@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2023
-;               - First release.
+;               - Initial release.
 ; Links:      https://learn.microsoft.com/en-us/windows/win32/api/compressapi/
 ; ==================================================================================================
 

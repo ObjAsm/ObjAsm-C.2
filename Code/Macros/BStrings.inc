@@ -2,48 +2,65 @@
 ; Title:      BStrings.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of BSTR string handling macros.
+; Purpose:    ObjAsm support for BSTR string handling macros.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
-; BSTR format as defined in the OLE 2.0 specification (MS ActiveX).
+
+; ==================================================================================================
+; BSTR FORMAT
+; ==================================================================================================
+;
+; BSTR format as defined in the OLE 2.0 specification (Microsoft ActiveX).
 ;
 ;          4 bytes      2 bytes per character             2 bytes
 ;       --------------------------------------------------------------------
-;  ... | Byte Lenght | UNICODE character array | Zero Termination Character | ...
+;  ... | Byte Length | UNICODE character array | Zero Termination Character | ...
 ;       --------------------------------------------------------------------
 ;                    ^
 ;                    BSTR points here!
-
-
-
-; ==================================================================================================
-; (($)C/($)T/($)D/($)J)BStr: Defines an BSTR string in (C) CONST, (T) SEG_TEXT, (D) _DATA or
-;                            (J) _TEXT segment, returning a reference to it, if the "$" prefix was
-;                            used.
-; $Ofs(C/T/D/J)BStr:         Same as ($C/$T/$D/$J)BStr, but returns the string offset.
 ;
-; Note: - Use ??StrSize (byte count including the ZTC) or
-;         ??StrLength (character count without the ZTC).
-;         Both values do not include the byte length header (DWORD).
-;       - The "Byte Lenght" prefix does NOT include the ZTC.
 ; ==================================================================================================
+
+
+
+; ==================================================================================================
+; BSTR DEFINITION MACROS
+; ==================================================================================================
+;
+; (($)C/($)T/($)D/($)J)BStr
+;     Defines a BSTR string in the (C) CONST, (T) SEG_TEXT, (D) _DATA, or
+;     (J) _TEXT segment, returning a reference to the string if the "$"
+;     prefix is used.
+;
+; $Ofs(C/T/D/J)BStr
+;     Same as ($C/$T/$D/$J)BStr, but returns the string offset.
+;
+; Notes:
+;   - Use ??StrSize   (byte size including the ZTC) or
+;     ??StrLength     (character length excluding the ZTC).
+;   - Both values do NOT include the byte length header (DWORD).
+;   - The "Byte Length" prefix does NOT include the ZTC.
+; ==================================================================================================
+
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      BString / ($)CBStr / ($)TBStr / ($)DBStr / ($)JBStr
-; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
+; Purpose:    Place a BSTR string in the CONST, SEG_TEXT, _DATA, or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
 ;             Arg2: Quoted text.
-; Return:     Nothing / Reference to the string.
-; Notes:      - Quotation marks can be used as usual. See example.
-;             - Partial input strings can be separated by commas.
+; Returns:    Nothing / Reference to the string.
+; Notes:      - Quotation marks may be used as usual. See example.
+;             - Partial input strings may be separated by commas.
 ;             - Break input lines with "\".
-;             - Empty input strings ("" or '') causes an error.
-;             - Numeric inputs in word range are possible.
+;             - Empty input strings ("" or '') cause an error.
+;             - Numeric inputs in the WORD range are allowed.
+;
 ; Example:    CBStr MyBStr, 'Note: "', "Director's cut", '"', 13, 10
-;             Resulting BStr:   Note: "Director's cut" + CRLF
+;             Resulting BSTR:   Note: "Director's cut" + CRLF
+; --------------------------------------------------------------------------------------------------
 
 BString macro StrName, QuotedText:vararg
   $$Count = 0
@@ -73,7 +90,7 @@ BString macro StrName, QuotedText:vararg
     endif
   endm
 
-% dd $$Count        ;;Set byte Count before the WIDE string is placed
+% dd $$Count        ;;Set byte count before the WIDE string is placed
 
   $$StrStart = $
   $$SrcLine textequ @CatStr(StrName, < dw >)
@@ -111,11 +128,18 @@ BString macro StrName, QuotedText:vararg
     ;;Initiate new $$SubText
     $$SrcLine textequ <dw >
   endm
+
   ;;Set zero termination mark
   dw 0
   ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC
-  ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character count without ZTC
+  ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character length without ZTC
 endm
+
+
+
+; ==================================================================================================
+; NAMED BSTR MACROS
+; ==================================================================================================
 
 CBStr macro TextReference:req, QuotedText:vararg
   externdef TextReference:WORD
@@ -149,6 +173,12 @@ JBStr macro TextReference, QuotedText:vararg
   BString <TextReference>, <QuotedText>
   Lbl:
 endm
+
+
+
+; ==================================================================================================
+; INLINE BSTR MACROS
+; ==================================================================================================
 
 $CBStr macro QuotedText:vararg
   local ??StrLocation
@@ -192,11 +222,14 @@ $JBStr macro QuotedText:vararg
   exitm <??StrLocation + 4>
 endm
 
+
+
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C/T/D/J)BStr
-; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
+; Purpose:    Place a BSTR string in the CONST, SEG_TEXT, _DATA, or _TEXT segment.
 ; Arguments:  Arg1: Quoted text.
-; Return:     String offset.
+; Returns:    String offset.
+; --------------------------------------------------------------------------------------------------
 
 $OfsCBStr macro QuotedText:vararg
   local ??StrLocation

@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,18 +171,18 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1070
-1=0,0,0,0,525
+2=0,0,0,0,0
+1=0,0,0,0,0
 6=0,0,1456,414,59484
-4=0,0,0,0,266
+4=0,0,0,0,1132
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,151
 9=0,0,0,0,80187
 10=0,0,0,0,8243
 5=0,0,0,0,4185
-3=0,0,0,0,250
-11=0,0,1783,588,1361
+3=0,0,0,0,0
+11=0,0,1783,588,0
 15=0,0,0,0,5891
 14=0,0,0,0,814
 13=0,0,0,0,7167
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="szAppClassName"
-2="szDemoApp02"
-3="APP_CLS_STYLE"
-4="CLSSTYLE"
-5="DemoApp02"
-6="MENU_APP"
-7="; Return:    "
-8=";            Arg2:"
-9="; Arguments: "
-10="; Purpose:   "
+1="//"
+2="szAppClassName"
+3="szDemoApp02"
+4="APP_CLS_STYLE"
+5="CLSSTYLE"
+6="DemoApp02"
+7="MENU_APP"
+8="; Return:    "
+9=";            Arg2:"
+10="; Arguments: "
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,4,21
+AutoLoad=
 [PTimer]
-PTimer=915210230
+PTimer=917577762
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

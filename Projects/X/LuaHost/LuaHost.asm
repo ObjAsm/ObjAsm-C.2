@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Lua Host Application.
 ; Notes:      Version C.1.0, November 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

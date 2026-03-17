@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Compressed Resources.
 ; Notes:      Version C.1.0, October 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

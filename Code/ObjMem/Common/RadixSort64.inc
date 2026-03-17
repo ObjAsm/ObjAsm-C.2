@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Helper macros for modular build of radix sort routines.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

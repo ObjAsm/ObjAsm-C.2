@@ -148,7 +148,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=24
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,12 +183,12 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,480,367,7700
-3=0,0,0,0,241
-1=480,488,480,244,765
-4=0,0,0,0,266
+2=0,0,480,367,131
+3=0,0,0,0,953
+1=480,488,480,244,2814
+4=0,0,0,0,1130
 1001=0,0,0,0,460
-5=0,0,0,0,18785
+5=0,0,0,0,10695
 6=0,0,0,0,50605
 7=0,0,0,0,1793
 8=0,0,0,0,4481
@@ -212,13 +212,13 @@ ProductVer4Range=0
 26=0,0,0,0,49324
 27=0,0,0,0,21715
 28=0,0,0,0,7264
-29=0,0,0,0,5884
+29=0,0,0,0,20829
 30=
 31=0,0,0,0,2138
 32=0,0,0,0,8400
 34=0,0,0,0,5472
 35=
-36=0,0,1783,588,2331
+36=0,0,1783,588,1810
 33=0,0,0,0,2807
 
 [BookMark]
@@ -238,22 +238,22 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="MaskedImageList"
-2="pIconImageList"
-3="OnSize"
-4="Statusbar"
-5="AppStatusbar"
-6="SB_STYLE"
-7="pStatusbar"
-8="szDemoApp03"
-9="DemoApp03"
-10="SBSTYLE"
+1="Demo10"
+2="//"
+3="hDbgDev"
+4="MaskedImageList"
+5="pIconImageList"
+6="OnSize"
+7="Statusbar"
+8="AppStatusbar"
+9="SB_STYLE"
+10="pStatusbar"
 [Collapse]
 1=
 2=
 4=
 6=,,
-5=,
+5=,,,
 7=
 8=
 3=
@@ -286,7 +286,7 @@ ProductVer4Range=0
 36=
 33=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=
 [RADebugBP]
 2=
 0=
@@ -317,6 +317,6 @@ AutoLoad=1,2
 35=
 36=
 [PTimer]
-PTimer=1050170407
+PTimer=1060503594
 [GroupExpand]
 GroupExpand=1,1,1,0,1,1,1,0

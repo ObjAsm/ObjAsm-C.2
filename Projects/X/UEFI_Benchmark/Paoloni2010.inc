@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    Include file for UEFI Benchmark Application.
 ; Version:    Version 1.0.0, May 2022
-;             - First release.
+;             - Initial release.
 ;
 ; Note:       Gabriele Paoloni, 2010. How to Benchmark Code Execution Times on Intel IA-32 and IA-64
 ;             Instruction Set Architectures. Retrieved May 26, 2022, from

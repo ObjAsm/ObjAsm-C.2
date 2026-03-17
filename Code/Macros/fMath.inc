@@ -6,7 +6,7 @@
 ; Link:       http://www.rism.com/Trig/Trig02.htm
 ; Note:       Based on the work of Eóin O'Callaghan [Eóin] and bitRAKE.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 ; Remark: The IEEE format uses a bias for the exponent - 7Fh for REAL4 format.

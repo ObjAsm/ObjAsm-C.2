@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm cluster to support chart base objects and their setup.
 ; Notes:      Version 1.0.0, August 2021
-;               - First release. This code is based on the legacy PlotXY object.
+;               - Initial release. This code is based on the legacy PlotXY object.
 ;                 The ChartWnd object has the ability to pan and zoom the plot area.
 ;                 It reacts in different ways according to the mouse position on different chart
 ;                 areas like the scales or plot.

@@ -4,7 +4,7 @@
 ; Version:  C.1.0
 ; Purpose:  ObjAsm library procedures and definitions.
 ; Notes:    Version 1.0.0, October 2017
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 
@@ -1025,6 +1025,7 @@ if TARGET_BITNESS eq 32
   XWORD2HEX_MAX_CHARS textequ <DWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <DWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
+  UXWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SDWORD2DEC_MAX_CHARS>
 
   uxMulEx textequ <uqqqMul>
@@ -1072,6 +1073,7 @@ elseif TARGET_BITNESS eq 64
   XWORD2HEX_MAX_CHARS textequ <QWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <QWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
+  UXWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
 
   uxMulEx textequ <uoooMul>

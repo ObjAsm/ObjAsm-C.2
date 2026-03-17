@@ -6,7 +6,7 @@
 ; Links:      http://en.wikipedia.org/wiki/Linked_list
 ; Notes:      No sanity checks are performed by this set of macros!
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -18,7 +18,7 @@
 ;             https://docs.microsoft.com/en-us/windows/win32/intl/surrogates-and-supplementary-characters
 ;
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

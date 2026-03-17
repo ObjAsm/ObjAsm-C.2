@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm UEFI Demo.
 ; Notes:      Version C.1.0, June 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

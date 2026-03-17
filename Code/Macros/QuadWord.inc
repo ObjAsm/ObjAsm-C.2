@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of QuadWord operations.
 ; Note:       See QuadWord definition in "Memory.inc" file.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

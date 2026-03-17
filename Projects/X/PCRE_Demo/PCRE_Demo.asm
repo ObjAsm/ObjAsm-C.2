@@ -4,7 +4,7 @@
 ; Version:    1.1.0
 ; Purpose:    ObjAsm RegEx Application.
 ; Notes:      Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version 1.1.0, December 2020
 ;               - Updated to PCRE 8.44.
 ; =================================================================================================

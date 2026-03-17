@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for MemoryStream object.
 ; Notes:      Version C.1.0, December 2020
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

@@ -3,7 +3,7 @@
 ; Author:     Kai Liebenau.
 ; Purpose:    ObjAsm support of ISupportErrorInfo interfaces.
 ; Version:    Version 1.0.0, September 2006
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

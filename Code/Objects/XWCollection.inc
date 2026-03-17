@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of XWCollection objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Can only be used with MakeObjects. There is no precompiled object.
 ; ==================================================================================================
 

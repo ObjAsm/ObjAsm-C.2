@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Simple translation of ParseA. Needs optimizations.
+;               - Initial release. Simple translation of ParseA. Needs optimizations.
 ; ==================================================================================================
 
 

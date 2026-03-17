@@ -4,7 +4,7 @@
 ; Version:    2.0.1
 ; Purpose:    ObjAsm Object Explorer Application.
 ; Notes:      Version 1.0.0, December 2017
-;               - First release.
+;               - Initial release.
 ;             Version 1.1.0, August 2020
 ;               - WebBrowser rendering replaced by TextView.
 ;             Version 2.0.0, October 2021

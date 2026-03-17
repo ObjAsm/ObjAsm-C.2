@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm support of Fireworks objects.
 ; Notes:      Version 1.0.0, July 2006
-;              - First release.
+;              - Initial release.
 ; ==================================================================================================
 
 

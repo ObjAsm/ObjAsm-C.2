@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    DOM-XML helper definitions.
 ; Notes:      Version C.1.0, November 2024
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

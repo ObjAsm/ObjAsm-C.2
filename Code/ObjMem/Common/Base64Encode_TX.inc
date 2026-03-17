@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, November 2023.
-;               - First release.
+;               - Initial release.
 ;               - Bitness neutral code.
 ;             Version C.1.1, October 2024
 ;               - Encode alphabet added.

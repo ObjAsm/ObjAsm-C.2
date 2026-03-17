@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of MS XML2 API.
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Generated using COMView (www.japheth.de)
+;               - Initial release. Generated using COMView (www.japheth.de)
 ;                 Manually translated and edited.
 ; ==================================================================================================
 

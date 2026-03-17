@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.1, March 2021
 ;               - .endc replaced by .endcatch and .endfy by .endfinally (HSE)
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

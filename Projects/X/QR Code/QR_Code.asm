@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm QR_Code.
 ; Notes:      Version C.1.0, November 2022
-;               - First release.
+;               - Initial release.
 ; Links:      https://github.com/nayuki/QR-Code-generator
 ; ==================================================================================================
 

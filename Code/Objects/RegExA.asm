@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.1 December 2020
 ;             - Updated to version 8.44.
 ;             Version C.1.0, November 2017
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

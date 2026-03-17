@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of HashMap objects.
 ; Notes:      Version C.1.0, January 2022
-;             - First release.
+;             - Initial release.
 ; Links:      - http://libhashish.sourceforge.net/
 ;             - http://isthe.com/chongo/tech/comp/fnv/       in particular the FNV-1a algorithm
 ; ==================================================================================================

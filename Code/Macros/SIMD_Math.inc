@@ -5,7 +5,7 @@
 ; Purpose:    SIMD (MMX, SSE, SEE2, SSE3, AVX, AVX2, etc.) math macros.
 ; Links:      http://softpixel.com/~cwright/programming/simd/
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

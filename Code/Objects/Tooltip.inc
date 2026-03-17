@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support Tooltip GDI control.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Make sure you always add the correct manifest in the resource section.
 ; ==================================================================================================
 

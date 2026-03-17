@@ -6,7 +6,7 @@
 ; Notes:      This object is destroyed by the OS when WM_DESTROY is received.
 ;             It should NOT be destroyed by the user!
 ;             Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

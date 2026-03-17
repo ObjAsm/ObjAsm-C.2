@@ -6,7 +6,7 @@
 ;               - Code based on this article:
 ;                 https://devblogs.microsoft.com/oldnewthing/20030911-00/?p=42553
 ;             Version C.1.0, October 2017
-;               - First release
+;               - Initial release
 ; ==================================================================================================
 
 

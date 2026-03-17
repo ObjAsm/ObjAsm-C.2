@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Based on E. Harris' code (http://donkey.visualassembler.com/).
+;               - Initial release. Based on E. Harris' code (http://donkey.visualassembler.com/).
 ; ==================================================================================================
 
 

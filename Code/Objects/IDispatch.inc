@@ -6,7 +6,7 @@
 ;             This interface exposes objects, methods, and properties to automation programming
 ;             tools and other applications.
 ; Notes:      Version C.1.0, October 2017
-;              - First release.
+;              - Initial release.
 ; ==================================================================================================
 
 

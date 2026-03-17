@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; Notes:      Version C.1.1, November 2023
 ;               - Code moved to DbgOutTextC_TX.inc.
 ; ==================================================================================================

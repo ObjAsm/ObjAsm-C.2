@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm support of IcmpManager objects.
 ; Notes:      Version C.2.0, December 2022
-;               - First release.
+;               - Initial release.
 ;               - Alternative implementation to IcmpSendEcho API (icmpapi.h).
 ; Links:      https://learn.microsoft.com/en-us/windows/win32/winsock/tcp-ip-raw-sockets-2
 ; ==================================================================================================

@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm COM helper macros.
 ; Links:      http://www.microsoft.com/com/default.mspx
 ; Notes:      Version C.1.0, October 2017
-;              - First release.
+;              - Initial release.
 ; ==================================================================================================
 
 

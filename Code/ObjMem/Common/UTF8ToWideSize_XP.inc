@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.1, February 2020
-;               - First release.
+;               - Initial release.
 ; Links:      https://en.wikipedia.org/wiki/UTF-8
 ;             https://en.wikipedia.org/wiki/UTF-16
 ; ==================================================================================================

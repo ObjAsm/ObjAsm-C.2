@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm support of Windows SDI application objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2020
 ;               - SdiApp.OnNCDestroy moved to WinApp.
 ;             Version C.1.2, September 2025

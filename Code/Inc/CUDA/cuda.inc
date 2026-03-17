@@ -60,145 +60,145 @@ ENDIF
 ; * CUDA API versioning support
 ; */
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR Defined(__DOXYGEN_ONLY__) OR Defined(CUDA_ENABLE_DEPRECATED)
-__CUDA_DEPRECATED	equ 1	
+__CUDA_DEPRECATED  equ 1  
 ELSEIF Defined(_MSC_VER)
-__CUDA_DEPRECATED	equ	< deprecated>
+__CUDA_DEPRECATED  equ  < deprecated>
 ELSEIF Defined(__GNUC__)
-__CUDA_DEPRECATED	equ	< >
+__CUDA_DEPRECATED  equ  < >
 ELSE
-__CUDA_DEPRECATED	equ	0
+__CUDA_DEPRECATED  equ  0
 ENDIF 
 
 IF Defined(CUDA_FORCE_API_VERSION)
 IF ( CUDA_FORCE_API_VERSION EQ 3010)
-__CUDA_API_VERSION	equ < 3010>
+__CUDA_API_VERSION  equ < 3010>
 ELSE
 .ERR <"Unsupported value of CUDA_FORCE_API_VERSION">
 ENDIF 
 ELSE
-__CUDA_API_VERSION	equ	< 10010>
+__CUDA_API_VERSION  equ  < 10010>
 ENDIF ;/* CUDA_FORCE_API_VERSION */ 
 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR Defined(CUDA_API_PER_THREAD_DEFAULT_STREAM)
-__CUDA_API_PER_THREAD_DEFAULT_STREAM	equ	
-__CUDA_API_PTDS	equ	< api>
-__CUDA_API_PTSZ	equ	< api>
+__CUDA_API_PER_THREAD_DEFAULT_STREAM  equ  
+__CUDA_API_PTDS  equ  < api>
+__CUDA_API_PTSZ  equ  < api>
 ELSE
-__CUDA_API_PTDS	equ	< api>
-__CUDA_API_PTSZ	equ	< api>
+__CUDA_API_PTDS  equ  < api>
+__CUDA_API_PTSZ  equ  < api>
 ENDIF 
 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 3020
-cuDeviceTotalMem	equ	< cuDeviceTotalMem_v2>
-cuCtxCreate	equ	< cuCtxCreate_v2>
-cuModuleGetGlobal	equ	< cuModuleGetGlobal_v2>
-cuMemGetInfo	equ	< cuMemGetInfo_v2>
-cuMemAlloc	equ	< cuMemAlloc_v2>
-cuMemAllocPitch	equ	< cuMemAllocPitch_v2>
-cuMemFree	equ	< cuMemFree_v2>
-cuMemGetAddressRange	equ	< cuMemGetAddressRange_v2>
-cuMemAllocHost	equ	< cuMemAllocHost_v2>
-cuMemHostGetDevicePointer	equ	< cuMemHostGetDevicePointer_v2>
-cuMemcpyHtoD	equ	< cuMemcpyHtoD_v2>
-cuMemcpyDtoH	equ	< cuMemcpyDtoH_v2>
-cuMemcpyDtoD	equ	< cuMemcpyDtoD_v2>
-cuMemcpyDtoA	equ	< cuMemcpyDtoA_v2>
-cuMemcpyAtoD	equ	< cuMemcpyAtoD_v2>
-cuMemcpyHtoA	equ	< cuMemcpyHtoA_v2>
-cuMemcpyAtoH	equ	< cuMemcpyAtoH_v2>
-cuMemcpyAtoA	equ	< cuMemcpyAtoA_v2>
-cuMemcpyHtoAAsync	equ	< cuMemcpyHtoAAsync_v2>
-cuMemcpyAtoHAsync	equ	< cuMemcpyAtoHAsync_v2>
-cuMemcpy2D	equ	< cuMemcpy2D_v2>
-cuMemcpy2DUnaligned	equ	< cuMemcpy2DUnaligned_v2>
-cuMemcpy3D	equ	< cuMemcpy3D_v2>
-cuMemcpyHtoDAsync	equ	< cuMemcpyHtoDAsync_v2>
-cuMemcpyDtoHAsync	equ	< cuMemcpyDtoHAsync_v2>
-cuMemcpyDtoDAsync	equ	< cuMemcpyDtoDAsync_v2>
-cuMemcpy2DAsync	equ	< cuMemcpy2DAsync_v2>
-cuMemcpy3DAsync	equ	< cuMemcpy3DAsync_v2>
-cuMemsetD8	equ	< cuMemsetD8_v2>
-cuMemsetD16	equ	< cuMemsetD16_v2>
-cuMemsetD32	equ	< cuMemsetD32_v2>
-cuMemsetD2D8	equ	< cuMemsetD2D8_v2>
-cuMemsetD2D16	equ	< cuMemsetD2D16_v2>
-cuMemsetD2D32	equ	< cuMemsetD2D32_v2>
-cuArrayCreate	equ	< cuArrayCreate_v2>
-cuArrayGetDescriptor	equ	< cuArrayGetDescriptor_v2>
-cuArray3DCreate	equ	< cuArray3DCreate_v2>
-cuArray3DGetDescriptor	equ	< cuArray3DGetDescriptor_v2>
-cuTexRefSetAddress	equ	< cuTexRefSetAddress_v2>
-cuTexRefGetAddress	equ	< cuTexRefGetAddress_v2>
-cuGraphicsResourceGetMappedPointer	equ	< cuGraphicsResourceGetMappedPointer_v2>
+cuDeviceTotalMem  equ  < cuDeviceTotalMem_v2>
+cuCtxCreate  equ  < cuCtxCreate_v2>
+cuModuleGetGlobal  equ  < cuModuleGetGlobal_v2>
+cuMemGetInfo  equ  < cuMemGetInfo_v2>
+cuMemAlloc  equ  < cuMemAlloc_v2>
+cuMemAllocPitch  equ  < cuMemAllocPitch_v2>
+cuMemFree  equ  < cuMemFree_v2>
+cuMemGetAddressRange  equ  < cuMemGetAddressRange_v2>
+cuMemAllocHost  equ  < cuMemAllocHost_v2>
+cuMemHostGetDevicePointer  equ  < cuMemHostGetDevicePointer_v2>
+cuMemcpyHtoD  equ  < cuMemcpyHtoD_v2>
+cuMemcpyDtoH  equ  < cuMemcpyDtoH_v2>
+cuMemcpyDtoD  equ  < cuMemcpyDtoD_v2>
+cuMemcpyDtoA  equ  < cuMemcpyDtoA_v2>
+cuMemcpyAtoD  equ  < cuMemcpyAtoD_v2>
+cuMemcpyHtoA  equ  < cuMemcpyHtoA_v2>
+cuMemcpyAtoH  equ  < cuMemcpyAtoH_v2>
+cuMemcpyAtoA  equ  < cuMemcpyAtoA_v2>
+cuMemcpyHtoAAsync  equ  < cuMemcpyHtoAAsync_v2>
+cuMemcpyAtoHAsync  equ  < cuMemcpyAtoHAsync_v2>
+cuMemcpy2D  equ  < cuMemcpy2D_v2>
+cuMemcpy2DUnaligned  equ  < cuMemcpy2DUnaligned_v2>
+cuMemcpy3D  equ  < cuMemcpy3D_v2>
+cuMemcpyHtoDAsync  equ  < cuMemcpyHtoDAsync_v2>
+cuMemcpyDtoHAsync  equ  < cuMemcpyDtoHAsync_v2>
+cuMemcpyDtoDAsync  equ  < cuMemcpyDtoDAsync_v2>
+cuMemcpy2DAsync  equ  < cuMemcpy2DAsync_v2>
+cuMemcpy3DAsync  equ  < cuMemcpy3DAsync_v2>
+cuMemsetD8  equ  < cuMemsetD8_v2>
+cuMemsetD16  equ  < cuMemsetD16_v2>
+cuMemsetD32  equ  < cuMemsetD32_v2>
+cuMemsetD2D8  equ  < cuMemsetD2D8_v2>
+cuMemsetD2D16  equ  < cuMemsetD2D16_v2>
+cuMemsetD2D32  equ  < cuMemsetD2D32_v2>
+cuArrayCreate  equ  < cuArrayCreate_v2>
+cuArrayGetDescriptor  equ  < cuArrayGetDescriptor_v2>
+cuArray3DCreate  equ  < cuArray3DCreate_v2>
+cuArray3DGetDescriptor  equ  < cuArray3DGetDescriptor_v2>
+cuTexRefSetAddress  equ  < cuTexRefSetAddress_v2>
+cuTexRefGetAddress  equ  < cuTexRefGetAddress_v2>
+cuGraphicsResourceGetMappedPointer  equ  < cuGraphicsResourceGetMappedPointer_v2>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 3020 */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 4000
-cuCtxDestroy	equ	< cuCtxDestroy_v2>
-cuCtxPopCurrent	equ	< cuCtxPopCurrent_v2>
-cuCtxPushCurrent	equ	< cuCtxPushCurrent_v2>
-cuStreamDestroy	equ	< cuStreamDestroy_v2>
-cuEventDestroy	equ	< cuEventDestroy_v2>
+cuCtxDestroy  equ  < cuCtxDestroy_v2>
+cuCtxPopCurrent  equ  < cuCtxPopCurrent_v2>
+cuCtxPushCurrent  equ  < cuCtxPushCurrent_v2>
+cuStreamDestroy  equ  < cuStreamDestroy_v2>
+cuEventDestroy  equ  < cuEventDestroy_v2>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 4000 */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 4010
-cuTexRefSetAddress2D	equ	< cuTexRefSetAddress2D_v3>
+cuTexRefSetAddress2D  equ  < cuTexRefSetAddress2D_v3>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 4010 */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 6050
-cuLinkCreate	equ	< cuLinkCreate_v2>
-cuLinkAddData	equ	< cuLinkAddData_v2>
-cuLinkAddFile	equ	< cuLinkAddFile_v2>
+cuLinkCreate  equ  < cuLinkCreate_v2>
+cuLinkAddData  equ  < cuLinkAddData_v2>
+cuLinkAddFile  equ  < cuLinkAddFile_v2>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 6050 */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 6050
-cuMemHostRegister	equ	< cuMemHostRegister_v2>
-cuGraphicsResourceSetMapFlags	equ	< cuGraphicsResourceSetMapFlags_v2>
+cuMemHostRegister  equ  < cuMemHostRegister_v2>
+cuGraphicsResourceSetMapFlags  equ  < cuGraphicsResourceSetMapFlags_v2>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 6050 */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION GE 10010
-cuStreamBeginCapture	equ	< cuStreamBeginCapture_v2>
+cuStreamBeginCapture  equ  < cuStreamBeginCapture_v2>
 ELSEIF Defined(__CUDA_API_PER_THREAD_DEFAULT_STREAM)
-cuStreamBeginCapture	equ	< cuStreamBeginCapture>
+cuStreamBeginCapture  equ  < cuStreamBeginCapture>
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL || __CUDA_API_VERSION >= 10010 */ 
 IF not Defined(__CUDA_API_VERSION_INTERNAL)
 IF Defined(__CUDA_API_VERSION) AND  __CUDA_API_VERSION GE 3020 AND  __CUDA_API_VERSION LT 4010
-cuTexRefSetAddress2D	equ	< cuTexRefSetAddress2D_v2>
+cuTexRefSetAddress2D  equ  < cuTexRefSetAddress2D_v2>
 ENDIF ;/* __CUDA_API_VERSION && __CUDA_API_VERSION >= 3020 && __CUDA_API_VERSION < 4010 */ 
 ENDIF ;/* __CUDA_API_VERSION_INTERNAL */ 
 IF Defined(__CUDA_API_PER_THREAD_DEFAULT_STREAM)
-cuMemcpy	equ	< cuMemcpy>
-cuMemcpyAsync	equ	< cuMemcpyAsync>
-cuMemcpyPeer	equ	< cuMemcpyPeer>
-cuMemcpyPeerAsync	equ	< cuMemcpyPeerAsync>
-cuMemcpy3DPeer	equ	< cuMemcpy3DPeer>
-cuMemcpy3DPeerAsync	equ	< cuMemcpy3DPeerAsync>
-cuMemPrefetchAsync	equ	< cuMemPrefetchAsync>
-cuMemsetD8Async	equ	< cuMemsetD8Async>
-cuMemsetD16Async	equ	< cuMemsetD16Async>
-cuMemsetD32Async	equ	< cuMemsetD32Async>
-cuMemsetD2D8Async	equ	< cuMemsetD2D8Async>
-cuMemsetD2D16Async	equ	< cuMemsetD2D16Async>
-cuMemsetD2D32Async	equ	< cuMemsetD2D32Async>
-cuStreamGetPriority	equ	< cuStreamGetPriority>
-cuStreamGetFlags	equ	< cuStreamGetFlags>
-cuStreamGetCtx	equ	< cuStreamGetCtx>
-cuStreamWaitEvent	equ	< cuStreamWaitEvent>
-cuStreamEndCapture	equ	< cuStreamEndCapture>
-cuStreamIsCapturing	equ	< cuStreamIsCapturing>
-cuStreamGetCaptureInfo	equ	< cuStreamGetCaptureInfo>
-cuStreamAddCallback	equ	< cuStreamAddCallback>
-cuStreamAttachMemAsync	equ	< cuStreamAttachMemAsync>
-cuStreamQuery	equ	< cuStreamQuery>
-cuStreamSynchronize	equ	< cuStreamSynchronize>
-cuEventRecord	equ	< cuEventRecord>
-cuLaunchKernel	equ	< cuLaunchKernel>
-cuLaunchHostFunc	equ	< cuLaunchHostFunc>
-cuGraphicsMapResources	equ	< cuGraphicsMapResources>
-cuGraphicsUnmapResources	equ	< cuGraphicsUnmapResources>
-cuStreamWriteValue32	equ	< cuStreamWriteValue32>
-cuStreamWaitValue32	equ	< cuStreamWaitValue32>
-cuStreamWriteValue64	equ	< cuStreamWriteValue64>
-cuStreamWaitValue64	equ	< cuStreamWaitValue64>
-cuStreamBatchMemOp	equ	< cuStreamBatchMemOp>
-cuLaunchCooperativeKernel	equ	< cuLaunchCooperativeKernel>
-cuSignalExternalSemaphoresAsync	equ	< cuSignalExternalSemaphoresAsync>
-cuWaitExternalSemaphoresAsync	equ	< cuWaitExternalSemaphoresAsync>
-cuGraphLaunch	equ	< cuGraphLaunch>
+cuMemcpy  equ  < cuMemcpy>
+cuMemcpyAsync  equ  < cuMemcpyAsync>
+cuMemcpyPeer  equ  < cuMemcpyPeer>
+cuMemcpyPeerAsync  equ  < cuMemcpyPeerAsync>
+cuMemcpy3DPeer  equ  < cuMemcpy3DPeer>
+cuMemcpy3DPeerAsync  equ  < cuMemcpy3DPeerAsync>
+cuMemPrefetchAsync  equ  < cuMemPrefetchAsync>
+cuMemsetD8Async  equ  < cuMemsetD8Async>
+cuMemsetD16Async  equ  < cuMemsetD16Async>
+cuMemsetD32Async  equ  < cuMemsetD32Async>
+cuMemsetD2D8Async  equ  < cuMemsetD2D8Async>
+cuMemsetD2D16Async  equ  < cuMemsetD2D16Async>
+cuMemsetD2D32Async  equ  < cuMemsetD2D32Async>
+cuStreamGetPriority  equ  < cuStreamGetPriority>
+cuStreamGetFlags  equ  < cuStreamGetFlags>
+cuStreamGetCtx  equ  < cuStreamGetCtx>
+cuStreamWaitEvent  equ  < cuStreamWaitEvent>
+cuStreamEndCapture  equ  < cuStreamEndCapture>
+cuStreamIsCapturing  equ  < cuStreamIsCapturing>
+cuStreamGetCaptureInfo  equ  < cuStreamGetCaptureInfo>
+cuStreamAddCallback  equ  < cuStreamAddCallback>
+cuStreamAttachMemAsync  equ  < cuStreamAttachMemAsync>
+cuStreamQuery  equ  < cuStreamQuery>
+cuStreamSynchronize  equ  < cuStreamSynchronize>
+cuEventRecord  equ  < cuEventRecord>
+cuLaunchKernel  equ  < cuLaunchKernel>
+cuLaunchHostFunc  equ  < cuLaunchHostFunc>
+cuGraphicsMapResources  equ  < cuGraphicsMapResources>
+cuGraphicsUnmapResources  equ  < cuGraphicsUnmapResources>
+cuStreamWriteValue32  equ  < cuStreamWriteValue32>
+cuStreamWaitValue32  equ  < cuStreamWaitValue32>
+cuStreamWriteValue64  equ  < cuStreamWriteValue64>
+cuStreamWaitValue64  equ  < cuStreamWaitValue64>
+cuStreamBatchMemOp  equ  < cuStreamBatchMemOp>
+cuLaunchCooperativeKernel  equ  < cuLaunchCooperativeKernel>
+cuSignalExternalSemaphoresAsync  equ  < cuSignalExternalSemaphoresAsync>
+cuWaitExternalSemaphoresAsync  equ  < cuWaitExternalSemaphoresAsync>
+cuGraphLaunch  equ  < cuGraphLaunch>
 ENDIF 
 ;/**
 ; * \file cuda.h
@@ -219,7 +219,7 @@ ENDIF
 ;/**
 ; * CUDA API version number
 ; */
-CUDA_VERSION	equ	< 10010>
+CUDA_VERSION  equ  < 10010>
 IFDEF __cplusplus
 ENDIF 
 ;/**
@@ -259,11 +259,11 @@ CUgraph TYPEDEF XWORD
 CUgraphNode TYPEDEF XWORD
 CUgraphExec TYPEDEF XWORD
 IFNDEF CU_UUID_HAS_BEEN_DEFINED
-CU_UUID_HAS_BEEN_DEFINED	equ	
+CU_UUID_HAS_BEEN_DEFINED  equ  
 
-CUuuid	STRUCT; DEFALIGNMASM
-	bytes BYTE 16 dup (?)
-CUuuid		ENDS
+CUuuid  STRUCT; DEFALIGNMASM
+  bytes BYTE 16 dup (?)
+CUuuid    ENDS
 
 
 ENDIF 
@@ -271,34 +271,34 @@ IF  __CUDA_API_VERSION GE 4010
 ;/**
 ; * CUDA IPC handle size
 ; */
-CU_IPC_HANDLE_SIZE	equ	< 64>
+CU_IPC_HANDLE_SIZE  equ  < 64>
 ;/**
 ; * CUDA IPC event handle
 ; */
 
-CUipcEventHandle	STRUCT DEFALIGNMASM
-	reserved BYTE CU_IPC_HANDLE_SIZE dup (?)
-CUipcEventHandle		ENDS
+CUipcEventHandle  STRUCT DEFALIGNMASM
+  reserved BYTE CU_IPC_HANDLE_SIZE dup (?)
+CUipcEventHandle    ENDS
 
 
 ;/**
 ; * CUDA IPC mem handle
 ; */
 
-CUipcMemHandle	STRUCT DEFALIGNMASM
-	reserved BYTE CU_IPC_HANDLE_SIZE dup (?)
-CUipcMemHandle		ENDS
+CUipcMemHandle  STRUCT DEFALIGNMASM
+  reserved BYTE CU_IPC_HANDLE_SIZE dup (?)
+CUipcMemHandle    ENDS
 
 
 ;/**
 ; * CUDA Ipc Mem Flags
 ; */
 
-CUipcMem_flags	TYPEDEF DWORD ;enum
+CUipcMem_flags  TYPEDEF DWORD ;enum
 
-;CUipcMem_flags	UNION DEFALIGNMASM
-	CU_IPC_MEM_LAZY_ENABLE_PEER_ACCESS	EQU <01h >
-;CUipcMem_flags		ENDS
+;CUipcMem_flags  UNION DEFALIGNMASM
+  CU_IPC_MEM_LAZY_ENABLE_PEER_ACCESS  EQU <01h >
+;CUipcMem_flags    ENDS
 
 
 ENDIF 
@@ -306,44 +306,44 @@ ENDIF
 ; * CUDA Mem Attach Flags
 ; */
 
-CUmemAttach_flags	TYPEDEF DWORD ;enum
+CUmemAttach_flags  TYPEDEF DWORD ;enum
 
-;CUmemAttach_flags	UNION DEFALIGNMASM
-	CU_MEM_ATTACH_GLOBAL	EQU <01h >	;/**< Memory can be accessed by any stream on any device */ 
-	CU_MEM_ATTACH_HOST	EQU <02h >	;/**< Memory cannot be accessed by any stream on any device */ 
-	CU_MEM_ATTACH_SINGLE	EQU <04h >
-;CUmemAttach_flags		ENDS
+;CUmemAttach_flags  UNION DEFALIGNMASM
+  CU_MEM_ATTACH_GLOBAL  EQU <01h >  ;/**< Memory can be accessed by any stream on any device */ 
+  CU_MEM_ATTACH_HOST  EQU <02h >  ;/**< Memory cannot be accessed by any stream on any device */ 
+  CU_MEM_ATTACH_SINGLE  EQU <04h >
+;CUmemAttach_flags    ENDS
 
 
 ;/**
 ; * Context creation flags
 ; */
 
-CUctx_flags	TYPEDEF DWORD ;enum
+CUctx_flags  TYPEDEF DWORD ;enum
 
-;CUctx_flags	UNION DEFALIGNMASM
-	CU_CTX_SCHED_AUTO	EQU <000h >	;/**< Automatic scheduling */ 
-	CU_CTX_SCHED_SPIN	EQU <001h >	;/**< Set spin as default scheduling */ 
-	CU_CTX_SCHED_YIELD	EQU <002h >	;/**< Set yield as default scheduling */ 
-	CU_CTX_SCHED_BLOCKING_SYNC	EQU <004h >	;/**< Set blocking synchronization as default scheduling */ 
-	CU_CTX_BLOCKING_SYNC	EQU <004h >
-	CU_CTX_SCHED_MASK	EQU <007h >
-	CU_CTX_MAP_HOST	EQU <008h >	;/**< Support mapped pinned allocations */ 
-	CU_CTX_LMEM_RESIZE_TO_MAX	EQU <010h >	;/**< Keep local memory allocation after launch */ 
-	CU_CTX_FLAGS_MASK	EQU <01fh >
-;CUctx_flags		ENDS
+;CUctx_flags  UNION DEFALIGNMASM
+  CU_CTX_SCHED_AUTO  EQU <000h >  ;/**< Automatic scheduling */ 
+  CU_CTX_SCHED_SPIN  EQU <001h >  ;/**< Set spin as default scheduling */ 
+  CU_CTX_SCHED_YIELD  EQU <002h >  ;/**< Set yield as default scheduling */ 
+  CU_CTX_SCHED_BLOCKING_SYNC  EQU <004h >  ;/**< Set blocking synchronization as default scheduling */ 
+  CU_CTX_BLOCKING_SYNC  EQU <004h >
+  CU_CTX_SCHED_MASK  EQU <007h >
+  CU_CTX_MAP_HOST  EQU <008h >  ;/**< Support mapped pinned allocations */ 
+  CU_CTX_LMEM_RESIZE_TO_MAX  EQU <010h >  ;/**< Keep local memory allocation after launch */ 
+  CU_CTX_FLAGS_MASK  EQU <01fh >
+;CUctx_flags    ENDS
 
 
 ;/**
 ; * Stream creation flags
 ; */
 
-CUstream_flags	TYPEDEF DWORD ;enum
+CUstream_flags  TYPEDEF DWORD ;enum
 
-;CUstream_flags	UNION DEFALIGNMASM
-	CU_STREAM_DEFAULT	EQU <00h >	;/**< Default stream flag */ 
-	CU_STREAM_NON_BLOCKING	EQU <01h >
-;CUstream_flags		ENDS
+;CUstream_flags  UNION DEFALIGNMASM
+  CU_STREAM_DEFAULT  EQU <00h >  ;/**< Default stream flag */ 
+  CU_STREAM_NON_BLOCKING  EQU <01h >
+;CUstream_flags    ENDS
 
 
 ;/**
@@ -354,7 +354,7 @@ CUstream_flags	TYPEDEF DWORD ;enum
 ; *
 ; * See details of the \link_sync_behavior
 ; */
-CU_STREAM_LEGACY	equ	<  01h>
+CU_STREAM_LEGACY  equ  <  01h>
 ;/**
 ; * Per-thread stream handle
 ; *
@@ -363,19 +363,19 @@ CU_STREAM_LEGACY	equ	<  01h>
 ; *
 ; * See details of the \link_sync_behavior
 ; */
-CU_STREAM_PER_THREAD	equ	<  02h>
+CU_STREAM_PER_THREAD  equ  <  02h>
 ;/**
 ; * Event creation flags
 ; */
 
-CUevent_flags	TYPEDEF DWORD ;enum
+CUevent_flags  TYPEDEF DWORD ;enum
 
-;CUevent_flags	UNION DEFALIGNMASM
-	CU_EVENT_DEFAULT	EQU <00h >	;/**< Default event flag */ 
-	CU_EVENT_BLOCKING_SYNC	EQU <01h >	;/**< Event uses blocking synchronization */ 
-	CU_EVENT_DISABLE_TIMING	EQU <02h >	;/**< Event will not record timing data */ 
-	CU_EVENT_INTERPROCESS	EQU <04h >
-;CUevent_flags		ENDS
+;CUevent_flags  UNION DEFALIGNMASM
+  CU_EVENT_DEFAULT  EQU <00h >  ;/**< Default event flag */ 
+  CU_EVENT_BLOCKING_SYNC  EQU <01h >  ;/**< Event uses blocking synchronization */ 
+  CU_EVENT_DISABLE_TIMING  EQU <02h >  ;/**< Event will not record timing data */ 
+  CU_EVENT_INTERPROCESS  EQU <04h >
+;CUevent_flags    ENDS
 
 
 IF  __CUDA_API_VERSION GE 8000
@@ -383,76 +383,76 @@ IF  __CUDA_API_VERSION GE 8000
 ; * Flags for ::cuStreamWaitValue32 and ::cuStreamWaitValue64
 ; */
 
-CUstreamWaitValue_flags	TYPEDEF DWORD ;enum
+CUstreamWaitValue_flags  TYPEDEF DWORD ;enum
 
-;CUstreamWaitValue_flags	UNION DEFALIGNMASM
-	CU_STREAM_WAIT_VALUE_GEQ	EQU <00h >
-	CU_STREAM_WAIT_VALUE_EQ	EQU <01h >	;/**< Wait until *addr == value. */ 
-	CU_STREAM_WAIT_VALUE_AND	EQU <02h >	;/**< Wait until (*addr & value) != 0. */ 
-	CU_STREAM_WAIT_VALUE_NOR	EQU <03h >
-	CU_STREAM_WAIT_VALUE_FLUSH	EQU <1 	SHL 30 >
-;CUstreamWaitValue_flags		ENDS
+;CUstreamWaitValue_flags  UNION DEFALIGNMASM
+  CU_STREAM_WAIT_VALUE_GEQ  EQU <00h >
+  CU_STREAM_WAIT_VALUE_EQ  EQU <01h >  ;/**< Wait until *addr == value. */ 
+  CU_STREAM_WAIT_VALUE_AND  EQU <02h >  ;/**< Wait until (*addr & value) != 0. */ 
+  CU_STREAM_WAIT_VALUE_NOR  EQU <03h >
+  CU_STREAM_WAIT_VALUE_FLUSH  EQU <1   SHL 30 >
+;CUstreamWaitValue_flags    ENDS
 
 
 ;/**
 ; * Flags for ::cuStreamWriteValue32
 ; */
 
-CUstreamWriteValue_flags	TYPEDEF DWORD ;enum
+CUstreamWriteValue_flags  TYPEDEF DWORD ;enum
 
-;CUstreamWriteValue_flags	UNION DEFALIGNMASM
-	CU_STREAM_WRITE_VALUE_DEFAULT	EQU <00h >	;/**< Default behavior */ 
-	CU_STREAM_WRITE_VALUE_NO_MEMORY_BARRIER	EQU <01h >
-;CUstreamWriteValue_flags		ENDS
+;CUstreamWriteValue_flags  UNION DEFALIGNMASM
+  CU_STREAM_WRITE_VALUE_DEFAULT  EQU <00h >  ;/**< Default behavior */ 
+  CU_STREAM_WRITE_VALUE_NO_MEMORY_BARRIER  EQU <01h >
+;CUstreamWriteValue_flags    ENDS
 
 
 ;/**
 ; * Operations for ::cuStreamBatchMemOp
 ; */
 
-CUstreamBatchMemOpType	TYPEDEF DWORD ;enum
+CUstreamBatchMemOpType  TYPEDEF DWORD ;enum
 
-;CUstreamBatchMemOpType	UNION DEFALIGNMASM
-	CU_STREAM_MEM_OP_WAIT_VALUE_32	EQU <1 >	;/**< Represents a ::cuStreamWaitValue32 operation */ 
-	CU_STREAM_MEM_OP_WRITE_VALUE_32	EQU <2 >	;/**< Represents a ::cuStreamWriteValue32 operation */ 
-	CU_STREAM_MEM_OP_WAIT_VALUE_64	EQU <4 >	;/**< Represents a ::cuStreamWaitValue64 operation */ 
-	CU_STREAM_MEM_OP_WRITE_VALUE_64	EQU <5 >	;/**< Represents a ::cuStreamWriteValue64 operation */ 
-	CU_STREAM_MEM_OP_FLUSH_REMOTE_WRITES	EQU <3 >
-;CUstreamBatchMemOpType		ENDS
+;CUstreamBatchMemOpType  UNION DEFALIGNMASM
+  CU_STREAM_MEM_OP_WAIT_VALUE_32  EQU <1 >  ;/**< Represents a ::cuStreamWaitValue32 operation */ 
+  CU_STREAM_MEM_OP_WRITE_VALUE_32  EQU <2 >  ;/**< Represents a ::cuStreamWriteValue32 operation */ 
+  CU_STREAM_MEM_OP_WAIT_VALUE_64  EQU <4 >  ;/**< Represents a ::cuStreamWaitValue64 operation */ 
+  CU_STREAM_MEM_OP_WRITE_VALUE_64  EQU <5 >  ;/**< Represents a ::cuStreamWriteValue64 operation */ 
+  CU_STREAM_MEM_OP_FLUSH_REMOTE_WRITES  EQU <3 >
+;CUstreamBatchMemOpType    ENDS
 
 
 ;/**
 ; * Per-operation parameters for ::cuStreamBatchMemOp
 ; */
 
-CUstreamBatchMemOpParams	UNION DEFALIGNMASM
-	operation CUstreamBatchMemOpType ?
-	STRUCT	waitValue
-	operation CUstreamBatchMemOpType ?
-	address XWORD ?
-	union
-	value DWORD ?
-	value64 QWORD ?
-	ENDS
-	flags DWORD ?
-	aliasA XWORD ? ;/**< For driver internal use. Initial value is unimportant. */ 
-	ENDS
-	STRUCT	writeValue
-	operation CUstreamBatchMemOpType ?
-	address XWORD ?
-	union
-	value DWORD ?
-	value64 QWORD ?
-	ENDS
-	flags DWORD ?
-	aliasA XWORD ? ;/**< For driver internal use. Initial value is unimportant. */ 
-	ENDS
-	STRUCT	flushRemoteWrites
-	operation CUstreamBatchMemOpType ?
-	flags DWORD ?
-	ENDS
-	pad QWORD 6 dup (?)
-CUstreamBatchMemOpParams		ENDS
+CUstreamBatchMemOpParams  UNION DEFALIGNMASM
+  operation CUstreamBatchMemOpType ?
+  STRUCT  waitValue
+  operation CUstreamBatchMemOpType ?
+  address XWORD ?
+  union
+  value DWORD ?
+  value64 QWORD ?
+  ENDS
+  flags DWORD ?
+  aliasA XWORD ? ;/**< For driver internal use. Initial value is unimportant. */ 
+  ENDS
+  STRUCT  writeValue
+  operation CUstreamBatchMemOpType ?
+  address XWORD ?
+  union
+  value DWORD ?
+  value64 QWORD ?
+  ENDS
+  flags DWORD ?
+  aliasA XWORD ? ;/**< For driver internal use. Initial value is unimportant. */ 
+  ENDS
+  STRUCT  flushRemoteWrites
+  operation CUstreamBatchMemOpType ?
+  flags DWORD ?
+  ENDS
+  pad QWORD 6 dup (?)
+CUstreamBatchMemOpParams    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 8000 */ 
@@ -460,421 +460,421 @@ ENDIF ;/* __CUDA_API_VERSION >= 8000 */
 ; * Occupancy calculator flag
 ; */
 
-CUoccupancy_flags	TYPEDEF DWORD ;enum
+CUoccupancy_flags  TYPEDEF DWORD ;enum
 
-;CUoccupancy_flags	UNION DEFALIGNMASM
-	CU_OCCUPANCY_DEFAULT	EQU <00h >	;/**< Default behavior */ 
-	CU_OCCUPANCY_DISABLE_CACHING_OVERRIDE	EQU <01h >
-;CUoccupancy_flags		ENDS
+;CUoccupancy_flags  UNION DEFALIGNMASM
+  CU_OCCUPANCY_DEFAULT  EQU <00h >  ;/**< Default behavior */ 
+  CU_OCCUPANCY_DISABLE_CACHING_OVERRIDE  EQU <01h >
+;CUoccupancy_flags    ENDS
 
 
 ;/**
 ; * Array formats
 ; */
 
-CUarray_format	TYPEDEF DWORD ;enum
+CUarray_format  TYPEDEF DWORD ;enum
 
-;CUarray_format	UNION DEFALIGNMASM
-	CU_AD_FORMAT_UNSIGNED_INT8	EQU <001h >	;/**< Unsigned 8-bit integers */ 
-	CU_AD_FORMAT_UNSIGNED_INT16	EQU <002h >	;/**< Unsigned 16-bit integers */ 
-	CU_AD_FORMAT_UNSIGNED_INT32	EQU <003h >	;/**< Unsigned 32-bit integers */ 
-	CU_AD_FORMAT_SIGNED_INT8	EQU <008h >	;/**< Signed 8-bit integers */ 
-	CU_AD_FORMAT_SIGNED_INT16	EQU <009h >	;/**< Signed 16-bit integers */ 
-	CU_AD_FORMAT_SIGNED_INT32	EQU <00ah >	;/**< Signed 32-bit integers */ 
-	CU_AD_FORMAT_HALF	EQU <010h >	;/**< 16-bit floating point */ 
-	CU_AD_FORMAT_FLOAT	EQU <020h >
-;CUarray_format		ENDS
+;CUarray_format  UNION DEFALIGNMASM
+  CU_AD_FORMAT_UNSIGNED_INT8  EQU <001h >  ;/**< Unsigned 8-bit integers */ 
+  CU_AD_FORMAT_UNSIGNED_INT16  EQU <002h >  ;/**< Unsigned 16-bit integers */ 
+  CU_AD_FORMAT_UNSIGNED_INT32  EQU <003h >  ;/**< Unsigned 32-bit integers */ 
+  CU_AD_FORMAT_SIGNED_INT8  EQU <008h >  ;/**< Signed 8-bit integers */ 
+  CU_AD_FORMAT_SIGNED_INT16  EQU <009h >  ;/**< Signed 16-bit integers */ 
+  CU_AD_FORMAT_SIGNED_INT32  EQU <00ah >  ;/**< Signed 32-bit integers */ 
+  CU_AD_FORMAT_HALF  EQU <010h >  ;/**< 16-bit floating point */ 
+  CU_AD_FORMAT_FLOAT  EQU <020h >
+;CUarray_format    ENDS
 
 
 ;/**
 ; * Texture reference addressing modes
 ; */
 
-CUaddress_mode	TYPEDEF DWORD ;enum
+CUaddress_mode  TYPEDEF DWORD ;enum
 
-;CUaddress_mode	UNION DEFALIGNMASM
-	CU_TR_ADDRESS_MODE_WRAP	EQU <0 >	;/**< Wrapping address mode */ 
-	CU_TR_ADDRESS_MODE_CLAMP	EQU <1 >	;/**< Clamp to edge address mode */ 
-	CU_TR_ADDRESS_MODE_MIRROR	EQU <2 >	;/**< Mirror address mode */ 
-	CU_TR_ADDRESS_MODE_BORDER	EQU <3 >
-;CUaddress_mode		ENDS
+;CUaddress_mode  UNION DEFALIGNMASM
+  CU_TR_ADDRESS_MODE_WRAP  EQU <0 >  ;/**< Wrapping address mode */ 
+  CU_TR_ADDRESS_MODE_CLAMP  EQU <1 >  ;/**< Clamp to edge address mode */ 
+  CU_TR_ADDRESS_MODE_MIRROR  EQU <2 >  ;/**< Mirror address mode */ 
+  CU_TR_ADDRESS_MODE_BORDER  EQU <3 >
+;CUaddress_mode    ENDS
 
 
 ;/**
 ; * Texture reference filtering modes
 ; */
 
-CUfilter_mode	TYPEDEF DWORD ;enum
+CUfilter_mode  TYPEDEF DWORD ;enum
 
-;CUfilter_mode	UNION DEFALIGNMASM
-	CU_TR_FILTER_MODE_POINT	EQU <0 >	;/**< Point filter mode */ 
-	CU_TR_FILTER_MODE_LINEAR	EQU <1 >
-;CUfilter_mode		ENDS
+;CUfilter_mode  UNION DEFALIGNMASM
+  CU_TR_FILTER_MODE_POINT  EQU <0 >  ;/**< Point filter mode */ 
+  CU_TR_FILTER_MODE_LINEAR  EQU <1 >
+;CUfilter_mode    ENDS
 
 
 ;/**
 ; * Device properties
 ; */
 
-CUdevice_attribute	TYPEDEF DWORD ;enum
+CUdevice_attribute  TYPEDEF DWORD ;enum
 
-;CUdevice_attribute	UNION DEFALIGNMASM
-	CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK	EQU <1 >	;/**< Maximum number of threads per block */ 
-	CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X	EQU <2 >	;/**< Maximum block dimension X */ 
-	CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y	EQU <3 >	;/**< Maximum block dimension Y */ 
-	CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z	EQU <4 >	;/**< Maximum block dimension Z */ 
-	CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X	EQU <5 >	;/**< Maximum grid dimension X */ 
-	CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y	EQU <6 >	;/**< Maximum grid dimension Y */ 
-	CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z	EQU <7 >	;/**< Maximum grid dimension Z */ 
-	CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK	EQU <8 >	;/**< Maximum shared memory available per block in bytes */ 
-	CU_DEVICE_ATTRIBUTE_SHARED_MEMORY_PER_BLOCK	EQU <8 >	;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK */ 
-	CU_DEVICE_ATTRIBUTE_TOTAL_CONSTANT_MEMORY	EQU <9 >	;/**< Memory available on device for __constant__ variables in a CUDA C kernel in bytes */ 
-	CU_DEVICE_ATTRIBUTE_WARP_SIZE	EQU <10 >	;/**< Warp size in threads */ 
-	CU_DEVICE_ATTRIBUTE_MAX_PITCH	EQU <11 >	;/**< Maximum pitch in bytes allowed by memory copies */ 
-	CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK	EQU <12 >	;/**< Maximum number of 32-bit registers available per block */ 
-	CU_DEVICE_ATTRIBUTE_REGISTERS_PER_BLOCK	EQU <12 >	;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK */ 
-	CU_DEVICE_ATTRIBUTE_CLOCK_RATE	EQU <13 >	;/**< Typical clock frequency in kilohertz */ 
-	CU_DEVICE_ATTRIBUTE_TEXTURE_ALIGNMENT	EQU <14 >	;/**< Alignment requirement for textures */ 
-	CU_DEVICE_ATTRIBUTE_GPU_OVERLAP	EQU <15 >	;/**< Device can possibly copy memory and execute a kernel concurrently. Deprecated. Use instead CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT. */ 
-	CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT	EQU <16 >	;/**< Number of multiprocessors on device */ 
-	CU_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT	EQU <17 >	;/**< Specifies whether there is a run time limit on kernels */ 
-	CU_DEVICE_ATTRIBUTE_INTEGRATED	EQU <18 >	;/**< Device is integrated with host memory */ 
-	CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY	EQU <19 >	;/**< Device can map host memory into CUDA address space */ 
-	CU_DEVICE_ATTRIBUTE_COMPUTE_MODE	EQU <20 >	;/**< Compute mode (See ::CUcomputemode for details) */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH	EQU <21 >	;/**< Maximum 1D texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH	EQU <22 >	;/**< Maximum 2D texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT	EQU <23 >	;/**< Maximum 2D texture height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH	EQU <24 >	;/**< Maximum 3D texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT	EQU <25 >	;/**< Maximum 3D texture height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH	EQU <26 >	;/**< Maximum 3D texture depth */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH	EQU <27 >	;/**< Maximum 2D layered texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT	EQU <28 >	;/**< Maximum 2D layered texture height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS	EQU <29 >	;/**< Maximum layers in a 2D layered texture */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_WIDTH	EQU <27 >	;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_HEIGHT	EQU <28 >	;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_NUMSLICES	EQU <29 >	;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS */ 
-	CU_DEVICE_ATTRIBUTE_SURFACE_ALIGNMENT	EQU <30 >	;/**< Alignment requirement for surfaces */ 
-	CU_DEVICE_ATTRIBUTE_CONCURRENT_KERNELS	EQU <31 >	;/**< Device can possibly execute multiple kernels concurrently */ 
-	CU_DEVICE_ATTRIBUTE_ECC_ENABLED	EQU <32 >	;/**< Device has ECC support enabled */ 
-	CU_DEVICE_ATTRIBUTE_PCI_BUS_ID	EQU <33 >	;/**< PCI bus ID of the device */ 
-	CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID	EQU <34 >	;/**< PCI device ID of the device */ 
-	CU_DEVICE_ATTRIBUTE_TCC_DRIVER	EQU <35 >	;/**< Device is using TCC driver model */ 
-	CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE	EQU <36 >	;/**< Peak memory clock frequency in kilohertz */ 
-	CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH	EQU <37 >	;/**< Global memory bus width in bits */ 
-	CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE	EQU <38 >	;/**< Size of L2 cache in bytes */ 
-	CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR	EQU <39 >	;/**< Maximum resident threads per multiprocessor */ 
-	CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT	EQU <40 >	;/**< Number of asynchronous engines */ 
-	CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING	EQU <41 >	;/**< Device shares a unified address space with the host */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_WIDTH	EQU <42 >	;/**< Maximum 1D layered texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_LAYERS	EQU <43 >	;/**< Maximum layers in a 1D layered texture */ 
-	CU_DEVICE_ATTRIBUTE_CAN_TEX2D_GATHER	EQU <44 >	;/**< Deprecated, do not use. */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_WIDTH	EQU <45 >	;/**< Maximum 2D texture width if CUDA_ARRAY3D_TEXTURE_GATHER is set */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_HEIGHT	EQU <46 >	;/**< Maximum 2D texture height if CUDA_ARRAY3D_TEXTURE_GATHER is set */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE	EQU <47 >	;/**< Alternate maximum 3D texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE	EQU <48 >	;/**< Alternate maximum 3D texture height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE	EQU <49 >	;/**< Alternate maximum 3D texture depth */ 
-	CU_DEVICE_ATTRIBUTE_PCI_DOMAIN_ID	EQU <50 >	;/**< PCI domain ID of the device */ 
-	CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT	EQU <51 >	;/**< Pitch alignment requirement for textures */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_WIDTH	EQU <52 >	;/**< Maximum cubemap texture width/height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH	EQU <53 >	;/**< Maximum cubemap layered texture width/height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS	EQU <54 >	;/**< Maximum layers in a cubemap layered texture */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_WIDTH	EQU <55 >	;/**< Maximum 1D surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_WIDTH	EQU <56 >	;/**< Maximum 2D surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_HEIGHT	EQU <57 >	;/**< Maximum 2D surface height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_WIDTH	EQU <58 >	;/**< Maximum 3D surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_HEIGHT	EQU <59 >	;/**< Maximum 3D surface height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_DEPTH	EQU <60 >	;/**< Maximum 3D surface depth */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_WIDTH	EQU <61 >	;/**< Maximum 1D layered surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_LAYERS	EQU <62 >	;/**< Maximum layers in a 1D layered surface */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_WIDTH	EQU <63 >	;/**< Maximum 2D layered surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_HEIGHT	EQU <64 >	;/**< Maximum 2D layered surface height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_LAYERS	EQU <65 >	;/**< Maximum layers in a 2D layered surface */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_WIDTH	EQU <66 >	;/**< Maximum cubemap surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH	EQU <67 >	;/**< Maximum cubemap layered surface width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS	EQU <68 >	;/**< Maximum layers in a cubemap layered surface */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LINEAR_WIDTH	EQU <69 >	;/**< Maximum 1D linear texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_WIDTH	EQU <70 >	;/**< Maximum 2D linear texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_HEIGHT	EQU <71 >	;/**< Maximum 2D linear texture height */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_PITCH	EQU <72 >	;/**< Maximum 2D linear texture pitch in bytes */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH	EQU <73 >	;/**< Maximum mipmapped 2D texture width */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT	EQU <74 >	;/**< Maximum mipmapped 2D texture height */ 
-	CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR	EQU <75 >	;/**< Major compute capability version number */ 
-	CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR	EQU <76 >	;/**< Minor compute capability version number */ 
-	CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH	EQU <77 >	;/**< Maximum mipmapped 1D texture width */ 
-	CU_DEVICE_ATTRIBUTE_STREAM_PRIORITIES_SUPPORTED	EQU <78 >	;/**< Device supports stream priorities */ 
-	CU_DEVICE_ATTRIBUTE_GLOBAL_L1_CACHE_SUPPORTED	EQU <79 >	;/**< Device supports caching globals in L1 */ 
-	CU_DEVICE_ATTRIBUTE_LOCAL_L1_CACHE_SUPPORTED	EQU <80 >	;/**< Device supports caching locals in L1 */ 
-	CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR	EQU <81 >	;/**< Maximum shared memory available per multiprocessor in bytes */ 
-	CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_MULTIPROCESSOR	EQU <82 >	;/**< Maximum number of 32-bit registers available per multiprocessor */ 
-	CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY	EQU <83 >	;/**< Device can allocate managed memory on this system */ 
-	CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD	EQU <84 >	;/**< Device is on a multi-GPU board */ 
-	CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD_GROUP_ID	EQU <85 >	;/**< Unique id for a group of devices on the same multi-GPU board */ 
-	CU_DEVICE_ATTRIBUTE_HOST_NATIVE_ATOMIC_SUPPORTED	EQU <86 >	;/**< Link between the device and the host supports native atomic operations (this is a placeholder attribute, and is not supported on any current hardware)*/ 
-	CU_DEVICE_ATTRIBUTE_SINGLE_TO_DOUBLE_PRECISION_PERF_RATIO	EQU <87 >	;/**< Ratio of single precision performance (in floating-point operations per second) to double precision performance */ 
-	CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS	EQU <88 >	;/**< Device supports coherently accessing pageable memory without calling cudaHostRegister on it */ 
-	CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS	EQU <89 >	;/**< Device can coherently access managed memory concurrently with the CPU */ 
-	CU_DEVICE_ATTRIBUTE_COMPUTE_PREEMPTION_SUPPORTED	EQU <90 >	;/**< Device supports compute preemption. */ 
-	CU_DEVICE_ATTRIBUTE_CAN_USE_HOST_POINTER_FOR_REGISTERED_MEM	EQU <91 >	;/**< Device can access host registered memory at the same virtual address as the CPU */ 
-	CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_MEM_OPS	EQU <92 >	;/**< ::cuStreamBatchMemOp and related APIs are supported. */ 
-	CU_DEVICE_ATTRIBUTE_CAN_USE_64_BIT_STREAM_MEM_OPS	EQU <93 >	;/**< 64-bit operations are supported in ::cuStreamBatchMemOp and related APIs. */ 
-	CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_WAIT_VALUE_NOR	EQU <94 >	;/**< ::CU_STREAM_WAIT_VALUE_NOR is supported. */ 
-	CU_DEVICE_ATTRIBUTE_COOPERATIVE_LAUNCH	EQU <95 >	;/**< Device supports launching cooperative kernels via ::cuLaunchCooperativeKernel */ 
-	CU_DEVICE_ATTRIBUTE_COOPERATIVE_MULTI_DEVICE_LAUNCH	EQU <96 >	;/**< Device can participate in cooperative kernels launched via ::cuLaunchCooperativeKernelMultiDevice */ 
-	CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK_OPTIN	EQU <97 >	;/**< Maximum optin shared memory per block */ 
-	CU_DEVICE_ATTRIBUTE_CAN_FLUSH_REMOTE_WRITES	EQU <98 >	;/**< Both the ::CU_STREAM_WAIT_VALUE_FLUSH flag and the ::CU_STREAM_MEM_OP_FLUSH_REMOTE_WRITES MemOp are supported on the device. See \ref CUDA_MEMOP for additional details. */ 
-	CU_DEVICE_ATTRIBUTE_HOST_REGISTER_SUPPORTED	EQU <99 >	;/**< Device supports host memory registration via ::cudaHostRegister. */ 
-	CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES	EQU <100 >	;/**< Device accesses pageable memory via the host's page tables. */ 
-	CU_DEVICE_ATTRIBUTE_DIRECT_MANAGED_MEM_ACCESS_FROM_HOST	EQU <101 >	;/**< The host can directly access managed memory on the device without migration. */ 
-	CU_DEVICE_ATTRIBUTE_MAX	EQU <066H>
-;CUdevice_attribute		ENDS
+;CUdevice_attribute  UNION DEFALIGNMASM
+  CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK  EQU <1 >  ;/**< Maximum number of threads per block */ 
+  CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_X  EQU <2 >  ;/**< Maximum block dimension X */ 
+  CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Y  EQU <3 >  ;/**< Maximum block dimension Y */ 
+  CU_DEVICE_ATTRIBUTE_MAX_BLOCK_DIM_Z  EQU <4 >  ;/**< Maximum block dimension Z */ 
+  CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_X  EQU <5 >  ;/**< Maximum grid dimension X */ 
+  CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Y  EQU <6 >  ;/**< Maximum grid dimension Y */ 
+  CU_DEVICE_ATTRIBUTE_MAX_GRID_DIM_Z  EQU <7 >  ;/**< Maximum grid dimension Z */ 
+  CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK  EQU <8 >  ;/**< Maximum shared memory available per block in bytes */ 
+  CU_DEVICE_ATTRIBUTE_SHARED_MEMORY_PER_BLOCK  EQU <8 >  ;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK */ 
+  CU_DEVICE_ATTRIBUTE_TOTAL_CONSTANT_MEMORY  EQU <9 >  ;/**< Memory available on device for __constant__ variables in a CUDA C kernel in bytes */ 
+  CU_DEVICE_ATTRIBUTE_WARP_SIZE  EQU <10 >  ;/**< Warp size in threads */ 
+  CU_DEVICE_ATTRIBUTE_MAX_PITCH  EQU <11 >  ;/**< Maximum pitch in bytes allowed by memory copies */ 
+  CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK  EQU <12 >  ;/**< Maximum number of 32-bit registers available per block */ 
+  CU_DEVICE_ATTRIBUTE_REGISTERS_PER_BLOCK  EQU <12 >  ;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_BLOCK */ 
+  CU_DEVICE_ATTRIBUTE_CLOCK_RATE  EQU <13 >  ;/**< Typical clock frequency in kilohertz */ 
+  CU_DEVICE_ATTRIBUTE_TEXTURE_ALIGNMENT  EQU <14 >  ;/**< Alignment requirement for textures */ 
+  CU_DEVICE_ATTRIBUTE_GPU_OVERLAP  EQU <15 >  ;/**< Device can possibly copy memory and execute a kernel concurrently. Deprecated. Use instead CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT. */ 
+  CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT  EQU <16 >  ;/**< Number of multiprocessors on device */ 
+  CU_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT  EQU <17 >  ;/**< Specifies whether there is a run time limit on kernels */ 
+  CU_DEVICE_ATTRIBUTE_INTEGRATED  EQU <18 >  ;/**< Device is integrated with host memory */ 
+  CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY  EQU <19 >  ;/**< Device can map host memory into CUDA address space */ 
+  CU_DEVICE_ATTRIBUTE_COMPUTE_MODE  EQU <20 >  ;/**< Compute mode (See ::CUcomputemode for details) */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_WIDTH  EQU <21 >  ;/**< Maximum 1D texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_WIDTH  EQU <22 >  ;/**< Maximum 2D texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_HEIGHT  EQU <23 >  ;/**< Maximum 2D texture height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH  EQU <24 >  ;/**< Maximum 3D texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT  EQU <25 >  ;/**< Maximum 3D texture height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH  EQU <26 >  ;/**< Maximum 3D texture depth */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH  EQU <27 >  ;/**< Maximum 2D layered texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT  EQU <28 >  ;/**< Maximum 2D layered texture height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS  EQU <29 >  ;/**< Maximum layers in a 2D layered texture */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_WIDTH  EQU <27 >  ;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_WIDTH */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_HEIGHT  EQU <28 >  ;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_HEIGHT */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_ARRAY_NUMSLICES  EQU <29 >  ;/**< Deprecated, use CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LAYERED_LAYERS */ 
+  CU_DEVICE_ATTRIBUTE_SURFACE_ALIGNMENT  EQU <30 >  ;/**< Alignment requirement for surfaces */ 
+  CU_DEVICE_ATTRIBUTE_CONCURRENT_KERNELS  EQU <31 >  ;/**< Device can possibly execute multiple kernels concurrently */ 
+  CU_DEVICE_ATTRIBUTE_ECC_ENABLED  EQU <32 >  ;/**< Device has ECC support enabled */ 
+  CU_DEVICE_ATTRIBUTE_PCI_BUS_ID  EQU <33 >  ;/**< PCI bus ID of the device */ 
+  CU_DEVICE_ATTRIBUTE_PCI_DEVICE_ID  EQU <34 >  ;/**< PCI device ID of the device */ 
+  CU_DEVICE_ATTRIBUTE_TCC_DRIVER  EQU <35 >  ;/**< Device is using TCC driver model */ 
+  CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE  EQU <36 >  ;/**< Peak memory clock frequency in kilohertz */ 
+  CU_DEVICE_ATTRIBUTE_GLOBAL_MEMORY_BUS_WIDTH  EQU <37 >  ;/**< Global memory bus width in bits */ 
+  CU_DEVICE_ATTRIBUTE_L2_CACHE_SIZE  EQU <38 >  ;/**< Size of L2 cache in bytes */ 
+  CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR  EQU <39 >  ;/**< Maximum resident threads per multiprocessor */ 
+  CU_DEVICE_ATTRIBUTE_ASYNC_ENGINE_COUNT  EQU <40 >  ;/**< Number of asynchronous engines */ 
+  CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING  EQU <41 >  ;/**< Device shares a unified address space with the host */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_WIDTH  EQU <42 >  ;/**< Maximum 1D layered texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LAYERED_LAYERS  EQU <43 >  ;/**< Maximum layers in a 1D layered texture */ 
+  CU_DEVICE_ATTRIBUTE_CAN_TEX2D_GATHER  EQU <44 >  ;/**< Deprecated, do not use. */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_WIDTH  EQU <45 >  ;/**< Maximum 2D texture width if CUDA_ARRAY3D_TEXTURE_GATHER is set */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_GATHER_HEIGHT  EQU <46 >  ;/**< Maximum 2D texture height if CUDA_ARRAY3D_TEXTURE_GATHER is set */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_WIDTH_ALTERNATE  EQU <47 >  ;/**< Alternate maximum 3D texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_HEIGHT_ALTERNATE  EQU <48 >  ;/**< Alternate maximum 3D texture height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE3D_DEPTH_ALTERNATE  EQU <49 >  ;/**< Alternate maximum 3D texture depth */ 
+  CU_DEVICE_ATTRIBUTE_PCI_DOMAIN_ID  EQU <50 >  ;/**< PCI domain ID of the device */ 
+  CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT  EQU <51 >  ;/**< Pitch alignment requirement for textures */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_WIDTH  EQU <52 >  ;/**< Maximum cubemap texture width/height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_WIDTH  EQU <53 >  ;/**< Maximum cubemap layered texture width/height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURECUBEMAP_LAYERED_LAYERS  EQU <54 >  ;/**< Maximum layers in a cubemap layered texture */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_WIDTH  EQU <55 >  ;/**< Maximum 1D surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_WIDTH  EQU <56 >  ;/**< Maximum 2D surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_HEIGHT  EQU <57 >  ;/**< Maximum 2D surface height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_WIDTH  EQU <58 >  ;/**< Maximum 3D surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_HEIGHT  EQU <59 >  ;/**< Maximum 3D surface height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE3D_DEPTH  EQU <60 >  ;/**< Maximum 3D surface depth */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_WIDTH  EQU <61 >  ;/**< Maximum 1D layered surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE1D_LAYERED_LAYERS  EQU <62 >  ;/**< Maximum layers in a 1D layered surface */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_WIDTH  EQU <63 >  ;/**< Maximum 2D layered surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_HEIGHT  EQU <64 >  ;/**< Maximum 2D layered surface height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACE2D_LAYERED_LAYERS  EQU <65 >  ;/**< Maximum layers in a 2D layered surface */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_WIDTH  EQU <66 >  ;/**< Maximum cubemap surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_WIDTH  EQU <67 >  ;/**< Maximum cubemap layered surface width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_SURFACECUBEMAP_LAYERED_LAYERS  EQU <68 >  ;/**< Maximum layers in a cubemap layered surface */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_LINEAR_WIDTH  EQU <69 >  ;/**< Maximum 1D linear texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_WIDTH  EQU <70 >  ;/**< Maximum 2D linear texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_HEIGHT  EQU <71 >  ;/**< Maximum 2D linear texture height */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_LINEAR_PITCH  EQU <72 >  ;/**< Maximum 2D linear texture pitch in bytes */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_WIDTH  EQU <73 >  ;/**< Maximum mipmapped 2D texture width */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE2D_MIPMAPPED_HEIGHT  EQU <74 >  ;/**< Maximum mipmapped 2D texture height */ 
+  CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR  EQU <75 >  ;/**< Major compute capability version number */ 
+  CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR  EQU <76 >  ;/**< Minor compute capability version number */ 
+  CU_DEVICE_ATTRIBUTE_MAXIMUM_TEXTURE1D_MIPMAPPED_WIDTH  EQU <77 >  ;/**< Maximum mipmapped 1D texture width */ 
+  CU_DEVICE_ATTRIBUTE_STREAM_PRIORITIES_SUPPORTED  EQU <78 >  ;/**< Device supports stream priorities */ 
+  CU_DEVICE_ATTRIBUTE_GLOBAL_L1_CACHE_SUPPORTED  EQU <79 >  ;/**< Device supports caching globals in L1 */ 
+  CU_DEVICE_ATTRIBUTE_LOCAL_L1_CACHE_SUPPORTED  EQU <80 >  ;/**< Device supports caching locals in L1 */ 
+  CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_MULTIPROCESSOR  EQU <81 >  ;/**< Maximum shared memory available per multiprocessor in bytes */ 
+  CU_DEVICE_ATTRIBUTE_MAX_REGISTERS_PER_MULTIPROCESSOR  EQU <82 >  ;/**< Maximum number of 32-bit registers available per multiprocessor */ 
+  CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY  EQU <83 >  ;/**< Device can allocate managed memory on this system */ 
+  CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD  EQU <84 >  ;/**< Device is on a multi-GPU board */ 
+  CU_DEVICE_ATTRIBUTE_MULTI_GPU_BOARD_GROUP_ID  EQU <85 >  ;/**< Unique id for a group of devices on the same multi-GPU board */ 
+  CU_DEVICE_ATTRIBUTE_HOST_NATIVE_ATOMIC_SUPPORTED  EQU <86 >  ;/**< Link between the device and the host supports native atomic operations (this is a placeholder attribute, and is not supported on any current hardware)*/ 
+  CU_DEVICE_ATTRIBUTE_SINGLE_TO_DOUBLE_PRECISION_PERF_RATIO  EQU <87 >  ;/**< Ratio of single precision performance (in floating-point operations per second) to double precision performance */ 
+  CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS  EQU <88 >  ;/**< Device supports coherently accessing pageable memory without calling cudaHostRegister on it */ 
+  CU_DEVICE_ATTRIBUTE_CONCURRENT_MANAGED_ACCESS  EQU <89 >  ;/**< Device can coherently access managed memory concurrently with the CPU */ 
+  CU_DEVICE_ATTRIBUTE_COMPUTE_PREEMPTION_SUPPORTED  EQU <90 >  ;/**< Device supports compute preemption. */ 
+  CU_DEVICE_ATTRIBUTE_CAN_USE_HOST_POINTER_FOR_REGISTERED_MEM  EQU <91 >  ;/**< Device can access host registered memory at the same virtual address as the CPU */ 
+  CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_MEM_OPS  EQU <92 >  ;/**< ::cuStreamBatchMemOp and related APIs are supported. */ 
+  CU_DEVICE_ATTRIBUTE_CAN_USE_64_BIT_STREAM_MEM_OPS  EQU <93 >  ;/**< 64-bit operations are supported in ::cuStreamBatchMemOp and related APIs. */ 
+  CU_DEVICE_ATTRIBUTE_CAN_USE_STREAM_WAIT_VALUE_NOR  EQU <94 >  ;/**< ::CU_STREAM_WAIT_VALUE_NOR is supported. */ 
+  CU_DEVICE_ATTRIBUTE_COOPERATIVE_LAUNCH  EQU <95 >  ;/**< Device supports launching cooperative kernels via ::cuLaunchCooperativeKernel */ 
+  CU_DEVICE_ATTRIBUTE_COOPERATIVE_MULTI_DEVICE_LAUNCH  EQU <96 >  ;/**< Device can participate in cooperative kernels launched via ::cuLaunchCooperativeKernelMultiDevice */ 
+  CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK_OPTIN  EQU <97 >  ;/**< Maximum optin shared memory per block */ 
+  CU_DEVICE_ATTRIBUTE_CAN_FLUSH_REMOTE_WRITES  EQU <98 >  ;/**< Both the ::CU_STREAM_WAIT_VALUE_FLUSH flag and the ::CU_STREAM_MEM_OP_FLUSH_REMOTE_WRITES MemOp are supported on the device. See \ref CUDA_MEMOP for additional details. */ 
+  CU_DEVICE_ATTRIBUTE_HOST_REGISTER_SUPPORTED  EQU <99 >  ;/**< Device supports host memory registration via ::cudaHostRegister. */ 
+  CU_DEVICE_ATTRIBUTE_PAGEABLE_MEMORY_ACCESS_USES_HOST_PAGE_TABLES  EQU <100 >  ;/**< Device accesses pageable memory via the host's page tables. */ 
+  CU_DEVICE_ATTRIBUTE_DIRECT_MANAGED_MEM_ACCESS_FROM_HOST  EQU <101 >  ;/**< The host can directly access managed memory on the device without migration. */ 
+  CU_DEVICE_ATTRIBUTE_MAX  EQU <066H>
+;CUdevice_attribute    ENDS
 
 ;/**
 ; * Legacy device properties
 ; */
 
-CUdevprop	STRUCT; DEFALIGNMASM
-	maxThreadsPerBlock DWORD ? ;/**< Maximum number of threads per block */ 
-	maxThreadsDim DWORD 3 dup (?) ;/**< Maximum size of each dimension of a block */ 
-	maxGridSize DWORD 3 dup (?) ;/**< Maximum size of each dimension of a grid */ 
-	sharedMemPerBlock DWORD ? ;/**< Shared memory available per block in bytes */ 
-	totalConstantMemory DWORD ? ;/**< Constant memory available on device in bytes */ 
-	SIMDWidth DWORD ? ;/**< Warp size in threads */ 
-	memPitch DWORD ? ;/**< Maximum pitch in bytes allowed by memory copies */ 
-	regsPerBlock DWORD ? ;/**< 32-bit registers available per block */ 
-	clockRate DWORD ? ;/**< Clock frequency in kilohertz */ 
-	textureAlign DWORD ? ;/**< Alignment requirement for textures */ 
-CUdevprop		ENDS
+CUdevprop  STRUCT; DEFALIGNMASM
+  maxThreadsPerBlock DWORD ? ;/**< Maximum number of threads per block */ 
+  maxThreadsDim DWORD 3 dup (?) ;/**< Maximum size of each dimension of a block */ 
+  maxGridSize DWORD 3 dup (?) ;/**< Maximum size of each dimension of a grid */ 
+  sharedMemPerBlock DWORD ? ;/**< Shared memory available per block in bytes */ 
+  totalConstantMemory DWORD ? ;/**< Constant memory available on device in bytes */ 
+  SIMDWidth DWORD ? ;/**< Warp size in threads */ 
+  memPitch DWORD ? ;/**< Maximum pitch in bytes allowed by memory copies */ 
+  regsPerBlock DWORD ? ;/**< 32-bit registers available per block */ 
+  clockRate DWORD ? ;/**< Clock frequency in kilohertz */ 
+  textureAlign DWORD ? ;/**< Alignment requirement for textures */ 
+CUdevprop    ENDS
 
 
 ;/**
 ; * Pointer information
 ; */
 
-CUpointer_attribute	TYPEDEF DWORD ;enum
+CUpointer_attribute  TYPEDEF DWORD ;enum
 
-;CUpointer_attribute	UNION DEFALIGNMASM
-	CU_POINTER_ATTRIBUTE_CONTEXT	EQU <1 >	;/**< The ::CUcontext on which a pointer was allocated or registered */ 
-	CU_POINTER_ATTRIBUTE_MEMORY_TYPE	EQU <2 >	;/**< The ::CUmemorytype describing the physical location of a pointer */ 
-	CU_POINTER_ATTRIBUTE_DEVICE_POINTER	EQU <3 >	;/**< The address at which a pointer's memory may be accessed on the device */ 
-	CU_POINTER_ATTRIBUTE_HOST_POINTER	EQU <4 >	;/**< The address at which a pointer's memory may be accessed on the host */ 
-	CU_POINTER_ATTRIBUTE_P2P_TOKENS	EQU <5 >	;/**< A pair of tokens for use with the nv-p2p.h Linux kernel interface */ 
-	CU_POINTER_ATTRIBUTE_SYNC_MEMOPS	EQU <6 >	;/**< Synchronize every synchronous memory operation initiated on this region */ 
-	CU_POINTER_ATTRIBUTE_BUFFER_ID	EQU <7 >	;/**< A process-wide unique ID for an allocated memory region*/ 
-	CU_POINTER_ATTRIBUTE_IS_MANAGED	EQU <8 >	;/**< Indicates if the pointer points to managed memory */ 
-	CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL	EQU <9 >
-;CUpointer_attribute		ENDS
+;CUpointer_attribute  UNION DEFALIGNMASM
+  CU_POINTER_ATTRIBUTE_CONTEXT  EQU <1 >  ;/**< The ::CUcontext on which a pointer was allocated or registered */ 
+  CU_POINTER_ATTRIBUTE_MEMORY_TYPE  EQU <2 >  ;/**< The ::CUmemorytype describing the physical location of a pointer */ 
+  CU_POINTER_ATTRIBUTE_DEVICE_POINTER  EQU <3 >  ;/**< The address at which a pointer's memory may be accessed on the device */ 
+  CU_POINTER_ATTRIBUTE_HOST_POINTER  EQU <4 >  ;/**< The address at which a pointer's memory may be accessed on the host */ 
+  CU_POINTER_ATTRIBUTE_P2P_TOKENS  EQU <5 >  ;/**< A pair of tokens for use with the nv-p2p.h Linux kernel interface */ 
+  CU_POINTER_ATTRIBUTE_SYNC_MEMOPS  EQU <6 >  ;/**< Synchronize every synchronous memory operation initiated on this region */ 
+  CU_POINTER_ATTRIBUTE_BUFFER_ID  EQU <7 >  ;/**< A process-wide unique ID for an allocated memory region*/ 
+  CU_POINTER_ATTRIBUTE_IS_MANAGED  EQU <8 >  ;/**< Indicates if the pointer points to managed memory */ 
+  CU_POINTER_ATTRIBUTE_DEVICE_ORDINAL  EQU <9 >
+;CUpointer_attribute    ENDS
 
 
 ;/**
 ; * Function properties
 ; */
 
-CUfunction_attribute	TYPEDEF DWORD ;enum
+CUfunction_attribute  TYPEDEF DWORD ;enum
 
-;CUfunction_attribute	UNION DEFALIGNMASM
-	CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK	EQU <0 >
-	CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES	EQU <1 >
-	CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES	EQU <2 >
-	CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES	EQU <3 >
-	CU_FUNC_ATTRIBUTE_NUM_REGS	EQU <4 >
-	CU_FUNC_ATTRIBUTE_PTX_VERSION	EQU <5 >
-	CU_FUNC_ATTRIBUTE_BINARY_VERSION	EQU <6 >
-	CU_FUNC_ATTRIBUTE_CACHE_MODE_CA	EQU <7 >
-	CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES	EQU <8 >
-	CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT	EQU <9 >
-	CU_FUNC_ATTRIBUTE_MAX	EQU <0AH>
-;CUfunction_attribute		ENDS
+;CUfunction_attribute  UNION DEFALIGNMASM
+  CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK  EQU <0 >
+  CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES  EQU <1 >
+  CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES  EQU <2 >
+  CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES  EQU <3 >
+  CU_FUNC_ATTRIBUTE_NUM_REGS  EQU <4 >
+  CU_FUNC_ATTRIBUTE_PTX_VERSION  EQU <5 >
+  CU_FUNC_ATTRIBUTE_BINARY_VERSION  EQU <6 >
+  CU_FUNC_ATTRIBUTE_CACHE_MODE_CA  EQU <7 >
+  CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES  EQU <8 >
+  CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT  EQU <9 >
+  CU_FUNC_ATTRIBUTE_MAX  EQU <0AH>
+;CUfunction_attribute    ENDS
 
 
 ;/**
 ; * Function cache configurations
 ; */
 
-CUfunc_cache	TYPEDEF DWORD ;enum
+CUfunc_cache  TYPEDEF DWORD ;enum
 
-;CUfunc_cache	UNION DEFALIGNMASM
-	CU_FUNC_CACHE_PREFER_NONE	EQU <000h >	;/**< no preference for shared memory or L1 (default) */ 
-	CU_FUNC_CACHE_PREFER_SHARED	EQU <001h >	;/**< prefer larger shared memory and smaller L1 cache */ 
-	CU_FUNC_CACHE_PREFER_L1	EQU <002h >	;/**< prefer larger L1 cache and smaller shared memory */ 
-	CU_FUNC_CACHE_PREFER_EQUAL	EQU <003h >
-;CUfunc_cache		ENDS
+;CUfunc_cache  UNION DEFALIGNMASM
+  CU_FUNC_CACHE_PREFER_NONE  EQU <000h >  ;/**< no preference for shared memory or L1 (default) */ 
+  CU_FUNC_CACHE_PREFER_SHARED  EQU <001h >  ;/**< prefer larger shared memory and smaller L1 cache */ 
+  CU_FUNC_CACHE_PREFER_L1  EQU <002h >  ;/**< prefer larger L1 cache and smaller shared memory */ 
+  CU_FUNC_CACHE_PREFER_EQUAL  EQU <003h >
+;CUfunc_cache    ENDS
 
 
 ;/**
 ; * Shared memory configurations
 ; */
 
-CUsharedconfig	TYPEDEF DWORD ;enum
+CUsharedconfig  TYPEDEF DWORD ;enum
 
-;CUsharedconfig	UNION DEFALIGNMASM
-	CU_SHARED_MEM_CONFIG_DEFAULT_BANK_SIZE	EQU <000h >	;/**< set default shared memory bank size */ 
-	CU_SHARED_MEM_CONFIG_FOUR_BYTE_BANK_SIZE	EQU <001h >	;/**< set shared memory bank width to four bytes */ 
-	CU_SHARED_MEM_CONFIG_EIGHT_BYTE_BANK_SIZE	EQU <002h >
-;CUsharedconfig		ENDS
+;CUsharedconfig  UNION DEFALIGNMASM
+  CU_SHARED_MEM_CONFIG_DEFAULT_BANK_SIZE  EQU <000h >  ;/**< set default shared memory bank size */ 
+  CU_SHARED_MEM_CONFIG_FOUR_BYTE_BANK_SIZE  EQU <001h >  ;/**< set shared memory bank width to four bytes */ 
+  CU_SHARED_MEM_CONFIG_EIGHT_BYTE_BANK_SIZE  EQU <002h >
+;CUsharedconfig    ENDS
 
 
 ;/**
 ; * Shared memory carveout configurations. These may be passed to ::cuFuncSetAttribute
 ; */
 
-CUshared_carveout	TYPEDEF DWORD ;enum
+CUshared_carveout  TYPEDEF DWORD ;enum
 
-;CUshared_carveout	UNION DEFALIGNMASM
-	CU_SHAREDMEM_CARVEOUT_DEFAULT	EQU <	- 1 >	;/**< No preference for shared memory or L1 (default) */ 
-	CU_SHAREDMEM_CARVEOUT_MAX_SHARED	EQU <100 >	;/**< Prefer maximum available shared memory, minimum L1 cache */ 
-	CU_SHAREDMEM_CARVEOUT_MAX_L1	EQU <0 >
-;CUshared_carveout		ENDS
+;CUshared_carveout  UNION DEFALIGNMASM
+  CU_SHAREDMEM_CARVEOUT_DEFAULT  EQU <  - 1 >  ;/**< No preference for shared memory or L1 (default) */ 
+  CU_SHAREDMEM_CARVEOUT_MAX_SHARED  EQU <100 >  ;/**< Prefer maximum available shared memory, minimum L1 cache */ 
+  CU_SHAREDMEM_CARVEOUT_MAX_L1  EQU <0 >
+;CUshared_carveout    ENDS
 
 
 ;/**
 ; * Memory types
 ; */
 
-CUmemorytype	TYPEDEF DWORD ;enum
+CUmemorytype  TYPEDEF DWORD ;enum
 
-;CUmemorytype	UNION DEFALIGNMASM
-	CU_MEMORYTYPE_HOST	EQU <001h >	;/**< Host memory */ 
-	CU_MEMORYTYPE_DEVICE	EQU <002h >	;/**< Device memory */ 
-	CU_MEMORYTYPE_ARRAY	EQU <003h >	;/**< Array memory */ 
-	CU_MEMORYTYPE_UNIFIED	EQU <004h >
-;CUmemorytype		ENDS
+;CUmemorytype  UNION DEFALIGNMASM
+  CU_MEMORYTYPE_HOST  EQU <001h >  ;/**< Host memory */ 
+  CU_MEMORYTYPE_DEVICE  EQU <002h >  ;/**< Device memory */ 
+  CU_MEMORYTYPE_ARRAY  EQU <003h >  ;/**< Array memory */ 
+  CU_MEMORYTYPE_UNIFIED  EQU <004h >
+;CUmemorytype    ENDS
 
 
 ;/**
 ; * Compute Modes
 ; */
 
-CUcomputemode	TYPEDEF DWORD ;enum
+CUcomputemode  TYPEDEF DWORD ;enum
 
-;CUcomputemode	UNION DEFALIGNMASM
-	CU_COMPUTEMODE_DEFAULT	EQU <0 >	;/**< Default compute mode (Multiple contexts allowed per device) */ 
-	CU_COMPUTEMODE_PROHIBITED	EQU <2 >	;/**< Compute-prohibited mode (No contexts can be created on this device at this time) */ 
-	CU_COMPUTEMODE_EXCLUSIVE_PROCESS	EQU <3 >
-;CUcomputemode		ENDS
+;CUcomputemode  UNION DEFALIGNMASM
+  CU_COMPUTEMODE_DEFAULT  EQU <0 >  ;/**< Default compute mode (Multiple contexts allowed per device) */ 
+  CU_COMPUTEMODE_PROHIBITED  EQU <2 >  ;/**< Compute-prohibited mode (No contexts can be created on this device at this time) */ 
+  CU_COMPUTEMODE_EXCLUSIVE_PROCESS  EQU <3 >
+;CUcomputemode    ENDS
 
 
 ;/**
 ; * Memory advise values
 ; */
 
-CUmem_advise	TYPEDEF DWORD ;enum
+CUmem_advise  TYPEDEF DWORD ;enum
 
-;CUmem_advise	UNION DEFALIGNMASM
-	CU_MEM_ADVISE_SET_READ_MOSTLY	EQU <1 >	;/**< Data will mostly be read and only occassionally be written to */ 
-	CU_MEM_ADVISE_UNSET_READ_MOSTLY	EQU <2 >	;/**< Undo the effect of ::CU_MEM_ADVISE_SET_READ_MOSTLY */ 
-	CU_MEM_ADVISE_SET_PREFERRED_LOCATION	EQU <3 >	;/**< Set the preferred location for the data as the specified device */ 
-	CU_MEM_ADVISE_UNSET_PREFERRED_LOCATION	EQU <4 >	;/**< Clear the preferred location for the data */ 
-	CU_MEM_ADVISE_SET_ACCESSED_BY	EQU <5 >	;/**< Data will be accessed by the specified device, so prevent page faults as much as possible */ 
-	CU_MEM_ADVISE_UNSET_ACCESSED_BY	EQU <6 >
-;CUmem_advise		ENDS
+;CUmem_advise  UNION DEFALIGNMASM
+  CU_MEM_ADVISE_SET_READ_MOSTLY  EQU <1 >  ;/**< Data will mostly be read and only occassionally be written to */ 
+  CU_MEM_ADVISE_UNSET_READ_MOSTLY  EQU <2 >  ;/**< Undo the effect of ::CU_MEM_ADVISE_SET_READ_MOSTLY */ 
+  CU_MEM_ADVISE_SET_PREFERRED_LOCATION  EQU <3 >  ;/**< Set the preferred location for the data as the specified device */ 
+  CU_MEM_ADVISE_UNSET_PREFERRED_LOCATION  EQU <4 >  ;/**< Clear the preferred location for the data */ 
+  CU_MEM_ADVISE_SET_ACCESSED_BY  EQU <5 >  ;/**< Data will be accessed by the specified device, so prevent page faults as much as possible */ 
+  CU_MEM_ADVISE_UNSET_ACCESSED_BY  EQU <6 >
+;CUmem_advise    ENDS
 
 
 
-CUmem_range_attribute	TYPEDEF DWORD ;enum
+CUmem_range_attribute  TYPEDEF DWORD ;enum
 
-;CUmem_range_attribute	UNION DEFALIGNMASM
-	CU_MEM_RANGE_ATTRIBUTE_READ_MOSTLY	EQU <1 >	;/**< Whether the range will mostly be read and only occassionally be written to */ 
-	CU_MEM_RANGE_ATTRIBUTE_PREFERRED_LOCATION	EQU <2 >	;/**< The preferred location of the range */ 
-	CU_MEM_RANGE_ATTRIBUTE_ACCESSED_BY	EQU <3 >	;/**< Memory range has ::CU_MEM_ADVISE_SET_ACCESSED_BY set for specified device */ 
-	CU_MEM_RANGE_ATTRIBUTE_LAST_PREFETCH_LOCATION	EQU <4 >
-;CUmem_range_attribute		ENDS
+;CUmem_range_attribute  UNION DEFALIGNMASM
+  CU_MEM_RANGE_ATTRIBUTE_READ_MOSTLY  EQU <1 >  ;/**< Whether the range will mostly be read and only occassionally be written to */ 
+  CU_MEM_RANGE_ATTRIBUTE_PREFERRED_LOCATION  EQU <2 >  ;/**< The preferred location of the range */ 
+  CU_MEM_RANGE_ATTRIBUTE_ACCESSED_BY  EQU <3 >  ;/**< Memory range has ::CU_MEM_ADVISE_SET_ACCESSED_BY set for specified device */ 
+  CU_MEM_RANGE_ATTRIBUTE_LAST_PREFETCH_LOCATION  EQU <4 >
+;CUmem_range_attribute    ENDS
 
 
 ;/**
 ; * Online compiler and linker options
 ; */
 
-CUjit_option	TYPEDEF DWORD ;enum
+CUjit_option  TYPEDEF DWORD ;enum
 
-;CUjit_option	UNION DEFALIGNMASM
-	CU_JIT_MAX_REGISTERS	EQU <0 >
-	CU_JIT_THREADS_PER_BLOCK	EQU <01H>
-	CU_JIT_WALL_TIME	EQU <02H>
-	CU_JIT_INFO_LOG_BUFFER	EQU <03H>
-	CU_JIT_INFO_LOG_BUFFER_SIZE_BYTES	EQU <04H>
-	CU_JIT_ERROR_LOG_BUFFER	EQU <05H>
-	CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES	EQU <06H>
-	CU_JIT_OPTIMIZATION_LEVEL	EQU <07H>
-	CU_JIT_TARGET_FROM_CUCONTEXT	EQU <08H>
-	CU_JIT_TARGET	EQU <09H>
-	CU_JIT_FALLBACK_STRATEGY	EQU <0AH>
-	CU_JIT_GENERATE_DEBUG_INFO	EQU <0BH>
-	CU_JIT_LOG_VERBOSE	EQU <0CH>
-	CU_JIT_GENERATE_LINE_INFO	EQU <0DH>
-	CU_JIT_CACHE_MODE	EQU <0EH>
-	CU_JIT_NEW_SM3X_OPT	EQU <0FH>
-	CU_JIT_FAST_COMPILE	EQU <010H>
-	CU_JIT_GLOBAL_SYMBOL_NAMES	EQU <011H>
-	CU_JIT_GLOBAL_SYMBOL_ADDRESSES	EQU <012H>
-	CU_JIT_GLOBAL_SYMBOL_COUNT	EQU <013H>
-	CU_JIT_NUM_OPTIONS	EQU <014H>
-;CUjit_option		ENDS
+;CUjit_option  UNION DEFALIGNMASM
+  CU_JIT_MAX_REGISTERS  EQU <0 >
+  CU_JIT_THREADS_PER_BLOCK  EQU <01H>
+  CU_JIT_WALL_TIME  EQU <02H>
+  CU_JIT_INFO_LOG_BUFFER  EQU <03H>
+  CU_JIT_INFO_LOG_BUFFER_SIZE_BYTES  EQU <04H>
+  CU_JIT_ERROR_LOG_BUFFER  EQU <05H>
+  CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES  EQU <06H>
+  CU_JIT_OPTIMIZATION_LEVEL  EQU <07H>
+  CU_JIT_TARGET_FROM_CUCONTEXT  EQU <08H>
+  CU_JIT_TARGET  EQU <09H>
+  CU_JIT_FALLBACK_STRATEGY  EQU <0AH>
+  CU_JIT_GENERATE_DEBUG_INFO  EQU <0BH>
+  CU_JIT_LOG_VERBOSE  EQU <0CH>
+  CU_JIT_GENERATE_LINE_INFO  EQU <0DH>
+  CU_JIT_CACHE_MODE  EQU <0EH>
+  CU_JIT_NEW_SM3X_OPT  EQU <0FH>
+  CU_JIT_FAST_COMPILE  EQU <010H>
+  CU_JIT_GLOBAL_SYMBOL_NAMES  EQU <011H>
+  CU_JIT_GLOBAL_SYMBOL_ADDRESSES  EQU <012H>
+  CU_JIT_GLOBAL_SYMBOL_COUNT  EQU <013H>
+  CU_JIT_NUM_OPTIONS  EQU <014H>
+;CUjit_option    ENDS
 
 
 ;/**
 ; * Online compilation targets
 ; */
 
-CUjit_target	TYPEDEF DWORD ;enum
+CUjit_target  TYPEDEF DWORD ;enum
 
-;CUjit_target	UNION DEFALIGNMASM
-	CU_TARGET_COMPUTE_20	EQU <20 >	;/**< Compute device class 2.0 */ 
-	CU_TARGET_COMPUTE_21	EQU <21 >	;/**< Compute device class 2.1 */ 
-	CU_TARGET_COMPUTE_30	EQU <30 >	;/**< Compute device class 3.0 */ 
-	CU_TARGET_COMPUTE_32	EQU <32 >	;/**< Compute device class 3.2 */ 
-	CU_TARGET_COMPUTE_35	EQU <35 >	;/**< Compute device class 3.5 */ 
-	CU_TARGET_COMPUTE_37	EQU <37 >	;/**< Compute device class 3.7 */ 
-	CU_TARGET_COMPUTE_50	EQU <50 >	;/**< Compute device class 5.0 */ 
-	CU_TARGET_COMPUTE_52	EQU <52 >	;/**< Compute device class 5.2 */ 
-	CU_TARGET_COMPUTE_53	EQU <53 >	;/**< Compute device class 5.3 */ 
-	CU_TARGET_COMPUTE_60	EQU <60 >	;/**< Compute device class 6.0.*/ 
-	CU_TARGET_COMPUTE_61	EQU <61 >	;/**< Compute device class 6.1.*/ 
-	CU_TARGET_COMPUTE_62	EQU <62 >	;/**< Compute device class 6.2.*/ 
-	CU_TARGET_COMPUTE_70	EQU <70 >	;/**< Compute device class 7.0.*/ 
-	CU_TARGET_COMPUTE_72	EQU <72 >	;/**< Compute device class 7.2.*/ 
-	CU_TARGET_COMPUTE_75	EQU <75 >
-;CUjit_target		ENDS
+;CUjit_target  UNION DEFALIGNMASM
+  CU_TARGET_COMPUTE_20  EQU <20 >  ;/**< Compute device class 2.0 */ 
+  CU_TARGET_COMPUTE_21  EQU <21 >  ;/**< Compute device class 2.1 */ 
+  CU_TARGET_COMPUTE_30  EQU <30 >  ;/**< Compute device class 3.0 */ 
+  CU_TARGET_COMPUTE_32  EQU <32 >  ;/**< Compute device class 3.2 */ 
+  CU_TARGET_COMPUTE_35  EQU <35 >  ;/**< Compute device class 3.5 */ 
+  CU_TARGET_COMPUTE_37  EQU <37 >  ;/**< Compute device class 3.7 */ 
+  CU_TARGET_COMPUTE_50  EQU <50 >  ;/**< Compute device class 5.0 */ 
+  CU_TARGET_COMPUTE_52  EQU <52 >  ;/**< Compute device class 5.2 */ 
+  CU_TARGET_COMPUTE_53  EQU <53 >  ;/**< Compute device class 5.3 */ 
+  CU_TARGET_COMPUTE_60  EQU <60 >  ;/**< Compute device class 6.0.*/ 
+  CU_TARGET_COMPUTE_61  EQU <61 >  ;/**< Compute device class 6.1.*/ 
+  CU_TARGET_COMPUTE_62  EQU <62 >  ;/**< Compute device class 6.2.*/ 
+  CU_TARGET_COMPUTE_70  EQU <70 >  ;/**< Compute device class 7.0.*/ 
+  CU_TARGET_COMPUTE_72  EQU <72 >  ;/**< Compute device class 7.2.*/ 
+  CU_TARGET_COMPUTE_75  EQU <75 >
+;CUjit_target    ENDS
 
 
 ;/**
 ; * Cubin matching fallback strategies
 ; */
 
-CUjit_fallback	TYPEDEF DWORD ;enum
+CUjit_fallback  TYPEDEF DWORD ;enum
 
-;CUjit_fallback	UNION DEFALIGNMASM
-	CU_PREFER_PTX	EQU <0 >	;/**< Prefer to compile ptx if exact binary match not found */ 
-	CU_PREFER_BINARY	EQU <01H>
-;CUjit_fallback		ENDS
+;CUjit_fallback  UNION DEFALIGNMASM
+  CU_PREFER_PTX  EQU <0 >  ;/**< Prefer to compile ptx if exact binary match not found */ 
+  CU_PREFER_BINARY  EQU <01H>
+;CUjit_fallback    ENDS
 
 
 ;/**
 ; * Caching modes for dlcm
 ; */
 
-CUjit_cacheMode	TYPEDEF DWORD ;enum
+CUjit_cacheMode  TYPEDEF DWORD ;enum
 
-;CUjit_cacheMode	UNION DEFALIGNMASM
-	CU_JIT_CACHE_OPTION_NONE	EQU <0 >	;/**< Compile with no -dlcm flag specified */ 
-	CU_JIT_CACHE_OPTION_CG	EQU <01H>	;/**< Compile with L1 cache disabled */ 
-	CU_JIT_CACHE_OPTION_CA	EQU <02H>
-;CUjit_cacheMode		ENDS
+;CUjit_cacheMode  UNION DEFALIGNMASM
+  CU_JIT_CACHE_OPTION_NONE  EQU <0 >  ;/**< Compile with no -dlcm flag specified */ 
+  CU_JIT_CACHE_OPTION_CG  EQU <01H>  ;/**< Compile with L1 cache disabled */ 
+  CU_JIT_CACHE_OPTION_CA  EQU <02H>
+;CUjit_cacheMode    ENDS
 
 
 ;/**
 ; * Device code formats
 ; */
 
-CUjitInputType	TYPEDEF DWORD ;enum
+CUjitInputType  TYPEDEF DWORD ;enum
 
-;CUjitInputType	UNION DEFALIGNMASM
-	CU_JIT_INPUT_CUBIN	EQU <0 >
-	CU_JIT_INPUT_PTX	EQU <01H>
-	CU_JIT_INPUT_FATBINARY	EQU <02H>
-	CU_JIT_INPUT_OBJECT	EQU <03H>
-	CU_JIT_INPUT_LIBRARY	EQU <04H>
-	CU_JIT_NUM_INPUT_TYPES	EQU <05H>
-;CUjitInputType		ENDS
+;CUjitInputType  UNION DEFALIGNMASM
+  CU_JIT_INPUT_CUBIN  EQU <0 >
+  CU_JIT_INPUT_PTX  EQU <01H>
+  CU_JIT_INPUT_FATBINARY  EQU <02H>
+  CU_JIT_INPUT_OBJECT  EQU <03H>
+  CU_JIT_INPUT_LIBRARY  EQU <04H>
+  CU_JIT_NUM_INPUT_TYPES  EQU <05H>
+;CUjitInputType    ENDS
 
 
 IF  __CUDA_API_VERSION GE 5050
@@ -884,81 +884,81 @@ ENDIF ;/* __CUDA_API_VERSION >= 5050 */
 ; * Flags to register a graphics resource
 ; */
 
-CUgraphicsRegisterFlags	TYPEDEF DWORD ;enum
+CUgraphicsRegisterFlags  TYPEDEF DWORD ;enum
 
-;CUgraphicsRegisterFlags	UNION DEFALIGNMASM
-	CU_GRAPHICS_REGISTER_FLAGS_NONE	EQU <000h >
-	CU_GRAPHICS_REGISTER_FLAGS_READ_ONLY	EQU <001h >
-	CU_GRAPHICS_REGISTER_FLAGS_WRITE_DISCARD	EQU <002h >
-	CU_GRAPHICS_REGISTER_FLAGS_SURFACE_LDST	EQU <004h >
-	CU_GRAPHICS_REGISTER_FLAGS_TEXTURE_GATHER	EQU <008h >
-;CUgraphicsRegisterFlags		ENDS
+;CUgraphicsRegisterFlags  UNION DEFALIGNMASM
+  CU_GRAPHICS_REGISTER_FLAGS_NONE  EQU <000h >
+  CU_GRAPHICS_REGISTER_FLAGS_READ_ONLY  EQU <001h >
+  CU_GRAPHICS_REGISTER_FLAGS_WRITE_DISCARD  EQU <002h >
+  CU_GRAPHICS_REGISTER_FLAGS_SURFACE_LDST  EQU <004h >
+  CU_GRAPHICS_REGISTER_FLAGS_TEXTURE_GATHER  EQU <008h >
+;CUgraphicsRegisterFlags    ENDS
 
 
 ;/**
 ; * Flags for mapping and unmapping interop resources
 ; */
 
-CUgraphicsMapResourceFlags	TYPEDEF DWORD ;enum
+CUgraphicsMapResourceFlags  TYPEDEF DWORD ;enum
 
-;CUgraphicsMapResourceFlags	UNION DEFALIGNMASM
-	CU_GRAPHICS_MAP_RESOURCE_FLAGS_NONE	EQU <000h >
-	CU_GRAPHICS_MAP_RESOURCE_FLAGS_READ_ONLY	EQU <001h >
-	CU_GRAPHICS_MAP_RESOURCE_FLAGS_WRITE_DISCARD	EQU <002h >
-;CUgraphicsMapResourceFlags		ENDS
+;CUgraphicsMapResourceFlags  UNION DEFALIGNMASM
+  CU_GRAPHICS_MAP_RESOURCE_FLAGS_NONE  EQU <000h >
+  CU_GRAPHICS_MAP_RESOURCE_FLAGS_READ_ONLY  EQU <001h >
+  CU_GRAPHICS_MAP_RESOURCE_FLAGS_WRITE_DISCARD  EQU <002h >
+;CUgraphicsMapResourceFlags    ENDS
 
 
 ;/**
 ; * Array indices for cube faces
 ; */
 
-CUarray_cubemap_face	TYPEDEF DWORD ;enum
+CUarray_cubemap_face  TYPEDEF DWORD ;enum
 
-;CUarray_cubemap_face	UNION DEFALIGNMASM
-	CU_CUBEMAP_FACE_POSITIVE_X	EQU <000h >	;/**< Positive X face of cubemap */ 
-	CU_CUBEMAP_FACE_NEGATIVE_X	EQU <001h >	;/**< Negative X face of cubemap */ 
-	CU_CUBEMAP_FACE_POSITIVE_Y	EQU <002h >	;/**< Positive Y face of cubemap */ 
-	CU_CUBEMAP_FACE_NEGATIVE_Y	EQU <003h >	;/**< Negative Y face of cubemap */ 
-	CU_CUBEMAP_FACE_POSITIVE_Z	EQU <004h >	;/**< Positive Z face of cubemap */ 
-	CU_CUBEMAP_FACE_NEGATIVE_Z	EQU <005h >
-;CUarray_cubemap_face		ENDS
+;CUarray_cubemap_face  UNION DEFALIGNMASM
+  CU_CUBEMAP_FACE_POSITIVE_X  EQU <000h >  ;/**< Positive X face of cubemap */ 
+  CU_CUBEMAP_FACE_NEGATIVE_X  EQU <001h >  ;/**< Negative X face of cubemap */ 
+  CU_CUBEMAP_FACE_POSITIVE_Y  EQU <002h >  ;/**< Positive Y face of cubemap */ 
+  CU_CUBEMAP_FACE_NEGATIVE_Y  EQU <003h >  ;/**< Negative Y face of cubemap */ 
+  CU_CUBEMAP_FACE_POSITIVE_Z  EQU <004h >  ;/**< Positive Z face of cubemap */ 
+  CU_CUBEMAP_FACE_NEGATIVE_Z  EQU <005h >
+;CUarray_cubemap_face    ENDS
 
 
 ;/**
 ; * Limits
 ; */
 
-CUlimit	TYPEDEF DWORD ;enum
+CUlimit  TYPEDEF DWORD ;enum
 
-;CUlimit	UNION DEFALIGNMASM
-	CU_LIMIT_STACK_SIZE	EQU <000h >	;/**< GPU thread stack size */ 
-	CU_LIMIT_PRINTF_FIFO_SIZE	EQU <001h >	;/**< GPU printf FIFO size */ 
-	CU_LIMIT_MALLOC_HEAP_SIZE	EQU <002h >	;/**< GPU malloc heap size */ 
-	CU_LIMIT_DEV_RUNTIME_SYNC_DEPTH	EQU <003h >	;/**< GPU device runtime launch synchronize depth */ 
-	CU_LIMIT_DEV_RUNTIME_PENDING_LAUNCH_COUNT	EQU <004h >	;/**< GPU device runtime pending launch count */ 
-	CU_LIMIT_MAX_L2_FETCH_GRANULARITY	EQU <005h >	;/**< A value between 0 and 128 that indicates the maximum fetch granularity of L2 (in Bytes). This is a hint */ 
-	CU_LIMIT_MAX	EQU <06BH>
-;CUlimit		ENDS
+;CUlimit  UNION DEFALIGNMASM
+  CU_LIMIT_STACK_SIZE  EQU <000h >  ;/**< GPU thread stack size */ 
+  CU_LIMIT_PRINTF_FIFO_SIZE  EQU <001h >  ;/**< GPU printf FIFO size */ 
+  CU_LIMIT_MALLOC_HEAP_SIZE  EQU <002h >  ;/**< GPU malloc heap size */ 
+  CU_LIMIT_DEV_RUNTIME_SYNC_DEPTH  EQU <003h >  ;/**< GPU device runtime launch synchronize depth */ 
+  CU_LIMIT_DEV_RUNTIME_PENDING_LAUNCH_COUNT  EQU <004h >  ;/**< GPU device runtime pending launch count */ 
+  CU_LIMIT_MAX_L2_FETCH_GRANULARITY  EQU <005h >  ;/**< A value between 0 and 128 that indicates the maximum fetch granularity of L2 (in Bytes). This is a hint */ 
+  CU_LIMIT_MAX  EQU <06BH>
+;CUlimit    ENDS
 
 
 ;/**
 ; * Resource types
 ; */
 
-CUresourcetype	TYPEDEF DWORD ;enum
+CUresourcetype  TYPEDEF DWORD ;enum
 
-;CUresourcetype	UNION DEFALIGNMASM
-	CU_RESOURCE_TYPE_ARRAY	EQU <000h >	;/**< Array resoure */ 
-	CU_RESOURCE_TYPE_MIPMAPPED_ARRAY	EQU <001h >	;/**< Mipmapped array resource */ 
-	CU_RESOURCE_TYPE_LINEAR	EQU <002h >	;/**< Linear resource */ 
-	CU_RESOURCE_TYPE_PITCH2D	EQU <003h >
-;CUresourcetype		ENDS
+;CUresourcetype  UNION DEFALIGNMASM
+  CU_RESOURCE_TYPE_ARRAY  EQU <000h >  ;/**< Array resoure */ 
+  CU_RESOURCE_TYPE_MIPMAPPED_ARRAY  EQU <001h >  ;/**< Mipmapped array resource */ 
+  CU_RESOURCE_TYPE_LINEAR  EQU <002h >  ;/**< Linear resource */ 
+  CU_RESOURCE_TYPE_PITCH2D  EQU <003h >
+;CUresourcetype    ENDS
 
 
 IFDEF _WIN32
-CUDA_CB	equ	< __stdcall>
+CUDA_CB  equ  < __stdcall>
 ELSE
-CUDA_CB	equ	
+CUDA_CB  equ  
 ENDIF 
 IF  __CUDA_API_VERSION GE 10000
 ;/**
@@ -971,72 +971,72 @@ ZCUhostFn TYPEDEF PROTO :XWORD
 ; * GPU kernel node parameters
 ; */
 
-CUDA_KERNEL_NODE_PARAMS	STRUCT DEFALIGNMASM
-	func XWORD ? ;/**< Kernel to launch */ 
-	gridDimX DWORD ? ;/**< Width of grid in blocks */ 
-	gridDimY DWORD ? ;/**< Height of grid in blocks */ 
-	gridDimZ DWORD ? ;/**< Depth of grid in blocks */ 
-	blockDimX DWORD ? ;/**< X dimension of each thread block */ 
-	blockDimY DWORD ? ;/**< Y dimension of each thread block */ 
-	blockDimZ DWORD ? ;/**< Z dimension of each thread block */ 
-	sharedMemBytes DWORD ? ;/**< Dynamic shared-memory size per thread block in bytes */ 
+CUDA_KERNEL_NODE_PARAMS  STRUCT DEFALIGNMASM
+  func XWORD ? ;/**< Kernel to launch */ 
+  gridDimX DWORD ? ;/**< Width of grid in blocks */ 
+  gridDimY DWORD ? ;/**< Height of grid in blocks */ 
+  gridDimZ DWORD ? ;/**< Depth of grid in blocks */ 
+  blockDimX DWORD ? ;/**< X dimension of each thread block */ 
+  blockDimY DWORD ? ;/**< Y dimension of each thread block */ 
+  blockDimZ DWORD ? ;/**< Z dimension of each thread block */ 
+  sharedMemBytes DWORD ? ;/**< Dynamic shared-memory size per thread block in bytes */ 
 kernelParams XWORD ?
 extra XWORD ?
-CUDA_KERNEL_NODE_PARAMS		ENDS
+CUDA_KERNEL_NODE_PARAMS    ENDS
 
 
 ;/**
 ; * Memset node parameters
 ; */
 
-CUDA_MEMSET_NODE_PARAMS	STRUCT DEFALIGNMASM
-	dst XWORD ? ;/**< Destination device pointer */ 
-	pitch DWORD ? ;/**< Pitch of destination device pointer. Unused if height is 1 */ 
-	value DWORD ? ;/**< Value to be set */ 
-	elementSize DWORD ? ;/**< Size of each element in bytes. Must be 1, 2, or 4. */ 
-	awidth DWORD ? ;/**< Width in bytes, of the row */ 
-	height DWORD ? ;/**< Number of rows */ 
-CUDA_MEMSET_NODE_PARAMS		ENDS
+CUDA_MEMSET_NODE_PARAMS  STRUCT DEFALIGNMASM
+  dst XWORD ? ;/**< Destination device pointer */ 
+  pitch DWORD ? ;/**< Pitch of destination device pointer. Unused if height is 1 */ 
+  value DWORD ? ;/**< Value to be set */ 
+  elementSize DWORD ? ;/**< Size of each element in bytes. Must be 1, 2, or 4. */ 
+  awidth DWORD ? ;/**< Width in bytes, of the row */ 
+  height DWORD ? ;/**< Number of rows */ 
+CUDA_MEMSET_NODE_PARAMS    ENDS
 
 
 ;/**
 ; * Host node parameters
 ; */
 
-CUDA_HOST_NODE_PARAMS	STRUCT DEFALIGNMASM
-	fnF XWORD ? ;/**< The function to call when the node executes */ 
+CUDA_HOST_NODE_PARAMS  STRUCT DEFALIGNMASM
+  fnF XWORD ? ;/**< The function to call when the node executes */ 
 userData XWORD ?
-CUDA_HOST_NODE_PARAMS		ENDS
+CUDA_HOST_NODE_PARAMS    ENDS
 
 
 ;/**
 ; * Graph node types
 ; */
 
-CUgraphNodeType	TYPEDEF DWORD ;enum
+CUgraphNodeType  TYPEDEF DWORD ;enum
 
-;CUgraphNodeType	UNION DEFALIGNMASM
-	CU_GRAPH_NODE_TYPE_KERNEL	EQU <0 >	;/**< GPU kernel node */ 
-	CU_GRAPH_NODE_TYPE_MEMCPY	EQU <1 >	;/**< Memcpy node */ 
-	CU_GRAPH_NODE_TYPE_MEMSET	EQU <2 >	;/**< Memset node */ 
-	CU_GRAPH_NODE_TYPE_HOST	EQU <3 >	;/**< Host (executable) node */ 
-	CU_GRAPH_NODE_TYPE_GRAPH	EQU <4 >	;/**< Node which executes an embedded graph */ 
-	CU_GRAPH_NODE_TYPE_EMPTY	EQU <5 >	;/**< Empty (no-op) node */ 
-	CU_GRAPH_NODE_TYPE_COUNT	EQU <06H>
-;CUgraphNodeType		ENDS
+;CUgraphNodeType  UNION DEFALIGNMASM
+  CU_GRAPH_NODE_TYPE_KERNEL  EQU <0 >  ;/**< GPU kernel node */ 
+  CU_GRAPH_NODE_TYPE_MEMCPY  EQU <1 >  ;/**< Memcpy node */ 
+  CU_GRAPH_NODE_TYPE_MEMSET  EQU <2 >  ;/**< Memset node */ 
+  CU_GRAPH_NODE_TYPE_HOST  EQU <3 >  ;/**< Host (executable) node */ 
+  CU_GRAPH_NODE_TYPE_GRAPH  EQU <4 >  ;/**< Node which executes an embedded graph */ 
+  CU_GRAPH_NODE_TYPE_EMPTY  EQU <5 >  ;/**< Empty (no-op) node */ 
+  CU_GRAPH_NODE_TYPE_COUNT  EQU <06H>
+;CUgraphNodeType    ENDS
 
 
 ;/**
 ; * Possible stream capture statuses returned by ::cuStreamIsCapturing
 ; */
 
-CUstreamCaptureStatus	TYPEDEF DWORD ;enum
+CUstreamCaptureStatus  TYPEDEF DWORD ;enum
 
-;CUstreamCaptureStatus	UNION DEFALIGNMASM
-	CU_STREAM_CAPTURE_STATUS_NONE	EQU <0 >	;/**< Stream is not capturing */ 
-	CU_STREAM_CAPTURE_STATUS_ACTIVE	EQU <1 >	;/**< Stream is actively capturing */ 
-	CU_STREAM_CAPTURE_STATUS_INVALIDATED	EQU <2 >
-;CUstreamCaptureStatus		ENDS
+;CUstreamCaptureStatus  UNION DEFALIGNMASM
+  CU_STREAM_CAPTURE_STATUS_NONE  EQU <0 >  ;/**< Stream is not capturing */ 
+  CU_STREAM_CAPTURE_STATUS_ACTIVE  EQU <1 >  ;/**< Stream is actively capturing */ 
+  CU_STREAM_CAPTURE_STATUS_INVALIDATED  EQU <2 >
+;CUstreamCaptureStatus    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 10000 */ 
@@ -1046,13 +1046,13 @@ IF  __CUDA_API_VERSION GE 10010
 ; * ::cuStreamBeginCapture and ::cuThreadExchangeStreamCaptureMode
 ; */
 
-CUstreamCaptureMode	TYPEDEF DWORD ;enum
+CUstreamCaptureMode  TYPEDEF DWORD ;enum
 
-;CUstreamCaptureMode	UNION DEFALIGNMASM
-	CU_STREAM_CAPTURE_MODE_GLOBAL	EQU <0 >
-	CU_STREAM_CAPTURE_MODE_THREAD_LOCAL	EQU <1 >
-	CU_STREAM_CAPTURE_MODE_RELAXED	EQU <2 >
-;CUstreamCaptureMode		ENDS
+;CUstreamCaptureMode  UNION DEFALIGNMASM
+  CU_STREAM_CAPTURE_MODE_GLOBAL  EQU <0 >
+  CU_STREAM_CAPTURE_MODE_THREAD_LOCAL  EQU <1 >
+  CU_STREAM_CAPTURE_MODE_RELAXED  EQU <2 >
+;CUstreamCaptureMode    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 10010 */ 
@@ -1060,98 +1060,98 @@ ENDIF ;/* __CUDA_API_VERSION >= 10010 */
 ; * Error codes
 ; */
 
-CUresult	TYPEDEF DWORD ;enum
+CUresult  TYPEDEF DWORD ;enum
 
-;CUresult	UNION DEFALIGNMASM
-	CUDA_SUCCESS	EQU <0 >
-	CUDA_ERROR_INVALID_VALUE	EQU <1 >
-	CUDA_ERROR_OUT_OF_MEMORY	EQU <2 >
-	CUDA_ERROR_NOT_INITIALIZED	EQU <3 >
-	CUDA_ERROR_DEINITIALIZED	EQU <4 >
-	CUDA_ERROR_PROFILER_DISABLED	EQU <5 >
-	CUDA_ERROR_PROFILER_NOT_INITIALIZED	EQU <6 >
-	CUDA_ERROR_PROFILER_ALREADY_STARTED	EQU <7 >
-	CUDA_ERROR_PROFILER_ALREADY_STOPPED	EQU <8 >
-	CUDA_ERROR_NO_DEVICE	EQU <100 >
-	CUDA_ERROR_INVALID_DEVICE	EQU <101 >
-	CUDA_ERROR_INVALID_IMAGE	EQU <200 >
-	CUDA_ERROR_INVALID_CONTEXT	EQU <201 >
-	CUDA_ERROR_CONTEXT_ALREADY_CURRENT	EQU <202 >
-	CUDA_ERROR_MAP_FAILED	EQU <205 >
-	CUDA_ERROR_UNMAP_FAILED	EQU <206 >
-	CUDA_ERROR_ARRAY_IS_MAPPED	EQU <207 >
-	CUDA_ERROR_ALREADY_MAPPED	EQU <208 >
-	CUDA_ERROR_NO_BINARY_FOR_GPU	EQU <209 >
-	CUDA_ERROR_ALREADY_ACQUIRED	EQU <210 >
-	CUDA_ERROR_NOT_MAPPED	EQU <211 >
-	CUDA_ERROR_NOT_MAPPED_AS_ARRAY	EQU <212 >
-	CUDA_ERROR_NOT_MAPPED_AS_POINTER	EQU <213 >
-	CUDA_ERROR_ECC_UNCORRECTABLE	EQU <214 >
-	CUDA_ERROR_UNSUPPORTED_LIMIT	EQU <215 >
-	CUDA_ERROR_CONTEXT_ALREADY_IN_USE	EQU <216 >
-	CUDA_ERROR_PEER_ACCESS_UNSUPPORTED	EQU <217 >
-	CUDA_ERROR_INVALID_PTX	EQU <218 >
-	CUDA_ERROR_INVALID_GRAPHICS_CONTEXT	EQU <219 >
-	CUDA_ERROR_NVLINK_UNCORRECTABLE	EQU <220 >
-	CUDA_ERROR_JIT_COMPILER_NOT_FOUND	EQU <221 >
-	CUDA_ERROR_INVALID_SOURCE	EQU <300 >
-	CUDA_ERROR_FILE_NOT_FOUND	EQU <301 >
-	CUDA_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND	EQU <302 >
-	CUDA_ERROR_SHARED_OBJECT_INIT_FAILED	EQU <303 >
-	CUDA_ERROR_OPERATING_SYSTEM	EQU <304 >
-	CUDA_ERROR_INVALID_HANDLE	EQU <400 >
-	CUDA_ERROR_ILLEGAL_STATE	EQU <401 >
-	CUDA_ERROR_NOT_FOUND	EQU <500 >
-	CUDA_ERROR_NOT_READY	EQU <600 >
-	CUDA_ERROR_ILLEGAL_ADDRESS	EQU <700 >
-	CUDA_ERROR_LAUNCH_OUT_OF_RESOURCES	EQU <701 >
-	CUDA_ERROR_LAUNCH_TIMEOUT	EQU <702 >
-	CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING	EQU <703 >
-	CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED	EQU <704 >
-	CUDA_ERROR_PEER_ACCESS_NOT_ENABLED	EQU <705 >
-	CUDA_ERROR_PRIMARY_CONTEXT_ACTIVE	EQU <708 >
-	CUDA_ERROR_CONTEXT_IS_DESTROYED	EQU <709 >
-	CUDA_ERROR_ASSERT	EQU <710 >
-	CUDA_ERROR_TOO_MANY_PEERS	EQU <711 >
-	CUDA_ERROR_HOST_MEMORY_ALREADY_REGISTERED	EQU <712 >
-	CUDA_ERROR_HOST_MEMORY_NOT_REGISTERED	EQU <713 >
-	CUDA_ERROR_HARDWARE_STACK_ERROR	EQU <714 >
-	CUDA_ERROR_ILLEGAL_INSTRUCTION	EQU <715 >
-	CUDA_ERROR_MISALIGNED_ADDRESS	EQU <716 >
-	CUDA_ERROR_INVALID_ADDRESS_SPACE	EQU <717 >
-	CUDA_ERROR_INVALID_PC	EQU <718 >
-	CUDA_ERROR_LAUNCH_FAILED	EQU <719 >
-	CUDA_ERROR_COOPERATIVE_LAUNCH_TOO_LARGE	EQU <720 >
-	CUDA_ERROR_NOT_PERMITTED	EQU <800 >
-	CUDA_ERROR_NOT_SUPPORTED	EQU <801 >
-	CUDA_ERROR_SYSTEM_NOT_READY	EQU <802 >
-	CUDA_ERROR_SYSTEM_DRIVER_MISMATCH	EQU <803 >
-	CUDA_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE	EQU <804 >
-	CUDA_ERROR_STREAM_CAPTURE_UNSUPPORTED	EQU <900 >
-	CUDA_ERROR_STREAM_CAPTURE_INVALIDATED	EQU <901 >
-	CUDA_ERROR_STREAM_CAPTURE_MERGE	EQU <902 >
-	CUDA_ERROR_STREAM_CAPTURE_UNMATCHED	EQU <903 >
-	CUDA_ERROR_STREAM_CAPTURE_UNJOINED	EQU <904 >
-	CUDA_ERROR_STREAM_CAPTURE_ISOLATION	EQU <905 >
-	CUDA_ERROR_STREAM_CAPTURE_IMPLICIT	EQU <906 >
-	CUDA_ERROR_CAPTURED_EVENT	EQU <907 >
-	CUDA_ERROR_STREAM_CAPTURE_WRONG_THREAD	EQU <908 >
-	CUDA_ERROR_UNKNOWN	EQU <999 >
-;CUresult		ENDS
+;CUresult  UNION DEFALIGNMASM
+  CUDA_SUCCESS  EQU <0 >
+  CUDA_ERROR_INVALID_VALUE  EQU <1 >
+  CUDA_ERROR_OUT_OF_MEMORY  EQU <2 >
+  CUDA_ERROR_NOT_INITIALIZED  EQU <3 >
+  CUDA_ERROR_DEINITIALIZED  EQU <4 >
+  CUDA_ERROR_PROFILER_DISABLED  EQU <5 >
+  CUDA_ERROR_PROFILER_NOT_INITIALIZED  EQU <6 >
+  CUDA_ERROR_PROFILER_ALREADY_STARTED  EQU <7 >
+  CUDA_ERROR_PROFILER_ALREADY_STOPPED  EQU <8 >
+  CUDA_ERROR_NO_DEVICE  EQU <100 >
+  CUDA_ERROR_INVALID_DEVICE  EQU <101 >
+  CUDA_ERROR_INVALID_IMAGE  EQU <200 >
+  CUDA_ERROR_INVALID_CONTEXT  EQU <201 >
+  CUDA_ERROR_CONTEXT_ALREADY_CURRENT  EQU <202 >
+  CUDA_ERROR_MAP_FAILED  EQU <205 >
+  CUDA_ERROR_UNMAP_FAILED  EQU <206 >
+  CUDA_ERROR_ARRAY_IS_MAPPED  EQU <207 >
+  CUDA_ERROR_ALREADY_MAPPED  EQU <208 >
+  CUDA_ERROR_NO_BINARY_FOR_GPU  EQU <209 >
+  CUDA_ERROR_ALREADY_ACQUIRED  EQU <210 >
+  CUDA_ERROR_NOT_MAPPED  EQU <211 >
+  CUDA_ERROR_NOT_MAPPED_AS_ARRAY  EQU <212 >
+  CUDA_ERROR_NOT_MAPPED_AS_POINTER  EQU <213 >
+  CUDA_ERROR_ECC_UNCORRECTABLE  EQU <214 >
+  CUDA_ERROR_UNSUPPORTED_LIMIT  EQU <215 >
+  CUDA_ERROR_CONTEXT_ALREADY_IN_USE  EQU <216 >
+  CUDA_ERROR_PEER_ACCESS_UNSUPPORTED  EQU <217 >
+  CUDA_ERROR_INVALID_PTX  EQU <218 >
+  CUDA_ERROR_INVALID_GRAPHICS_CONTEXT  EQU <219 >
+  CUDA_ERROR_NVLINK_UNCORRECTABLE  EQU <220 >
+  CUDA_ERROR_JIT_COMPILER_NOT_FOUND  EQU <221 >
+  CUDA_ERROR_INVALID_SOURCE  EQU <300 >
+  CUDA_ERROR_FILE_NOT_FOUND  EQU <301 >
+  CUDA_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND  EQU <302 >
+  CUDA_ERROR_SHARED_OBJECT_INIT_FAILED  EQU <303 >
+  CUDA_ERROR_OPERATING_SYSTEM  EQU <304 >
+  CUDA_ERROR_INVALID_HANDLE  EQU <400 >
+  CUDA_ERROR_ILLEGAL_STATE  EQU <401 >
+  CUDA_ERROR_NOT_FOUND  EQU <500 >
+  CUDA_ERROR_NOT_READY  EQU <600 >
+  CUDA_ERROR_ILLEGAL_ADDRESS  EQU <700 >
+  CUDA_ERROR_LAUNCH_OUT_OF_RESOURCES  EQU <701 >
+  CUDA_ERROR_LAUNCH_TIMEOUT  EQU <702 >
+  CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING  EQU <703 >
+  CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED  EQU <704 >
+  CUDA_ERROR_PEER_ACCESS_NOT_ENABLED  EQU <705 >
+  CUDA_ERROR_PRIMARY_CONTEXT_ACTIVE  EQU <708 >
+  CUDA_ERROR_CONTEXT_IS_DESTROYED  EQU <709 >
+  CUDA_ERROR_ASSERT  EQU <710 >
+  CUDA_ERROR_TOO_MANY_PEERS  EQU <711 >
+  CUDA_ERROR_HOST_MEMORY_ALREADY_REGISTERED  EQU <712 >
+  CUDA_ERROR_HOST_MEMORY_NOT_REGISTERED  EQU <713 >
+  CUDA_ERROR_HARDWARE_STACK_ERROR  EQU <714 >
+  CUDA_ERROR_ILLEGAL_INSTRUCTION  EQU <715 >
+  CUDA_ERROR_MISALIGNED_ADDRESS  EQU <716 >
+  CUDA_ERROR_INVALID_ADDRESS_SPACE  EQU <717 >
+  CUDA_ERROR_INVALID_PC  EQU <718 >
+  CUDA_ERROR_LAUNCH_FAILED  EQU <719 >
+  CUDA_ERROR_COOPERATIVE_LAUNCH_TOO_LARGE  EQU <720 >
+  CUDA_ERROR_NOT_PERMITTED  EQU <800 >
+  CUDA_ERROR_NOT_SUPPORTED  EQU <801 >
+  CUDA_ERROR_SYSTEM_NOT_READY  EQU <802 >
+  CUDA_ERROR_SYSTEM_DRIVER_MISMATCH  EQU <803 >
+  CUDA_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE  EQU <804 >
+  CUDA_ERROR_STREAM_CAPTURE_UNSUPPORTED  EQU <900 >
+  CUDA_ERROR_STREAM_CAPTURE_INVALIDATED  EQU <901 >
+  CUDA_ERROR_STREAM_CAPTURE_MERGE  EQU <902 >
+  CUDA_ERROR_STREAM_CAPTURE_UNMATCHED  EQU <903 >
+  CUDA_ERROR_STREAM_CAPTURE_UNJOINED  EQU <904 >
+  CUDA_ERROR_STREAM_CAPTURE_ISOLATION  EQU <905 >
+  CUDA_ERROR_STREAM_CAPTURE_IMPLICIT  EQU <906 >
+  CUDA_ERROR_CAPTURED_EVENT  EQU <907 >
+  CUDA_ERROR_STREAM_CAPTURE_WRONG_THREAD  EQU <908 >
+  CUDA_ERROR_UNKNOWN  EQU <999 >
+;CUresult    ENDS
 
 ;/**
 ; * P2P Attributes
 ; */
 
-CUdevice_P2PAttribute	TYPEDEF DWORD ;enum
+CUdevice_P2PAttribute  TYPEDEF DWORD ;enum
 
-;CUdevice_P2PAttribute	UNION DEFALIGNMASM
-	CU_DEVICE_P2P_ATTRIBUTE_PERFORMANCE_RANK	EQU <001h >	;/**< A relative value indicating the performance of the link between two devices */ 
-	CU_DEVICE_P2P_ATTRIBUTE_ACCESS_SUPPORTED	EQU <002h >	;/**< P2P Access is enable */ 
-	CU_DEVICE_P2P_ATTRIBUTE_NATIVE_ATOMIC_SUPPORTED	EQU <003h >	;/**< Atomic operation over the link supported */ 
-	CU_DEVICE_P2P_ATTRIBUTE_ACCESS_ACCESS_SUPPORTED	EQU <004h >	;/**< \deprecated use CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED instead */ 
-	CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED	EQU <004h >
-;CUdevice_P2PAttribute		ENDS
+;CUdevice_P2PAttribute  UNION DEFALIGNMASM
+  CU_DEVICE_P2P_ATTRIBUTE_PERFORMANCE_RANK  EQU <001h >  ;/**< A relative value indicating the performance of the link between two devices */ 
+  CU_DEVICE_P2P_ATTRIBUTE_ACCESS_SUPPORTED  EQU <002h >  ;/**< P2P Access is enable */ 
+  CU_DEVICE_P2P_ATTRIBUTE_NATIVE_ATOMIC_SUPPORTED  EQU <003h >  ;/**< Atomic operation over the link supported */ 
+  CU_DEVICE_P2P_ATTRIBUTE_ACCESS_ACCESS_SUPPORTED  EQU <004h >  ;/**< \deprecated use CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED instead */ 
+  CU_DEVICE_P2P_ATTRIBUTE_CUDA_ARRAY_ACCESS_SUPPORTED  EQU <004h >
+;CUdevice_P2PAttribute    ENDS
 
 
 ;/**
@@ -1174,31 +1174,31 @@ ZCUoccupancyB2DSize TYPEDEF PROTO blockSize:DWORD
 ; * If set, host memory is portable between CUDA contexts.
 ; * Flag for ::cuMemHostAlloc()
 ; */
-CU_MEMHOSTALLOC_PORTABLE	equ	< 001h>
+CU_MEMHOSTALLOC_PORTABLE  equ  < 001h>
 ;/**
 ; * If set, host memory is mapped into CUDA address space and
 ; * ::cuMemHostGetDevicePointer() may be called on the host pointer.
 ; * Flag for ::cuMemHostAlloc()
 ; */
-CU_MEMHOSTALLOC_DEVICEMAP	equ	< 002h>
+CU_MEMHOSTALLOC_DEVICEMAP  equ  < 002h>
 ;/**
 ; * If set, host memory is allocated as write-combined - fast to write,
 ; * faster to DMA, slow to read except via SSE4 streaming load instruction
 ; * (MOVNTDQA).
 ; * Flag for ::cuMemHostAlloc()
 ; */
-CU_MEMHOSTALLOC_WRITECOMBINED	equ	< 004h>
+CU_MEMHOSTALLOC_WRITECOMBINED  equ  < 004h>
 ;/**
 ; * If set, host memory is portable between CUDA contexts.
 ; * Flag for ::cuMemHostRegister()
 ; */
-CU_MEMHOSTREGISTER_PORTABLE	equ	< 001h>
+CU_MEMHOSTREGISTER_PORTABLE  equ  < 001h>
 ;/**
 ; * If set, host memory is mapped into CUDA address space and
 ; * ::cuMemHostGetDevicePointer() may be called on the host pointer.
 ; * Flag for ::cuMemHostRegister()
 ; */
-CU_MEMHOSTREGISTER_DEVICEMAP	equ	< 002h>
+CU_MEMHOSTREGISTER_DEVICEMAP  equ  < 002h>
 ;/**
 ; * If set, the passed memory pointer is treated as pointing to some
 ; * memory-mapped I/O space, e.g. belonging to a third-party PCIe device.
@@ -1211,122 +1211,122 @@ CU_MEMHOSTREGISTER_DEVICEMAP	equ	< 002h>
 ; * is returned.
 ; * Flag for ::cuMemHostRegister()
 ; */
-CU_MEMHOSTREGISTER_IOMEMORY	equ	< 004h>
+CU_MEMHOSTREGISTER_IOMEMORY  equ  < 004h>
 IF  __CUDA_API_VERSION GE 3020
 ;/**
 ; * 2D memory copy parameters
 ; */
 
-CUDA_MEMCPY2D	STRUCT DEFALIGNMASM
-	srcXInBytes DWORD ? ;/**< Source X in bytes */ 
-	srcY DWORD ? ;/**< Source Y */ 
-	srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
+CUDA_MEMCPY2D  STRUCT DEFALIGNMASM
+  srcXInBytes DWORD ? ;/**< Source X in bytes */ 
+  srcY DWORD ? ;/**< Source Y */ 
+  srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
 srcHost XWORD ?
-	srcDevice XWORD ? ;/**< Source device pointer */ 
-	srcArray XWORD ? ;/**< Source array reference */ 
-	srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
-	dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
-	dstY DWORD ? ;/**< Destination Y */ 
-	dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
+  srcDevice XWORD ? ;/**< Source device pointer */ 
+  srcArray XWORD ? ;/**< Source array reference */ 
+  srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
+  dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
+  dstY DWORD ? ;/**< Destination Y */ 
+  dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
 dstHost XWORD ?
-	dstDevice XWORD ? ;/**< Destination device pointer */ 
-	dstArray XWORD ? ;/**< Destination array reference */ 
-	dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
-	WidthInBytes DWORD ? ;/**< Width of 2D memory copy in bytes */ 
-	Height DWORD ? ;/**< Height of 2D memory copy */ 
-CUDA_MEMCPY2D		ENDS
+  dstDevice XWORD ? ;/**< Destination device pointer */ 
+  dstArray XWORD ? ;/**< Destination array reference */ 
+  dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
+  WidthInBytes DWORD ? ;/**< Width of 2D memory copy in bytes */ 
+  Height DWORD ? ;/**< Height of 2D memory copy */ 
+CUDA_MEMCPY2D    ENDS
 
 
 ;/**
 ; * 3D memory copy parameters
 ; */
 
-CUDA_MEMCPY3D	STRUCT DEFALIGNMASM
-	srcXInBytes DWORD ? ;/**< Source X in bytes */ 
-	srcY DWORD ? ;/**< Source Y */ 
-	srcZ DWORD ? ;/**< Source Z */ 
-	srcLOD DWORD ? ;/**< Source LOD */ 
-	srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
+CUDA_MEMCPY3D  STRUCT DEFALIGNMASM
+  srcXInBytes DWORD ? ;/**< Source X in bytes */ 
+  srcY DWORD ? ;/**< Source Y */ 
+  srcZ DWORD ? ;/**< Source Z */ 
+  srcLOD DWORD ? ;/**< Source LOD */ 
+  srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
 srcHost XWORD ?
-	srcDevice XWORD ? ;/**< Source device pointer */ 
-	srcArray XWORD ? ;/**< Source array reference */ 
+  srcDevice XWORD ? ;/**< Source device pointer */ 
+  srcArray XWORD ? ;/**< Source array reference */ 
 reserved0 XWORD ?
-	srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
-	srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
-	dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
-	dstY DWORD ? ;/**< Destination Y */ 
-	dstZ DWORD ? ;/**< Destination Z */ 
-	dstLOD DWORD ? ;/**< Destination LOD */ 
-	dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
+  srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
+  srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
+  dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
+  dstY DWORD ? ;/**< Destination Y */ 
+  dstZ DWORD ? ;/**< Destination Z */ 
+  dstLOD DWORD ? ;/**< Destination LOD */ 
+  dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
 dstHost XWORD ?
-	dstDevice XWORD ? ;/**< Destination device pointer */ 
-	dstArray XWORD ? ;/**< Destination array reference */ 
+  dstDevice XWORD ? ;/**< Destination device pointer */ 
+  dstArray XWORD ? ;/**< Destination array reference */ 
 reserved1 XWORD ?
-	dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
-	dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
-	WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
-	Height DWORD ? ;/**< Height of 3D memory copy */ 
-	Depth DWORD ? ;/**< Depth of 3D memory copy */ 
-CUDA_MEMCPY3D		ENDS
+  dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
+  dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
+  WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
+  Height DWORD ? ;/**< Height of 3D memory copy */ 
+  Depth DWORD ? ;/**< Depth of 3D memory copy */ 
+CUDA_MEMCPY3D    ENDS
 
 
 ;/**
 ; * 3D memory cross-context copy parameters
 ; */
 
-CUDA_MEMCPY3D_PEER	STRUCT DEFALIGNMASM
-	srcXInBytes DWORD ? ;/**< Source X in bytes */ 
-	srcY DWORD ? ;/**< Source Y */ 
-	srcZ DWORD ? ;/**< Source Z */ 
-	srcLOD DWORD ? ;/**< Source LOD */ 
-	srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
+CUDA_MEMCPY3D_PEER  STRUCT DEFALIGNMASM
+  srcXInBytes DWORD ? ;/**< Source X in bytes */ 
+  srcY DWORD ? ;/**< Source Y */ 
+  srcZ DWORD ? ;/**< Source Z */ 
+  srcLOD DWORD ? ;/**< Source LOD */ 
+  srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
 srcHost XWORD ?
-	srcDevice XWORD ? ;/**< Source device pointer */ 
-	srcArray XWORD ? ;/**< Source array reference */ 
-	srcContext XWORD ? ;/**< Source context (ignored with srcMemoryType is ::CU_MEMORYTYPE_ARRAY) */ 
-	srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
-	srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
-	dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
-	dstY DWORD ? ;/**< Destination Y */ 
-	dstZ DWORD ? ;/**< Destination Z */ 
-	dstLOD DWORD ? ;/**< Destination LOD */ 
-	dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
+  srcDevice XWORD ? ;/**< Source device pointer */ 
+  srcArray XWORD ? ;/**< Source array reference */ 
+  srcContext XWORD ? ;/**< Source context (ignored with srcMemoryType is ::CU_MEMORYTYPE_ARRAY) */ 
+  srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
+  srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
+  dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
+  dstY DWORD ? ;/**< Destination Y */ 
+  dstZ DWORD ? ;/**< Destination Z */ 
+  dstLOD DWORD ? ;/**< Destination LOD */ 
+  dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
 dstHost XWORD ?
-	dstDevice XWORD ? ;/**< Destination device pointer */ 
-	dstArray XWORD ? ;/**< Destination array reference */ 
-	dstContext XWORD ? ;/**< Destination context (ignored with dstMemoryType is ::CU_MEMORYTYPE_ARRAY) */ 
-	dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
-	dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
-	WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
-	Height DWORD ? ;/**< Height of 3D memory copy */ 
-	Depth DWORD ? ;/**< Depth of 3D memory copy */ 
-CUDA_MEMCPY3D_PEER		ENDS
+  dstDevice XWORD ? ;/**< Destination device pointer */ 
+  dstArray XWORD ? ;/**< Destination array reference */ 
+  dstContext XWORD ? ;/**< Destination context (ignored with dstMemoryType is ::CU_MEMORYTYPE_ARRAY) */ 
+  dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
+  dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
+  WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
+  Height DWORD ? ;/**< Height of 3D memory copy */ 
+  Depth DWORD ? ;/**< Depth of 3D memory copy */ 
+CUDA_MEMCPY3D_PEER    ENDS
 
 
 ;/**
 ; * Array descriptor
 ; */
 
-CUDA_ARRAY_DESCRIPTOR	STRUCT DEFALIGNMASM
-	awidth DWORD ? ;/**< Width of array */ 
-	Height DWORD ? ;/**< Height of array */ 
-	Format CUarray_format ? ;/**< Array format */ 
-	NumChannels DWORD ? ;/**< Channels per array element */ 
-CUDA_ARRAY_DESCRIPTOR		ENDS
+CUDA_ARRAY_DESCRIPTOR  STRUCT DEFALIGNMASM
+  awidth DWORD ? ;/**< Width of array */ 
+  Height DWORD ? ;/**< Height of array */ 
+  Format CUarray_format ? ;/**< Array format */ 
+  NumChannels DWORD ? ;/**< Channels per array element */ 
+CUDA_ARRAY_DESCRIPTOR    ENDS
 
 
 ;/**
 ; * 3D array descriptor
 ; */
 
-CUDA_ARRAY3D_DESCRIPTOR	STRUCT DEFALIGNMASM
-	awidth DWORD ? ;/**< Width of 3D array */ 
-	Height DWORD ? ;/**< Height of 3D array */ 
-	Depth DWORD ? ;/**< Depth of 3D array */ 
-	Format CUarray_format ? ;/**< Array format */ 
-	NumChannels DWORD ? ;/**< Channels per array element */ 
-	Flags DWORD ? ;/**< Flags */ 
-CUDA_ARRAY3D_DESCRIPTOR		ENDS
+CUDA_ARRAY3D_DESCRIPTOR  STRUCT DEFALIGNMASM
+  awidth DWORD ? ;/**< Width of 3D array */ 
+  Height DWORD ? ;/**< Height of 3D array */ 
+  Depth DWORD ? ;/**< Depth of 3D array */ 
+  Format CUarray_format ? ;/**< Array format */ 
+  NumChannels DWORD ? ;/**< Channels per array element */ 
+  Flags DWORD ? ;/**< Flags */ 
+CUDA_ARRAY3D_DESCRIPTOR    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 3020 */ 
@@ -1335,124 +1335,124 @@ IF  __CUDA_API_VERSION GE 5000
 ; * CUDA Resource descriptor
 ; */
 
-CUDA_RESOURCE_DESC	STRUCT DEFALIGNMASM
-	resType CUresourcetype ? ;/**< Resource type */ 
-	union	res
-	STRUCT	array
-	hArray XWORD ? ;/**< CUDA array */ 
-	ENDS
-	STRUCT	mipmap
-	hMipmappedArray XWORD ? ;/**< CUDA mipmapped array */ 
-	ENDS
-	STRUCT	linear
-	devPtr XWORD ? ;/**< Device pointer */ 
-	format CUarray_format ? ;/**< Array format */ 
-	numChannels DWORD ? ;/**< Channels per array element */ 
-	sizeInBytes DWORD ? ;/**< Size in bytes */ 
-	ENDS
-	STRUCT	pitch2D
-	devPtr XWORD ? ;/**< Device pointer */ 
-	format CUarray_format ? ;/**< Array format */ 
-	numChannels DWORD ? ;/**< Channels per array element */ 
-	awidth DWORD ? ;/**< Width of the array in elements */ 
-	height DWORD ? ;/**< Height of the array in elements */ 
-	pitchInBytes DWORD ? ;/**< Pitch between two rows in bytes */ 
-	ENDS
-	STRUCT	reserved
-	reserved DWORD 32 dup (?)
-	ENDS
-	ENDS
-	flags DWORD ? ;/**< Flags (must be zero) */ 
-CUDA_RESOURCE_DESC		ENDS
+CUDA_RESOURCE_DESC  STRUCT DEFALIGNMASM
+  resType CUresourcetype ? ;/**< Resource type */ 
+  union  res
+  STRUCT  array
+  hArray XWORD ? ;/**< CUDA array */ 
+  ENDS
+  STRUCT  mipmap
+  hMipmappedArray XWORD ? ;/**< CUDA mipmapped array */ 
+  ENDS
+  STRUCT  linear
+  devPtr XWORD ? ;/**< Device pointer */ 
+  format CUarray_format ? ;/**< Array format */ 
+  numChannels DWORD ? ;/**< Channels per array element */ 
+  sizeInBytes DWORD ? ;/**< Size in bytes */ 
+  ENDS
+  STRUCT  pitch2D
+  devPtr XWORD ? ;/**< Device pointer */ 
+  format CUarray_format ? ;/**< Array format */ 
+  numChannels DWORD ? ;/**< Channels per array element */ 
+  awidth DWORD ? ;/**< Width of the array in elements */ 
+  height DWORD ? ;/**< Height of the array in elements */ 
+  pitchInBytes DWORD ? ;/**< Pitch between two rows in bytes */ 
+  ENDS
+  STRUCT  reserved
+  reserved DWORD 32 dup (?)
+  ENDS
+  ENDS
+  flags DWORD ? ;/**< Flags (must be zero) */ 
+CUDA_RESOURCE_DESC    ENDS
 
 
 ;/**
 ; * Texture descriptor
 ; */
 
-CUDA_TEXTURE_DESC	STRUCT DEFALIGNMASM
-	addressMode CUaddress_mode 3 dup (?) ;/**< Address modes */ 
-	filterMode CUfilter_mode ? ;/**< Filter mode */ 
-	flags DWORD ? ;/**< Flags */ 
-	maxAnisotropy DWORD ? ;/**< Maximum anisotropy ratio */ 
-	mipmapFilterMode CUfilter_mode ? ;/**< Mipmap filter mode */ 
-	mipmapLevelBias REAL4 ? ;/**< Mipmap level bias */ 
-	minMipmapLevelClamp REAL4 ? ;/**< Mipmap minimum level clamp */ 
-	maxMipmapLevelClamp REAL4 ? ;/**< Mipmap maximum level clamp */ 
-	borderColor REAL4 4 dup (?) ;/**< Border Color */ 
-	reserved DWORD 12 dup (?)
-CUDA_TEXTURE_DESC		ENDS
+CUDA_TEXTURE_DESC  STRUCT DEFALIGNMASM
+  addressMode CUaddress_mode 3 dup (?) ;/**< Address modes */ 
+  filterMode CUfilter_mode ? ;/**< Filter mode */ 
+  flags DWORD ? ;/**< Flags */ 
+  maxAnisotropy DWORD ? ;/**< Maximum anisotropy ratio */ 
+  mipmapFilterMode CUfilter_mode ? ;/**< Mipmap filter mode */ 
+  mipmapLevelBias REAL4 ? ;/**< Mipmap level bias */ 
+  minMipmapLevelClamp REAL4 ? ;/**< Mipmap minimum level clamp */ 
+  maxMipmapLevelClamp REAL4 ? ;/**< Mipmap maximum level clamp */ 
+  borderColor REAL4 4 dup (?) ;/**< Border Color */ 
+  reserved DWORD 12 dup (?)
+CUDA_TEXTURE_DESC    ENDS
 
 
 ;/**
 ; * Resource view format
 ; */
 
-CUresourceViewFormat	TYPEDEF DWORD ;enum
+CUresourceViewFormat  TYPEDEF DWORD ;enum
 
-;CUresourceViewFormat	UNION DEFALIGNMASM
-	CU_RES_VIEW_FORMAT_NONE	EQU <000h >	;/**< No resource view format (use underlying resource format) */ 
-	CU_RES_VIEW_FORMAT_UINT_1X8	EQU <001h >	;/**< 1 channel unsigned 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_2X8	EQU <002h >	;/**< 2 channel unsigned 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_4X8	EQU <003h >	;/**< 4 channel unsigned 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_1X8	EQU <004h >	;/**< 1 channel signed 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_2X8	EQU <005h >	;/**< 2 channel signed 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_4X8	EQU <006h >	;/**< 4 channel signed 8-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_1X16	EQU <007h >	;/**< 1 channel unsigned 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_2X16	EQU <008h >	;/**< 2 channel unsigned 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_4X16	EQU <009h >	;/**< 4 channel unsigned 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_1X16	EQU <00ah >	;/**< 1 channel signed 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_2X16	EQU <00bh >	;/**< 2 channel signed 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_4X16	EQU <00ch >	;/**< 4 channel signed 16-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_1X32	EQU <00dh >	;/**< 1 channel unsigned 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_2X32	EQU <00eh >	;/**< 2 channel unsigned 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_UINT_4X32	EQU <00fh >	;/**< 4 channel unsigned 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_1X32	EQU <010h >	;/**< 1 channel signed 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_2X32	EQU <011h >	;/**< 2 channel signed 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_SINT_4X32	EQU <012h >	;/**< 4 channel signed 32-bit integers */ 
-	CU_RES_VIEW_FORMAT_FLOAT_1X16	EQU <013h >	;/**< 1 channel 16-bit floating point */ 
-	CU_RES_VIEW_FORMAT_FLOAT_2X16	EQU <014h >	;/**< 2 channel 16-bit floating point */ 
-	CU_RES_VIEW_FORMAT_FLOAT_4X16	EQU <015h >	;/**< 4 channel 16-bit floating point */ 
-	CU_RES_VIEW_FORMAT_FLOAT_1X32	EQU <016h >	;/**< 1 channel 32-bit floating point */ 
-	CU_RES_VIEW_FORMAT_FLOAT_2X32	EQU <017h >	;/**< 2 channel 32-bit floating point */ 
-	CU_RES_VIEW_FORMAT_FLOAT_4X32	EQU <018h >	;/**< 4 channel 32-bit floating point */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC1	EQU <019h >	;/**< Block compressed 1 */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC2	EQU <01ah >	;/**< Block compressed 2 */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC3	EQU <01bh >	;/**< Block compressed 3 */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC4	EQU <01ch >	;/**< Block compressed 4 unsigned */ 
-	CU_RES_VIEW_FORMAT_SIGNED_BC4	EQU <01dh >	;/**< Block compressed 4 signed */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC5	EQU <01eh >	;/**< Block compressed 5 unsigned */ 
-	CU_RES_VIEW_FORMAT_SIGNED_BC5	EQU <01fh >	;/**< Block compressed 5 signed */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC6H	EQU <020h >	;/**< Block compressed 6 unsigned half-float */ 
-	CU_RES_VIEW_FORMAT_SIGNED_BC6H	EQU <021h >	;/**< Block compressed 6 signed half-float */ 
-	CU_RES_VIEW_FORMAT_UNSIGNED_BC7	EQU <022h >
-;CUresourceViewFormat		ENDS
+;CUresourceViewFormat  UNION DEFALIGNMASM
+  CU_RES_VIEW_FORMAT_NONE  EQU <000h >  ;/**< No resource view format (use underlying resource format) */ 
+  CU_RES_VIEW_FORMAT_UINT_1X8  EQU <001h >  ;/**< 1 channel unsigned 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_2X8  EQU <002h >  ;/**< 2 channel unsigned 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_4X8  EQU <003h >  ;/**< 4 channel unsigned 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_1X8  EQU <004h >  ;/**< 1 channel signed 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_2X8  EQU <005h >  ;/**< 2 channel signed 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_4X8  EQU <006h >  ;/**< 4 channel signed 8-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_1X16  EQU <007h >  ;/**< 1 channel unsigned 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_2X16  EQU <008h >  ;/**< 2 channel unsigned 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_4X16  EQU <009h >  ;/**< 4 channel unsigned 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_1X16  EQU <00ah >  ;/**< 1 channel signed 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_2X16  EQU <00bh >  ;/**< 2 channel signed 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_4X16  EQU <00ch >  ;/**< 4 channel signed 16-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_1X32  EQU <00dh >  ;/**< 1 channel unsigned 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_2X32  EQU <00eh >  ;/**< 2 channel unsigned 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_UINT_4X32  EQU <00fh >  ;/**< 4 channel unsigned 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_1X32  EQU <010h >  ;/**< 1 channel signed 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_2X32  EQU <011h >  ;/**< 2 channel signed 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_SINT_4X32  EQU <012h >  ;/**< 4 channel signed 32-bit integers */ 
+  CU_RES_VIEW_FORMAT_FLOAT_1X16  EQU <013h >  ;/**< 1 channel 16-bit floating point */ 
+  CU_RES_VIEW_FORMAT_FLOAT_2X16  EQU <014h >  ;/**< 2 channel 16-bit floating point */ 
+  CU_RES_VIEW_FORMAT_FLOAT_4X16  EQU <015h >  ;/**< 4 channel 16-bit floating point */ 
+  CU_RES_VIEW_FORMAT_FLOAT_1X32  EQU <016h >  ;/**< 1 channel 32-bit floating point */ 
+  CU_RES_VIEW_FORMAT_FLOAT_2X32  EQU <017h >  ;/**< 2 channel 32-bit floating point */ 
+  CU_RES_VIEW_FORMAT_FLOAT_4X32  EQU <018h >  ;/**< 4 channel 32-bit floating point */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC1  EQU <019h >  ;/**< Block compressed 1 */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC2  EQU <01ah >  ;/**< Block compressed 2 */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC3  EQU <01bh >  ;/**< Block compressed 3 */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC4  EQU <01ch >  ;/**< Block compressed 4 unsigned */ 
+  CU_RES_VIEW_FORMAT_SIGNED_BC4  EQU <01dh >  ;/**< Block compressed 4 signed */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC5  EQU <01eh >  ;/**< Block compressed 5 unsigned */ 
+  CU_RES_VIEW_FORMAT_SIGNED_BC5  EQU <01fh >  ;/**< Block compressed 5 signed */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC6H  EQU <020h >  ;/**< Block compressed 6 unsigned half-float */ 
+  CU_RES_VIEW_FORMAT_SIGNED_BC6H  EQU <021h >  ;/**< Block compressed 6 signed half-float */ 
+  CU_RES_VIEW_FORMAT_UNSIGNED_BC7  EQU <022h >
+;CUresourceViewFormat    ENDS
 
 ;/**
 ; * Resource view descriptor
 ; */
 
-CUDA_RESOURCE_VIEW_DESC	STRUCT DEFALIGNMASM
-	format CUresourceViewFormat ? ;/**< Resource view format */ 
-	awidth DWORD ? ;/**< Width of the resource view */ 
-	height DWORD ? ;/**< Height of the resource view */ 
-	depth DWORD ? ;/**< Depth of the resource view */ 
-	firstMipmapLevel DWORD ? ;/**< First defined mipmap level */ 
-	lastMipmapLevel DWORD ? ;/**< Last defined mipmap level */ 
-	firstLayer DWORD ? ;/**< First layer index */ 
-	lastLayer DWORD ? ;/**< Last layer index */ 
-	reserved DWORD 16 dup (?)
-CUDA_RESOURCE_VIEW_DESC		ENDS
+CUDA_RESOURCE_VIEW_DESC  STRUCT DEFALIGNMASM
+  format CUresourceViewFormat ? ;/**< Resource view format */ 
+  awidth DWORD ? ;/**< Width of the resource view */ 
+  height DWORD ? ;/**< Height of the resource view */ 
+  depth DWORD ? ;/**< Depth of the resource view */ 
+  firstMipmapLevel DWORD ? ;/**< First defined mipmap level */ 
+  lastMipmapLevel DWORD ? ;/**< Last defined mipmap level */ 
+  firstLayer DWORD ? ;/**< First layer index */ 
+  lastLayer DWORD ? ;/**< Last layer index */ 
+  reserved DWORD 16 dup (?)
+CUDA_RESOURCE_VIEW_DESC    ENDS
 
 
 ;/**
 ; * GPU Direct v3 tokens
 ; */
 
-CUDA_POINTER_ATTRIBUTE_P2P_TOKENS	STRUCT DEFALIGNMASM
-	p2pToken QWORD ?
-	vaSpaceToken DWORD ?
-CUDA_POINTER_ATTRIBUTE_P2P_TOKENS		ENDS
+CUDA_POINTER_ATTRIBUTE_P2P_TOKENS  STRUCT DEFALIGNMASM
+  p2pToken QWORD ?
+  vaSpaceToken DWORD ?
+CUDA_POINTER_ATTRIBUTE_P2P_TOKENS    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 5000 */ 
@@ -1461,18 +1461,18 @@ IF  __CUDA_API_VERSION GE 9000
 ; * Kernel launch parameters
 ; */
 
-CUDA_LAUNCH_PARAMS	STRUCT DEFALIGNMASM
-	function XWORD ? ;/**< Kernel to launch */ 
-	gridDimX DWORD ? ;/**< Width of grid in blocks */ 
-	gridDimY DWORD ? ;/**< Height of grid in blocks */ 
-	gridDimZ DWORD ? ;/**< Depth of grid in blocks */ 
-	blockDimX DWORD ? ;/**< X dimension of each thread block */ 
-	blockDimY DWORD ? ;/**< Y dimension of each thread block */ 
-	blockDimZ DWORD ? ;/**< Z dimension of each thread block */ 
-	sharedMemBytes DWORD ? ;/**< Dynamic shared-memory size per thread block in bytes */ 
-	hStream XWORD ? ;/**< Stream identifier */ 
+CUDA_LAUNCH_PARAMS  STRUCT DEFALIGNMASM
+  function XWORD ? ;/**< Kernel to launch */ 
+  gridDimX DWORD ? ;/**< Width of grid in blocks */ 
+  gridDimY DWORD ? ;/**< Height of grid in blocks */ 
+  gridDimZ DWORD ? ;/**< Depth of grid in blocks */ 
+  blockDimX DWORD ? ;/**< X dimension of each thread block */ 
+  blockDimY DWORD ? ;/**< Y dimension of each thread block */ 
+  blockDimZ DWORD ? ;/**< Z dimension of each thread block */ 
+  sharedMemBytes DWORD ? ;/**< Dynamic shared-memory size per thread block in bytes */ 
+  hStream XWORD ? ;/**< Stream identifier */ 
 kernelParams XWORD ?
-CUDA_LAUNCH_PARAMS		ENDS
+CUDA_LAUNCH_PARAMS    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 9000 */ 
@@ -1481,126 +1481,126 @@ IF  __CUDA_API_VERSION GE 10000
 ; * External memory handle types
 ; */
 
-CUexternalMemoryHandleType	TYPEDEF DWORD ;enum
+CUexternalMemoryHandleType  TYPEDEF DWORD ;enum
 
-;CUexternalMemoryHandleType	UNION DEFALIGNMASM
-	CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD	EQU <1 >
-	CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32	EQU <2 >
-	CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT	EQU <3 >
-	CU_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP	EQU <4 >
-	CU_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE	EQU <5 >
-;CUexternalMemoryHandleType		ENDS
+;CUexternalMemoryHandleType  UNION DEFALIGNMASM
+  CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD  EQU <1 >
+  CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32  EQU <2 >
+  CU_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT  EQU <3 >
+  CU_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP  EQU <4 >
+  CU_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE  EQU <5 >
+;CUexternalMemoryHandleType    ENDS
 
 
 ;/**
 ; * Indicates that the external memory object is a dedicated resource
 ; */
-CUDA_EXTERNAL_MEMORY_DEDICATED	equ	< 01h>
+CUDA_EXTERNAL_MEMORY_DEDICATED  equ  < 01h>
 ;/**
 ; * External memory handle descriptor
 ; */
 
-CUDA_EXTERNAL_MEMORY_HANDLE_DESC	STRUCT DEFALIGNMASM
-	atype CUexternalMemoryHandleType ?
-	union	handle
-	fd DWORD ?
-	STRUCT	win32
+CUDA_EXTERNAL_MEMORY_HANDLE_DESC  STRUCT DEFALIGNMASM
+  atype CUexternalMemoryHandleType ?
+  union  handle
+  fd DWORD ?
+  STRUCT  win32
 handle XWORD ?
 nameN XWORD ?
-	ENDS
-	ENDS
-	asize QWORD ?
-	flags DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_MEMORY_HANDLE_DESC		ENDS
+  ENDS
+  ENDS
+  asize QWORD ?
+  flags DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_MEMORY_HANDLE_DESC    ENDS
 
 
 ;/**
 ; * External memory buffer descriptor
 ; */
 
-CUDA_EXTERNAL_MEMORY_BUFFER_DESC	STRUCT DEFALIGNMASM
-	aoffset QWORD ?
-	asize QWORD ?
-	flags DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_MEMORY_BUFFER_DESC		ENDS
+CUDA_EXTERNAL_MEMORY_BUFFER_DESC  STRUCT DEFALIGNMASM
+  aoffset QWORD ?
+  asize QWORD ?
+  flags DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_MEMORY_BUFFER_DESC    ENDS
 
 
 ;/**
 ; * External memory mipmap descriptor
 ; */
 
-CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC	STRUCT DEFALIGNMASM
-	aoffset QWORD ?
-	arrayDesc CUDA_ARRAY3D_DESCRIPTOR <> 
-	numLevels DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC		ENDS
+CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC  STRUCT DEFALIGNMASM
+  aoffset QWORD ?
+  arrayDesc CUDA_ARRAY3D_DESCRIPTOR <> 
+  numLevels DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC    ENDS
 
 
 ;/**
 ; * External semaphore handle types
 ; */
 
-CUexternalSemaphoreHandleType	TYPEDEF DWORD ;enum
+CUexternalSemaphoreHandleType  TYPEDEF DWORD ;enum
 
-;CUexternalSemaphoreHandleType	UNION DEFALIGNMASM
-	CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD	EQU <1 >
-	CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32	EQU <2 >
-	CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT	EQU <3 >
-	CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE	EQU <4 >
-;CUexternalSemaphoreHandleType		ENDS
+;CUexternalSemaphoreHandleType  UNION DEFALIGNMASM
+  CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD  EQU <1 >
+  CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32  EQU <2 >
+  CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT  EQU <3 >
+  CU_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE  EQU <4 >
+;CUexternalSemaphoreHandleType    ENDS
 
 
 ;/**
 ; * External semaphore handle descriptor
 ; */
 
-CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC	STRUCT DEFALIGNMASM
-	atype CUexternalSemaphoreHandleType ?
-	union	handle
-	fd DWORD ?
-	STRUCT	win32
+CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC  STRUCT DEFALIGNMASM
+  atype CUexternalSemaphoreHandleType ?
+  union  handle
+  fd DWORD ?
+  STRUCT  win32
 handle XWORD ?
 nameN XWORD ?
-	ENDS
-	ENDS
-	flags DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC		ENDS
+  ENDS
+  ENDS
+  flags DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC    ENDS
 
 
 ;/**
 ; * External semaphore signal parameters
 ; */
 
-CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS	STRUCT DEFALIGNMASM
-	STRUCT	params
-	STRUCT	fence
-	value QWORD ?
-	ENDS
-	reserved DWORD 16 dup (?)
-	ENDS
-	flags DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS		ENDS
+CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS  STRUCT DEFALIGNMASM
+  STRUCT  params
+  STRUCT  fence
+  value QWORD ?
+  ENDS
+  reserved DWORD 16 dup (?)
+  ENDS
+  flags DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS    ENDS
 
 
 ;/**
 ; * External semaphore wait parameters
 ; */
 
-CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS	STRUCT DEFALIGNMASM
-	STRUCT	params
-	STRUCT	fence
-	value QWORD ?
-	ENDS
-	reserved DWORD 16 dup (?)
-	ENDS
-	flags DWORD ?
-	reserved DWORD 16 dup (?)
-CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS		ENDS
+CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS  STRUCT DEFALIGNMASM
+  STRUCT  params
+  STRUCT  fence
+  value QWORD ?
+  ENDS
+  reserved DWORD 16 dup (?)
+  ENDS
+  flags DWORD ?
+  reserved DWORD 16 dup (?)
+CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS    ENDS
 
 
 ENDIF ;/* __CUDA_API_VERSION >= 10000 */ 
@@ -1609,76 +1609,76 @@ ENDIF ;/* __CUDA_API_VERSION >= 10000 */
 ; * waits for prior work in the stream corresponding to that GPU to complete before the
 ; * kernel begins execution.
 ; */
-CUDA_COOPERATIVE_LAUNCH_MULTI_DEVICE_NO_PRE_LAUNCH_SYNC	equ	< 001h>
+CUDA_COOPERATIVE_LAUNCH_MULTI_DEVICE_NO_PRE_LAUNCH_SYNC  equ  < 001h>
 ;/**
 ; * If set, any subsequent work pushed in a stream that participated in a call to
 ; * ::cuLaunchCooperativeKernelMultiDevice will only wait for the kernel launched on
 ; * the GPU corresponding to that stream to complete before it begins execution.
 ; */
-CUDA_COOPERATIVE_LAUNCH_MULTI_DEVICE_NO_POST_LAUNCH_SYNC	equ	< 002h>
+CUDA_COOPERATIVE_LAUNCH_MULTI_DEVICE_NO_POST_LAUNCH_SYNC  equ  < 002h>
 ;/**
 ; * If set, the CUDA array is a collection of layers, where each layer is either a 1D
 ; * or a 2D array and the Depth member of CUDA_ARRAY3D_DESCRIPTOR specifies the number
 ; * of layers, not the depth of a 3D array.
 ; */
-CUDA_ARRAY3D_LAYERED	equ	< 001h>
+CUDA_ARRAY3D_LAYERED  equ  < 001h>
 ;/**
 ; * Deprecated, use CUDA_ARRAY3D_LAYERED
 ; */
-CUDA_ARRAY3D_2DARRAY	equ	< 001h>
+CUDA_ARRAY3D_2DARRAY  equ  < 001h>
 ;/**
 ; * This flag must be set in order to bind a surface reference
 ; * to the CUDA array
 ; */
-CUDA_ARRAY3D_SURFACE_LDST	equ	< 002h>
+CUDA_ARRAY3D_SURFACE_LDST  equ  < 002h>
 ;/**
 ; * If set, the CUDA array is a collection of six 2D arrays, representing faces of a cube. The
 ; * width of such a CUDA array must be equal to its height, and Depth must be six.
 ; * If ::CUDA_ARRAY3D_LAYERED flag is also set, then the CUDA array is a collection of cubemaps
 ; * and Depth must be a multiple of six.
 ; */
-CUDA_ARRAY3D_CUBEMAP	equ	< 004h>
+CUDA_ARRAY3D_CUBEMAP  equ  < 004h>
 ;/**
 ; * This flag must be set in order to perform texture gather operations
 ; * on a CUDA array.
 ; */
-CUDA_ARRAY3D_TEXTURE_GATHER	equ	< 008h>
+CUDA_ARRAY3D_TEXTURE_GATHER  equ  < 008h>
 ;/**
 ; * This flag if set indicates that the CUDA
 ; * array is a DEPTH_TEXTURE.
 ; */
-CUDA_ARRAY3D_DEPTH_TEXTURE	equ	< 010h>
+CUDA_ARRAY3D_DEPTH_TEXTURE  equ  < 010h>
 ;/**
 ; * This flag indicates that the CUDA array may be bound as a color target
 ; * in an external graphics API
 ; */
-CUDA_ARRAY3D_COLOR_ATTACHMENT	equ	< 020h>
+CUDA_ARRAY3D_COLOR_ATTACHMENT  equ  < 020h>
 ;/**
 ; * Override the texref format with a format inferred from the array.
 ; * Flag for ::cuTexRefSetArray()
 ; */
-CU_TRSA_OVERRIDE_FORMAT	equ	< 001h>
+CU_TRSA_OVERRIDE_FORMAT  equ  < 001h>
 ;/**
 ; * Read the texture as integers rather than promoting the values to floats
 ; * in the range [0,1].
 ; * Flag for ::cuTexRefSetFlags()
 ; */
-CU_TRSF_READ_AS_INTEGER	equ	< 001h>
+CU_TRSF_READ_AS_INTEGER  equ  < 001h>
 ;/**
 ; * Use normalized texture coordinates in the range [0,1) instead of [0,dim).
 ; * Flag for ::cuTexRefSetFlags()
 ; */
-CU_TRSF_NORMALIZED_COORDINATES	equ	< 002h>
+CU_TRSF_NORMALIZED_COORDINATES  equ  < 002h>
 ;/**
 ; * Perform sRGB->linear conversion during texture read.
 ; * Flag for ::cuTexRefSetFlags()
 ; */
-CU_TRSF_SRGB	equ	< 010h>
+CU_TRSF_SRGB  equ  < 010h>
 ;/**
 ; * End of array terminator for the \p extra parameter to
 ; * ::cuLaunchKernel
 ; */
-CU_LAUNCH_PARAM_END	equ	<  000h>
+CU_LAUNCH_PARAM_END  equ  <  000h>
 ;/**
 ; * Indicator that the next value in the \p extra parameter to
 ; * ::cuLaunchKernel will be a pointer to a buffer containing all kernel
@@ -1688,7 +1688,7 @@ CU_LAUNCH_PARAM_END	equ	<  000h>
 ; * \p extra array, then ::CU_LAUNCH_PARAM_BUFFER_POINTER will have no
 ; * effect.
 ; */
-CU_LAUNCH_PARAM_BUFFER_POINTER	equ	<  001h>
+CU_LAUNCH_PARAM_BUFFER_POINTER  equ  <  001h>
 ;/**
 ; * Indicator that the next value in the \p extra parameter to
 ; * ::cuLaunchKernel will be a pointer to a size_t which contains the
@@ -1697,24 +1697,24 @@ CU_LAUNCH_PARAM_BUFFER_POINTER	equ	<  001h>
 ; * in the \p extra array if the value associated with
 ; * ::CU_LAUNCH_PARAM_BUFFER_SIZE is not zero.
 ; */
-CU_LAUNCH_PARAM_BUFFER_SIZE	equ	<  002h>
+CU_LAUNCH_PARAM_BUFFER_SIZE  equ  <  002h>
 ;/**
 ; * For texture references loaded into the module, use default texunit from
 ; * texture reference.
 ; */
-CU_PARAM_TR_DEFAULT	equ	< - 1>
+CU_PARAM_TR_DEFAULT  equ  < - 1>
 ;/**
 ; * Device that represents the CPU
 ; */
-CU_DEVICE_CPU	equ	<  - 1>
+CU_DEVICE_CPU  equ  <  - 1>
 ;/**
 ; * Device that represents an invalid device
 ; */
-CU_DEVICE_INVALID	equ	<  - 2>
+CU_DEVICE_INVALID  equ  <  - 2>
 IFDEF _WIN32
-CUDAAPI	equ	< __stdcall>
+CUDAAPI  equ  < __stdcall>
 ELSE
-CUDAAPI	equ	
+CUDAAPI  equ  
 ENDIF 
 ;/**
 ; * \defgroup CUDA_ERROR Error Handling
@@ -13585,87 +13585,87 @@ ENDIF ;/* __CUDA_API_VERSION_INTERNAL || (__CUDA_API_VERSION >= 3020 && __CUDA_A
 ; * CUDA API made obselete at API version 3020
 ; */
 IF Defined(__CUDA_API_VERSION_INTERNAL)
-CUdeviceptr	equ	< CUdeviceptr_v1>
-CUDA_MEMCPY2D_st	equ	< CUDA_MEMCPY2D_v1_st>
-CUDA_MEMCPY2D	equ	< CUDA_MEMCPY2D_v1>
-CUDA_MEMCPY3D_st	equ	< CUDA_MEMCPY3D_v1_st>
-CUDA_MEMCPY3D	equ	< CUDA_MEMCPY3D_v1>
-CUDA_ARRAY_DESCRIPTOR_st	equ	< CUDA_ARRAY_DESCRIPTOR_v1_st>
-CUDA_ARRAY_DESCRIPTOR	equ	< CUDA_ARRAY_DESCRIPTOR_v1>
-CUDA_ARRAY3D_DESCRIPTOR_st	equ	< CUDA_ARRAY3D_DESCRIPTOR_v1_st>
-CUDA_ARRAY3D_DESCRIPTOR	equ	< CUDA_ARRAY3D_DESCRIPTOR_v1>
+CUdeviceptr  equ  < CUdeviceptr_v1>
+CUDA_MEMCPY2D_st  equ  < CUDA_MEMCPY2D_v1_st>
+CUDA_MEMCPY2D  equ  < CUDA_MEMCPY2D_v1>
+CUDA_MEMCPY3D_st  equ  < CUDA_MEMCPY3D_v1_st>
+CUDA_MEMCPY3D  equ  < CUDA_MEMCPY3D_v1>
+CUDA_ARRAY_DESCRIPTOR_st  equ  < CUDA_ARRAY_DESCRIPTOR_v1_st>
+CUDA_ARRAY_DESCRIPTOR  equ  < CUDA_ARRAY_DESCRIPTOR_v1>
+CUDA_ARRAY3D_DESCRIPTOR_st  equ  < CUDA_ARRAY3D_DESCRIPTOR_v1_st>
+CUDA_ARRAY3D_DESCRIPTOR  equ  < CUDA_ARRAY3D_DESCRIPTOR_v1>
 ENDIF ;/* CUDA_FORCE_LEGACY32_INTERNAL */ 
 IF Defined(__CUDA_API_VERSION_INTERNAL) OR  __CUDA_API_VERSION LT 3020
 ;/**< typedef __int64 CUdeviceptr */ 
 
-CUDA_MEMCPY2D	STRUCT; DEFALIGNMASM
-	srcXInBytes DWORD ? ;/**< Source X in bytes */ 
-	srcY DWORD ? ;/**< Source Y */ 
-	srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
+CUDA_MEMCPY2D  STRUCT; DEFALIGNMASM
+  srcXInBytes DWORD ? ;/**< Source X in bytes */ 
+  srcY DWORD ? ;/**< Source Y */ 
+  srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
 srcHost XWORD ?
-	srcDevice XWORD ? ;/**< Source device pointer */ 
-	srcArray XWORD ? ;/**< Source array reference */ 
-	srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
-	dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
-	dstY DWORD ? ;/**< Destination Y */ 
-	dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
+  srcDevice XWORD ? ;/**< Source device pointer */ 
+  srcArray XWORD ? ;/**< Source array reference */ 
+  srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
+  dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
+  dstY DWORD ? ;/**< Destination Y */ 
+  dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
 dstHost XWORD ?
-	dstDevice XWORD ? ;/**< Destination device pointer */ 
-	dstArray XWORD ? ;/**< Destination array reference */ 
-	dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
-	WidthInBytes DWORD ? ;/**< Width of 2D memory copy in bytes */ 
-	Height DWORD ? ;/**< Height of 2D memory copy */ 
-CUDA_MEMCPY2D		ENDS
+  dstDevice XWORD ? ;/**< Destination device pointer */ 
+  dstArray XWORD ? ;/**< Destination array reference */ 
+  dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
+  WidthInBytes DWORD ? ;/**< Width of 2D memory copy in bytes */ 
+  Height DWORD ? ;/**< Height of 2D memory copy */ 
+CUDA_MEMCPY2D    ENDS
 
 
 
-CUDA_MEMCPY3D	STRUCT; DEFALIGNMASM
-	srcXInBytes DWORD ? ;/**< Source X in bytes */ 
-	srcY DWORD ? ;/**< Source Y */ 
-	srcZ DWORD ? ;/**< Source Z */ 
-	srcLOD DWORD ? ;/**< Source LOD */ 
-	srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
+CUDA_MEMCPY3D  STRUCT; DEFALIGNMASM
+  srcXInBytes DWORD ? ;/**< Source X in bytes */ 
+  srcY DWORD ? ;/**< Source Y */ 
+  srcZ DWORD ? ;/**< Source Z */ 
+  srcLOD DWORD ? ;/**< Source LOD */ 
+  srcMemoryType CUmemorytype ? ;/**< Source memory type (host, device, array) */ 
 srcHost XWORD ?
-	srcDevice XWORD ? ;/**< Source device pointer */ 
-	srcArray XWORD ? ;/**< Source array reference */ 
+  srcDevice XWORD ? ;/**< Source device pointer */ 
+  srcArray XWORD ? ;/**< Source array reference */ 
 reserved0 XWORD ?
-	srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
-	srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
-	dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
-	dstY DWORD ? ;/**< Destination Y */ 
-	dstZ DWORD ? ;/**< Destination Z */ 
-	dstLOD DWORD ? ;/**< Destination LOD */ 
-	dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
+  srcPitch DWORD ? ;/**< Source pitch (ignored when src is array) */ 
+  srcHeight DWORD ? ;/**< Source height (ignored when src is array; may be 0 if Depth==1) */ 
+  dstXInBytes DWORD ? ;/**< Destination X in bytes */ 
+  dstY DWORD ? ;/**< Destination Y */ 
+  dstZ DWORD ? ;/**< Destination Z */ 
+  dstLOD DWORD ? ;/**< Destination LOD */ 
+  dstMemoryType CUmemorytype ? ;/**< Destination memory type (host, device, array) */ 
 dstHost XWORD ?
-	dstDevice XWORD ? ;/**< Destination device pointer */ 
-	dstArray XWORD ? ;/**< Destination array reference */ 
+  dstDevice XWORD ? ;/**< Destination device pointer */ 
+  dstArray XWORD ? ;/**< Destination array reference */ 
 reserved1 XWORD ?
-	dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
-	dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
-	WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
-	Height DWORD ? ;/**< Height of 3D memory copy */ 
-	Depth DWORD ? ;/**< Depth of 3D memory copy */ 
-CUDA_MEMCPY3D		ENDS
+  dstPitch DWORD ? ;/**< Destination pitch (ignored when dst is array) */ 
+  dstHeight DWORD ? ;/**< Destination height (ignored when dst is array; may be 0 if Depth==1) */ 
+  WidthInBytes DWORD ? ;/**< Width of 3D memory copy in bytes */ 
+  Height DWORD ? ;/**< Height of 3D memory copy */ 
+  Depth DWORD ? ;/**< Depth of 3D memory copy */ 
+CUDA_MEMCPY3D    ENDS
 
 
 
-CUDA_ARRAY_DESCRIPTOR	STRUCT; DEFALIGNMASM
-	awidth DWORD ? ;/**< Width of array */ 
-	Height DWORD ? ;/**< Height of array */ 
-	Format CUarray_format ? ;/**< Array format */ 
-	NumChannels DWORD ? ;/**< Channels per array element */ 
-CUDA_ARRAY_DESCRIPTOR		ENDS
+CUDA_ARRAY_DESCRIPTOR  STRUCT; DEFALIGNMASM
+  awidth DWORD ? ;/**< Width of array */ 
+  Height DWORD ? ;/**< Height of array */ 
+  Format CUarray_format ? ;/**< Array format */ 
+  NumChannels DWORD ? ;/**< Channels per array element */ 
+CUDA_ARRAY_DESCRIPTOR    ENDS
 
 
 
-CUDA_ARRAY3D_DESCRIPTOR	STRUCT; DEFALIGNMASM
-	awidth DWORD ? ;/**< Width of 3D array */ 
-	Height DWORD ? ;/**< Height of 3D array */ 
-	Depth DWORD ? ;/**< Depth of 3D array */ 
-	Format CUarray_format ? ;/**< Array format */ 
-	NumChannels DWORD ? ;/**< Channels per array element */ 
-	Flags DWORD ? ;/**< Flags */ 
-CUDA_ARRAY3D_DESCRIPTOR		ENDS
+CUDA_ARRAY3D_DESCRIPTOR  STRUCT; DEFALIGNMASM
+  awidth DWORD ? ;/**< Width of 3D array */ 
+  Height DWORD ? ;/**< Height of 3D array */ 
+  Depth DWORD ? ;/**< Depth of 3D array */ 
+  Format CUarray_format ? ;/**< Array format */ 
+  NumChannels DWORD ? ;/**< Channels per array element */ 
+  Flags DWORD ? ;/**< Flags */ 
+CUDA_ARRAY3D_DESCRIPTOR    ENDS
 
 
 ;API

@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm hosting of MSChart objects.
 ; Notes:      Requires mschrt20.ocx.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 ; Links:

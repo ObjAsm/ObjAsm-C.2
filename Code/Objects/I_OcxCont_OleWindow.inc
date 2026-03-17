@@ -4,17 +4,17 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of OleWindow Interface for COM OcxContainer objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
 externdef IID_IOleWindow:GUID
 
 ; --------------------------------------------------------------------------------------------------
-; Object: 	  I_OcxCont_OleWindow
-; Purpose:	  The IOleWindow interface provides methods that allow an application to obtain the
-;         	  HANDLE to the various windows that participate in in-place activation, and also to
-;         	  enter and exit context-sensitive help mode.
+; Object:     I_OcxCont_OleWindow
+; Purpose:    The IOleWindow interface provides methods that allow an application to obtain the
+;             HANDLE to the various windows that participate in in-place activation, and also to
+;             enter and exit context-sensitive help mode.
 
 Object I_OcxCont_OleWindow,, IUnknown
   RedefineMethod    Init,                   POINTER, HWND         ;-> Owner, hWnd

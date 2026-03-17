@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm IcmpApp.
 ; Notes:      Version C.2.0, December 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

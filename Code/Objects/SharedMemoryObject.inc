@@ -4,7 +4,7 @@
 ; Purpose:    ObjAsm support of SharedMemoryObject objects.
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

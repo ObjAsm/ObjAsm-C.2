@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, November 2024.
-;               - First release.
+;               - Initial release.
 ;               - Bitness neutral code.
 ; ==================================================================================================
 

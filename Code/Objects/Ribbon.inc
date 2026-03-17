@@ -7,7 +7,7 @@
 ;             https://msdn.microsoft.com/en-us/library/windows/desktop/dd316921(v=vs.85).aspx
 ;             https://msdn.microsoft.com/en-us/library/windows/desktop/dd371681(v=vs.85).aspx
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

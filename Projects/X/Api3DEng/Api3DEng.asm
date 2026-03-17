@@ -4,7 +4,7 @@
 ; Version:    2.0.0
 ; Purpose:    ObjAsm API 3D Engine program.
 ; Notes:      Version 2.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

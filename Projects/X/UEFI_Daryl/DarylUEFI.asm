@@ -5,7 +5,7 @@
 ; Purpose:      ObjAsm version of "Multiprocessing with UEFI, Daryl McDaniel"
 ;               (Software and Solutions Group, Intel), UEFI Plugfest, June 22 - 24, 2010,
 ; Version:      1.0.0, December 2022
-;               - First release.
+;               - Initial release.
 ; Links:        https://uefi.org/sites/default/files/resources/Plugfest_Multiprocessing-with_UEFI-McDaniel.pdf
 ; ==================================================================================================
 

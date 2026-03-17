@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm compilation file for Service object.
 ; Notes:      Version C.2.0, Service 2025
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

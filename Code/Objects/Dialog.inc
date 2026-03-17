@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support for Dialog objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Set the focus on a Dialog (do not use SetFocus => WM_NEXTDLGCTL):
 ;                 https://devblogs.microsoft.com/oldnewthing/20040802-00/?p=38283
 ; ==================================================================================================

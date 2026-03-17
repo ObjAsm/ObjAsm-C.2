@@ -4,7 +4,7 @@
 ; Version:    C.2.1
 ; Purpose:    ObjAsm support of Window objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2020
 ;               - Dynamic Layout support added.
 ;             Version C.1.2, October 2020

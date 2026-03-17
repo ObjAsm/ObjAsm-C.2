@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of basic UEFI handling macros and procedures.
 ; Notes:      Version C.1.0, Héctor S. Enrique
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for IAT_Hook object.
 ; Notes:      Version C.1.0, August 2023
-;            - First release.
+;            - Initial release.
 ; =================================================================================================
 
 

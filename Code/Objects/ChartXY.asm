@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm compilation file for ChartXY object.
 ; Notes:      Version C.1.1, August 2021
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

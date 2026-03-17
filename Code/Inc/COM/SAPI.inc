@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of Sound API 5.1.
 ; Notes:      Version 1.0.0, October 2017
-;               - First release. Generated using COMView (www.japheth.de), NaN's header files
+;               - Initial release. Generated using COMView (www.japheth.de), NaN's header files
 ;                 translated and edited manually.
 ; ==================================================================================================
 

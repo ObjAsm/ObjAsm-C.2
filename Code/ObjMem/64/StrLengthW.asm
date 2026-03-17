@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    3.0.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

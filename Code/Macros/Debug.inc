@@ -4,7 +4,7 @@
 ; Version:    C.2.4
 ; Purpose:    ObjAsm debug macros.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, October 2019
 ;               - Added more color and font customization by HSE.
 ;             Version C.1.2, October 2020
@@ -173,22 +173,22 @@ DBG_OPT_SHOWINFO          equ   01h
 
 ;Debug memory formats
 DBG_MEM_NONE              equ   100       ;No representation output
-DBG_MEM_STRA              equ   101       ;ANSI String
-DBG_MEM_STRW              equ   102       ;WIDE String
-DBG_MEM_UI8               equ   103       ;Unsigned BYTE Integer in decimal format
-DBG_MEM_UI16              equ   104       ;Unsigned WORD Integer in decimal format
-DBG_MEM_UI32              equ   105       ;Unsigned DWORD Integer in decimal format
-DBG_MEM_UI64              equ   106       ;Unsigned QWORD Integer in decimal format
-DBG_MEM_I8                equ   107       ;Signed BYTE Integer in decimal format
-DBG_MEM_I16               equ   108       ;Signed WORD Integer in decimal format
-DBG_MEM_I32               equ   109       ;Signed DWORD Integer in decimal format
-DBG_MEM_I64               equ   110       ;Signed QWORD Integer in decimal format
+DBG_MEM_STRA              equ   101       ;ANSI string
+DBG_MEM_STRW              equ   102       ;WIDE string
+DBG_MEM_UI8               equ   103       ;Unsigned BYTE integer in decimal format
+DBG_MEM_UI16              equ   104       ;Unsigned WORD integer in decimal format
+DBG_MEM_UI32              equ   105       ;Unsigned DWORD integer in decimal format
+DBG_MEM_UI64              equ   106       ;Unsigned QWORD integer in decimal format
+DBG_MEM_I8                equ   107       ;Signed BYTE integer in decimal format
+DBG_MEM_I16               equ   108       ;Signed WORD integer in decimal format
+DBG_MEM_I32               equ   109       ;Signed DWORD integer in decimal format
+DBG_MEM_I64               equ   110       ;Signed QWORD integer in decimal format
 DBG_MEM_R4                equ   111       ;REAL4 in decimal format
 DBG_MEM_R8                equ   112       ;REAL8 in decimal format
-DBG_MEM_H8                equ   113       ;BYTE Integer in hexadecimal format
-DBG_MEM_H16               equ   114       ;WORD Integer in hexadecimal format
-DBG_MEM_H32               equ   115       ;DWORD Integer in hexadecimal format
-DBG_MEM_H64               equ   116       ;QWORD Integer in hexadecimal format
+DBG_MEM_H8                equ   113       ;BYTE integer in hexadecimal format
+DBG_MEM_H16               equ   114       ;WORD integer in hexadecimal format
+DBG_MEM_H32               equ   115       ;DWORD integer in hexadecimal format
+DBG_MEM_H64               equ   116       ;QWORD integer in hexadecimal format
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DBG_MEM_STR equ DBG_MEM_STRA
@@ -224,8 +224,8 @@ if DEBUGGING
     CStrW szDbgCtrCls,    &DEBUG_CENTER_CLASS
 
     externdef hDbgDev:HANDLE
-    .data?
-    hDbgDev             HANDLE    ?
+    .data
+    hDbgDev             HANDLE    0
   endif
 
   .data?
@@ -287,7 +287,7 @@ endif
 ; Macro:      DbgSaveContext
 ; Purpose:    Save CPU & FPU registers & flags onto stack and aligns it. This way, all subsequent
 ;             invocations have an aligned stack and a cleared direction flag. Additionally, a
-;             Critacal Section is passed to avoid racing conditions.
+;             Critical Section is passed to avoid race conditions.
 ; Arguments:  Arg1: Handle the passed argument as a Value (FALSE) or a reference (TRUE).
 ;             Arg2: Var to be saved in rbx/ebx/bx/bl or the address of Var in xbx.
 ; Return:     Nothing.
@@ -669,11 +669,11 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTextF
-; Purpose:    Output formated a text on the debug device.
-; Arguments:  Arg1: Optinal text color.
+; Purpose:    Output formatted text on the debug device.
+; Arguments:  Arg1: Optional text color.
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
-;             Arg 4..n: optional arguments.
+;             Arg 4..n: Optional arguments.
 ; Example:    DbgTextF $RGB(000,000,000), "DC_Output", "Data = ¦SA", xax
 
 DbgTextF macro Color:=<DbgColorForeground>, Dest, Message:req, Args:vararg
@@ -1257,10 +1257,10 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteF
 ; Purpose:    Output a string on the debug device.
-; Arguments:  Arg1: Optinal text color.
+; Arguments:  Arg1: Optional text color.
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
-;             Arg 4..n: optional arguments.
+;             Arg 4..n: Optional arguments.
 ; Note:       All registers are allowed as parameters, even indirect references of the form
 ;             [xbx].POINT.x
 ;             REAL8 can not be used combined with TARGET_BITNESS = 32.

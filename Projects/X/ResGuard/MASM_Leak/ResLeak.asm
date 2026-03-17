@@ -4,7 +4,7 @@
 ; Purpose:    Detection of resource leakages using ResGuardxx.dll for plain MASM applications.
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, August 2023
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

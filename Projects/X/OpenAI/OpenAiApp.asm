@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm OpenAI Application.
 ; Notes:      Version C.1.0, September 2025
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

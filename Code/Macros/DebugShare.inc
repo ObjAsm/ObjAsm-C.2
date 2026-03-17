@@ -2,22 +2,23 @@
 ; Title:      DebugShare.inc
 ; Author:     G. Friedrich
 ; Purpose:    ObjAsm debug shared definitions.
-;             This file provides definitions used by the "application debug system" and DebugCenter.
+;             This file provides definitions used by the "application debug system" and 
+;             the DebugCenter.
 ; ==================================================================================================
 
 
-;Exported symbols defined in Model.inc
+; Exported symbols defined in Model.inc
 externdef dDbgDev:DWORD
 externdef dDbgOpt:DWORD
 externdef hDbgDev:HANDLE
 
-;Exported symbols defined in Debug.inc
+; Exported symbols defined in Debug.inc
 externdef szDbgCtrCmd:CHRA
 externdef szDbgSrc:CHRW
 externdef szDbgErr:CHRW
 externdef szDbgComErr:CHRW
 
-;Exported symbols defined in Debug.inc
+; Exported symbols defined in Debug.inc
 externdef szDbgElipsis:CHRA
 externdef szDbgInvalid:CHRA
 externdef szDbgPoint2:CHRA
@@ -27,30 +28,30 @@ externdef szDbgBracketRight:CHRA
 externdef szDbgColon:CHRA
 externdef szDbgComma:CHRA
 
-;Exported symbols defined in DebugShare.inc
+; Exported symbols defined in DebugShare.inc
 externdef szDbgCtrCls:CHRW
 
-;Exported symbols defined in DbgConstants.asm
+; Exported symbols defined in DbgConstants.asm
 externdef szDbgInvalidDevPtr:CHRW
 externdef szDbgRegKey:CHRW
 
 ; --------------------------------------------------------------------------------------------------
 
-DGB_MSG_ID                equ   58ADF9ACh     ;Random number that identifies these debug messages
+DGB_MSG_ID                equ   58ADF9ACh     ; Random number that identifies these debug messages
 DBG_MSG_HDR               equ   00
 DBG_MSG_CMD               equ   01
 DBG_MSG_STR               equ   02
 DBG_MSG_BMP               equ   03
 DBG_MSG_CHT               equ   04
 
-DBG_EFFECT_NORMAL         equ   00000000h     ;Regular text
-DBG_EFFECT_BOLD           equ   00000001h     ;CFE_BOLD
-DBG_EFFECT_ITALIC         equ   00000002h     ;CFE_ITALIC
-DBG_EFFECT_UNDERLINE      equ   00000004h     ;CFE_UNDERLINE
-DBG_EFFECT_STRIKEOUT      equ   00000008h     ;CFE_STRIKEOUT
+DBG_EFFECT_NORMAL         equ   00000000h     ; Regular text
+DBG_EFFECT_BOLD           equ   00000001h     ; CFE_BOLD
+DBG_EFFECT_ITALIC         equ   00000002h     ; CFE_ITALIC
+DBG_EFFECT_UNDERLINE      equ   00000004h     ; CFE_UNDERLINE
+DBG_EFFECT_STRIKEOUT      equ   00000008h     ; CFE_STRIKEOUT
 DBG_EFFECT_NEWLINE        equ   00000100h
 
-DBG_CHARTYPE_WIDE         equ   80000000h     ;if not set => ANSI (BIT31)
+DBG_CHARTYPE_WIDE         equ   80000000h     ; If not set => ANSI (BIT31)
 
 DBG_CMD_CLEAR_TXT         equ   00
 DBG_CMD_CLEAR_BMP         equ   01
@@ -60,12 +61,12 @@ DBG_CMD_CLOSE_TXT         equ   03
 DBG_CMD_CLOSE_BMP         equ   04
 DBG_CMD_CLOSE_CHT         equ   25
 DBG_CMD_CLOSE_ALL         equ   05
-DBG_CMD_SINGLE_LINE       equ   06            ;char 2500 or 2014
-DBG_CMD_DOUBLE_LINE       equ   07            ;Char 2550
-DBG_CMD_FLASH_WINDOW      equ   08            ;Flags in dParam1, number of flashes in dParam2
-DBG_CMD_FLASH_MENU        equ   09            ;Color in dParam1, number of flashes in dParam2
-DBG_CMD_SET_BKGND_TXT     equ   10            ;Color in dParam1
-DBG_CMD_SET_BKGND_BMP     equ   11            ;Color in dParam1
+DBG_CMD_SINGLE_LINE       equ   06            ; Char 2500 or 2014
+DBG_CMD_DOUBLE_LINE       equ   07            ; Char 2550
+DBG_CMD_FLASH_WINDOW      equ   08            ; Flags in dParam1, number of flashes in dParam2
+DBG_CMD_FLASH_MENU        equ   09            ; Color in dParam1, number of flashes in dParam2
+DBG_CMD_SET_BKGND_TXT     equ   10            ; Color in dParam1
+DBG_CMD_SET_BKGND_BMP     equ   11            ; Color in dParam1
 DBG_CMD_ZOOM_IN_TXT       equ   12
 DBG_CMD_ZOOM_IN_BMP       equ   13
 DBG_CMD_ZOOM_OUT_TXT      equ   14
@@ -80,12 +81,11 @@ DBG_CMD_ICONS_ARRANGE     equ   22
 DBG_CMD_PIN_WND           equ   23
 DBG_CMD_CLOSE_WND         equ   24
 
-SMTO_TIMEOUT              equ   5000          ;Timeout of a WM_COPYDATA message
+SMTO_TIMEOUT              equ   5000          ; Timeout of a WM_COPYDATA message
 
+IDM_DEBUG_CENTER_RESTORE  equ   0F6CAh        ; Random number
 
-IDM_DEBUG_CENTER_RESTORE  equ   0F6CAh        ;Random number
-
-DBG_IP_PORT textequ <8080>                    ;Default value
+DBG_IP_PORT textequ <8080>                    ; Default value
 
 ; --------------------------------------------------------------------------------------------------
 ; Info:
@@ -97,41 +97,41 @@ DBG_IP_PORT textequ <8080>                    ;Default value
 ;       DBG_MSG_HDR                                 DBG_MSG_XXX
 
 
-DBG_HEADER_INFO struc 1                       ;Size = 6t
+DBG_HEADER_INFO struc 1                       ; Size = 6t
   bBlockID    BYTE    DBG_MSG_HDR
   bInfo       BYTE    ?
-  dBlockLen   DWORD   ?                       ;Size of this structure + payload size
+  dBlockLen   DWORD   ?                       ; Size of this structure + payload size
 DBG_HEADER_INFO ends
-;Destination WIDE string & ZTC follow this structure
+; Destination WIDE string & ZTC follow this structure
 
-DBG_STR_INFO struc 1                          ;Size = 18t = 12h
+DBG_STR_INFO struc 1                          ; Size = 18t = 12h
               DBG_HEADER_INFO {DBG_MSG_STR}
   dForeColor  DWORD   ?
   dBackColor  DWORD   ?
-  dEffects    DWORD   ?                       ;Text effects & flags
+  dEffects    DWORD   ?                       ; Text effects & flags
 DBG_STR_INFO ends
-;String characters & ZTC (ANSI/WIDE string) follow this structure
+; String characters & ZTC (ANSI/WIDE string) follow this structure
 
 if TARGET_PLATFORM eq PLATFORM_WINDOWS
-  DBG_CMD_INFO struc 1                        ;Size = 14t = 0Eh
+  DBG_CMD_INFO struc 1                        ; Size = 14t = 0Eh
                 DBG_HEADER_INFO {DBG_MSG_CMD}
-    dParam1     DWORD   ?                     ;First parameter
-    dParam2     DWORD   ?                     ;Second parameter
+    dParam1     DWORD   ?                     ; First parameter
+    dParam2     DWORD   ?                     ; Second parameter
   DBG_CMD_INFO ends
-  ;Additional data bytes may follow this structure
+  ; Additional data bytes may follow this structure
 
   DBG_BMP_INFO struc 1
                 DBG_HEADER_INFO {DBG_MSG_BMP}
     dBackColor  DWORD   ?
     BmpHeader   BITMAPINFOHEADER  {}
   DBG_BMP_INFO ends
-  ;Bitmap data follow this structure
+  ; Bitmap data follow this structure
 endif
 
 DBG_CHT_INFO struc 1
               DBG_HEADER_INFO {DBG_MSG_CHT}
 DBG_CHT_INFO ends
-;Additional data bytes may follow this structure
+; Additional data bytes may follow this structure
 
 ; --------------------------------------------------------------------------------------------------
 

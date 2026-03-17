@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm object cluster to support Database tables, indexes and queries.
 ; Notes:      Version C.1.1, August 2019
-;             - First release.
+;             - Initial release.
 ; Links:      - http://en.wikipedia.org/wiki/DBase
 ;             - http://www.sxlist.com/techref/language/dbase/ndxs.htm
 ;             - http://www.dbfree.org/webdocs/1-documentation/a-about_indexes.htm

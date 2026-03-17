@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Collection of date and time functions.
 ; Notes:      Version C.1.0, October 2023
-;               - First release.
+;               - Initial release.
 ;               - Timecounting on Windows starts on 1st January 1601 00:00:00 UTC
 ; Links:      https://en.wikipedia.org/wiki/Gregorian_calendar
 ;             https://learn.microsoft.com/en-us/windows/win32/intl/calendar-identifiers

@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Fireworks.
 ; Version:    See FireworksApp.asm
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm CUDA demo application.
 ;             Original idea and implementation by LiaoMi @ MASM32 Forum.
 ; Notes:      Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

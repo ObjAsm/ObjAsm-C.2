@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Excel interface for ObjAsm.
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Generated using COMView (www.japheth.de) and edited manually.
+;               - Initial release. Generated using COMView (www.japheth.de) and edited manually.
 ;               - Prototypes too complex for MASM may exist. If such ones reside in a vtable they
 ;                 were replaced by dummies. Search for occurances of ';+++' to have a closer look
 ;                 at these.
@@ -64,7 +64,7 @@ MsoDiagramType              typedef SDWORD
 MsoFlipCmd                  typedef SDWORD
 MsoZOrderCmd                typedef SDWORD
 MsoAlignCmd                 typedef SDWORD
-MsoDistributeCmd	          typedef SDWORD
+MsoDistributeCmd            typedef SDWORD
 MsoFeatureInstall           typedef SDWORD
 MsoAutomationSecurity       typedef SDWORD
 

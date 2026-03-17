@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of modeless dialog objects.
 ;             Version C.1.0, February 2003
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

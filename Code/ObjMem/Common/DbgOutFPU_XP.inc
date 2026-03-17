@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017.
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, July 2022.
 ;               - Level count corrected. Value displayed in Visual studio does not match the FPU
 ;                 TagWord. Here it is explained http://www.ray.masmcode.com/tutorial/fpuchap1.htm

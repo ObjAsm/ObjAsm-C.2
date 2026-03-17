@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm URL encoding and decoding routines.
 ; Notes:      Version C.1.0, December 2020
-;               - First release.
+;               - Initial release.
 ;               - These routines don't support UFT8 encoding.
 ; ==================================================================================================
 

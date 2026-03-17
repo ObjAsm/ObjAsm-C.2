@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.1, August 2022
 ;               - High Contrast support added for the link controls.
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

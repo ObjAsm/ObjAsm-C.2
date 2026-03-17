@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm common COM Dispatch Interfaces.
 ; Notes:      Most of the interfaces can be found in the OBJIDL.H file.
 ;             Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

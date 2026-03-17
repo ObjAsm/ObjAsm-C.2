@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of ChartXYTabSeries objects.
 ; Notes:      Version 1.0.0, August 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

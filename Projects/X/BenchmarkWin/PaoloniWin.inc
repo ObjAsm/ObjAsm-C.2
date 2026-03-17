@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    Include file for Windows Benchmark Application.
 ; Version:    Version C.2.0, January 2023
-;             - First release.
+;             - Initial release.
 ;
 ; Note:       Gabriele Paoloni, 2010. How to Benchmark Code Execution Times on Intel IA-32 and IA-64
 ;             Instruction Set Architectures. Retrieved May 26, 2022, from

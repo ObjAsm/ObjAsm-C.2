@@ -1,27 +1,34 @@
 ; ==================================================================================================
 ; Title:      Demo06.rc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm resource file.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Resource script for ObjAsm demonstration application Demo06.
+; Version:    See Demo06.asm
+;
+; Description:
+;   This file defines the resource entries used by the Demo06 ObjAsm application.
+;   It is processed by the Resource Compiler (RC.EXE) to generate a .res file that
+;   becomes part of the final executable. The script provides the metadata, version
+;   information, and application icon required for proper identification within
+;   the Windows environment.
+;
 ; ==================================================================================================
 
 
-#include "Resource.h"               //Windows resource definitions
-#include "Demo06_Shared.rc"         //Application shared definitions
-#include "VER\Version.rc"           //Application version definition
-#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+#include "Resource.h"                                   ; Windows resource definitions
+#include "Demo06_Shared.rc"                             ; Application shared definitions
+#include "VER\Version.rc"                               ; Application version definition
+#include "MFT\Manifest_Invoker.rc"                      ; Application manifest definition
+
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 
-// Icons -------------------------------------------------------------------------------------------
-// App icons
+; Icons -------------------------------------------------------------------------------------------
+; App icons
 ICON_APP              ICON DISCARDABLE "ICO\OA.ico"
 ICON_APP_CHILD        ICON DISCARDABLE "ICO\Window_16x16_04.ico"
 
-// Menu icons
+; Menu icons
 ICON_FILE_NEW         ICON DISCARDABLE "ICO\New_16x16_04.ico"
 ICON_FILE_CLOSE       ICON DISCARDABLE "ICO\Close_16x16_04.ico"
 ICON_FILE_EXIT        ICON DISCARDABLE "ICO\Exit_16x16_04.ico"
@@ -33,26 +40,26 @@ ICON_WINDOW_CLOSEALL  ICON DISCARDABLE "ICO\CloseAll_16x16_04.ico"
 ICON_HELP_HELP        ICON DISCARDABLE "ICO\Help_Red_16x16_04.ico"
 ICON_HELP_ABOUT       ICON DISCARDABLE "ICO\Info_Blue_16x16_04.ico"
 
-// DialogAboutEx icon
+; DialogAboutEx icon
 ICON_LINK             ICON DISCARDABLE "ICO\Link_16x16_04.ico"
 ICON_MAIL             ICON DISCARDABLE "ICO\Mail_16x16_04.ico"
 
 
-// Dialogs -----------------------------------------------------------------------------------------
+; Dialogs -----------------------------------------------------------------------------------------
 #include "DLG\DialogAboutEx.rc"
 
 
-// Bitmaps -----------------------------------------------------------------------------------------
+; Bitmaps -----------------------------------------------------------------------------------------
 BMP_BACKGROUND        BITMAP "BMP\WndBkgnd.bmp"
 BMP_MENUSIDEBAR_1     BITMAP "BMP\OA_Vert.bmp"
 BMP_MENUSIDEBAR_2     BITMAP "BMP\Sidebar_2.bmp"
 
 
-// Cursors -----------------------------------------------------------------------------------------
+; Cursors -----------------------------------------------------------------------------------------
 CURSOR_HAND           CURSOR "CUR\Hand.cur"    ;Used by Hyperlink
 
 
-// Menus -------------------------------------------------------------------------------------------
+; Menus -------------------------------------------------------------------------------------------
 MDIMENUINIT MENUEX DISCARDABLE
 BEGIN
   POPUP "$00",          IDM_FILE,               MFT_STRING, MFS_ENABLED
@@ -118,7 +125,7 @@ BEGIN
 END
 
 
-// Stringtable -------------------------------------------------------------------------------------
+; Stringtable -------------------------------------------------------------------------------------
 
 STRINGTABLE
 MOVEABLE PURE LOADONCALL DISCARDABLE
@@ -223,7 +230,7 @@ BEGIN
 END
 
 
-// Accelerators ------------------------------------------------------------------------------------
+; Accelerators ------------------------------------------------------------------------------------
 MDIACCEL ACCELERATORS DISCARDABLE
 BEGIN
   VK_F1, IDM_HELP_HELP,       VIRTKEY, SHIFT,   NOINVERT

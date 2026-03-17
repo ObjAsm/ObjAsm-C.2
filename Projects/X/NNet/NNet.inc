@@ -9,7 +9,7 @@
 ;             https://en.wikipedia.org/wiki/Perceptron
 ;             https://en.wikipedia.org/wiki/Deep_learning
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

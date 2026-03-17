@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, February 2025
 ;               - Return value added for compatibility with the 64 bit procedure.
 ; ==================================================================================================

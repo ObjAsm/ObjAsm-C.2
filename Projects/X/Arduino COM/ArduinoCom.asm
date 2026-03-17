@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Arduino Communication program.
 ; Notes:      Version 1.0.0, October 2020
-;               - First release.
+;               - Initial release.
 ;               - https://www.xanthium.in/Serial-Port-Programming-using-Win32-API
 ;               - https://docs.microsoft.com/en-us/previous-versions/ff802693(v=msdn.10)?redirectedfrom=MSDN
 ; ==================================================================================================

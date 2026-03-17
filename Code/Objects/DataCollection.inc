@@ -4,19 +4,19 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm implementation of DataCollection objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     DataCollection
-; Purpose:    DataCollection is a descendant of Collection. It implements a collection of data
-;             structures instead of objects. To achieve this behaviour, the dynamic method
-;             DestroyItem redefined.
-; Notes:      - Since this object inherits from Streamable, it is able to store and recall its data
-;               members to any type of Stream descendant object.
-;             - This object and all descendants are thread safe using the ObjAsm multithreading
-;               support.
+; Purpose:    DataCollection is a descendant of Collection. It implements a collection of raw data
+;             structures instead of objects. To achieve this behavior, the dynamic method
+;             DestroyItem is redefined.
+; Notes:      - Since this object inherits from Streamable, it can store and restore its data
+;               members from any Stream-derived object.
+;             - This object and all descendants are thread-safe using the ObjAsm multithreading
+;               infrastructure.
 
 Object DataCollection, DataCollectionID, Collection
   RedefineMethod    DeserializeItem,POINTER, PDESER_INFO
@@ -33,8 +33,8 @@ if IMPLEMENT
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.DeserializeItem
-; Purpose:    Convert a serialized data item back.
-; Arguments:  Arg1: -> Item. This argument should never be NULL.
+; Purpose:    Restores a serialized data item.
+; Arguments:  Arg1: -> Item. This argument must never be NULL.
 ;             Arg2: -> DESER_INFO.
 ; Return:     Nothing.
 
@@ -43,13 +43,13 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.DestroyItem
-; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
-; Arguments:  -> Item.
+; Purpose:    Helper function to dispose of an item from the collection. Do not call directly!
+; Arguments:  Arg1: -> Item.
 ; Return:     Nothing.
 
 Method DataCollection.DestroyItem,, pItem:POINTER
   .if pItem != NULL
-    MemFree pItem                                       ;Free data from process heap
+    MemFree pItem                                       ; Free data from the process heap
   .endif
 MethodEnd
 
@@ -57,7 +57,7 @@ MethodEnd
 ; Method:     DataCollection.GetItem
 ; Purpose:    Load an item from a stream object.
 ; Arguments:  Arg1: -> Stream object.
-; Return:     xax -> New loaded data.
+; Return:     xax -> Newly allocated and loaded data.
 
 Method DataCollection.GetItem, uses xbx, pStream:$ObjPtr(Stream)
   local dSize:DWORD
@@ -75,15 +75,15 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.PutItem
-; Purpose:    Store an item of the collection in a stream object.
+; Purpose:    Store a data item in a stream object.
 ; Arguments:  Arg1: -> Stream.
-;             Arg2: -> Item. This argument should never be NULL.
+;             Arg2: -> Item. This argument must never be NULL.
 ; Return:     Nothing.
 
 Method DataCollection.PutItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   local dSize:DWORD
 
-  invoke HeapSize, hProcessHeap, 0, pItem           ;Return in xax
+  invoke HeapSize, hProcessHeap, 0, pItem               ; Returns size in xax
   mov dSize, eax
   OCall pStream::Stream.BinWrite, addr dSize, sizeof(dSize)
   OCall pStream::Stream.BinWrite, pItem, dSize
@@ -92,7 +92,7 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.SerializeItem
 ; Purpose:    Serialize a data item.
-; Arguments:  Arg1: -> Item. This argument should never be NULL.
+; Arguments:  Arg1: -> Item. This argument must never be NULL.
 ;             Arg2: -> DESER_INFO.
 ; Return:     Nothing.
 

@@ -116,10 +116,10 @@ ThrobberCount = ($ - ThrobberList)/sizeof(POINTER)
 IDC_TEXT_ABOUT                equ   100
 
 ;Res\Application.dlg
-IDD_DLG_APPLICATION 					equ   1000
-IDC_STC_PROMPT								equ   1001
-IDC_EDT_PROMPT								equ   1002
-IDC_BTN_SEND									equ   1003
-IDC_STC_ANSWER								equ   1004
-IDC_EDT_ANSWER								equ   1005
-IDC_BTN_EXIT									equ   1006
+IDD_DLG_APPLICATION           equ   1000
+IDC_STC_PROMPT                equ   1001
+IDC_EDT_PROMPT                equ   1002
+IDC_BTN_SEND                  equ   1003
+IDC_STC_ANSWER                equ   1004
+IDC_EDT_ANSWER                equ   1005
+IDC_BTN_EXIT                  equ   1006

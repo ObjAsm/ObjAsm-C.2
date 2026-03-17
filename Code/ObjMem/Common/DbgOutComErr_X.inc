@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Bitness independent code.
 ;             Version C.1.1, August 2022
 ;               - New ComGetErrStrA proc used. 

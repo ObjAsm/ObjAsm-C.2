@@ -21,7 +21,7 @@
 ;             Version C.1.2, October 2020
 ;               - {TAB} calculation corrected.
 ;             Version C.1.1, April 2020
-;               - First release.
+;               - Initial release.
 ; Links:      https://docs.microsoft.com/en-us/windows/win32/gdi/string-widths-and-heights
 ;             https://codepundit.wordpress.com/2012/04/14/text-metrics-wow/
 ;             https://docs.microsoft.com/de-ch/windows/win32/gdi/drawing-text-from-different-fonts-on-the-same-line

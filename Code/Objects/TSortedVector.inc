@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of TSortedVector object template.
 ; Notes:      Version C.1.0, February 2024
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

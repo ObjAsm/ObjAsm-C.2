@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm support of HttpServer objects.
 ; Notes:      Version C.1.2, December 2020
-;               - First release.
+;               - Initial release.
 ;             https://docs.microsoft.com/en-us/windows/win32/http/http-api-start-page
 ;             https://docs.microsoft.com/en-us/windows/win32/http/urlprefix-strings
 ; Example:    https://docs.microsoft.com/en-us/windows/win32/http/http-server-sample-application

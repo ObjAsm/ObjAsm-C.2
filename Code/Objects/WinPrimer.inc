@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm support of WinPrimer objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, February 2021
 ;               - Done method added. Call DestroyWindow at life end of descendents.
 ;             Version C.1.2

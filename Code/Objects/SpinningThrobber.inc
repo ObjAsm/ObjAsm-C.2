@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm implementation of SpinningThrobber objects.
 ; Notes:      Version C.1.0, August 2022
-;               - First release.
+;               - Initial release.
 ;             Require an addition to the manifest to enable WS_EX_LAYERED style on child windows
 ;             <application>
 ;               <!--The ID below indicates app support for Windows 8 -->

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    Excel interface for ObjAsm.
 ; Notes:      Version C.1.0, October 2017
-;               - First release. Generated using COMView (www.japheth.de) and edited manually.
+;               - Initial release. Generated using COMView (www.japheth.de) and edited manually.
 ;               - Documentation = Microsoft Excel 10.0 Object Library
 ;               - GUID = 00020813-0000-0000-C000-000000000046
 ;               - Version 1.4, LCID 0

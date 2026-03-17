@@ -134,7 +134,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -169,32 +169,33 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1134
+2=0,0,0,0,202
 3=0,0,0,0,61339
-1=0,0,1870,602,806
+1=0,0,1870,602,1530
 4=0,0,0,0,4236
 5=0,0,694,587,100460
 6=0,0,0,0,17549
 8=0,0,0,0,2186
-7=0,0,0,0,5941
+7=0,0,0,0,891
 9=0,0,1870,602,14508
-10=0,0,0,0,3231
-11=0,0,0,0,489
-12=0,0,1914,598,1026
+10=0,0,0,0,18526
+11=0,0,0,0,1130
+12=0,0,1914,598,349
 16=
 15=
 14=0,0,0,0,89692
-13=0,0,0,0,0
-17=0,0,0,0,11731
+13=0,0,0,0,2571
+17=0,0,0,0,34956
 18=0,0,0,0,1063
 29=
-21=0,0,0,0,2137
+21=0,0,0,0,481
 27=
 25=0,0,0,0,440
 22=
 26=0,0,0,0,0
 20=
 28=
+19=0,0,0,0,0
 
 [BookMark]
 0=
@@ -213,16 +214,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="VEC64_MAX_CAPACITY"
-2="XVEC_MAX_CAPACITY"
-3="Vector_"
-4="PushMethodArgs"
-5="MethodInvoke"
-6="OCall m"
-7="SetFilePointerEx"
-8="Seek"
-9="DWordVector"
-10="MakeObjects"
+1="//"
+2="Demo03"
+3="allocating the necessary memory on the heap"
+4="shifting the remaining items"
+5="Growing factor of the collection"
+6="wasn’t"
+7="wasn’t found"
+8="The coding praxis has shown"
+9="Call base object Done"
+10="Converts a serialized item back"
 [Collapse]
 1=
 4=1
@@ -248,10 +249,11 @@ ProductVer4Range=0
 25=
 22=
 26=
+19=
 [AutoLoad]
-AutoLoad=1,21,13
+AutoLoad=
 [PTimer]
-PTimer=472167753
+PTimer=483850783
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0
 [RADebugBP]

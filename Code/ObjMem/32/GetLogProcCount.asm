@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; Links:      - http://software.intel.com/en-us/articles/multi-core-detect
 ;             - http://cache-www.intel.com/cd/00/00/27/66/276613_276613.pdf
 ;             - http://cache-www.intel.com/cd/00/00/27/66/276611_276611.txt

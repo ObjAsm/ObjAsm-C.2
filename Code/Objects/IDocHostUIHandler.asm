@@ -4,7 +4,7 @@
 ; Version:    C.1.2
 ; Purpose:    ObjAsm compilation file for IDocHostUIHandler object.
 ; Notes:      Version C.1.2, December 2020
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

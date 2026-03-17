@@ -5,7 +5,7 @@
 ; Notes:      Version C.1.1, September 2022
 ;               - Arg3 = Memory type added by HSE.
 ;             Version C.1.0, June 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

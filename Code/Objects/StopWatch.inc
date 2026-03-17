@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of performance monitoring objects.
 ; Link:       http://www.agner.org/assem/
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, October 2019
 ;               - Arithmetic bug in StopWatch.Stop 32 bit corrected.
 ;             Version C.1.2, June 2024

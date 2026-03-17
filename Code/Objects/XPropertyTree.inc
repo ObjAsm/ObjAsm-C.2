@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm XPropertyTree object.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Due to timing problems (WM_PAINT) in the implementation if ComboBox, it is not 
 ;                 reused like other controls. Instead it is recreated each time it is needed.
 ; ==================================================================================================

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm DebugCenter test application.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc

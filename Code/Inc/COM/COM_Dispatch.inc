@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    COM dispatching helper procedures compatible with ObjAsm definitions.
 ; Notes:      Version 1.0.0, October 2017.
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

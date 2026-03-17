@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2023
-;               - First release.
+;               - Initial release.
 ; Links:      https://devblogs.microsoft.com/oldnewthing/20120720-00/?p=7083
 ;             https://devblogs.microsoft.com/oldnewthing/20231025-00/?p=108925
 ; ==================================================================================================

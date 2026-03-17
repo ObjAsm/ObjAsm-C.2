@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of WebTextTranslator objects.
 ; Notes:      Version C.1.0, November 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Skined Application.
 ; Notes:      Version 1.0.0, November 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

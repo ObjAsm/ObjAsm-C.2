@@ -6,7 +6,7 @@
 ; Links:      https://de.wikipedia.org/wiki/Perzeptron    --> XOR problem
 ;             https://towardsdatascience.com/perceptrons-logical-functions-and-the-xor-problem-37ca5025790a
 ; Notes:      Version 1.0.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

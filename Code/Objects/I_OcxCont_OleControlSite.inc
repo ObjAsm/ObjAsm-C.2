@@ -1,10 +1,10 @@
 ; ==================================================================================================
-; Title:   	  I_OcxCont_OleControlSite.inc
-; Author:  	  G. Friedrich
-; Version: 	  C.1.0
-; Purpose: 	  ObjAsm support of OleControlSite Interface for COM OcxContainer objects.
-; Notes:   	  Version C.1.0, October 2017
-;          	    - First release.
+; Title:       I_OcxCont_OleControlSite.inc
+; Author:      G. Friedrich
+; Version:     C.1.0
+; Purpose:     ObjAsm support of OleControlSite Interface for COM OcxContainer objects.
+; Notes:       Version C.1.0, October 2017
+;                - Initial release.
 ; ==================================================================================================
 
 

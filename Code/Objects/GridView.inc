@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of GridView objects.
 ; Notes:      Version C.1.1, May 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

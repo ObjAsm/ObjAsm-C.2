@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of windows Imagelist GDI objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -133,13 +133,13 @@ Method MaskedImageList.IconLoadResource, uses xbx xsi, pResName:POINTER
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	MaskedImageList.Init
-; Purpose:  	Initialize the ImageList control.
-; Arguments:	Arg1: -> Owner object.
-;           	Arg2: Image X size in pixels.
-;           	Arg3: Image Y size in pixels.
-;           	Arg4: Number of images that the image list initially may contain.
-; Return:   	xax = HIMAGELIST.
+; Method:     MaskedImageList.Init
+; Purpose:    Initialize the ImageList control.
+; Arguments:  Arg1: -> Owner object.
+;             Arg2: Image X size in pixels.
+;             Arg3: Image Y size in pixels.
+;             Arg4: Number of images that the image list initially may contain.
+; Return:     xax = HIMAGELIST.
 
 Method MaskedImageList.Init, uses xsi, pOwner:POINTER, dSX:DWORD, dSY:DWORD, dInitCount:DWORD
   SetObject xsi
@@ -149,13 +149,13 @@ Method MaskedImageList.Init, uses xsi, pOwner:POINTER, dSX:DWORD, dSY:DWORD, dIn
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:   	MaskedImageList.Replace
-; Purpose:  	Replace an image in the control. hBmp & hMask must be deleted (DeleteObject)
-;           	after MaskedImageList.Replace.
-; Arguments:	Arg1: Index of the image that will be replaced.
-;           	Arg2: New image handle.
-;           	Arg3: New mask handle.
-; Return:   	eax = TRUE if succeeded, otherwise FALSE.
+; Method:     MaskedImageList.Replace
+; Purpose:    Replace an image in the control. hBmp & hMask must be deleted (DeleteObject)
+;             after MaskedImageList.Replace.
+; Arguments:  Arg1: Index of the image that will be replaced.
+;             Arg2: New image handle.
+;             Arg3: New mask handle.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method MaskedImageList.Replace,, dIndex:DWORD, hBmp:HBITMAP, hMask:HBITMAP
   SetObject xcx

@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.2
 ; Notes:      Version C.1.2, May 2020
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

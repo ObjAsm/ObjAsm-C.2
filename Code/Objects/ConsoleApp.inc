@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of ConsoleApp objects.
 ; Link:       https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session
 ; Notes:      Version C.1.0, April 2024
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, June 2025
 ;               - PrintLn bug corrected by HSE.
 ;             Version C.1.2, September 2025

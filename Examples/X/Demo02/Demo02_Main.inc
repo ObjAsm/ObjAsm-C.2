@@ -1,14 +1,21 @@
 ; ==================================================================================================
 ; Title:      Demo02_Main.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 2.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    ObjAsm demonstration application Demo02.
+; Version:    See Demo02.asm
+;
+; Description:
+;   Defines the SDI Application object and implements the core Windows message handlers:
+;     - Init       Creates the main window
+;     - OnCommand  Handles menu commands (Exit, About, Help)
+;     - OnClose    Displays a confirmation before exiting
+;     - OnPaint    Handles WM_PAINT drawing
+;     - Startup    Registers the application window class
+;
 ; ==================================================================================================
 
 
-Object Application, ApplicationID, SdiApp                  ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup
 
@@ -37,9 +44,9 @@ Method Application.Init, uses xsi
 
   SetObject xsi
   ACall xsi.Init
-  mov dWndWidth, 500                                    ;Default creation width
-  mov dWndHeight, 350                                   ;Default creation height
-  
+  mov dWndWidth, 500                                    ;Default window width
+  mov dWndHeight, 350                                   ;Default window height
+
   mov dWndPosX, $32($invoke(CenterForm, dWndWidth,  $32($invoke(GetSystemMetrics, SM_CXSCREEN))))
   mov dWndPosY, $32($invoke(CenterForm, dWndHeight, $32($invoke(GetSystemMetrics, SM_CYSCREEN))))
 
@@ -53,7 +60,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
-; Purpose:    Event procedure for WM_COMMAND message.
+; Purpose:    Event procedure for WM_COMMAND messages.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
@@ -89,14 +96,14 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
-; Purpose:    Event procedure for WM_CLOSE message.
+; Purpose:    Event procedure for WM_CLOSE messages.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
 Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
+  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
   .if eax == IDNO
     xor eax, eax
@@ -107,7 +114,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
-; Purpose:    Event procedure for WM_PAINT message.
+; Purpose:    Event procedure for WM_PAINT messages.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.

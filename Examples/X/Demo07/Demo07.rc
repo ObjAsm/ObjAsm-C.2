@@ -1,28 +1,34 @@
 ; ==================================================================================================
 ; Title:      Demo07.rc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm resource file for demonstration program 7.
-; Notes:      Version C.1.0, August 2021
-;               - First release.
+; Purpose:    Resource script for ObjAsm demonstration application Demo07.
+; Version:    See Demo07.asm
+;
+; Description:
+;   This file defines the resource entries used by the Demo07 ObjAsm application.
+;   It is processed by the Resource Compiler (RC.EXE) to generate a .res file that
+;   becomes part of the final executable. The script provides the metadata, version
+;   information, and application icon required for proper identification within
+;   the Windows environment.
+;
 ; ==================================================================================================
 
 
-#include "Resource.h"               //Windows resource definitions
-#include "Demo07_Shared.rc"         //Application shared definitions
-#include "VER\Version.rc"           //Application version definition
-#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+#include "Resource.h"                                   ; Windows resource definitions
+#include "Demo07_Shared.rc"                             ; Application shared definitions
+#include "VER\Version.rc"                               ; Application version definition
+#include "MFT\Manifest_Invoker.rc"                      ; Application manifest definition
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 
-// Icons -------------------------------------------------------------------------------------------
+; Icons --------------------------------------------------------------------------------------------
 
-// App icons
+; App icons
 ICON_APP              ICON DISCARDABLE "ICO\OA.ico"
 ICON_APP_CHILD        ICON DISCARDABLE "ICO\ChartXY_16x16_04.ico"
 
-// Menu icons
+; Menu icons
 ICON_FILE_NEW         ICON DISCARDABLE "ICO\New_16x16_04.ico"
 ICON_FILE_CLOSE       ICON DISCARDABLE "ICO\Close_16x16_04.ico"
 ICON_FILE_EXIT        ICON DISCARDABLE "ICO\Exit_16x16_04.ico"
@@ -34,17 +40,17 @@ ICON_WINDOW_CLOSEALL  ICON DISCARDABLE "ICO\CloseAll_16x16_04.ico"
 ICON_HELP_HELP        ICON DISCARDABLE "ICO\Help_Red_16x16_04.ico"
 ICON_HELP_ABOUT       ICON DISCARDABLE "ICO\Info_Blue_16x16_04.ico"
 
-// Button icons
+; Button icons
 ICON_BLOT             ICON DISCARDABLE "ICO\Blot_16x16_04.ico"
 ICON_OK               ICON DISCARDABLE "ICO\OK_16x16_04.ico"
 ICON_CANCEL           ICON DISCARDABLE "ICO\Cancel_16x16_04.ico"
 ICON_PREVIEW          ICON DISCARDABLE "ICO\Refresh_16x16_04.ico"
 
-// DialogAboutEx icons
+; DialogAboutEx icons
 ICON_LINK             ICON DISCARDABLE "ICO\Link_16x16_04.ico"
 ICON_MAIL             ICON DISCARDABLE "ICO\Mail_16x16_04.ico"
 
-// Chart icons
+; Chart icons
 ICON_SETUP            ICON DISCARDABLE "ICO\Setup_16x16_04.ico"
 ICON_SCALEX           ICON DISCARDABLE "ICO\ScaleX_16x16_04.ico"
 ICON_SCALEY1          ICON DISCARDABLE "ICO\ScaleY1_16x16_04.ico"
@@ -52,12 +58,12 @@ ICON_SCALEY2          ICON DISCARDABLE "ICO\ScaleY2_16x16_04.ico"
 ICON_SERIESXY         ICON DISCARDABLE "ICO\SeriesXY_16x16_04.ico"
 
 
-// Bitmaps -----------------------------------------------------------------------------------------
+; Bitmaps ------------------------------------------------------------------------------------------
 
 BMP_BACKGROUND        BITMAP "BMP\WndBkgnd.bmp"
 
 
-// Dialogs -----------------------------------------------------------------------------------------
+; Dialogs ------------------------------------------------------------------------------------------
 
 #include "DLG\DialogAlert.rc"
 #include "DLG\DialogPassword.rc"
@@ -68,7 +74,7 @@ BMP_BACKGROUND        BITMAP "BMP\WndBkgnd.bmp"
 #include "Res\ChartTabSeriesXYDlg.rc"
 
 
-// Menus -------------------------------------------------------------------------------------------
+; Menus --------------------------------------------------------------------------------------------
 
 MDIMENUINIT MENUEX DISCARDABLE
 BEGIN
@@ -110,7 +116,7 @@ BEGIN
 END
 
 
-// Stringtable -------------------------------------------------------------------------------------
+; Stringtable --------------------------------------------------------------------------------------
 
 STRINGTABLE
 MOVEABLE PURE LOADONCALL DISCARDABLE
@@ -137,7 +143,7 @@ BEGIN
 END
 
 
-// Accelerators ------------------------------------------------------------------------------------
+; Accelerators -------------------------------------------------------------------------------------
 
 MDIACCEL ACCELERATORS DISCARDABLE
 BEGIN

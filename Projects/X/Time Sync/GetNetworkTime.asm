@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm GetNetworkTime Application.
 ; Link:       https://en.wikipedia.org/wiki/Network_Time_Protocol
 ; Notes:      Version 1.0.0, January 2021
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

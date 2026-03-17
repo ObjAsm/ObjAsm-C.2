@@ -4,7 +4,7 @@
 ; Version:    See ImageApp.asm
 ; Purpose:    ObjAsm Image Application.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

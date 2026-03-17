@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm DOM-XML Test.
 ; Notes:      Version C.1.0, November 2024
-;               - First release.
+;               - Initial release.
 ;               - This is a port from sources of Veria Kalantary - Ideas of East Company
 ;                 http://www.IdeasofEast.com; http://www.ioe.co.ir
 ; ==================================================================================================

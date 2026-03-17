@@ -22,7 +22,7 @@ HH_TP_HELP_WM_HELP        equ 0011h   ;Text popup help, same as WinHelp HELP_WM_
 HH_CLOSE_ALL              equ 0012h   ;Close all windows opened directly or indirectly by the caller
 HH_ALINK_LOOKUP           equ 0013h   ;ALink version of HH_KEYWORD_LOOKUP
 HH_GET_LAST_ERROR         equ 0014h   ;Not currently implemented // See HHERROR.h
-HH_ENUM_CATEGORY          equ 0015h	  ;Get category name, call repeatedly to enumerate, -1 at end
+HH_ENUM_CATEGORY          equ 0015h    ;Get category name, call repeatedly to enumerate, -1 at end
 HH_ENUM_CATEGORY_IT       equ 0016h   ;Get category info type members, call repeatedly to enumerate, -1 at end
 HH_RESET_IT_FILTER        equ 0017h   ;Clear the info type filter of all info types.
 HH_SET_INCLUSIVE_FILTER   equ 0018h   ;set inclusive filtering method for untyped topics to be included in display

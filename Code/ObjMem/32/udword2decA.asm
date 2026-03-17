@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.2.1
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.2.1, January 2023
 ;               - ZTC bug corrected.
 ; ==================================================================================================

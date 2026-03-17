@@ -40,7 +40,7 @@
 ;             ServiceNames: look at %WINDIR%\system32\drivers\etc\services
 ;
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -233,9 +233,6 @@ ACCEPT_DATA struct 4
   pListener       PLISTENER   ?
   pConnection     POINTER     ?
 ACCEPT_DATA ends
-
-;WSACF_DONT_REMOVE             equ   BIT00
-
 
 ;Maximum Transmission Unit (MTU) of network hardware in BYTEs
 MTU_ETHERNET                  equ   1500
@@ -844,7 +841,7 @@ include NetComSupervisor.inc        ;
 
 endif
 
-;  State	      Who is here	  What it means
+;  State        Who is here    What it means
 ;  -------------------------------------------
 ;  CLOSED       Both          No connection
 ;  LISTEN       Server        Waiting for SYN
@@ -918,12 +915,12 @@ endif
 ;  ________________________________________
 ;  Error handling via WSA
 ;  Winsock reports TCP state problems as errors:
-;  TCP condition	WSA error
-;  Connection reset	WSAECONNRESET
-;  Peer closed	recv() returns 0
-;  Broken pipe	WSAECONNABORTED
-;  Timeout	    WSAETIMEDOUT
-;  Unreachable	WSAENETUNREACH
+;  TCP condition  WSA error
+;  Connection reset  WSAECONNRESET
+;  Peer closed  recv() returns 0
+;  Broken pipe  WSAECONNABORTED
+;  Timeout      WSAETIMEDOUT
+;  Unreachable  WSAENETUNREACH
 ;  ________________________________________
 ;  Common state-related bugs in WSA apps
 ;  1) CLOSE_WAIT leak
@@ -939,15 +936,15 @@ endif
 ;  send(sock, ...);   // -> WSAESHUTDOWN
 ;  ________________________________________
 ;  Summary
-;  WSA Call	TCP State Effect
-;  socket()	CLOSED
-;  bind()+listen()	LISTEN
-;  connect()	SYN_SENT -> ESTABLISHED
-;  accept()	SYN_RECEIVED -> ESTABLISHED
-;  send()/recv()	ESTABLISHED
-;  shutdown(SD_SEND)	FIN_WAIT_1 -> FIN_WAIT_2
-;  closesocket()	LAST_ACK / TIME_WAIT
-;  SO_LINGER abort	RST
+;  WSA Call  TCP State Effect
+;  socket()  CLOSED
+;  bind()+listen()  LISTEN
+;  connect()  SYN_SENT -> ESTABLISHED
+;  accept()  SYN_RECEIVED -> ESTABLISHED
+;  send()/recv()  ESTABLISHED
+;  shutdown(SD_SEND)  FIN_WAIT_1 -> FIN_WAIT_2
+;  closesocket()  LAST_ACK / TIME_WAIT
+;  SO_LINGER abort  RST
 
 
 

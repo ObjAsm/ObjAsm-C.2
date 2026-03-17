@@ -1,10 +1,14 @@
 ; ==================================================================================================
 ; Title:      Demo09_Globals.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 2.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Global definitions for ObjAsm demonstration application Demo09.
+; Version:    See Demo09.asm
+;
+; Description:
+;   This file defines global constants, shared strings, and metadata used throughout the Demo09
+;   application. These definitions are included by the main application modules and provide common
+;   resources such as application titles, version text, and build information.
+;
 ; ==================================================================================================
 
 

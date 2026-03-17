@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=28
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,18 +171,18 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,6358
-1=0,0,0,0,1915
+2=0,0,0,0,1433
+1=0,0,0,0,1561
 6=0,0,1456,414,59484
-4=0,0,0,0,266
+4=0,0,0,0,1654
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,151
 9=0,0,0,0,10041
 10=0,0,0,0,18138
 5=0,0,0,0,14589
-3=0,0,0,0,413
-11=0,0,1783,588,1361
+3=0,0,0,0,1165
+11=0,0,1783,588,722
 15=0,0,0,0,5950
 14=0,0,0,0,4686
 13=0,0,0,0,5536
@@ -192,7 +192,7 @@ ProductVer4Range=0
 20=0,0,0,0,2021
 18=0,0,0,0,5804
 19=0,0,0,0,2360
-23=0,0,0,0,457
+23=0,0,0,0,1292
 24=0,0,0,0,0
 25=
 21=0,0,0,0,575
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="szDemoApp04"
-2="APP_CLS_STYLE"
-3="CLSSTYLE"
-4="DemoApp04"
-5="DbgOutHex"
-6="DbgHex"
-7="DbgHex "
-8="IndexOf"
-9="SubReg"
-10="T_Collection"
+1="Demo02"
+2="TData"
+3="Internal"
+4="szDemoApp04"
+5="APP_CLS_STYLE"
+6="CLSSTYLE"
+7="DemoApp04"
+8="DbgOutHex"
+9="DbgHex"
+10="DbgHex "
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=
 [PTimer]
-PTimer=919684216
+PTimer=1561732044
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

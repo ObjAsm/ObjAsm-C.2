@@ -3,7 +3,7 @@
 ; Author:     Kai Liebenau.
 ; Purpose:    EnumVARIANT object.
 ; Version:    Version C.1.1, April 2007
-;               - First release.
+;               - Initial release.
 ; =================================================================================================
 
 

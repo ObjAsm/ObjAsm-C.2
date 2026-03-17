@@ -11,7 +11,7 @@
 ;             This object requires unique MenuItemIDs to work properly!
 ;             NEVER use a command ID = 0! (The OS has problems with the first MenuBar item).
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, December 2020
 ;               - Minor changes to avaoid this probem http://masm32.com/board/index.php?topic=8928.0
 ;             Version C.1.2, November 2023

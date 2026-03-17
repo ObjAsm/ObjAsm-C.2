@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Service base object.
 ; Notes:      Version C.1.0, December 2025.
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -217,15 +217,15 @@ Method Service.Dispatch,, dControl:DWORD, dEventType:DWORD, pEventData:POINTER
   DbgDec dControl                                       ;Log control code
   DbgDec dEventType                                     ;Log event type
   mov eax, dControl                                     ;Select control code
-  .if eax == SERVICE_CONTROL_CONTINUE    	              ;Resume request
+  .if eax == SERVICE_CONTROL_CONTINUE                    ;Resume request
     OCall xcx.OnContinue                                ;Resume service
-  .elseif eax == SERVICE_CONTROL_INTERROGATE	          ;Status query
+  .elseif eax == SERVICE_CONTROL_INTERROGATE            ;Status query
     OCall xcx.OnInterrogate                             ;Report status
-  .elseif eax == SERVICE_CONTROL_PAUSE	                ;Pause request
+  .elseif eax == SERVICE_CONTROL_PAUSE                  ;Pause request
     OCall xcx.OnPause                                   ;Pause service
   .elseif eax == SERVICE_CONTROL_PRESHUTDOWN            ;Pre-shutdown request
     OCall xcx.OnPreshutdown                             ;Early shutdown handling
-  .elseif eax == SERVICE_CONTROL_SHUTDOWN	              ;Shutdown request
+  .elseif eax == SERVICE_CONTROL_SHUTDOWN                ;Shutdown request
     OCall xcx.OnShutdown                                ;Immediate shutdown
   .elseif eax == SERVICE_CONTROL_STOP                   ;Stop request
     OCall xcx.OnStop                                    ;Terminate service

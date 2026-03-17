@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for WordVector object.
 ; Notes:      Version C.1.0, September 2021
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

@@ -108,7 +108,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=16
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -143,17 +143,17 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1783,588,251
+2=0,0,1783,588,161
 3=0,0,0,0,48601
-1=0,0,0,0,1693
+1=0,0,0,0,694
 4=0,0,562,490,13453
 5=0,0,694,587,114031
 6=0,0,0,0,885
 8=0,0,0,0,19422
 7=0,0,0,0,1367
 9=0,0,0,0,10588
-10=0,0,0,0,232
-11=0,0,0,0,1265
+10=0,0,0,0,247
+11=0,0,763,589,7157
 12=0,0,0,0,794
 16=
 15=
@@ -177,16 +177,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="CREATETYPEDEFS"
-2="IMPLEMENT"
-3="Pepe"
-4="SysSetup"
-5="m2m"
-6="p1st"
-7="rdi"
-8="PassedParamCount"
-9="rax"
-10="??IName"
+1="// "
+2="cBuff"
+3="UXWORD2DEC_MAX_CHARS"
+4="XWORD2DEC_MAX_CHARS"
+5="SXWORD2DEC_MAX_CHARS"
+6="SDWORD2DEC_MAX_CHARS"
+7="sdword2decA"
+8="xword2decA"
+9="QWORD2DEC_MAX_CHARS"
+10="uqword2decA"
 [Collapse]
 1=
 4=
@@ -205,9 +205,9 @@ ProductVer4Range=0
 13=
 8=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=
 [PTimer]
-PTimer=686112809
+PTimer=695843714
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

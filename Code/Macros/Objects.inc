@@ -4,7 +4,7 @@
 ; Version:    C.1.7
 ; Purpose:    ObjAsm object support using MASM compatible assemblers (UASM, ASMC, JWASM, ML)
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, September 2019
 ;               - Method "uses": skip 64 bit registers in 32 bit mode.
 ;               - Undefined symbol warning added in $PushMethodArgs.
@@ -1482,7 +1482,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      New / $New
 ; Purpose:    Create a new instance of an object copying the object template.
-;             It is also suitable for object instances located on the stack using the LOCAL keyword.
+;             It is also suitable for object instances located on the stack using the local keyword.
 ; Arguments:  Arg1: Expression of the form "Instance::Namespace:Object"
 ;                   "Instance" is an optional expression used for preallocated instances like when
 ;                   stack is used to hold the object.

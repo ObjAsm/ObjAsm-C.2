@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm application.
 ; Notes:      Version C.2.0
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; Purpose:    Helper macros for modular build of radix sort routines.
 ; ==================================================================================================
 

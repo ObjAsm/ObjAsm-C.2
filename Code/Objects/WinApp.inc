@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of WinApp objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, January 2020
 ;               - WinApp inherits from Window.
 ;               - OnNcDestroy method moved from SdiApp, MdiApp and DlgApp.

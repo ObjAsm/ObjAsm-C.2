@@ -4,7 +4,7 @@
 ; Version:    C.2.1
 ; Purpose:    ObjAsm collection of useful macros.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;             Version C.1.1, August 2022
 ;               - WriteF macro added.
 ;             Version C.2.0, December 2022
@@ -154,7 +154,7 @@ OAT_BIT_15        equ 1000000000000000b
 ;   036 = 0000 0000 0010 0100y = immediate operand or constant
 ;   037 = 0000 0000 0010 0101y = label, either local or global
 ;   042 = 0000 0000 0010 1010y = GLOBAL var
-;   098 = 0000 0000 0110 0000y = LOCAL  var
+;   098 = 0000 0000 0110 0000y = local  var
 ;   048 = 0000 0000 0011 0000y = register
 ;   805 = 0000 0011 0010 0101y = local procedure in code
 ;   933 = 0000 0011 1010 0101y = external procedure or API call
@@ -3655,7 +3655,7 @@ endm
 ;
 ;; --------------------------------------------------------------------------------------------------
 ;; Macro:     StackProbe
-;; Purpose:   Allow a procedure to safely use LOCAL variables with a total size of more than the
+;; Purpose:   Allow a procedure to safely use local variables with a total size of more than the
 ;;            PageSize, using an unrolled stack probing method.
 ;; Usage:     OPTION PROLOGUE:StackProbe
 ;;            MyProcedure PROC ; ...

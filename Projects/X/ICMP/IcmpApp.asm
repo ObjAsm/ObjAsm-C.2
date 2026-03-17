@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm IcmpApp.
 ; Notes:      Version C.2.0, December 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exlude WinSock.inc

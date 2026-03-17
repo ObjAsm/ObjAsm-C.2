@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of registry keys objects.
 ; Notes:      Must include Advapi32.inc and includelib Advapi32.lib
 ;             Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

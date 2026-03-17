@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm WndPosMgr.
 ; Notes:      Version 1.0.0, August 2025
-;               - First release.
+;               - Initial release.
 ;             Version 1.1.0, September 2025
 ;               - When data is captured, any existing profile with the same name is replaced. 
 ;                 The remaining profiles are left untouched. 

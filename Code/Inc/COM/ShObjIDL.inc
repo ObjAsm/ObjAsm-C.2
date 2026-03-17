@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    COM interfaces for shell objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 
@@ -919,11 +919,11 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;{
 ;    typedef struct
 ;    {
-;        LPITEMIDLIST	pidlTargetFolder;
-;	WCHAR		szTargetParsingName[MAX_PATH];
-;	WCHAR		szNetworkProvider[MAX_PATH];
-;	DWORD		dwAttributes;
-;	int		csidl;
+;        LPITEMIDLIST  pidlTargetFolder;
+;  WCHAR    szTargetParsingName[MAX_PATH];
+;  WCHAR    szNetworkProvider[MAX_PATH];
+;  DWORD    dwAttributes;
+;  int    csidl;
 ;    } PERSIST_FOLDER_TARGET_INFO;
 ;
 ;  COM_MTD_STD InitializeEx(
@@ -1410,7 +1410,7 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;{
 ;    cpp_quote("struct _SHELLEXECUTEINFOW;")
 ;  COM_MTD_STD Execute(
-;		[in, out] struct _SHELLEXECUTEINFOW* pei);
+;    [in, out] struct _SHELLEXECUTEINFOW* pei);
 ;}
 ;
 ;/*****************************************************************************
@@ -2437,28 +2437,28 @@ COM_INTERFACE_BEG IModalWindow, IUnknown, <B4DB1657-70D7-485E-8E3E-6FCB5A5C1802>
 COM_INTERFACE_END
 
 
-FOS_OVERWRITEPROMPT        equ  		00000002h
-FOS_STRICTFILETYPES        equ  		00000004h
-FOS_NOCHANGEDIR            equ  		00000008h
-FOS_PICKFOLDERS            equ  		00000020h
-FOS_FORCEFILESYSTEM        equ  		00000040h
-FOS_ALLNONSTORAGEITEMS     equ  		00000080h
-FOS_NOVALIDATE             equ  		00000100h
-FOS_ALLOWMULTISELECT       equ  		00000200h
-FOS_PATHMUSTEXIST          equ  		00000800h
-FOS_FILEMUSTEXIST          equ  		00001000h
-FOS_CREATEPROMPT           equ  		00002000h
-FOS_SHAREAWARE             equ  		00004000h
-FOS_NOREADONLYRETURN       equ  		00008000h
-FOS_NOTESTFILECREATE       equ  		00010000h
-FOS_HIDEMRUPLACES          equ  		00020000h
-FOS_HIDEPINNEDPLACES       equ  		00040000h
-FOS_NODEREFERENCELINKS     equ  		00100000h
-FOS_DONTADDTORECENT        equ  		02000000h
-FOS_FORCESHOWHIDDEN        equ  		10000000h
-FOS_DEFAULTNOMINIMODE      equ  		20000000h
-FOS_FORCEPREVIEWPANEON     equ  		40000000h
-FOS_SUPPORTSTREAMABLEITEMS equ  		80000000h
+FOS_OVERWRITEPROMPT        equ      00000002h
+FOS_STRICTFILETYPES        equ      00000004h
+FOS_NOCHANGEDIR            equ      00000008h
+FOS_PICKFOLDERS            equ      00000020h
+FOS_FORCEFILESYSTEM        equ      00000040h
+FOS_ALLNONSTORAGEITEMS     equ      00000080h
+FOS_NOVALIDATE             equ      00000100h
+FOS_ALLOWMULTISELECT       equ      00000200h
+FOS_PATHMUSTEXIST          equ      00000800h
+FOS_FILEMUSTEXIST          equ      00001000h
+FOS_CREATEPROMPT           equ      00002000h
+FOS_SHAREAWARE             equ      00004000h
+FOS_NOREADONLYRETURN       equ      00008000h
+FOS_NOTESTFILECREATE       equ      00010000h
+FOS_HIDEMRUPLACES          equ      00020000h
+FOS_HIDEPINNEDPLACES       equ      00040000h
+FOS_NODEREFERENCELINKS     equ      00100000h
+FOS_DONTADDTORECENT        equ      02000000h
+FOS_FORCESHOWHIDDEN        equ      10000000h
+FOS_DEFAULTNOMINIMODE      equ      20000000h
+FOS_FORCEPREVIEWPANEON     equ      40000000h
+FOS_SUPPORTSTREAMABLEITEMS equ      80000000h
 
 COM_INTERFACE_BEG IFileDialog, IModalWindow, <42F85136-DB7E-439C-85F1-E4075D135FC8>
   COM_MTD_STD   SetFileTypes,                 DWORD, POINTER

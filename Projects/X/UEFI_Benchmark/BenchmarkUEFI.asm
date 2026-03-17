@@ -4,7 +4,7 @@
 ; Version:    1.0.0
 ; Purpose:    ObjAsm compilation file for Benchmark UEFI Application.
 ; Version:    Version 1.0.0, Héctor S. Enrique
-;             - First release.
+;             - Initial release.
 ; Note:       Gabriele Paoloni. 2010. How to Benchmark Code Execution Times on Intel IA-32 and IA-64
 ;             Instruction Set Architectures. Retrieved May 26, 2022, from
 ;             http://www.intel.com/content/dam/www/public/us/en/documents/white-papers/

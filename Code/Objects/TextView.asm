@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for TextView object.
 ; Notes:      Version C.1.1, April 2020
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

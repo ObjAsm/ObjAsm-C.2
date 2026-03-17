@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of Dictionary objects.
 ; Notes:      Version C.1.0, January 2022
-;             - First release.
+;             - Initial release.
 ; Links:      - https://hg.python.org/cpython/file/52f68c95e025/Objects/dictobject.c#l296
 ; ==================================================================================================
 

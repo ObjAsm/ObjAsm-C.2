@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm support of CounterBadge objects.
 ; Notes:      Version C.2.0, November 2025
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

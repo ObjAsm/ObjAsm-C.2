@@ -4,7 +4,7 @@
 ; Version:    C.2.0
 ; Purpose:    ObjAsm support of DstDlg objects.
 ; Notes:      Version C.2.0, December 2022
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm charting demo with MSChart.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - MSChrt20.ocx is unfortunately 32-bit only.  
 ; ==================================================================================================
 

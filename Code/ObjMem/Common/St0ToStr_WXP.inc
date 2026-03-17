@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ;               - Bitness and platform independent code.
 ;             Version C.1.0, July 2022
 ;               - Support for f_ALIGN and f_PLUS added.

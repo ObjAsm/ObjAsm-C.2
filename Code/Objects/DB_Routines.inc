@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm Database general purpose routines.
 ; Notes:      Version C.1.1, August 2019
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

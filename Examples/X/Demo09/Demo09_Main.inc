@@ -2,9 +2,34 @@
 ; Title:      Demo09_Main.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 2.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Main implementation module for the ObjAsm Demo09 SDI application.
+;
+; Description:
+;   This module defines the Application object for Demo09, an ObjAsm example demonstrating
+;   the use of the SdiApp framework. The demo showcases the structure of a traditional
+;   Single Document Interface (SDI) application and illustrates how window creation,
+;   message handling, and class registration are implemented using ObjAsm’s OOP model.
+;
+;   The module provides:
+;     - An Application object derived from SdiApp
+;     - Initialization logic for creating and positioning the main window
+;     - Event handlers for:
+;       - WM_COMMAND     (menu commands: Exit, About, Help)
+;       - WM_CLOSE       (exit confirmation dialog)
+;       - WM_PAINT       (custom border drawing with DrawEdge)
+;     - A window class registration routine (Startup)
+;
+;   Demo09 highlights:
+;     - Minimal, clean SDI architecture
+;     - Integration with standard Windows messaging
+;     - Demonstration of DefWindowProc fallback behavior
+;     - Handling of modal dialogs (About)
+;     - Use of pattern brushes for custom window backgrounds
+;
+; Notes:
+;   Version C.1.0 - October 2017
+;       - Initial release.
+;
 ; ==================================================================================================
 
 
@@ -28,7 +53,7 @@ CStr szAppClassName, "OAC_Application"                  ;Creates szAppClassName 
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
-; Purpose:    Initialize the SDI application object.
+; Purpose:    Initializes the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -127,7 +152,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
-; Purpose:    Register the Application window class with the operating system.
+; Purpose:    Registers the Application window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 

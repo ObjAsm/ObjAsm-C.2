@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    COM interfaces for shell objects.
 ; Notes:      Version C.1.0, October 2017
-;               - First release.
+;               - Initial release.
 ; ==================================================================================================
 
 

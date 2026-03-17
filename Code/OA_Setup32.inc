@@ -4,7 +4,7 @@
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Model Setup for 32 bit.
 ; Notes:      Version C.1.0, November 2017
-;             - First release.
+;             - Initial release.
 ; ==================================================================================================
 
 

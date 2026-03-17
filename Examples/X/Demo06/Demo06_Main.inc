@@ -1,10 +1,25 @@
 ; ==================================================================================================
 ; Title:      Demo06_Main.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm demonstration program 6.
-; Notes:      Version C.1.0, October 2017
-;               - First release.
+; Purpose:    Main implementation module for the ObjAsm demonstration program Demo06.
+; Version:    See Demo06.asm
+;
+; Description:
+;   This module implements the primary logic for the Demo06 MDI application. It contains:
+;     - Application object for frame creation, initialization, and message processing
+;     - MDI Client and MDI Child window objects
+;     - Toolbar, Statusbar, Rebar, and XMenu handling
+;     - Language switching and accelerator support
+;     - Event handlers for application-level and window-level messages
+;
+;   The structures and methods defined here form the core of the Demo06 user interface and
+;   operational behavior. Additional resources, dialogs, and icon definitions are provided
+;   in the associated resource scripts and include files.
+;
+; Notes:
+;   Version C.1.0 - October 2017
+;     - Initial release.
+;
 ; ==================================================================================================
 
 
@@ -109,7 +124,7 @@ CStr szChildClassName, "OAC_Child"
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
-; Purpose:    Switch the application language.
+; Purpose:    Switches the application language.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
@@ -150,7 +165,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
-; Purpose:    Finalize the application object.
+; Purpose:    Finalizes the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -168,7 +183,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
-; Purpose:    Enable or disable MDI child actions.
+; Purpose:    Enables or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
@@ -185,7 +200,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
-; Purpose:    Initialize the application object.
+; Purpose:    Initializes the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -490,7 +505,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
-; Purpose:    Close all open child windows.
+; Purpose:    Closes all open child windows.
 ; Arguments:  Arg1: Child window handle.
 ;             Arg2: Parameter passed to the enumeration procedure.
 ; Return:     eax = Exit code passed to PostQuitMessage.
@@ -506,7 +521,7 @@ CloseEnumProc endp
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
-; Purpose:    Register the Application window class with the operating system.
+; Purpose:    Registers the Application window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -531,7 +546,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
-; Purpose:    Display a help string on panel 0 of the statusbar.
+; Purpose:    Displays a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
 ; Return:     Nothing.
 
@@ -548,7 +563,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.Done
-; Purpose:    Finalize MyClientWnd object.
+; Purpose:    Finalizes MyClientWnd object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -560,7 +575,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.Init
-; Purpose:    Initialize MdiClientWnd object.
+; Purpose:    Initializes MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
 
@@ -602,7 +617,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Done
-; Purpose:    Finalize MyChildWnd object.
+; Purpose:    Finalizes MyChildWnd object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -624,7 +639,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Init
-; Purpose:    Initialize MyChildWnd object.
+; Purpose:    Initializes MyChildWnd object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> Title string.
 ; Return:     Nothing.
@@ -742,7 +757,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Startup
-; Purpose:    Register the MyChildWnd window class with the operating system.
+; Purpose:    Registers the MyChildWnd window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 
