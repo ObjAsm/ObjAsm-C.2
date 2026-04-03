@@ -1717,8 +1717,13 @@ DbgBmp macro hBmp:req, Dest
     DbgSaveContext FALSE, hBmp
     DbgSetDestWnd Dest
     .if ??VarXBX == 0
+      .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;This is to avoid popping up a text
+        mov eax, DBG_EFFECT_NORMAL
+      .else 
+        mov eax, DBG_EFFECT_NEWLINE
+      .endif
       invoke DbgOutTextA, $OfsCStrA("Invalid bitmap HANDLE"), \
-                          DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+                          DbgColorError, DbgColorBackground, eax, ??DbgDstWnd
     .else
     ifidn DBG_DEVICE, <WND>
       invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
@@ -1733,7 +1738,9 @@ DbgBmp macro hBmp:req, Dest
                           DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     endif
     .endif
-    DbgShowSrcInfo ??DbgDstWnd
+    .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;This is to avoid popping up a text 
+      DbgShowSrcInfo ??DbgDstWnd                        ;  Child window when no info is required
+    .endif
     DbgLoadContext
   endif
 endm

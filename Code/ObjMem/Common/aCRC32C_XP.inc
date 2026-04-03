@@ -4,6 +4,7 @@
 ; Version:    C.1.0
 ; Notes:      Version C.1.1, March 2022
 ;               - Initial release.
+;               - Bitness and platform independent code.
 ; ==================================================================================================
 
 
@@ -14,6 +15,7 @@
 ; Arguments:  Arg1: -> Aligned memory block.
 ;             Arg2: Memory block size in BYTEs.
 ; Return:     eax = CRC32C.
+; Note:       Requires a SSE4.2 capable processor.
 ; Link:       https://en.wikipedia.org/wiki/Cyclic_redundancy_check
 
 .code

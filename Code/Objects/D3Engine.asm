@@ -16,10 +16,8 @@
 LoadObjects Primer
 LoadObjects Stream
 LoadObjects DiskStream
-LoadObjects Collection
-LoadObjects SortedCollection
-LoadObjects SortedDataCollection
-LoadObjects DataCollection
+LoadObjects Collection, SortedCollection, SortedDataCollection, DataCollection
+LoadObjects Vector, DWordVector, SortedDwordVector
 
 ;Add here the file that defines the object(s) to be included in the library
 MakeObjects D3Engine

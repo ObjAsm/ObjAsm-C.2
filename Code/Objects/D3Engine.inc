@@ -287,9 +287,9 @@ if IMPLEMENT
 
 % include .\D3VectronCollection.inc
 % include .\D3Triangle.inc
-% include .\D3Object.inc
-% include .\D3Light.inc
-% include .\D3Camera.inc
-% include .\D3Scene.inc
+;% include .\D3Object.inc
+;% include .\D3Light.inc
+;% include .\D3Camera.inc
+;% include .\D3Scene.inc
 
 endif

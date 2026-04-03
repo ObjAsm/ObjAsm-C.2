@@ -511,3 +511,7 @@ XmlNodeID                         equ     0000012721
 
 ;DirectoryWatcher
 DirectoryWatcherID                equ     0000012730
+
+;Desktop Duplication
+DesktopDuplicationSourceID        equ     0000012740
+DesktopDuplicationTargetID        equ     0000012741

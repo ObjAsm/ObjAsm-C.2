@@ -15,6 +15,7 @@
 ; Arguments:  Arg1: -> Unaligned memory block.
 ;             Arg2: Memory block size in BYTEs.
 ; Return:     eax = CRC32C.
+; Note:       Requires a SSE4.2 capable processor.
 ; Link:       https://en.wikipedia.org/wiki/Cyclic_redundancy_check
 
 .code

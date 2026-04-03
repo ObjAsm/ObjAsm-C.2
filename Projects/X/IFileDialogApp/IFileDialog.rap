@@ -185,7 +185,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=19
+MilestoneOnDateDate=23
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -234,7 +234,7 @@ ProductVer4Range=0
 11=
 14=
 13=0,0,0,0,719
-15=0,0,0,0,627
+15=0,0,0,0,1347
 18=
 21=
 23=0,0,0,0,0
@@ -250,7 +250,7 @@ ProductVer4Range=0
 28=
 29=
 30=0,0,0,0,344
-3=0,0,0,0,3277
+3=0,0,0,0,3820
 32=
 40=0,0,0,0,4319
 42=
@@ -275,16 +275,16 @@ ProductVer4Range=0
 53=
 54=
 [Find]
-1="MultiFileSpec"
-2="m2m"
-3=";            Arg2:"
-4="; Return:    "
-5="; Arguments: "
-6="; Purpose:   "
-7="; Method:    "
-8="VIEW.ICO"
-9="rax"
-10="rsi"
+1="IFileOpenDialog"
+2="MultiFileSpec"
+3="m2m"
+4=";            Arg2:"
+5="; Return:    "
+6="; Arguments: "
+7="; Purpose:   "
+8="; Method:    "
+9="VIEW.ICO"
+10="rax"
 [Collapse]
 36=
 3=
@@ -356,7 +356,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=15,3
 [PTimer]
-PTimer=691309802
+PTimer=692984599
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,0
 [RADebugBP]

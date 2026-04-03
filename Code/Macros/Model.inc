@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 ; Notes about ObjAsm:
-; ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+; ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  1. Naming rules
 ;     a. Constants, structures, unions, and native types are written in capitals and words are
 ;        separated with an underscore, e.g., MAX_SIZE.
