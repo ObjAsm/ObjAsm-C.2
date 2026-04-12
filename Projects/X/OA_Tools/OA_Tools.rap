@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=14
+MilestoneOnDateDate=12
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -239,9 +239,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1177,636,7783
+2=0,0,1177,636,16523
 3=0,0,0,0,3697
-1=0,0,694,487,322
+1=0,0,694,487,2335
 4=0,0,1202,621,3045
 1001=0,0,0,0,460
 8=0,0,0,0,6676
@@ -273,7 +273,7 @@ ProductVer4Range=0
 36=
 40=0,0,1167,599,26258
 39=0,0,0,0,2237
-38=0,0,0,0,2333
+38=0,0,0,0,5984
 42=0,0,0,0,1968
 41=0,0,0,0
 43=0,0,0,0,2495
@@ -320,16 +320,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="GdiplusStartup"
-2="DIALOG_SETUP"
-3="OAT_App"
-4="szANNOTATION"
-5="CheckRegInSentence"
-6="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
-7="pExternalEditor"
-8="ReadStr"
-9="szOAT_App"
-10="OnSetColor"
+1="IID_IFileOpenDialog"
+2="GdiplusStartup"
+3="DIALOG_SETUP"
+4="OAT_App"
+5="szANNOTATION"
+6="CheckRegInSentence"
+7="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
+8="pExternalEditor"
+9="ReadStr"
+10="szOAT_App"
 [Collapse]
 4=
 2=2128137,1413558528,2092959915,513
@@ -391,9 +391,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,38
 [PTimer]
-PTimer=2066675674
+PTimer=2067694424
 [GroupExpand]
 GroupExpand=1,1,0,1,1,1,1,0
 [RADebugBP]

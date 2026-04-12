@@ -455,7 +455,7 @@ ADE_DialogAboutID                 equ     0000012218
 ADE_ScriptEngineID                equ     0000012219
 ADE_SimpleInputDialogID           equ     0000012220
 
-;Database objects (DataBase.inc)
+;Database objects (Database.inc)
 DB_FieldID                        equ     0000012300
 DB_RecordID                       equ     0000012301
 DB_RecordCacheID                  equ     0000012302

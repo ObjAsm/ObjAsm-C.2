@@ -1264,6 +1264,8 @@ endm
 ; Note:       All registers are allowed as parameters, even indirect references of the form
 ;             [xbx].POINT.x
 ;             REAL8 can not be used combined with TARGET_BITNESS = 32.
+; Example:    DbgWriteF DbgColorWarning, "MyDbgWnd", "Payload address=¦HXh", xbx
+
 
 DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
   if DEBUGGING
