@@ -285,7 +285,7 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgSaveContext
-; Purpose:    Save CPU & FPU registers & flags onto stack and aligns it. This way, all subsequent
+; Purpose:    Saves CPU & FPU registers & flags onto stack and aligns it. This way, all subsequent
 ;             invocations have an aligned stack and a cleared direction flag. Additionally, a
 ;             Critical Section is passed to avoid race conditions.
 ; Arguments:  Arg1: Handle the passed argument as a Value (FALSE) or a reference (TRUE).
@@ -297,15 +297,15 @@ DBG_HOMING_SIZE equ 40h
 
 DbgSaveContext macro VarIsRef:=<FALSE>, Var
   pushcontext assumes
-  pushfx                                                ;;Save CPU flags
+  pushfx                                                ;; Save CPU flags
   pushax
   ifnb <Var>
     ??Attributes = opattr(Var)
     if VarIsRef ne FALSE
-      if ??Attributes and OAT_REGISTER                  ;;Is Var a register?
-        %ifdifi <Var>, <xbx>                            ;;Skip if Var is xbx
-          if type(Var) eq @WordSize                     ;;  Use xbx, because it is the only non
-            mov xbx, Var                                ;;  volatile register that can be loaded
+      if ??Attributes and OAT_REGISTER                  ;; Is Var a register?
+        %ifdifi <Var>, <xbx>                            ;; Skip if Var is xbx
+          if type(Var) eq @WordSize                     ;;   Use xbx, because it is the only non
+            mov xbx, Var                                ;;   volatile register that can be loaded
           else
             .err <DbgSaveContext - Reference error>
             exitm
@@ -344,51 +344,51 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
     endif
   endif
 
-  cld                                                   ;;Reset direction flag for API calling!
-  mov xdi, xsp                                          ;;Save current esp value in edi
+  cld                                                   ;; Reset direction flag for API calling!
+  mov xdi, xsp                                          ;; Save current esp value in edi
   if TARGET_BITNESS eq 32
-    and esp, 0FFFFFFF0h                                 ;;Align stack on a 16 byte boundary
+    and esp, 0FFFFFFF0h                                 ;; Align stack on a 16 byte boundary
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      invoke EnterCriticalSection, offset(DbgCritSect)  ;;This call don't change GetLastError
+      invoke EnterCriticalSection, offset(DbgCritSect)  ;; This call don't change GetLastError
     endif
     sub esp, XMM_CONTEXT_SIZE
-    fxsave [esp]                                        ;;This instruction reinitializes the XMM
-    push esp                                            ;;Save FPU storage pointer
-    push edi                                            ;;Save address to restore CPU registers
-    ifb <Var>                                           ;;If not Var is supplied, restore regs
-      mov eax, [edi +  7*sizeof(DWORD)]                 ;;Restore volatile registers that
-      mov ecx, [edi +  6*sizeof(DWORD)]                 ;;  EnterCriticalSection may have changed
+    fxsave [esp]                                        ;; This instruction reinitializes the XMM
+    push esp                                            ;; Save FPU storage pointer
+    push edi                                            ;; Save address to restore CPU registers
+    ifb <Var>                                           ;; If not Var is supplied, restore regs
+      mov eax, [edi +  7*sizeof(DWORD)]                 ;; Restore volatile registers that
+      mov ecx, [edi +  6*sizeof(DWORD)]                 ;;   EnterCriticalSection may have changed
       mov edx, [edi +  5*sizeof(DWORD)]
-      mov edi, [edi]                                    ;;Restore edi from pushed register values
+      mov edi, [edi]                                    ;; Restore edi from pushed register values
     endif
   else
-    and rsp, 0FFFFFFFFFFFFFFF0h                         ;;Align stack on a 16 byte boundary
+    and rsp, 0FFFFFFFFFFFFFFF0h                         ;; Align stack on a 16 byte boundary
     sub rsp, 20h
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      invoke EnterCriticalSection, offset(DbgCritSect)  ;;This call don't change GetLastError
+      invoke EnterCriticalSection, offset(DbgCritSect)  ;; This call don't change GetLastError
     endif
     sub rsp, XMM_CONTEXT_SIZE - 20h
-    fxsave [rsp]                                        ;;This instruction reinitializes the XMM
-    push rsp                                            ;;Save FPU storage pointer
-    push rdi                                            ;;Save address to restore CPU registers
-    ifb <Var>                                           ;;If Var is not supplied, restore vol. regs
-      mov rax, [rdi + 15*sizeof(QWORD)]                 ;;Restore volatile registers that
-      mov rcx, [rdi + 14*sizeof(QWORD)]                 ;;  EnterCriticalSection may have changed
+    fxsave [rsp]                                        ;; This instruction reinitializes the XMM
+    push rsp                                            ;; Save FPU storage pointer
+    push rdi                                            ;; Save address to restore CPU registers
+    ifb <Var>                                           ;; If Var is not supplied, restore vol. regs
+      mov rax, [rdi + 15*sizeof(QWORD)]                 ;; Restore volatile registers that
+      mov rcx, [rdi + 14*sizeof(QWORD)]                 ;;   EnterCriticalSection may have changed
       mov rdx, [rdi + 13*sizeof(QWORD)]
       mov r8,  [rdi +  7*sizeof(QWORD)]
       mov r9,  [rdi +  6*sizeof(QWORD)]
       mov r10, [rdi +  5*sizeof(QWORD)]
       mov r11, [rdi +  4*sizeof(QWORD)]
-      mov rdi, [rdi +  8*sizeof(QWORD)]                 ;;Restore rdi from pushed register values
+      mov rdi, [rdi +  8*sizeof(QWORD)]                 ;; Restore rdi from pushed register values
     endif
 
-    sub rsp, DBG_HOMING_SIZE                            ;;Add a homing area and argument space
-  endif                                                 ;; for the comming calls
+    sub rsp, DBG_HOMING_SIZE                            ;; Add a homing area and argument space
+  endif                                                 ;;   for the comming calls
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLoadContext
-; Purpose:    Load CPU & FPU registers & flags from stack and restores the original stack alignment.
+; Purpose:    Loads CPU, FPU registers & flags from stack and restores the original stack alignment.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -396,38 +396,38 @@ DbgLoadContext macro
   if TARGET_BITNESS eq 32
     pop ebp
     pop ebx
-    fxrstor [ebx]                                       ;;Read XMM content back
+    fxrstor [ebx]                                       ;; Read XMM content back
   else
-    add rsp, DBG_HOMING_SIZE                            ;;Remove homing area and argument space
+    add rsp, DBG_HOMING_SIZE                            ;; Remove homing area and argument space
     pop rbp
     pop rbx
-    fxrstor [rbx]                                       ;;Read XMM content back
+    fxrstor [rbx]                                       ;; Read XMM content back
     sub rsp, 20h
   endif
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
     invoke LeaveCriticalSection, offset(DbgCritSect)
   endif
-  mov xsp, xbp                                          ;;Restore rsp
-  popax                                                 ;;Restore CPU registers
-  popfx                                                 ;;Direction flag is restored here too
+  mov xsp, xbp                                          ;; Restore rsp
+  popax                                                 ;; Restore CPU registers
+  popfx                                                 ;; Direction flag is restored here too
   popcontext assumes
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgSetDestWnd
-; Purpose:    Set the global symbol ??DbgDstWnd.
+; Purpose:    Sets the global symbol ??DbgDstWnd.
 ; Arguments:  Arg1: Name of the child window of the Debug Center MDI target to which the information
 ;                   is directed.
 ; Return:     Nothing.
 
 DbgSetDestWnd macro DestWnd
-  local ??DestWnd                                       ;;Must be local
+  local ??DestWnd                                       ;; Must be local
 
   ifb <DestWnd>
     ??DbgDstWnd textequ <offset(szDbgSrc)>
   else
     ifidni @SubStr(DestWnd, 1, 1), <">
-      CStrW ??DestWnd, DestWnd                          ;;Create only 1 instance of the window name.
+      CStrW ??DestWnd, DestWnd                          ;; Create only 1 instance of the window name.
       ??DbgDstWnd textequ <offset(??DestWnd)>
     else
       ??DbgDstWnd textequ <DestWnd>
@@ -437,14 +437,14 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgShowSrcInfo
-; Purpose:    Output source line info on the debug device.
+; Purpose:    Outputs source line info on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
 ; Return:     Nothing.
 
 DbgShowSrcInfo macro Dest:req
   ??DbgIndex = 0
   ??DbgPos = 0
-  %forc ??DbgChar, @FileCur                             ;;Search last "\" and return string position
+  %forc ??DbgChar, @FileCur                             ;; Search last "\" and return str position
     ??DbgIndex = ??DbgIndex + 1
     ifidni <&??DbgChar>, <\>
       ??DbgPos = ??DbgIndex
@@ -456,14 +456,14 @@ DbgShowSrcInfo macro Dest:req
               $OfsCStrA(@CatStr(<!" [>, @SubStr(%@FileCur, ??DbgPos + 1), <, >, %@Line, <]!">)), \
               DbgColorComment, DbgColorBackground, DBG_EFFECT_NEWLINE, Dest
   .else
-    invoke DbgOutTextA, offset(bNULL), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, \
+    invoke DbgOutTextA, offset(bNULL), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE,\
                         Dest
   .endif
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgShowTxtInfo
-; Purpose:    Output additional text info on the debug device.
+; Purpose:    Outputs additional text info on the debug device.
 ; Arguments:  Arg1: Text.
 ;             Arg2: Optional destination Window name.
 ; Return:     Nothing.
@@ -477,7 +477,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgOutHex
-; Purpose:    Output a number in hexadecimal on the debug output device.
+; Purpose:    Outputs a number in hexadecimal on the debug output device.
 ; Arguments:  Arg1: Text displayed before the value.
 ;             Arg2: Output color of PreText (defaut is black).
 ;             Arg3: Symbol. Value or address must be stored in rbx/ebx/bx/bl.
@@ -526,7 +526,7 @@ OutHexAux macro
     invoke byte2hexA, xdi, BYTE ptr [xbx]
     H_Offset = BYTE2HEX_MAX_CHARS - 1
   endif
-  mov DCHRA ptr [xdi + H_Offset], "h"                   ;Include ZTC
+  mov DCHRA ptr [xdi + H_Offset], "h"                   ;; Include ZTC
 endm
 
 DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
@@ -536,14 +536,15 @@ DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
     ;;Reserve stack = 4*8 chars + "h" + ZTC = 22h => 28h
     sub esp, 28h
     ifnb <PreText>
-      invoke DbgOutTextA, $OfsCStrA($Esc("&PreText&")), PreColor, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
+      invoke DbgOutTextA, $OfsCStrA($Esc("&PreText&")), PreColor, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, Dest
     endif
-    if (opattr Var) and OAT_REGISTER                    ;;Is Var a register?
-      mov esi, esp                                      ;;+ 2 padding bytes = 0Ch
+    if (opattr Var) and OAT_REGISTER                    ;; Is Var a register?
+      mov esi, esp                                      ;; + 2 padding bytes = 0Ch
       invoke dword2hexA, esi, Var
-      mov DCHRA ptr [esi + DWORD2HEX_MAX_CHARS - 1], "h";;Set "h" + ZTC
+      mov DCHRA ptr [esi + DWORD2HEX_MAX_CHARS - 1], "h";; Set "h" + ZTC
       if ??DbgDataSize lt sizeof(DWORD)
-        add esi, 2*(sizeof(DWORD) - ??DbgDataSize)      ;;Skip unnecessary zeros
+        add esi, 2*(sizeof(DWORD) - ??DbgDataSize)      ;; Skip unnecessary zeros
       endif
     else
       mov edi, esp
@@ -551,19 +552,20 @@ DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
       OutHexAux
     endif
     invoke DbgOutTextA, esi, VarColor, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
-    add esp, 28h                                        ;;Restore stack
+    add esp, 28h                                        ;; Restore stack
   else
     ;;Reserve stack = 2*16 chars + "h" + ZTC + 14 padding bytes + homing space = 60h
     sub rsp, 60h
     ifnb <PreText>
-      invoke DbgOutTextA, $OfsCStrA($Esc("&PreText&")), PreColor, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
+      invoke DbgOutTextA, $OfsCStrA($Esc("&PreText&")), PreColor, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, Dest
     endif
-    if (opattr Var) and OAT_REGISTER                    ;;Is Var a register?
+    if (opattr Var) and OAT_REGISTER                    ;; Is Var a register?
       lea rsi, [rsp + 28h]
       invoke qword2hexA, rsi, Var
-      mov DCHRA ptr [rsi + QWORD2HEX_MAX_CHARS - 1], "h";;Set "h" + ZTC
+      mov DCHRA ptr [rsi + QWORD2HEX_MAX_CHARS - 1], "h";; Set "h" + ZTC
       if ??DbgDataSize lt sizeof(QWORD)
-        add rsi, 2*(sizeof(QWORD) - ??DbgDataSize)      ;;Skip unnecessary zeros
+        add rsi, 2*(sizeof(QWORD) - ??DbgDataSize)      ;; Skip unnecessary zeros
       endif
     else
       if TARGET_PLATFORM eq PLATFORM_WINDOWS
@@ -577,7 +579,7 @@ DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
       endif
     endif
     invoke DbgOutTextA, rsi, VarColor, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
-    add rsp, 60h                                        ;;Restore stack
+    add rsp, 60h                                        ;; Restore stack
   endif
 endm
 
@@ -587,7 +589,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLine
-; Purpose:    Draw a single line on the debug device.
+; Purpose:    Draws a single line on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgLine macro Dest
@@ -616,7 +618,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLine2
-; Purpose:    Draw a double line on the debug device.
+; Purpose:    Draws a double line on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgLine2 macro Dest
@@ -645,7 +647,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgText
-; Purpose:    Output a text on the debug device.
+; Purpose:    Outputs a text on the debug device.
 ; Arguments:  Arg1: Text.
 ;             Arg2: Optional destination Window name.
 
@@ -669,7 +671,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTextF
-; Purpose:    Output formatted text on the debug device.
+; Purpose:    Outputs formatted text on the debug device.
 ; Arguments:  Arg1: Optional text color.
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
@@ -702,7 +704,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWarning
-; Purpose:    Output a text on the debug device on red color.
+; Purpose:    Outputs a text on the debug device on red color.
 ; Arguments:  Arg1: Text.
 ;             Arg2: Optional destination Window name.
 
@@ -728,7 +730,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgndTxt
-; Purpose:    Set the text window background color.
+; Purpose:    Sets the text window background color.
 ; Arguments:  Arg1: New background color.
 ;             Arg2: Optional destination Window name.
 
@@ -752,7 +754,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgndBmp
-; Purpose:    Set the bitmap window background color.
+; Purpose:    Sets the bitmap window background color.
 ; Arguments:  Arg1: New background color.
 ;             Arg2: Optional destination Window name.
 
@@ -776,7 +778,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgnd
-; Purpose:    Set the window background color.
+; Purpose:    Sets the window background color.
 ; Arguments:  Arg1: New background color.
 ;             Arg2: Optional destination Window name.
 
@@ -802,7 +804,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFlashWnd
-; Purpose:    Flash the DebugCenter menu bar.
+; Purpose:    Flashes the DebugCenter menu bar.
 ; Arguments:  Arg1: Flashing flags, e.g. FLASHW_CAPTION
 ;             Arg2: Number of flashes.
 
@@ -824,7 +826,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFlashMenu
-; Purpose:    Flash the DebugCenter menu bar.
+; Purpose:    Flashes the DebugCenter menu bar.
 ; Arguments:  Arg1: Menu flash RGB color.
 ;             Arg2: Number of flashes.
 
@@ -846,7 +848,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTileHor
-; Purpose:    Tile the output windows horizontally.
+; Purpose:    Tiles the output windows horizontally.
 ; Arguments:  None.
 
 DbgTileHor macro
@@ -867,7 +869,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTileVer
-; Purpose:    Tile the output windows vertically.
+; Purpose:    Tiles the output windows vertically.
 ; Arguments:  None.
 
 DbgTileVer macro
@@ -888,7 +890,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCascade
-; Purpose:    Arrange output windows in a cascade.
+; Purpose:    Arranges output windows in a cascade.
 ; Arguments:  None.
 
 DbgCascade macro
@@ -909,7 +911,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgArrange
-; Purpose:    Arrange iconized output windows.
+; Purpose:    Arranges iconized output windows.
 ; Arguments:  None.
 
 DbgArrange macro
@@ -930,7 +932,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInTxt
-; Purpose:    Zoom In a specified text output window.
+; Purpose:    Zooms in a specified text output window.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomInTxt macro Dest
@@ -953,7 +955,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInBmp
-; Purpose:    Zoom In a specified bitmap output window.
+; Purpose:    Zooms in a specified bitmap output window.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomInBmp macro Dest
@@ -976,7 +978,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomIn
-; Purpose:    Zoom In specified output windows.
+; Purpose:    Zooms in specified output windows.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomIn macro Dest
@@ -1001,7 +1003,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutTxt
-; Purpose:    Zoom Out a specified text output window.
+; Purpose:    Zooms out a specified text output window.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOutTxt macro Dest
@@ -1024,7 +1026,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutBmp
-; Purpose:    Zoom Out a specified bitmap output window.
+; Purpose:    Zooms out a specified bitmap output window.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOutBmp macro Dest
@@ -1047,7 +1049,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOut
-; Purpose:    Zoom Out specified output windows.
+; Purpose:    Zooms out specified output windows.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgZoomOut macro Dest
@@ -1072,7 +1074,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontTxt
-; Purpose:    Bring a specified text output window to front.
+; Purpose:    Brings a specified text output window to front.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontTxt macro Dest
@@ -1095,7 +1097,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontBmp
-; Purpose:    Bring a specified output bitmap window to front.
+; Purpose:    Bringss a specified output bitmap window to front.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontBmp macro Dest
@@ -1118,7 +1120,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFront
-; Purpose:    Bring specified output windows to front.
+; Purpose:    Brings specified output windows to front.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgFront macro Dest
@@ -1143,7 +1145,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseWnd
-; Purpose:    Close Debug Center.
+; Purpose:    Closes Debug Center.
 ; Arguments:  None.
 
 DbgCloseWnd macro Arg:=<TRUE>
@@ -1164,7 +1166,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgPinWnd
-; Purpose:    Set TOPMOST flag.
+; Purpose:    Sets TOPMOST flag.
 ; Arguments:  Arg1: TRUE or FALSE.
 
 DbgPinWnd macro Arg:=<TRUE>
@@ -1185,7 +1187,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontWnd
-; Purpose:    Bring specified output windows to front.
+; Purpose:    Brings specified output windows to front.
 ; Arguments:  Arg1: Optional destination Window name.
 
 DbgFrontWnd macro Dest
@@ -1216,16 +1218,16 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteA
-; Purpose:    Output a string on the debug device.
+; Purpose:    Outputs a string on the debug device.
 ; Arguments:  Arg1: -> ANSI String.
 ;             Arg2: Optional destination Window name.
 
 DbgWriteA macro Var, Color:=<DbgColorForeground>, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
     else
-      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSaveContext TRUE, Var                          ;; Pass Var as a reference
     endif
     DbgSetDestWnd Dest
     invoke DbgOutTextA, ??VarXBX, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1236,16 +1238,16 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteW
-; Purpose:    Output a string on the debug device.
+; Purpose:    Outputs a string on the debug device.
 ; Arguments:  Arg1: -> WIDE String.
 ;             Arg2: Optional destination Window name.
 
 DbgWriteW macro Var, Color:=<DbgColorForeground>, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
     else
-      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSaveContext TRUE, Var                          ;; Pass Var as a reference
     endif
     DbgSetDestWnd Dest
     invoke DbgOutTextW, ??VarXBX, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1256,7 +1258,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteF
-; Purpose:    Output a string on the debug device.
+; Purpose:    Outputs a string on the debug device.
 ; Arguments:  Arg1: Optional text color.
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
@@ -1273,33 +1275,36 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
     DbgSetDestWnd Dest
 
     ;;Replace register arguments with their memory equivalents
-    $$sz2 textequ <>                                    ;;Clear new argument list
+    $$sz2 textequ <>                                    ;; Clear new argument list
     ifnb <Args>
       for $$Arg, <Args>
-        $$Attributes = opattr($$Arg)
-
-        if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE))    ;;E.g. [xax]
-          $$sz1 textequ GetMemBSS(type($$Arg))          ;;The type is passed along with the symbol
-          ;GetMemBSS is XWORD aligned => enough memory for the pop XWORD
-          push XWORD ptr $$Arg                          ;;Avoid using a register
-          pop XWORD ptr $$sz1                           ;;$$sz1 is not SS-Relative
-        elseif ($$Attributes eq (OAT_NO_ERROR or OAT_REGISTER))   ;;Register
-          $$sz1 textequ GetMemBSS(type($$Arg))
-          mov $$sz1, $$Arg
+        if @InStr(1, $$Arg, <addr>) eq 1
+          $$sz1 textequ <$$Arg>                         ;; Set default value
         else
-          $$sz1 textequ <$$Arg>                         ;;Set default value
+          $$Attributes = opattr($$Arg)
+          if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE))  ;; E.g. [xax]
+            $$sz1 textequ GetMemBSS(type($$Arg))        ;; The type is passed along with the symbol
+            ;GetMemBSS is XWORD aligned => enough memory for the pop XWORD
+            push XWORD ptr $$Arg                        ;; Avoid using a register
+            pop XWORD ptr $$sz1                         ;; $$sz1 is not SS-Relative
+          elseif ($$Attributes eq (OAT_NO_ERROR or OAT_REGISTER))   ;;Register
+            $$sz1 textequ GetMemBSS(type($$Arg))
+            mov $$sz1, $$Arg
+          else
+            $$sz1 textequ <$$Arg>                       ;; Set default value
+          endif
         endif
 
         ;;Build new argument list
         ifb $$sz2
-          $$sz2 textequ $$sz1                           ;;Start the argument list
+          $$sz2 textequ $$sz1                           ;; Start the argument list
         else
-          $$sz2 catstr $$sz2, <!,>, $$sz1               ;;Extend the argument list
+          $$sz2 catstr $$sz2, <!,>, $$sz1               ;; Extend the argument list
         endif
       endm
     endif
 
-    $$sz1 textequ GetMemBSS(1024*sizeof(CHR))           ;;Get a buffer to write the string
+    $$sz1 textequ GetMemBSS(1024*sizeof(CHR))           ;; Get a buffer to write the string
     mov xbx, offset $$sz1
 
     %WriteF xbx, Format, $$sz2
@@ -1319,24 +1324,24 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrA
-; Purpose:    Output a specified string on the debug device.
+; Purpose:    Outputs a specified string on the debug device.
 ; Arguments:  Arg1: ANSI String.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgStrA macro Var:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA($Esc("&Var& -\] ")), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      if (opattr Var) and OAT_REGISTER                  ;;Is Var a register?
+      if (opattr Var) and OAT_REGISTER                  ;; Is Var a register?
         .err <DbgStrA - <Var> register error>
         exitm
       else
-        DbgSaveContext TRUE, Var                        ;;Pass Var as a reference
+        DbgSaveContext TRUE, Var                        ;; Pass Var as a reference
         DbgSetDestWnd Dest
         invoke DbgOutTextA, $OfsCStrA("&Var& = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1351,24 +1356,24 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrW
-; Purpose:    Output a specified WIDE string on the debug device.
+; Purpose:    Outputs a specified WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 
 DbgStrW macro Var:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA($Esc("&Var& -\] ")), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      if (opattr Var) and OAT_REGISTER                  ;;Is Var a register?
+      if (opattr Var) and OAT_REGISTER                  ;; Is Var a register?
         .err <DbgStrW - <Var> register error>
         exitm
       else
-        DbgSaveContext TRUE, Var                        ;;Pass Var as a reference
+        DbgSaveContext TRUE, Var                        ;; Pass Var as a reference
         DbgSetDestWnd Dest
         invoke DbgOutTextA, $OfsCStrA("&Var& = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1383,7 +1388,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrCA
-; Purpose:    Output a limited ANSI string on the debug device.
+; Purpose:    Outputs a limited ANSI string on the debug device.
 ; Arguments:  Arg1: ANSI string.
 ;             Arg2: Character count (fix number, like 8 or a variable but not a register).
 ;             Arg3: Optional information.
@@ -1391,17 +1396,17 @@ endm
 
 DbgStrCA macro Var:req, StrLen:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA($Esc("&Var& -\] ")), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      if (opattr Var) and OAT_REGISTER                  ;;Is Var a register?
+      if (opattr Var) and OAT_REGISTER                  ;; Is Var a register?
         .err <DbgStrCA - <Var> register error>
         exitm
       else
-        DbgSaveContext TRUE, Var                        ;;Pass Var as a reference
+        DbgSaveContext TRUE, Var                        ;; Pass Var as a reference
         DbgSetDestWnd Dest
         invoke DbgOutTextA, $OfsCStrA("&Var& = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1417,7 +1422,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrCW
-; Purpose:    Output a limited WIDE string on the debug device.
+; Purpose:    Outputs a limited WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
 ;             Arg2: Character count (fix number, like 8 or a variable but not a register).
 ;             Arg3: Optional information.
@@ -1425,17 +1430,17 @@ endm
 
 DbgStrCW macro Var:req, StrLen:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA($Esc("&Var& -\] ")), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      if (opattr Var) and OAT_REGISTER                  ;;Is Var a register?
+      if (opattr Var) and OAT_REGISTER                  ;; Is Var a register?
         .err <DbgStrCW - <Var> register error>
         exitm
       else
-        DbgSaveContext TRUE, Var                        ;;Pass Var as a reference
+        DbgSaveContext TRUE, Var                        ;; Pass Var as a reference
         DbgSetDestWnd Dest
         invoke DbgOutTextA, $OfsCStrA("&Var& = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1464,7 +1469,7 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgHex
-; Purpose:    Display a number in hexadecimal format on the debug device.
+; Purpose:    Displays a number in hexadecimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1484,7 +1489,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBin
-; Purpose:    Output a number in binary format on the debug device.
+; Purpose:    Outputs a number in binary format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol). Max 32 bits.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1498,28 +1503,28 @@ DbgBin macro Var:req, InfoText, Dest
     invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     if TARGET_BITNESS eq 32
-      $$Buffersize = 24h                                ;;32 + "y" + ZTC + Padding(2) = 24h
-      sub esp, $$Buffersize                             ;;Reserve a buffer on the stack.
-      mov edi, esp                                      ;;Get a pointer to the buffer
+      $$Buffersize = 24h                                ;; 32 + "y" + ZTC + Padding(2) = 24h
+      sub esp, $$Buffersize                             ;; Reserve a buffer on the stack.
+      mov edi, esp                                      ;; Get a pointer to the buffer
     else
-      $$Buffersize = 70h                                ;;64 + "y" + ZTC + Padding(6) + Homing = 70h
-      sub rsp, $$Buffersize                             ;;Reserve a buffer on the stack.
-      lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
+      $$Buffersize = 70h                                ;; 64 + "y" + ZTC + Padding(6) + Homing=70h
+      sub rsp, $$Buffersize                             ;; Reserve a buffer on the stack.
+      lea rdi, [rsp + 28h]                              ;; Get a POINTER to the output buffer
     endif
-    mov xsi, xdi                                        ;;Save it
+    mov xsi, xdi                                        ;; Save it
     mov xcx, 8*type(Var)
     if @WordSize ne type(Var)
-      rcl xbx, 8*(@WordSize - type(Var))                ;;Skip unused bits in rbx
+      rcl xbx, 8*(@WordSize - type(Var))                ;; Skip unused bits in rbx
     endif
   @@:
-    rcl xbx, 1                                          ;;Set bit in carry flag
+    rcl xbx, 1                                          ;; Set bit in carry flag
     setc al
     add al, "0"
     stosb
     loop @B
-    mov DCHRA ptr [xdi], "y"                            ;;Set "y" specifier and ZTC
+    mov DCHRA ptr [xdi], "y"                            ;; Set "y" specifier and ZTC
     invoke DbgOutTextA, xsi, DbgColorDefaultVar, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    add xsp, $$Buffersize                               ;;Restore stack
+    add xsp, $$Buffersize                               ;; Restore stack
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
@@ -1528,7 +1533,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgDec
-; Purpose:    Output a number in signed decimal format on the debug device.
+; Purpose:    Outputs a number in signed decimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1543,13 +1548,13 @@ DbgDec macro Var:req, InfoText, Dest
     invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     if TARGET_BITNESS eq 32
-      $$Buffersize = 0Ch                                ;;SDWORD2DEC_MAX_CHARS = 0Ch
-      sub esp, $$Buffersize                             ;;Reserve a buffer on the stack.
-      mov edi, esp                                      ;;Get a pointer to the buffer
+      $$Buffersize = 0Ch                                ;; SDWORD2DEC_MAX_CHARS = 0Ch
+      sub esp, $$Buffersize                             ;; Reserve a buffer on the stack.
+      mov edi, esp                                      ;; Get a pointer to the buffer
     else
-      $$Buffersize = 40h                                ;;2*SDWORD2DEC_MAX_CHARS + Homing(28h) = 40h
-      sub rsp, $$Buffersize                             ;;Reserve a buffer on the stack.
-      lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
+      $$Buffersize = 40h                                ;; 2*SDWORD2DEC_MAX_CHARS + Homing(28h)=40h
+      sub rsp, $$Buffersize                             ;; Reserve a buffer on the stack.
+      lea rdi, [rsp + 28h]                              ;; Get a POINTER to the output buffer
     endif
     if ??DbgDataSize eq 1
       movsx ebx, ??VarXBX
@@ -1570,7 +1575,7 @@ DbgDec macro Var:req, InfoText, Dest
       mov edx, DbgColorError
     endif
     invoke DbgOutTextA, xdi, edx, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    add xsp, $$Buffersize                               ;;Restore stack
+    add xsp, $$Buffersize                               ;; Restore stack
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
@@ -1579,7 +1584,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFloat
-; Purpose:    Display a floating point number in decimal format on the debug device.
+; Purpose:    Displays a floating point number in decimal format on the debug device.
 ; Arguments:  Arg1: Floating point number (REAL4 or REAL8)
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1590,13 +1595,13 @@ DbgFloat macro Var:req, InfoText, Dest
     if (??DbgDataSize ne 4) and (??DbgDataSize ne 8) and (??DbgDataSize ne 10)
       .err <DbgFloat - wrong argument type>
     else
-      if (opattr Var) and OAT_REGISTER                  ;;Is Var a register?
+      if (opattr Var) and OAT_REGISTER                  ;; Is Var a register?
         .err <DbgFloat - invalid parameter>
       else
         DbgSaveContext TRUE, Var
         DbgSetDestWnd Dest
-        ;fInit                                           ;;Reset FPU to be sure that all
-        if ??DbgDataSize eq 4                           ;;comming computations are performed well
+        ;fInit                                          ;; Reset FPU to be sure that all
+        if ??DbgDataSize eq 4                           ;;   comming computations are performed well
           fld REAL4 ptr [xbx]
         elseif ??DbgDataSize eq 8
           fld REAL8 ptr [xbx]
@@ -1604,7 +1609,7 @@ DbgFloat macro Var:req, InfoText, Dest
           fld REAL10 ptr [xbx]
         endif
         mov xdi, xsp
-        sub xsp, DBG_FLOAT_BUFFERSIZE + 28h + 8h        ;;Reserve a buffer for the number
+        sub xsp, DBG_FLOAT_BUFFERSIZE + 28h + 8h        ;; Reserve a buffer for the number
         lea xsi, [xsp + 28h + 8]                        ;; Keep stack aligned!
         invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -1621,7 +1626,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgGUID
-; Purpose:    Output the a GUID on the debug device.
+; Purpose:    Outputs the a GUID on the debug device.
 ; Arguments:  Arg1: GUID.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1635,13 +1640,13 @@ DbgGUID macro Var:req, InfoText, Dest
       DbgSaveContext TRUE, Var
       DbgSetDestWnd Dest
       if TARGET_BITNESS eq 32
-        $$Buffersize = 28h                              ;;36 + ZTC + Padding(3) = 28Ch
-        sub esp, $$Buffersize                           ;;Reserve a buffer on the stack.
-        mov edi, esp                                    ;;Get a pointer to the buffer
+        $$Buffersize = 28h                              ;; 36 + ZTC + Padding(3) = 28Ch
+        sub esp, $$Buffersize                           ;; Reserve a buffer on the stack.
+        mov edi, esp                                    ;; Get a pointer to the buffer
       else
-        $$Buffersize = 48h                              ;;36 + ZTC + Padding(3) + Homing = 48h
-        sub rsp, $$Buffersize                           ;;Reserve a buffer on the stack.
-        lea rdi, [rsp + 20h]                            ;;Get a POINTER to the output buffer
+        $$Buffersize = 48h                              ;; 36 + ZTC + Padding(3) + Homing = 48h
+        sub rsp, $$Buffersize                           ;; Reserve a buffer on the stack.
+        lea rdi, [rsp + 20h]                            ;; Get a POINTER to the output buffer
       endif
       invoke GUID2StrA, xdi, ??VarXBX
       if ??DbgDataSize eq @WordSize
@@ -1655,7 +1660,7 @@ DbgGUID macro Var:req, InfoText, Dest
       endif
       invoke DbgOutTextA, xdi, DbgColorDefaultVar, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
-      add xsp, $$Buffersize                             ;;Restore stack
+      add xsp, $$Buffersize                             ;; Restore stack
       DbgShowTxtInfo InfoText, ??DbgDstWnd
       DbgShowSrcInfo ??DbgDstWnd
       DbgLoadContext
@@ -1665,7 +1670,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgARGB
-; Purpose:    Output the an ARGB color on the debug device.
+; Purpose:    Outputs the an ARGB color on the debug device.
 ; Arguments:  Arg1: ARGB DWORD color value.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1710,7 +1715,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBmp
-; Purpose:    Output a specified bitmap on the debug device.
+; Purpose:    Outputs a specified bitmap on the debug device.
 ; Arguments:  Arg1: Bitmap HANDLE.
 ;             Arg2: Optional destination Window name.
 
@@ -1719,7 +1724,7 @@ DbgBmp macro hBmp:req, Dest
     DbgSaveContext FALSE, hBmp
     DbgSetDestWnd Dest
     .if ??VarXBX == 0
-      .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;This is to avoid popping up a text
+      .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;; This is to avoid popping up a text
         mov eax, DBG_EFFECT_NORMAL
       .else 
         mov eax, DBG_EFFECT_NEWLINE
@@ -1729,19 +1734,15 @@ DbgBmp macro hBmp:req, Dest
     .else
     ifidn DBG_DEVICE, <WND>
       invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
-;      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
-;                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     elseifidn DBG_DEVICE, <NET>
       invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
-;      invoke DbgOutTextA, $OfsCStrA("DbgBmp"), \
-;                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
       invoke DbgOutTextA, $OfsCStrA("Bitmap can not be shown on this device"), \
                           DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     endif
     .endif
-    .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;This is to avoid popping up a text 
-      DbgShowSrcInfo ??DbgDstWnd                        ;  Child window when no info is required
+    .ifBitSet dDbgOpt, DBG_OPT_SHOWINFO                 ;; This is to avoid popping up a text 
+      DbgShowSrcInfo ??DbgDstWnd                        ;;   Child window when no info is required
     .endif
     DbgLoadContext
   endif
@@ -1749,7 +1750,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBmpFromDC
-; Purpose:    Output a specified bitmap on the debug device.
+; Purpose:    Outputs a specified bitmap on the debug device.
 ; Arguments:  Arg1: DC HANDLE.
 ;             Arg2: Optional destination Window name.
 
@@ -1778,7 +1779,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgMem
-; Purpose:    Output a memory block on the debug device.
+; Purpose:    Outputs a memory block on the debug device.
 ; Arguments:  Arg1: -> memory block.
 ;             Arg2: Size of memory block.
 ;             Arg3: Output format (DBG_MEM_STR, DBG_MEM_[U]I??, DBG_MEM_R?, DBG_MEM_H??).
@@ -1787,7 +1788,7 @@ endm
 
 DbgMem macro pData:req, DataSize:req, OutputFormat:=<DBG_MEM_NONE>, InfoText, Dest
   if DEBUGGING
-    DbgSaveContext FALSE, pData                          ;;Pass pData as a value
+    DbgSaveContext FALSE, pData                          ;; Pass pData as a value
     DbgSetDestWnd Dest
     invoke DbgOutTextA, $OfsCStrA("MEMORY DUMP of &pData"), DbgColorMemory, DbgColorBackground, \
                         DBG_EFFECT_BOLD, ??DbgDstWnd
@@ -1801,7 +1802,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgGlobalMemUsage
-; Purpose:    Display global memory usage on the debug window.
+; Purpose:    Displays global memory usage on the debug window.
 ; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
@@ -1809,16 +1810,16 @@ DbgGlobalMemUsage macro InfoText, Dest
   if DEBUGGING
     DbgSaveContext
     DbgSetDestWnd Dest
-    mov xbx, xsp                                        ;;Save stack pointer
-    sub xsp, 96                                         ;;Keep stack aligned to 16!
+    mov xbx, xsp                                        ;; Save stack pointer
+    sub xsp, 96                                         ;; Keep stack aligned to 16!
     mov xsi, xsp
-    sub xsp, (sizeof(MEMORYSTATUS)/16 + 1)*16           ;;Keep stack aligned to 16!
+    sub xsp, (sizeof(MEMORYSTATUS)/16 + 1)*16           ;; Keep stack aligned to 16!
     mov xdi, xsp
     assume xdi:ptr MEMORYSTATUS
     if TARGET_BITNESS eq 64
-      sub xsp, 20h                                      ;;Homing area
+      sub xsp, 20h                                      ;; Homing area
     endif
-    invoke GlobalMemoryStatus, xdi                      ;;No need to set MEMORYSTATUS.dwLength
+    invoke GlobalMemoryStatus, xdi                      ;; No need to set MEMORYSTATUS.dwLength
 
     invoke wsprintfA, xsi, $OfsCStrA("Memory load: %lu%%"), [xdi].MEMORYSTATUS.dwMemoryLoad
     invoke DbgOutTextA, xsi, DbgColorMemory, DbgColorBackground, DBG_EFFECT_BOLD, ??DbgDstWnd
@@ -1848,7 +1849,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFPU
-; Purpose:    Output the content of the FPU registers on the debug device.
+; Purpose:    Outputs the content of the FPU registers on the debug device.
 ; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
@@ -1867,7 +1868,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCpuFlags
-; Purpose:    Output the content of the CPU Flags on the debug device.
+; Purpose:    Outputs the content of the CPU Flags on the debug device.
 ; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 ; Links:      https://en.wikipedia.org/wiki/FLAGS_register
@@ -1876,10 +1877,12 @@ DbgTestFlagBit macro TestBit, BitName, BitDesc
 % .ifBitSet xbx, TestBit
 %   ifb <BitDesc>
 %     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 1 (set)"), \
-                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, ??DbgDstWnd
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, \
+                          ??DbgDstWnd
     else
 %     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 1 (", BitDesc, " set)"), \
-                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, ??DbgDstWnd
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, \
+                          ??DbgDstWnd
     endif
   .else
 %   ifb <BitDesc>
@@ -1935,7 +1938,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgMessage
-; Purpose:    Translate a windows message to a string and output it to the debug device.
+; Purpose:    Translates a windows message to a string and output it to the debug device.
 ; Arguments:  Arg1: Windows message.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -1955,7 +1958,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgApiError
-; Purpose:    Translate an API error to a string and output it to the debug device.
+; Purpose:    Translates an API error to a string and output it to the debug device.
 ; Arguments:  Arg1: Optional information.
 ;             Arg2: Optional destination Window name.
 
@@ -1975,7 +1978,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgComError
-; Purpose:    Translate a COM error to a string and output it to the debug device.
+; Purpose:    Translates a COM error to a string and output it to the debug device.
 ; Arguments:  Arg1: COM error code.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2000,63 +2003,12 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgObject
-; Purpose:    Output object variables to the debug device.
+; Purpose:    Outputs object variables to the debug device.
 ; Arguments:  Arg1: Instance::ClassName.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Return:     Nothing.
 ; Note:       ebp is assumed to nothing!
-
-;DbgObject macro Expression, InfoText, Dest
-;  if DEBUGGING
-;    PreParseExpr Expression
-;    if $ParseInstExpr(Expression) eq FALSE or ??Pos3 ne 0
-;      .err <DbgObject - invalid syntax: Expression>
-;    else
-;      %ifndef ??ObjExpr
-;        %.err <DbgObject - unknown object: ??ObjExpr>
-;      else
-;        DbgSaveContext TRUE, ??InsExpr
-;        DbgSetDestWnd Dest
-;        invoke DbgShowObjectHeader, $OfsCStrA(<!"%??ObjExpr!">), xbx, \
-;                                    DbgColorObject, DbgColorBackground, ??DbgDstWnd
-;        DbgShowTxtInfo InfoText, ??DbgDstWnd
-;        DbgShowSrcInfo ??DbgDstWnd
-;        mov xdi, xbx
-;
-;        %for ??TestObject, @CatStr(<!<>, %??ObjExpr, <_InherFrwPath!>>)
-;          $$ACount = 0
-;          %repeat @CatStr(<??TestObject>, <_VCount>)
-;            $$ACount = $$ACount + 1
-;            $$sz1 textequ @CatStr(<??TestObject>, <_VarName_>, %$$ACount)
-;            $$sz2 textequ @CatStr(<??TestObject>, <_VarType_>, %$$ACount)
-;            if @InStr(1, <%$$sz2>, <??>) eq 1
-;              $$Pos2 InStr 3, $$sz2, <_Init>
-;              if $$Pos2 gt 3
-;                $$sz2 CatStr @SubStr(<%$$sz2>, 3, $$Pos2 - 3)
-;              endif
-;            endif
-;            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1)
-;            push xdi
-;            %DbgOutHex < - &$$sz1 = >, DbgColorObject, \
-;                       @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1),, ??DbgDstWnd
-;            pop xdi
-;;            %ifidn <??TestObject>, <??ObjExpr>
-;;              invoke DbgOutTextA, $OfsCStrA(<!" (%$$sz2)!">), \
-;;                                   DbgColorObject, DbgColorBackground, \
-;;                                   DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;;            else
-;;              invoke DbgOutTextA, $OfsCStrA(<!" (%$$sz2 from &??TestObject)!">), \
-;;                                   DbgColorObject, DbgColorBackground, \
-;;                                   DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;;            endif
-;          endm
-;        endm
-;        DbgLoadContext
-;      endif
-;    endif
-;  endif
-;endm
 
 DbgObject macro Expression, InfoText, Dest
   if DEBUGGING
@@ -2117,7 +2069,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgVMT
-; Purpose:    Output offsets contained in a VMT.
+; Purpose:    Outputs offsets contained in a VMT.
 ; Arguments:  Arg1: Instance::ClassName.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2139,7 +2091,7 @@ DbgVMT macro Expression, InfoText, Dest
                                     DbgColorObject, DbgColorBackground, ??DbgDstWnd
         DbgShowTxtInfo InfoText, ??DbgDstWnd
         DbgShowSrcInfo ??DbgDstWnd
-        mov xdi, [xbx]                                  ;;xbx -> VMT
+        mov xdi, [xbx]                                  ;; xbx -> VMT
         DbgOutHex < Virtual Method Table @ >, DbgColorVMT, xbx, DbgColorForeground, ??DbgDstWnd
         invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -2166,7 +2118,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgIMT
-; Purpose:    Output offsets contained in a IMT.
+; Purpose:    Outputs offsets contained in a IMT.
 ; Arguments:  Arg1: Instance::ClassName.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2188,7 +2140,7 @@ DbgIMT macro Expression, InfoText, Dest
                                     DbgColorObject, DbgColorBackground, ??DbgDstWnd
         DbgShowTxtInfo InfoText, ??DbgDstWnd
         DbgShowSrcInfo ??DbgDstWnd
-        mov xdi, [xbx]                                  ;;xbx -> VMT
+        mov xdi, [xbx]                                  ;; xbx -> VMT
         DbgOutHex < Interface Method Table @ >, DbgColorVMT, xbx, DbgColorForeground, ??DbgDstWnd
         invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -2215,15 +2167,15 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTraceObject
-; Purpose:    Start tracing of an object instance.
+; Purpose:    Starts tracing of an object instance.
 ; Arguments:  Arg1: Instance POINTER.
 
 DbgTraceObject macro IName:req
   if DEBUGGING
     if TRACING
       DbgSaveContext TRUE, IName
-      if type(IName) eq @WordSize             ;;If true, then it's not an Object instance!
-        if (opattr IName) and OAT_REGISTER    ;;Is ??DbgIName a register?
+      if type(IName) eq @WordSize             ;; If true, then it's not an Object instance!
+        if (opattr IName) and OAT_REGISTER    ;; Is ??DbgIName a register?
           mov ??pDbgTraceInstance, IName
         else
           mrm ??pDbgTraceInstance, IName, xax
@@ -2246,7 +2198,7 @@ endm
 
 ;; --------------------------------------------------------------------------------------------------
 ;; Macro:      DbgTraceShow
-;; Purpose:    Display gattered trace information.
+;; Purpose:    Displays gattered trace information.
 ;; Arguments:  Arg1: Object name.
 ;;             Arg2: Optional information.
 ;;             Arg2: Optional destination Window name.
@@ -2260,7 +2212,7 @@ endm
 ;                                  DbgColorObject, DbgColorBackground, ??DbgDstWnd
 ;      DbgShowTxtInfo InfoText, ??DbgDstWnd
 ;      DbgShowSrcInfo ??DbgDstWnd
-;      %DbgShowTraceResult OName, ??DbgDstWnd          ;;Begin recursive display of results
+;      %DbgShowTraceResult OName, ??DbgDstWnd          ;; Begin recursive display of results
 ;      DbgLoadContext
 ;    else
 ;      %echo @CatStr(<WARNING: TRACE debug option is not active (>, %@FileCur, <, >, %@Line, <).>)
@@ -2407,7 +2359,7 @@ endm
 ;
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgAttach
-; Purpose:    Break execution and attaches the system debugger. If already loaded, nothing is done.
+; Purpose:    Breaks execution and attaches the system debugger. If already loaded, nothing is done.
 ; Arguments:  None.
 
 DbgAttach macro
@@ -2429,13 +2381,13 @@ endm
 
 DbgBreak macro
   if DEBUGGING
-    @CatStr(<int >, <3>)                                ;;Written this way to disable int3 search
+    @CatStr(<int >, <3>)                                ;; Written this way to bypass int3 search
   endif
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseAll
-; Purpose:    Close all child windows of the Debug window.
+; Purpose:    Closes all child windows of the Debug window.
 ; Arguments:  None.
 
 DbgCloseAll macro
@@ -2456,7 +2408,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClose
-; Purpose:    Close a specific child window of the Debug window.
+; Purpose:    Closes a specific child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClose macro Dest
@@ -2482,7 +2434,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseTxt
-; Purpose:    Close specific text child window of the Debug window.
+; Purpose:    Closes specific text child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgCloseTxt macro Dest
@@ -2505,7 +2457,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseBmp
-; Purpose:    Close specific bitmap child window of the Debug window.
+; Purpose:    Closes specific bitmap child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgCloseBmp macro Dest
@@ -2528,7 +2480,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseCht
-; Purpose:    Close specific Chart child window of the Debug window.
+; Purpose:    Closes specific Chart child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgCloseCht macro Dest
@@ -2551,7 +2503,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearAll
-; Purpose:    Clear the content of all child windows of the Debug window.
+; Purpose:    Clears the content of all child windows of the Debug window.
 ; Arguments:  None.
 
 DbgClearAll macro
@@ -2581,7 +2533,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClear
-; Purpose:    Clear the content of a specific child window of the Debug window.
+; Purpose:    Clears the content of a specific child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClear macro Dest
@@ -2606,7 +2558,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearTxt
-; Purpose:    Clear the content of a specific text child window of the Debug window.
+; Purpose:    Clears the content of a specific text child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClearTxt macro Dest
@@ -2629,7 +2581,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearBmp
-; Purpose:    Clear the content of a specific bitmap child window of the Debug window.
+; Purpose:    Clears the content of a specific bitmap child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClearBmp macro Dest
@@ -2652,7 +2604,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearCht
-; Purpose:    Clear the content of a specific chart child window of the Debug window.
+; Purpose:    Clears the content of a specific chart child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClearCht macro Dest
@@ -2675,7 +2627,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearGph
-; Purpose:    Clear the content of a specific Graphic child window of the Debug window.
+; Purpose:    Clears the content of a specific Graphic child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClearBmp macro Dest
@@ -2698,7 +2650,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      Fix
-; Purpose:    Reminder text echoed at compile time.
+; Purpose:    Reminds a text echoed at compile time.
 ; Arguments:  Arg1: (optional) Text.
 
 Fix macro Txt:=<Fix this later>
@@ -2707,7 +2659,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ASSERT
-; Purpose:    Display a message if an argument value is FALSE.
+; Purpose:    Displays a message if an argument value is FALSE.
 ; Arguments:  Arg1: Value.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2717,23 +2669,23 @@ ASSERT macro Expression:req, InfoText, Dest
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       pushcontext assumes
-      pushfx                                            ;;Save CPU flags
+      pushfx                                            ;; Save CPU flags
       pushax
-      .if Expression                                    ;Evaluate expression
+      .if Expression                                    ;: Evaluate expression
         mov ebx, TRUE
       .else
         xor ebx, ebx
       .endif
       DbgSetDestWnd Dest
-      cld                                               ;;Reset direction flag for API calling!
-      mov xdi, xsp                                      ;;Save current esp value in xdi
+      cld                                               ;; Reset direction flag for API calling!
+      mov xdi, xsp                                      ;; Save current esp value in xdi
       if TARGET_BITNESS eq 32
-        and xsp, 0FFFFFFF0h                             ;;Align stack on a 16 byte boundary
+        and xsp, 0FFFFFFF0h                             ;; Align stack on a 16 byte boundary
       else
-        and xsp, 0FFFFFFFFFFFFFFF0h                     ;;Align stack on a 16 byte boundary
+        and xsp, 0FFFFFFFFFFFFFFF0h                     ;; Align stack on a 16 byte boundary
       endif
       sub xsp, 20h
-      invoke EnterCriticalSection, offset(DbgCritSect)  ;;This call don't change GetLastError
+      invoke EnterCriticalSection, offset(DbgCritSect)  ;; This call don't change GetLastError
       .if ebx == FALSE
         invoke DbgOutTextA, $OfsCStrA("Assertion failed"), \
                             DbgColorWarning, DbgColorBackground, DBG_EFFECT_BOLD, ??DbgDstWnd
@@ -2741,9 +2693,9 @@ ASSERT macro Expression:req, InfoText, Dest
         DbgShowSrcInfo ??DbgDstWnd
       .endif
       invoke LeaveCriticalSection, offset(DbgCritSect)
-      mov xsp, xdi                                      ;;Restore rsp
-      popax                                             ;;Restore CPU registers
-      popfx                                             ;;Direction flag is restored here too
+      mov xsp, xdi                                      ;; Restore rsp
+      popax                                             ;; Restore CPU registers
+      popfx                                             ;; Direction flag is restored here too
       popcontext assumes
     endif
   endif
@@ -2756,7 +2708,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Show
-; Purpose:    Show the result of ResGuard system activity.
+; Purpose:    Shows the result of ResGuard system activity.
 ; Arguments:  None.
 
 ResGuard_Show macro
@@ -2777,7 +2729,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Start
-; Purpose:    Start activity of the ResGuard system.
+; Purpose:    Starts activity of the ResGuard system.
 ; Arguments:  None.
 
 ResGuard_Start macro
@@ -2798,7 +2750,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Stop
-; Purpose:    Stop activity of the ResGuard system.
+; Purpose:    Stops activity of the ResGuard system.
 ; Arguments:  None.
 
 ResGuard_Stop macro
@@ -2819,7 +2771,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgComponent
-; Purpose:    Output Componet information on the debug device.
+; Purpose:    Outputs Componet information on the debug device.
 ; Arguments:  Arg1: GUID.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2845,7 +2797,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgInterface
-; Purpose:    Output Interface information on the debug device.
+; Purpose:    Outputs Interface information on the debug device.
 ; Arguments:  Arg1: IID.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
@@ -2885,13 +2837,13 @@ DbgQuaternion equ DbgVec4
 
 DbgVec2 macro Var:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSaveContext TRUE, Var                          ;; Pass Var as a reference
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -2917,13 +2869,13 @@ endm
 
 DbgVec3 macro Var:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSaveContext TRUE, Var                          ;; Pass Var as a reference
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -2950,13 +2902,13 @@ endm
 
 DbgVec4 macro Var:req, InfoText, Dest
   if DEBUGGING
-    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
-      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+    if type(Var) eq @WordSize                           ;; Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;; Pass Var as a value
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
     else
-      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSaveContext TRUE, Var                          ;; Pass Var as a reference
       DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, ??DbgDstWnd
@@ -2975,7 +2927,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgMemBlock
-; Purpose:   Output MemBlock information and warn about unaligned payload.
+; Purpose:   Outputs MemBlock information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
 ;            Arg2: Optional information.
 ;            Arg3: Optional destination Window name.
@@ -3016,7 +2968,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgMStr
-; Purpose:   Output MemBlock / DbgMStr information and warn about unaligned payload.
+; Purpose:   Outputs MemBlock / DbgMStr information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
 ;            Arg2: Optional information.
 ;            Arg3: Optional destination Window name.
@@ -3059,7 +3011,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtOption
-; Purpose:    Set chart options on the debug device.
+; Purpose:    Sets chart options on the debug device.
 ; Arguments:  Arg1: Option ID
 ;             Arg2: -> Option value
 ;             Arg3: Optional destination Window name.
@@ -3104,7 +3056,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtSeriesOption
-; Purpose:    Set chart series options on the debug device.
+; Purpose:    Sets chart series options on the debug device.
 ; Arguments:  Arg1: Option ID
 ;             Arg2: Series ID
 ;             Arg2: Option value
@@ -3116,7 +3068,7 @@ DBG_PLOT_SERIES_OPTION struct
 DBG_PLOT_SERIES_OPTION ends
 
 .data?
-DbgPlotSeriesOption DBG_PLOT_SERIES_OPTION {}           ;;Theadsafe due to DbgSaveContext
+DbgPlotSeriesOption DBG_PLOT_SERIES_OPTION {}           ;; Theadsafe due to DbgSaveContext
 
 DbgChtSeriesOption macro OptionID, SeriesID, SeriesOption, Dest
   if DEBUGGING
@@ -3134,7 +3086,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtSeriesAdd
-; Purpose:    Add a new point to a chart series on the debug device.
+; Purpose:    Adds a new point to a chart series on the debug device.
 ; Arguments:  Arg1: Series ID
 ;             Arg2: X Value
 ;             Arg3: Y Value
@@ -3142,12 +3094,12 @@ endm
 
 DBG_PLOT_POINT struct
   dSeriesID DWORD ?
-  fX        REAL4 ?                                       ;Keep in synch with CHT_FLOAT used
-  fY        REAL4 ?                                       ;to compile DebugCenter
+  fX        REAL4 ?                                       ; Keep in synch with CHT_FLOAT used
+  fY        REAL4 ?                                       ; to compile DebugCenter
 DBG_PLOT_POINT ends
 
 .data?
-DbgPlotPoint DBG_PLOT_POINT {}                            ;;Theadsafe due to DbgSaveContext
+DbgPlotPoint DBG_PLOT_POINT {}                            ;; Theadsafe due to DbgSaveContext
 
 DbgChtSeriesAdd macro SeriesID, VarX, VarY, Dest
   if DEBUGGING
@@ -3163,7 +3115,7 @@ DbgChtSeriesAdd macro SeriesID, VarX, VarY, Dest
          (??DbgDataSizeX ne 8) and (??DbgDataSizeX ne 10)
         .err <DbgChtAdd - wrong X argument type>
       else
-        if (opattr VarX) and OAT_REGISTER                  ;;Is Var a register?
+        if (opattr VarX) and OAT_REGISTER                  ;; Is Var a register?
           .err <DbgChtAdd - invalid X parameter>
         endif
       endif
@@ -3173,7 +3125,7 @@ DbgChtSeriesAdd macro SeriesID, VarX, VarY, Dest
          (??DbgDataSizeY ne 8) and (??DbgDataSizeY ne 10)
         .err <DbgChtAdd - wrong Y argument type>
       else
-        if (opattr VarY) and OAT_REGISTER                  ;;Is Var a register?
+        if (opattr VarY) and OAT_REGISTER                  ;; Is Var a register?
           .err <DbgChtAdd - invalid Y parameter>
         endif
       endif

@@ -230,7 +230,7 @@ MethodEnd
 ;             default keyboard focus.
 
 Method Dialog.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
-  DbgText "Dialog.OnInitDialog"
+;  DbgText "Dialog.OnInitDialog"
   SetObject xsi
   OCall xsi.InitWindow
 

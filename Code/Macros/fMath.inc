@@ -130,15 +130,15 @@ HALF_PI equ <+1.5707963267948966192313216916398e+0000>
 PI      equ <+3.1415926535897932384626433832795e+0000>
 TWO_PI  equ <+6.2831853071795864769252867665590e+0000>
 
-R4_MAX  equ <+3.402823466e+38>                          ;07F7FFFFFh
-R4_MIN  equ <-R4_MAX>                                   ;0FF7FFFFFh
-R4_NAN  equ <07FF80000h>                                ;07FF80000h
-R8_MAX  equ <+1.7976931348623158e+308>                  ;07FEFFFFFFFFFFFFFh
-R8_MIN  equ <-R8_MAX>                                   ;0FFEFFFFFFFFFFFFFh
-R8_NAN  equ <07FF8000000000000h>                        ;07FF8000000000000h
-R10_MAX equ <+1.189731495357231765e+4932>               ;07FFEFFFFFFFFFFFFFFFFh
-R10_MIN equ <-R10_MAX>                                  ;0FFFEFFFFFFFFFFFFFFFFh
-r10_NAN equ <07FF80000000000000000h>                    ;07FF80000000000000000h
+R4_MAX  equ <+3.402823466e+38>                          ; 07F7FFFFFh
+R4_MIN  equ <-R4_MAX>                                   ; 0FF7FFFFFh
+R4_NAN  equ <07FF80000h>                                ; 07FF80000h
+R8_MAX  equ <+1.7976931348623158e+308>                  ; 07FEFFFFFFFFFFFFFh
+R8_MIN  equ <-R8_MAX>                                   ; 0FFEFFFFFFFFFFFFFh
+R8_NAN  equ <07FF8000000000000h>                        ; 07FF8000000000000h
+R10_MAX equ <+1.189731495357231765e+4932>               ; 07FFEFFFFFFFFFFFFFFFFh
+R10_MIN equ <-R10_MAX>                                  ; 0FFFEFFFFFFFFFFFFFFFFh
+r10_NAN equ <07FF80000000000000000h>                    ; 07FF80000000000000000h
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fildReg
@@ -148,7 +148,7 @@ r10_NAN equ <07FF80000000000000000h>                    ;07FF80000000000000000h
 ; Note:       st7 must be empty.
 
 fildReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER                  ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     if ??RegSize eq @WordSize
       push RegName
@@ -177,7 +177,7 @@ endm
 ; Return:     Nothing.
 
 fistReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER    ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     sub xsp, @WordSize
     if ??RegSize eq @WordSize
@@ -206,7 +206,7 @@ endm
 ; Return:     Nothing.
 
 fistpReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER    ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     sub xsp, @WordSize
     if ??RegSize eq @WordSize
@@ -236,7 +236,7 @@ endm
 ; Note:       st7 must be empty.
 
 fldReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER                  ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     if ??RegSize eq @WordSize
       push RegName
@@ -265,7 +265,7 @@ endm
 ; Return:     Nothing.
 
 fstReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER                  ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     sub xsp, @WordSize
     if ??RegSize eq @WordSize
@@ -294,7 +294,7 @@ endm
 ; Return:     Nothing.
 
 fstpReg macro RegName:req
-  if (opattr RegName) and OAT_REGISTER                  ;;is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; is RegName a register?
     ??RegSize = type(RegName)
     sub xsp, @WordSize
     if ??RegSize eq @WordSize
@@ -326,16 +326,16 @@ endm
 ;             Uses rax register.
 
 fSgn macro
-  sub xsp, @WordSize                                    ;;Reserve stack place
-  fldz                                                  ;;Load zero in st0
-  xor eax, eax                                          ;;Load zero in xax
-  fcomip st(0), st(1)                                   ;;Compare st0 and st1 and pop st0
-  cmova eax, $CReal4(-1.0)                              ;;Move if above
-  cmovb eax, $CReal4(+1.0)                              ;;Move if below
-  fstp st(0)                                            ;;Pop st0 from stack
-  mov [xsp], xax                                        ;;Load result in reserved room in stack
-  fld XWORD ptr [xsp]                                   ;;Load result in st0 from stack
-  add xsp, @WordSize                                    ;;Restore stack
+  sub xsp, @WordSize                                    ;; Reserve stack place
+  fldz                                                  ;; Load zero in st0
+  xor eax, eax                                          ;; Load zero in xax
+  fcomip st(0), st(1)                                   ;; Compare st0 and st1 and pop st0
+  cmova eax, $CReal4(-1.0)                              ;; Move if above
+  cmovb eax, $CReal4(+1.0)                              ;; Move if below
+  fstp st(0)                                            ;; Pop st0 from stack
+  mov [xsp], xax                                        ;; Load result in reserved room in stack
+  fld XWORD ptr [xsp]                                   ;; Load result in st0 from stack
+  add xsp, @WordSize                                    ;; Restore stack
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -346,10 +346,10 @@ endm
 ; Note:       The result affects the zero flag, that can be used to decide.
 
 fCheckStatus macro StatusBits:req
-  push xax                                              ;;Save xax
-  fstsw ax                                              ;;Store status word
-  test ax, StatusBits                                   ;;Test the requested StatusWord bit
-  pop xax                                               ;;Restore xax without changing flags!
+  push xax                                              ;; Save xax
+  fstsw ax                                              ;; Store status word
+  test ax, StatusBits                                   ;; Test the requested StatusWord bit
+  pop xax                                               ;; Restore xax without changing flags!
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -378,13 +378,13 @@ fGetFlags macro
 ;      If st(0) ? source     1     1     1
 ;                           ZF    PF    CF
 
-  fnstsw ax                                             ;;Store status word
-  sahf                                                  ;;Set EFlags
+  fnstsw ax                                             ;; Store status word
+  sahf                                                  ;; Set EFlags
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fSetPrecision
-; Purpose:    Set the precision bits in the control register.
+; Purpose:    Ses the precision bits in the control register.
 ; Arguments:  Arg1: Precision (REAL4, REAL8, REAL10).
 ; Return:     Nothing.
 ; Notes:      00 = 24 bits (REAL4)
@@ -393,9 +393,9 @@ endm
 ;             11 = 64 bits (REAL10) (this is the initialized state)
 
 fSetPrecision macro Precision:req
-  sub xsp, @WordSize                                    ;;Reserve stack place
-  fstcw WORD ptr [xsp]                                  ;;Store FPU control word
-  ifidni <Precision>, <REAL4>                           ;;Set precision bits
+  sub xsp, @WordSize                                    ;; Reserve stack place
+  fstcw WORD ptr [xsp]                                  ;; Store FPU control word
+  ifidni <Precision>, <REAL4>                           ;; Set precision bits
     BitClr WORD ptr [xsp], BIT09 or BIT08
   elseifidni <Precision>, <REAL8>
     BitClr WORD ptr [xsp], BIT08
@@ -403,8 +403,8 @@ fSetPrecision macro Precision:req
   else
     BitSet WORD ptr [xsp], BIT09 or BIT08
   endif
-  fldcw WORD ptr [xsp]                                  ;;Restore FPU control word
-  add xsp, @WordSize                                    ;;Restore stack
+  fldcw WORD ptr [xsp]                                  ;; Restore FPU control word
+  add xsp, @WordSize                                    ;; Restore stack
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -442,8 +442,8 @@ fMax macro val1:req, val2:req
   local @@1, @@2
 
   fld val1
-  fcomp val2                                            ;;pop st(0)
-  fjle @@1                                              ;;uses ax
+  fcomp val2                                            ;; pop st(0)
+  fjle @@1                                              ;; uses ax
   fld val1
   jmp @@2
 @@1:
@@ -508,15 +508,15 @@ endm
 ; Return:     Nothing.
 
 fRnd macro
-  sub xsp, @WordSize                                    ;;Reserve stack place
-  fstcw WORD ptr [xsp]                                  ;;Store FPU control word
-  push XWORD ptr [xsp]                                  ;;Duplicate value
-  BitClr WORD ptr [xsp], (BIT10 or BIT11)               ;;Modify the control word to return
-                                                        ;;rnd(x) Round to nearest, or to even if equidistant
-  fldcw WORD ptr [xsp]                                  ;;Restore modified FPU control word
-  frndint                                               ;;Round
-  fldcw WORD ptr[xsp + @WordSize]                       ;;Restore previous FPU control word
-  add xsp, 2*@WordSize                                  ;;Restore stack.
+  sub xsp, @WordSize                                    ;; Reserve stack place
+  fstcw WORD ptr [xsp]                                  ;; Store FPU control word
+  push XWORD ptr [xsp]                                  ;; Duplicate value
+  BitClr WORD ptr [xsp], (BIT10 or BIT11)               ;; Modify the control word to return
+                                                        ;; rnd(x) Round to nearest, or to even if equidistant
+  fldcw WORD ptr [xsp]                                  ;; Restore modified FPU control word
+  frndint                                               ;; Round
+  fldcw WORD ptr[xsp + @WordSize]                       ;; Restore previous FPU control word
+  add xsp, 2*@WordSize                                  ;; Restore stack.
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -526,15 +526,15 @@ endm
 ; Return:     Nothing.
 
 fRndUp macro
-  sub xsp, @WordSize                                    ;;Reserve stack place
-  fstcw WORD ptr [xsp]                                  ;;Store FPU control word
-  push XWORD ptr [xsp]                                  ;;Duplicate value
-  BitClr WORD ptr [xsp], BIT10                          ;;Modify the control word to
-  BitSet WORD ptr [xsp], BIT11                          ;;  round to +inf
-  fldcw WORD ptr [xsp]                                  ;;Restore modified FPU control word
-  frndint                                               ;;Round up
-  fldcw WORD ptr[xsp + @WordSize]                       ;;Restore previous FPU control word
-  add xsp, 2*@WordSize                                  ;;Restore stack.
+  sub xsp, @WordSize                                    ;; Reserve stack place
+  fstcw WORD ptr [xsp]                                  ;; Store FPU control word
+  push XWORD ptr [xsp]                                  ;; Duplicate value
+  BitClr WORD ptr [xsp], BIT10                          ;; Modify the control word to
+  BitSet WORD ptr [xsp], BIT11                          ;;   round to +inf
+  fldcw WORD ptr [xsp]                                  ;; Restore modified FPU control word
+  frndint                                               ;; Round up
+  fldcw WORD ptr[xsp + @WordSize]                       ;; Restore previous FPU control word
+  add xsp, 2*@WordSize                                  ;; Restore stack.
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -544,15 +544,15 @@ endm
 ; Return:     Nothing.
 
 fRndDn macro
-  sub xsp, @WordSize                                    ;;Reserve stack place for one word
-  fstcw WORD ptr [xsp]                                  ;;Store FPU control word
-  push XWORD ptr [xsp]                                  ;;Duplicate value
-  BitSet WORD ptr [xsp], BIT10                          ;;Modify the control word to
-  BitClr WORD ptr [xsp], BIT11                          ;;  round to -inf
-  fldcw WORD ptr [xsp]                                  ;;Restore modified FPU control word
-  frndint                                               ;;Round down
-  fldcw WORD ptr[xsp + @WordSize]                       ;;Restore previous FPU control word
-  add xsp, 2*@WordSize                                  ;;Restore stack.
+  sub xsp, @WordSize                                    ;; Reserve stack place for one word
+  fstcw WORD ptr [xsp]                                  ;; Store FPU control word
+  push XWORD ptr [xsp]                                  ;; Duplicate value
+  BitSet WORD ptr [xsp], BIT10                          ;; Modify the control word to
+  BitClr WORD ptr [xsp], BIT11                          ;;   round to -inf
+  fldcw WORD ptr [xsp]                                  ;; Restore modified FPU control word
+  frndint                                               ;; Round down
+  fldcw WORD ptr[xsp + @WordSize]                       ;; Restore previous FPU control word
+  add xsp, 2*@WordSize                                  ;; Restore stack.
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -562,14 +562,14 @@ endm
 ; Return:     Nothing.
 
 fInt macro
-  sub xsp, @WordSize                                    ;;Reserve stack place for one word
-  fstcw WORD ptr [xsp]                                  ;;Store FPU control word
-  push XWORD ptr [xsp]                                  ;;Duplicate value
-  BitSet WORD ptr [xsp], (BIT10 or BIT11)               ;;Modify the control word, int(x) = Truncate (toward 0)
-  fldcw WORD ptr [xsp]                                  ;;Restore modified FPU control word
-  frndint                                               ;;Round down
-  fldcw WORD ptr[xsp + @WordSize]                       ;;Restore previous FPU control word
-  add xsp, 2*@WordSize                                  ;;Restore stack. Don't use pop xax. We'll not destroy it.
+  sub xsp, @WordSize                                    ;; Reserve stack place for one word
+  fstcw WORD ptr [xsp]                                  ;; Store FPU control word
+  push XWORD ptr [xsp]                                  ;; Duplicate value
+  BitSet WORD ptr [xsp], (BIT10 or BIT11)               ;; Modify the control word, int(x) = Truncate (toward 0)
+  fldcw WORD ptr [xsp]                                  ;; Restore modified FPU control word
+  frndint                                               ;; Round down
+  fldcw WORD ptr[xsp + @WordSize]                       ;; Restore previous FPU control word
+  add xsp, 2*@WordSize                                  ;; Restore stack. Don't use pop xax. We'll not destroy it.
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -580,9 +580,9 @@ endm
 ; Note:       st7 must be empty.
 
 fFrac macro
-  fld st(0)                                             ;;Duplicate st0
-  fInt                                                  ;;Compute int(st0)
-  fsubp st(1), st(0)                                    ;;Frac(x) = x - Int(x)
+  fld st(0)                                             ;; Duplicate st0
+  fInt                                                  ;; Compute int(st0)
+  fsubp st(1), st(0)                                    ;; Frac(x) = x - Int(x)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -593,15 +593,15 @@ endm
 ; Note:       st5, st6 and st7 must be empty.
 
 fRound macro Decimals:=<0>
-  push XWORD ptr Decimals                               ;;Store number of decimals
-  fild XWORD ptr [xsp]                                  ;;Load Decimals
-  add xsp, @WordSize                                    ;;Restore stack
-  fExpT                                                 ;;Compute 10^x
-  frndint                                               ;;Round to an integer
-  fxch                                                  ;;Swap st0 and st1
-  fmul st(0), st(1)                                     ;;Compute Number * 10^Decimals
-  fRnd                                                  ;;Compute fRnd
-  fdivrp st(1), st(0)                                   ;;Compute Number / 10^Decimals
+  push XWORD ptr Decimals                               ;; Store number of decimals
+  fild XWORD ptr [xsp]                                  ;; Load Decimals
+  add xsp, @WordSize                                    ;; Restore stack
+  fExpT                                                 ;; Compute 10^x
+  frndint                                               ;; Round to an integer
+  fxch                                                  ;; Swap st0 and st1
+  fmul st(0), st(1)                                     ;; Compute Number * 10^Decimals
+  fRnd                                                  ;; Compute fRnd
+  fdivrp st(1), st(0)                                   ;; Compute Number / 10^Decimals
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -611,31 +611,31 @@ endm
 ; Return:     Nothing.
 ; Note:       st5, st6 and st7 must be empty.
 
-fExp2 macro                     ;;st0      st1      st2
-  fld st(0)                     ;;x        x        ?         Duplicate st0
-  frndint                       ;;int(x)   x        ?         Round to integer
-  fsub st(1), st(0)             ;;int(x)   frac(x)  ?         Compute fractional part of x
-  fld1                          ;;1        int(x)   frac(x)   Load 1
-  fscale                        ;;2^int(x) int(x)   frac(x)   Scale 1 by int(x)
-  fxch                          ;;int(x)   2^int(x) frac(x)   Exchange st0 and st1
-  fstp st(0)                    ;;2^int(x) frac(x)  ?         Eliminate st0 and pop
-  fxch                          ;;frac(x)  2^int(x) ?         Exchange st0 and st1
-  f2xm1                         ;;2^frac-1 2^int(x) ?         Compute 2xm1
-  fld1                          ;;1        2^frac-1 2^int(x)  Load 1
-  faddp st(1), st(0)            ;;2^frac   2^int(x) ?         Add st0 and st1 and pop
-  fmulp st(1), st(0)            ;;2^x      ?        ?         Multiplay st1 by st0 and pop
-endm
-
-fExp2_ macro                    ;;st0      st1      st2
-  fld st(0)                     ;;x        x        ?         Duplicate st0
-  frndint                       ;;int(x)   x        ?         Round to integer
-  fsub st(1), st(0)             ;;int(x)   frac(x)  ?         Compute fractional part of x
-  fxch                          ;;int(x)   2^int(x) frac(x)   Exchange st0 and st1
-  f2xm1                         ;;2^frac-1 2^int(x) ?         Compute 2xm1
-  fld1                          ;;1        int(x)   frac(x)   Load 1
-  fadd
-  fscale                        ;;2^int(x) int(x)   frac(x)   Scale 1 by int(x)
-  fstp st(1)                    ;;2^int(x) frac(x)  ?         Eliminate st0 and pop
+fExp2 macro                     ;; st0      st1      st2
+  fld st(0)                     ;; x        x        ?         Duplicate st0
+  frndint                       ;; int(x)   x        ?         Round to integer
+  fsub st(1), st(0)             ;; int(x)   frac(x)  ?         Compute fractional part of x
+  fld1                          ;; 1        int(x)   frac(x)   Load 1
+  fscale                        ;; 2^int(x) int(x)   frac(x)   Scale 1 by int(x)
+  fxch                          ;; int(x)   2^int(x) frac(x)   Exchange st0 and st1
+  fstp st(0)                    ;; 2^int(x) frac(x)  ?         Eliminate st0 and pop
+  fxch                          ;; frac(x)  2^int(x) ?         Exchange st0 and st1
+  f2xm1                         ;; 2^frac-1 2^int(x) ?         Compute 2xm1
+  fld1                          ;; 1        2^frac-1 2^int(x)  Load 1
+  faddp st(1), st(0)            ;; 2^frac   2^int(x) ?         Add st0 and st1 and pop
+  fmulp st(1), st(0)            ;; 2^x      ?        ?         Multiplay st1 by st0 and pop
+endm                               
+                                   
+fExp2_ macro                    ;; st0      st1      st2
+  fld st(0)                     ;; x        x        ?         Duplicate st0
+  frndint                       ;; int(x)   x        ?         Round to integer
+  fsub st(1), st(0)             ;; int(x)   frac(x)  ?         Compute fractional part of x
+  fxch                          ;; int(x)   2^int(x) frac(x)   Exchange st0 and st1
+  f2xm1                         ;; 2^frac-1 2^int(x) ?         Compute 2xm1
+  fld1                          ;; 1        int(x)   frac(x)   Load 1
+  fadd                             
+  fscale                        ;; 2^int(x) int(x)   frac(x)   Scale 1 by int(x)
+  fstp st(1)                    ;; 2^int(x) frac(x)  ?         Eliminate st0 and pop
 endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fExpN
@@ -645,9 +645,9 @@ endm
 ; Note:       st5, st6 and st7 must be empty.
 
 fExpN macro
-  fldl2e                                                ;;Put Log2(e) onto the stack
-  fmulp st(1), st(0)                                    ;;Compute x*Log2(e).
-  fExp2                                                 ;;Compute 2^(x*Log2(e)) = e^x
+  fldl2e                                                ;; Put Log2(e) onto the stack
+  fmulp st(1), st(0)                                    ;; Compute x*Log2(e).
+  fExp2                                                 ;; Compute 2^(x*Log2(e)) = e^x
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -658,9 +658,9 @@ endm
 ; Note:       st7 must be empty.
 
 fLogN macro
-  fldln2                                                ;;Put LogN(2) onto the stack
-  fxch                                                  ;;Swap st0 and st1
-  fyl2x                                                 ;;Compute LogN(2)*Log2(st0)
+  fldln2                                                ;; Put LogN(2) onto the stack
+  fxch                                                  ;; Swap st0 and st1
+  fyl2x                                                 ;; Compute LogN(2)*Log2(st0)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -671,9 +671,9 @@ endm
 ; Note:       st5, st6 and st7 must be empty.
 
 fExpT macro
-  fldl2t                                                ;;Push Log2(10) onto the FPU stack
-  fmulp st(1),st(0)                                     ;;Compute x*Log2(10)
-  fExp2                                                 ;;Compute 2^(x*Log2(10)) = 10^x
+  fldl2t                                                ;; Push Log2(10) onto the FPU stack
+  fmulp st(1),st(0)                                     ;; Compute x*Log2(10)
+  fExp2                                                 ;; Compute 2^(x*Log2(10)) = 10^x
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -684,9 +684,9 @@ endm
 ; Note:       st7 must be empty.
 
 fLogT macro
-  fldlg2                                                ;;Put Log10(2) onto the stack
-  fxch                                                  ;;Swap st0 and st1
-  fyl2x                                                 ;;Compute Log10(2)*Log2(st0)
+  fldlg2                                                ;; Put Log10(2) onto the stack
+  fxch                                                  ;; Swap st0 and st1
+  fyl2x                                                 ;; Compute Log10(2)*Log2(st0)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -697,11 +697,11 @@ endm
 ; Note:       st5, st6 and st7 must be empty.
 
 fPower macro
-  fld1                                                  ;;Put 1 onto the stack
-  fxch                                                  ;;Swap st0 and st1
-  fyl2x                                                 ;;Compute 1*Log2(x)
-  fmulp st(1), st(0)                                    ;;Compute y*Log2(x)
-  fExp2                                                 ;;Comput2 2^(x*Log2(y)) = x^y
+  fld1                                                  ;; Put 1 onto the stack
+  fxch                                                  ;; Swap st0 and st1
+  fyl2x                                                 ;; Compute 1*Log2(x)
+  fmulp st(1), st(0)                                    ;; Compute y*Log2(x)
+  fExp2                                                 ;; Comput2 2^(x*Log2(y)) = x^y
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -713,14 +713,14 @@ endm
 ;             Log[st1](st0) = Log2(st0) / Log2(st1).
 
 fLog macro
-  fld1                                                  ;;Load 1
-  fxch                                                  ;;Exchange with argument
-  fyl2x                                                 ;;st1 = 1 * Log2(st0) and pop stack
-  fxch                                                  ;;Exchange Log2(st0) with base
-  fld1                                                  ;;Load 1
-  fxch                                                  ;;Exchange 1 with base
-  fyl2x                                                 ;;st1 = 1 * Log2(st0) and pop stack
-  fdivp st(1), st(0)                                    ;;Log2(st0) / log2(st1)
+  fld1                                                  ;; Load 1
+  fxch                                                  ;; Exchange with argument
+  fyl2x                                                 ;; st1 = 1 * Log2(st0) and pop stack
+  fxch                                                  ;; Exchange Log2(st0) with base
+  fld1                                                  ;; Load 1
+  fxch                                                  ;; Exchange 1 with base
+  fyl2x                                                 ;; st1 = 1 * Log2(st0) and pop stack
+  fdivp st(1), st(0)                                    ;; Log2(st0) / log2(st1)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -734,15 +734,15 @@ endm
 fFitTrigRange macro
   local @@1
 
-  fldpi                                                 ;;Load Pi
-  fadd st(0), st(0)                                     ;;Double it
-  fxch                                                  ;;Exchange argument and 2*Pi
-@@1:
-  fprem1                                                ;;Reduce the exponent of st(0) by no more
-  fnstsw ax                                             ;;   than 63 in one execution
-  sahf                                                  ;;Check FPU flags
-  jp @@1                                                ;;C2 flag in the FPU set => reduce again
-  fstp st(1)                                            ;;Pop 2*Pi from stack
+  fldpi                                                 ;; Load Pi
+  fadd st(0), st(0)                                     ;; Double it
+  fxch                                                  ;; Exchange argument and 2*Pi
+@@1:                                                       
+  fprem1                                                ;; Reduce the exponent of st(0) by no more
+  fnstsw ax                                             ;;    than 63 in one execution
+  sahf                                                  ;; Check FPU flags
+  jp @@1                                                ;; C2 flag in the FPU set => reduce again
+  fstp st(1)                                            ;; Pop 2*Pi from stack
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -754,7 +754,7 @@ endm
 
 fTan macro
   fptan
-  fstp st(0)                                            ;;Pop st(0) from stack
+  fstp st(0)                                            ;; Pop st(0) from stack
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -765,7 +765,7 @@ endm
 
 fSec macro
   fcos
-  fdivr $CReal4(+1.0)                                   ;;Computes 1 / cos(x)
+  fdivr $CReal4(+1.0)                                   ;; Computes 1 / cos(x)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -776,7 +776,7 @@ endm
 
 fCsc macro
   fsin
-  fdivr $CReal4(+1.0)                                   ;;Computes 1 / sin(x)
+  fdivr $CReal4(+1.0)                                   ;; Computes 1 / sin(x)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -788,7 +788,7 @@ endm
 
 fCot macro
   fptan
-  fdivrp st(1), st(0)                                   ;;Computes 1 / tan(x)
+  fdivrp st(1), st(0)                                   ;; Computes 1 / tan(x)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1117,7 +1117,7 @@ endm
 
 fjg macro DestinationLabel:req
   fGetFlags
-  ja DestinationLabel                                   ;;Conditional jump
+  ja DestinationLabel                                   ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1128,7 +1128,7 @@ endm
 
 fjl macro DestinationLabel:req
   fGetFlags
-  jb DestinationLabel                                   ;;Conditional jump
+  jb DestinationLabel                                   ; ;Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1139,7 +1139,7 @@ endm
 
 fje macro DestinationLabel:req
   fGetFlags
-  je DestinationLabel                                   ;;Conditional jump
+  je DestinationLabel                                   ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1150,7 +1150,7 @@ endm
 
 fjne macro DestinationLabel:req
   fGetFlags
-  jne DestinationLabel                                  ;;Conditional jump
+  jne DestinationLabel                                  ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1162,7 +1162,7 @@ endm
 
 fjge macro DestinationLabel:req
   fGetFlags
-  jae DestinationLabel                                  ;;Conditional jump
+  jae DestinationLabel                                  ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1174,7 +1174,7 @@ endm
 
 fjle macro DestinationLabel:req
   fGetFlags
-  jbe DestinationLabel                                  ;;Conditional jump
+  jbe DestinationLabel                                  ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1186,7 +1186,7 @@ endm
 
 fjnc macro DestinationLabel:req
   fGetFlags
-  jp DestinationLabel                                   ;;Conditional jump
+  jp DestinationLabel                                   ;; Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1199,9 +1199,9 @@ endm
 
 fcmp macro var1:req, var2:req
   ??Reg3 textequ <>
-  if (opattr var1) and OAT_REGISTER                     ;;Is var1 a register?
+  if (opattr var1) and OAT_REGISTER                     ;; Is var1 a register?
     ??Reg1 textequ <var1>
-    if (opattr var2) and OAT_REGISTER                   ;;Is var2 a register?
+    if (opattr var2) and OAT_REGISTER                   ;; Is var2 a register?
       ??Reg2 textequ <var2>
     else
       ifdifi ??Reg1, <eax>
@@ -1214,7 +1214,7 @@ fcmp macro var1:req, var2:req
       mov ??Reg2, var2
     endif
   else
-    if (opattr var2) and OAT_REGISTER                   ;;Is var2 a register?
+    if (opattr var2) and OAT_REGISTER                   ;; Is var2 a register?
       ??Reg2 textequ <var2>
       ifdifi ??Reg2, <eax>
         ??Reg1 textequ <eax>
@@ -1277,7 +1277,7 @@ endm
 ;; Purpose:   If val > 0 => TRUE, else => FALSE.
 
 fIsPositive macro val:req
-  xor eax, eax                                          ;;FALSE
+  xor eax, eax                                          ;; FALSE
   test val, BIT31
   setz al
 endm
@@ -1292,7 +1292,7 @@ endm
 ;; Purpose:   If val < 0 => TRUE, else => FALSE.
 
 fIsNegative macro val:req
-  xor eax, eax                                          ;;FALSE
+  xor eax, eax                                          ;; FALSE
   test val, BIT31
   setnz al
 endm
@@ -1307,7 +1307,7 @@ endm
 ;; Purpose:   If val = (+/-)0 => TRUE, else => FALSE.
 
 fIsZero macro val:req
-  xor eax, eax                                          ;;FALSE
+  xor eax, eax                                          ;; FALSE
   test val, 7FFFFFFFh
   setz al
 endm

@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      Memory.inc
 ; Authors:    G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of basic memory handling macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
 ;             Version C.1.1, June 2022
 ;               - UEFI support added.
+;             Version C.1.2, April 2026
+;               - BitUpdate added.
 ; ==================================================================================================
 
 
@@ -229,7 +231,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      MemFree
-; Purpose:    Free a memory block previously allocated with MemAlloc or MemReAlloc.
+; Purpose:    Frees a memory block previously allocated with MemAlloc or MemReAlloc.
 ; Arguments:  Arg1: -> allocated memory block.
 ;             Arg2: Optional memory allocation flags: MEM_NO_SERIALIZE, MEM_SAFE_FREE
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
@@ -280,7 +282,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      MemCheck
-; Purpose:    Validates a memory block on the process heap.
+; Purpose:    Validate a memory block on the process heap.
 ; Arguments:  Arg1: -> allocated memory block. If NULL, the whole heap is checked.
 ; Return:     eax = non FALSE if succeeded, otherwise FALSE.
 
@@ -419,6 +421,25 @@ endm
 .elseIfAllBitsClr equ <.elseIfBitClr>
 
 ; --------------------------------------------------------------------------------------------------
+; Macro:      BitUpdate
+; Purpose:    Set or clear a bit if a condition is met.
+; Arguments:  Arg1: Condition 
+;             Arg2: Bit holding variable.
+;             Arg3: Bit to be tested for (ie: BIT12)
+; Return:     Nothing.
+; Example:    BitUpdate eax != FALSE, [xsi].dFlags, OPT_USE_PRINTER
+
+BitUpdate macro Condition:req, Var:req, Bit:req
+  .if (Condition)
+    BitSet Var, Bit
+  .else
+    BitClr Var, Bit
+  .endif
+endm
+
+BitUpd equ <BitUpdate>
+
+; --------------------------------------------------------------------------------------------------
 ; Macro:      JmpIfBitSet
 ; Purpose:    Jump if a bit is set.
 ; Arguments:  Arg1: Bit holding variable.
@@ -476,11 +497,11 @@ endif
 if TARGET_BITNESS eq 32
   StackAlloc macro AllocSize:req
   % ??Attributes = opattr(AllocSize)
-    if ??Attributes eq 00100100y                        ;;Constant expression
+    if ??Attributes eq 00100100y                        ;; Constant expression
       if AllocSize gt PAGESIZE
         ??StackCorr = PAGESIZE
         repeat AllocSize/PAGESIZE
-          mov BYTE ptr [esp - ??StackCorr], 0           ;;Probe
+          mov BYTE ptr [esp - ??StackCorr], 0           ;; Probe
           ??StackCorr = ??StackCorr + PAGESIZE
         endm
       endif
@@ -494,10 +515,10 @@ if TARGET_BITNESS eq 32
   %   ifdifi <AllocSize>, <ecx>
         mov ecx, eax
       endif
-      shr eax, $Log2(PAGESIZE)                        ;;Log2 PAGESIZE
+      shr eax, $Log2(PAGESIZE)                          ;; Log2 PAGESIZE
       mov edx, -PAGESIZE
       .while !ZERO?
-        mov BYTE ptr [esp + edx], 0                     ;;Probe
+        mov BYTE ptr [esp + edx], 0                     ;; Probe
         sub edx, PAGESIZE
         dec eax
       .endw
@@ -509,12 +530,12 @@ if TARGET_BITNESS eq 32
 else
   StackAlloc macro AllocSize:req
   % ??Attributes = opattr(AllocSize)
-    if ??Attributes eq 00100100y                        ;;Constant expression
-      ??AllocSize = (AllocSize + 2*@WordSize - 1)/2*@WordSize ;Multiple of @WordSize
+    if ??Attributes eq 00100100y                        ;; Constant expression
+      ??AllocSize = (AllocSize + 2*@WordSize - 1)/2*@WordSize ;; Multiple of @WordSize
       if ??AllocSize gt PAGESIZE
         ??StackCorr = PAGESIZE
         repeat ??AllocSize/PAGESIZE
-          mov BYTE ptr [rsp - ??StackCorr], 0           ;;Probe
+          mov BYTE ptr [rsp - ??StackCorr], 0           ;; Probe
           ??StackCorr = ??StackCorr + PAGESIZE
         endm
       endif
@@ -528,10 +549,10 @@ else
       add rax, 2*@WordSize - 1
       and rax, -2*@WordSize
       mov rcx, rax
-      shr rax, $Log2(PAGESIZE)                          ;;Log2 PAGESIZE
+      shr rax, $Log2(PAGESIZE)                          ;; Log2 PAGESIZE
       mov rdx, -PAGESIZE
       .while !ZERO?
-        mov BYTE ptr [rsp + rdx], 0                     ;;Probe
+        mov BYTE ptr [rsp + rdx], 0                     ;; Probe
         sub rdx, PAGESIZE
         dec rax
       .endw
