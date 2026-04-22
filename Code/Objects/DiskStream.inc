@@ -398,19 +398,19 @@ Method DiskStream.Init, uses xsi, pOwner:POINTER, pFileName:PSTRING, dAccessMode
 
   ACall xsi.Init, pOwner
 
-  .if dAttr == 0
+  .if dAttr == -1
     mov dAttr, FILE_ATTRIBUTE_NORMAL                    ;Default file attribute
   .endif
 
-  .if dCreationFlags == 0
+  .if dCreationFlags == -1
     mov dCreationFlags, OPEN_ALWAYS                     ;Default file creation
   .endif
 
-  .if dShareMode == 0
+  .if dShareMode == -1
     mov dShareMode, FILE_SHARE_READ or FILE_SHARE_WRITE ;Default file share mode
   .endif
 
-  .if dAccessMode == 0
+  .if dAccessMode == -1
     mov dAccessMode, GENERIC_READ or GENERIC_WRITE      ;Default file access mode
   .endif
 
@@ -418,6 +418,7 @@ Method DiskStream.Init, uses xsi, pOwner:POINTER, pFileName:PSTRING, dAccessMode
   mov [xsi].hFile, xax
 
   .if xax == INVALID_HANDLE_VALUE
+    DbgApiError
     OCall xsi.ErrorReport, NULL, STM_OPEN_ERROR
   .endif
 MethodEnd

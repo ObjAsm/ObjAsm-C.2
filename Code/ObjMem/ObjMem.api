@@ -404,6 +404,10 @@ ActivatePrevInstance, pStringID, pClassName
 ActivatePrevInstanceA, pStringIDA, pClassNameA
 ActivatePrevInstanceW, pStringIDW, pClassNameW
 
+GetSingletonHandle, pUniqueString
+GetSingletonHandleA, pUniqueStringA
+GetSingletonHandleW, pUniqueStringW
+
 GetPrevInstance, pStringID, pClassName
 GetPrevInstanceA, pStringIDA, pClassNameA
 GetPrevInstanceW, pStringIDW, pClassNameW

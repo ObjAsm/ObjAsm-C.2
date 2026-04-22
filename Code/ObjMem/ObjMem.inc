@@ -1312,6 +1312,16 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
     echo Warning: incompatible TARGET_STR_TYPE
   endif
 
+  GetSingletonHandleA proto :POINTER
+  GetSingletonHandleW proto :POINTER
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+    GetSingletonHandle textequ <GetSingletonHandleA>
+  elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+    GetSingletonHandle textequ <GetSingletonHandleW>
+  else
+    echo Warning: incompatible TARGET_STR_TYPE
+  endif
+
   GetPrevInstanceA proto :POINTER, :POINTER
   GetPrevInstanceW proto :POINTER, :POINTER
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
