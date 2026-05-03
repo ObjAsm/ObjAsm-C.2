@@ -145,47 +145,88 @@ DEBUG macro DbgArgs:vararg
   endif
 endm
 
-RESGUARD_LOADED         =         0                     ;Set these flags
-STKGUARDING             =         0
-TRACING                 =         0
-DEBUGGING               =         0
+RESGUARD_LOADED           =    0                     ;Set these flags
+STKGUARDING               =    0
+TRACING                   =    0
+DEBUGGING                 =    0
 
-STR_TYPE_ANSI           equ       1
-STR_TYPE_WIDE           equ       2
-TARGET_STR_TYPE         =         STR_TYPE_WIDE         ;Default WIDE strings
-TARGET_STR_AFFIX        textequ   <W>
 
-OOP_DISABLED            equ       1                     ;OOP support disabled.
-OOP_ENABLED             equ       2                     ;OOP support enabled.
-TARGET_OOP              =         OOP_DISABLED
+;CPU SIMD Features
+CPU_FEATURE_SIMD_MMX      equ  02
+CPU_FEATURE_SIMD_SSE      equ  03
+CPU_FEATURE_SIMD_SSE2     equ  04
+CPU_FEATURE_SIMD_SSE3     equ  05
+CPU_FEATURE_SIMD_SSSE3    equ  06
+CPU_FEATURE_SIMD_SSE4_1   equ  07
+CPU_FEATURE_SIMD_SSE4_2   equ  08
+CPU_FEATURE_SIMD_AVX      equ  09
+CPU_FEATURE_SIMD_AVX2     equ  10
+CPU_FEATURE_SIMD_AVX512_F equ  11
 
-BIN_FORMAT_EXE          equ       1
-BIN_FORMAT_DLL          equ       2
-BIN_FORMAT_LIB          equ       3
-TARGET_BIN_FORMAT       =         BIN_FORMAT_EXE
+;CPU Orthogonal Features
+CPU_FEATURE_FPU           equ  BIT00
+CPU_FEATURE_AVX512_DQ     equ  BIT01
+CPU_FEATURE_AVX512_IFMA   equ  BIT02
+CPU_FEATURE_AVX512_VBMI   equ  BIT03
+CPU_FEATURE_AVX512_VNNI   equ  BIT04
+CPU_FEATURE_FMA           equ  BIT05
+CPU_FEATURE_BMI1          equ  BIT06
+CPU_FEATURE_BMI2          equ  BIT07
+CPU_FEATURE_POPCNT        equ  BIT08
+CPU_FEATURE_LZCNT         equ  BIT09
+CPU_FEATURE_ABM           equ  BIT10
+CPU_FEATURE_AES           equ  BIT11
+CPU_FEATURE_PCLMULQDQ     equ  BIT12
+CPU_FEATURE_SHA           equ  BIT13
+CPU_FEATURE_VMX           equ  BIT14
+CPU_FEATURE_SVM           equ  BIT15
+CPU_FEATURE_CMPXCHG16B    equ  BIT16
+CPU_FEATURE_CX8           equ  BIT17
+CPU_FEATURE_CLFLUSH       equ  BIT18
+CPU_FEATURE_MONITOR_MWAIT equ  BIT19
+CPU_FEATURE_RDRAND        equ  BIT20
+CPU_FEATURE_RDSEED        equ  BIT21
+CPU_FEATURE_LAHF_SAHF     equ  BIT22
 
-USER_INTERFACE_NONE     equ       1                     ;No user interface
-USER_INTERFACE_GUI      equ       2                     ;Graphical user interface
-USER_INTERFACE_CLI      equ       3                     ;Command line interface
-TARGET_USER_INTERFACE   =         USER_INTERFACE_GUI    ;Default: Window
+TARGET_CPU_FEATURES       = CPU_FEATURE_FPU
+TARGET_CPU_SIMD_FEATURES  = CPU_FEATURE_SIMD_SSE
 
-TARGET_BITNESS          =         32                    ;Default 32-bit
-TARGET_ARCH_STRING      textequ   <x86>
+STR_TYPE_ANSI             equ       1
+STR_TYPE_WIDE             equ       2
+TARGET_STR_TYPE           =         STR_TYPE_WIDE       ;Default WIDE strings
+TARGET_STR_AFFIX          textequ   <W>
 
-PLATFORM_NONE           equ       1
-PLATFORM_UEFI           equ       2
-PLATFORM_WINDOWS        equ       3
-PLATFORM_OTHER          equ       4                     ;E.g. Linux distros
-TARGET_PLATFORM         =         PLATFORM_WINDOWS
+OOP_DISABLED              equ       1                   ;OOP support disabled.
+OOP_ENABLED               equ       2                   ;OOP support enabled.
+TARGET_OOP                =         OOP_DISABLED
 
-MODE_RLS                equ       1
-MODE_DBG                equ       2
-TARGET_MODE             =         MODE_RLS
-TARGET_MODE_STR         textequ   <R>
-TARGET_MODE_STRING      textequ   <RELEASE>
-DEBUGGING               =         0
+BIN_FORMAT_EXE            equ       1
+BIN_FORMAT_DLL            equ       2
+BIN_FORMAT_LIB            equ       3
+TARGET_BIN_FORMAT         =         BIN_FORMAT_EXE
 
-??ObjectContext         textequ   <>
+USER_INTERFACE_NONE       equ       1                   ;No user interface
+USER_INTERFACE_GUI        equ       2                   ;Graphical user interface
+USER_INTERFACE_CLI        equ       3                   ;Command line interface
+TARGET_USER_INTERFACE     =         USER_INTERFACE_GUI  ;Default: Window
+
+TARGET_BITNESS            =         32                  ;Default 32-bit
+TARGET_ARCH_STRING        textequ   <x86>
+
+PLATFORM_NONE             equ       1
+PLATFORM_UEFI             equ       2
+PLATFORM_WINDOWS          equ       3
+PLATFORM_OTHER            equ       4                   ;E.g. Linux distros
+TARGET_PLATFORM           =         PLATFORM_WINDOWS
+
+MODE_RLS                  equ       1
+MODE_DBG                  equ       2
+TARGET_MODE               =         MODE_RLS
+TARGET_MODE_STR           textequ   <R>
+TARGET_MODE_STRING        textequ   <RELEASE>
+DEBUGGING                 =         0
+
+??ObjectContext           textequ   <>
 
 
 SysSetup macro Arguments:vararg
