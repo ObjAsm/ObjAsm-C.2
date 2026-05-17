@@ -39,6 +39,41 @@
 ;
 ; ==================================================================================================
 
+
+; Menu
+; Workspace
+;   Solution (adesln)
+;     Delete
+;     Load
+;     New
+;     Rename
+;     Save
+;   Project (adeprj)
+;     Delete
+;     Load
+;     New
+;     Rename
+;     Save
+;   File
+;     Add
+;     Delete
+;     Load
+;     New
+;       asm
+;       inc
+;       txt
+;       rc
+;     Print
+;     Rename
+;     Save
+;   ---------
+;   Load (adewsp)
+;   Save
+;   Setup
+;   ---------
+;   Exit
+
+
 ;Note: comment $$RegCntMM = 0 in system.inc
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
