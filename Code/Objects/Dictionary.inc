@@ -147,7 +147,7 @@ Method Dictionary.Hash, uses xbx, pKey:PSTRING
       mov xcx, xax
       mov xbx, xax
 
-      ; rax = s, ecx = 32 bits of s
+      ; rax = s, ecx = 32-bits of s
       pxor xmm0, xmm0             ; set to zero
       and ecx, 0FH                ; lower 4 bits indicate misalignment
       and xax, -10H               ; align pointer by 16

@@ -14,7 +14,7 @@
 ; SCODEs are no longer used. The macros are still present for compatibility and easy porting of
 ; Win16 code. Newly written code should use the HRESULT macros and functions.
 ;
-;     HRESULTs are 32 bit values layed out as follows:
+;     HRESULTs are 32-bit values layed out as follows:
 ;
 ;      3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
 ;      1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0

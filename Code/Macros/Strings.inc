@@ -13,25 +13,25 @@
 ;Generic character and string type definitions
 CHRA      typedef     BYTE                              ;ANSI character type
 CHRW      typedef     WORD                              ;Wide character type
-CHRU      typedef     DWORD                             ;Unicode 32 bit character type
+CHRU      typedef     DWORD                             ;Unicode 32-bit character type
 DCHRA     typedef     WORD                              ;ANSI double character type
 DCHRW     typedef     DWORD                             ;Wide double character type
-DCHRU     typedef     QWORD                             ;Unicode 32 bit double character type
+DCHRU     typedef     QWORD                             ;Unicode 32-bit double character type
 QCHRA     typedef     DWORD                             ;ANSI quadruple character type
 QCHRW     typedef     QWORD                             ;Wide quadruple character type
 OCHRA     typedef     QWORD                             ;ANSI octuple character type
 PCHRA     typedef ptr CHRA                              ;ANSI character pointer type
 PCHRW     typedef ptr CHRW                              ;Wide character pointer type
-PCHRU     typedef ptr CHRU                              ;Unicode 32 bit character pointer type
+PCHRU     typedef ptr CHRU                              ;Unicode 32-bit character pointer type
 PDCHRA    typedef ptr DCHRA                             ;ANSI double character pointer type
 PDCHRW    typedef ptr DCHRW                             ;Wide double character pointer type
-PDCHRU    typedef ptr DCHRU                             ;Unicode 32 bit double character pointer type
+PDCHRU    typedef ptr DCHRU                             ;Unicode 32-bit double character pointer type
 PQCHRA    typedef ptr QCHRA                             ;ANSI quadruple pointer type
 PQCHRW    typedef ptr QCHRA                             ;Wide quadruple pointer type
 POCHRA    typedef ptr OCHRA                             ;ANSI octuple pointer type
 PSTRINGA  typedef ptr CHRA                              ;ANSI string pointer type
 PSTRINGW  typedef ptr CHRW                              ;Wide string pointer type
-PSTRINGU  typedef ptr CHRU                              ;Unicode 32 bit string pointer type
+PSTRINGU  typedef ptr CHRU                              ;Unicode 32-bit string pointer type
 
 ;Type neutral definitions
 if TARGET_STR_TYPE eq STR_TYPE_ANSI

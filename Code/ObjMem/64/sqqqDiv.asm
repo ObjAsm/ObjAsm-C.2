@@ -13,7 +13,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqDiv
 ; Purpose:    Divide 2 signed QWORDs.
-;             (64 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 
+;             (64-bit) Dividend divided by (64-bit) Divisor = (64-bit) Quotient. 
 ; Arguments:  Arg1: Dividend signed low word.
 ;             Arg2: Dividend signed high word.
 ;             Arg3: Divisor signed low word.

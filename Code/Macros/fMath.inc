@@ -390,7 +390,7 @@ endm
 ; Notes:      00 = 24 bits (REAL4)
 ;             01 = Not used
 ;             10 = 53 bits (REAL8)
-;             11 = 64 bits (REAL10) (this is the initialized state)
+;             11 = 64-bits (REAL10) (this is the initialized state)
 
 fSetPrecision macro Precision:req
   sub xsp, @WordSize                                    ;; Reserve stack place

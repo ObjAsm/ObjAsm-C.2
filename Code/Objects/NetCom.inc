@@ -352,7 +352,7 @@ PMIB_IPNET_ROW2 typedef ptr MIB_IPNET_ROW2
 
 MIB_IPNET_TABLE2 struct
   NumEntries            DWORD     ?
-                        DWORD     ?         ;Alignment 32/64 bit
+                        DWORD     ?         ;Alignment 32/64-bit
   Table                 MIB_IPNET_ROW2 0 dup(<>)
 MIB_IPNET_TABLE2 ends
 PMIB_IPNET_TABLE2 typedef ptr MIB_IPNET_TABLE2

@@ -21,7 +21,7 @@
 ;               - DbgCloseWnd, DbgPinWnd, DbgFrontWnd, DbgFront, DbgFrontTxt, DbgFrontBmp added.
 ;               - Color variables introduced. Setup is done in SysInit.
 ;             Version C.2.0, January 2023
-;               - Register restoration bug in DbgSaveContext (64 bit) corrected.
+;               - Register restoration bug in DbgSaveContext (64-bit) corrected.
 ;             Version C.2.1, December 2023
 ;               - DbgCpuFlags added.
 ;             Version C.2.1, January 2024
@@ -1490,7 +1490,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBin
 ; Purpose:    Outputs a number in binary format on the debug device.
-; Arguments:  Arg1: Number (register or symbol). Max 32 bits.
+; Arguments:  Arg1: Number (register or symbol). Max 32-bits.
 ;             Arg2: Optional information.
 ;             Arg3: Optional destination Window name.
 ; Note:       If register addressing is used, a size prefix is required.

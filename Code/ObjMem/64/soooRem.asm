@@ -14,7 +14,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooRem
 ; Purpose:    Calculate the remainder of the division of 2 signed OWORDs.
-;             (128 bit) Dividend divided by (128 bit) Divisor => (128 bit) Remainder. 
+;             (128-bit) Dividend divided by (128-bit) Divisor => (128-bit) Remainder. 
 ; Arguments:  Arg1: Dividend signed low word.
 ;             Arg2: Dividend signed high word.
 ;             Arg3: Divisor signed low word.

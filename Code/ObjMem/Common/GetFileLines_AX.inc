@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.1
 ; Notes:      Version C.1.1, December 2020
-;               - Completely reworked and 64 bit version added.
+;               - Completely reworked and 64-bit version added.
 ;             Version C.1.0, October 2017
 ;               - Initial release.
 ; ==================================================================================================

@@ -17,7 +17,7 @@ TypeArg equ <SQWORD>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooMul
 ; Purpose:    Multiply 2 signed OWORDs.
-;             (128 bit) Multiplicand multiplied by (128 bit) Multiplier = (128 bit) Product.
+;             (128-bit) Multiplicand multiplied by (128-bit) Multiplier = (128-bit) Product.
 ; Arguments:  Arg1: Multiplicand low signed word.
 ;             Arg2: Multiplicand high signed word.
 ;             Arg3: Multiplier low signed word.

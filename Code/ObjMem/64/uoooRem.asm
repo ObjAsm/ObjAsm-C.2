@@ -14,7 +14,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoooRem
 ; Purpose:    Calculate the remainder of the division of 2 unsigned OWORDs.
-;             (128 bit) Dividend divided by (128 bit) Divisor => (128 bit) Remainder. 
+;             (128-bit) Dividend divided by (128-bit) Divisor => (128-bit) Remainder. 
 ; Arguments:  Arg1: Dividend unsigned low word.
 ;             Arg2: Dividend unsigned high word.
 ;             Arg3: Divisor unsigned low word.

@@ -21,7 +21,7 @@
 .code
 align ALIGN_CODE
 uqShr proc
-; Handle shifts of 64 bits or more (if shifting 64 bits or more, the result
+; Handle shifts of 64-bits or more (if shifting 64-bits or more, the result
 ; depends only on the high order bit of edx).
   .if cl < 64
     .if cl < 32

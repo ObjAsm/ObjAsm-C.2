@@ -323,13 +323,13 @@ Method NetComFile.ReadFile, uses xsi
   qmov qCount, [xsi].qFileSize
   .repeat
     .if qCount.HiDWord != 0
-      ;The filesize is larger than 32 bits !!!
-      ;Make the biggest READ call we possibly can with 32 bits
+      ;The filesize is larger than 32-bits !!!
+      ;Make the biggest READ call we possibly can with 32-bits
       OCall xsi.BinRead, -1
       qdsub qCount, -1
     .else
       .break .if qCount.LoDWord == 0
-      ;The filesize is 32 bits
+      ;The filesize is 32-bits
       ;Make a READ call for that amount
       OCall xsi.BinRead, [xsi].qFileSize.QUADWORD.LoDWord
       qdsub qCount, [xsi].qFileSize.QUADWORD.LoDWord
@@ -340,7 +340,7 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.SetFilePointer
 ; Purpose:    Set the internal FilePointer offset (used when queuing IO requests).
-; Arguments:  Arg1: File pointer (64 bit).
+; Arguments:  Arg1: File pointer (64-bit).
 ; Note:       With care, you can use this to random-access a file.
 
 Method NetComFile.SetFilePointer,, qPosition:QWORD

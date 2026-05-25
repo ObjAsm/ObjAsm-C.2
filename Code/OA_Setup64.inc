@@ -2,7 +2,7 @@
 ; Title:      OA_Setup64.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm Model Setup for 64 bit.
+; Purpose:    ObjAsm Model Setup for 64-bit.
 ; Notes:      Version C.1.0, October 2017
 ;             - Initial release.
 ; ==================================================================================================

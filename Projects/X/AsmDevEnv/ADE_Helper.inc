@@ -9,8 +9,8 @@
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      GetCharType
 ; Purpose:    Return the type (CHR_XXX) from a given character.
-; Arguments:  Arg1: Character in a 32 bit register.
-;             Arg2: 32 bit register containing the character type.
+; Arguments:  Arg1: Character in a 32-bit register.
+;             Arg2: 32-bit register containing the character type.
 ; Return:     Arg2
 
 GetCharType macro CharReg32:req, TypeReg32:req

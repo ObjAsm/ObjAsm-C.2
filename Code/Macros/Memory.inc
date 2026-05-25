@@ -112,7 +112,7 @@ QUADWORD union
     HiDWord    DOUBLEWORD    {}
   ends
 QUADWORD ends
-PQUADWORD typedef QUADWORD
+PQUADWORD typedef ptr QUADWORD
 
 OCTOWORD union
   OWORD                      ?
@@ -121,7 +121,7 @@ OCTOWORD union
     HiQWord    QUADWORD      {}
   ends
 OCTOWORD ends
-POCTOWORD typedef OCTOWORD
+POCTOWORD typedef ptr OCTOWORD
 
 
 ; ==================================================================================================
@@ -145,7 +145,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      MemAlloc / $MemAlloc
 ; Purpose:    Allocate a memory block on global memory.
-; Arguments:  Arg1: Memory block size. For Windows muust be less than 7FFF8h.
+; Arguments:  Arg1: Memory block size. For Windows must be less than 7FFF8h.
 ;             Arg2: Optional memory allocation flags:
 ;                   MEM_DEFAULT, MEM_INIT_ZERO, MEM_GENERATE_EXEPTION, MEM_NO_SERIALIZE.
 ; Return:     xax -> allocated memory block. NULL or exception if failed.
@@ -184,7 +184,7 @@ MemAlloc macro MemSize:req, Flags:=<MEM_DEFAULT>
   endif
 endm
 
-$MemAlloc macro MemSize, Flags:=<0>
+$MemAlloc macro MemSize:req, Flags:=<0>
   MemAlloc <MemSize>, <Flags>
   exitm <xax>
 endm
@@ -513,7 +513,7 @@ if TARGET_BITNESS eq 32
         mov eax, AllocSize
       endif
   %   ifdifi <AllocSize>, <ecx>
-        mov ecx, eax
+        mov ecx, AllocSize
       endif
       shr eax, $Log2(PAGESIZE)                          ;; Log2 PAGESIZE
       mov edx, -PAGESIZE
@@ -531,7 +531,7 @@ else
   StackAlloc macro AllocSize:req
   % ??Attributes = opattr(AllocSize)
     if ??Attributes eq 00100100y                        ;; Constant expression
-      ??AllocSize = (AllocSize + 2*@WordSize - 1)/2*@WordSize ;; Multiple of @WordSize
+      ??AllocSize = ((AllocSize + @WordSize - 1)/@WordSize)*@WordSize ;; Multiple of @WordSize
       if ??AllocSize gt PAGESIZE
         ??StackCorr = PAGESIZE
         repeat ??AllocSize/PAGESIZE

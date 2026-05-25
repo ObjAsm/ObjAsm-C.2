@@ -107,7 +107,7 @@ ObjectEnd
 ; Macro:      .ColForEach
 ; Purpose:    Loops through all items of the collection.
 ; Arguments:  Arg1: Collection.
-;             Arg2: Optional 32 bit index variable/register. Cannot be eax!
+;             Arg2: Optional 32-bit index variable/register. Cannot be eax!
 ; Return:     Nothing.
 ; Note:       - On each loop xax -> collection item.
 ;             - If Arg1 is a POINTER, load it in an unused register and pass [reg] as argument.
@@ -152,7 +152,7 @@ endm
 ; Macro:      .ColForEachRev
 ; Purpose:    Loops through all items of the collection in reverse order.
 ; Arguments:  Arg1: Collection.
-;             Arg2: Optional 32 bit index variable/register. Cannot be eax!
+;             Arg2: Optional 32-bit index variable/register. Cannot be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> collection item.
 

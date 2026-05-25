@@ -3750,7 +3750,7 @@ IF  __CUDA_API_VERSION GE 5050
 ; *
 ; * If the call is successful, the caller owns the returned CUlinkState, which
 ; * should eventually be destroyed with ::cuLinkDestroy.  The
-; * device code machine size (32 or 64 bit) will match the calling application.
+; * device code machine size (32-bit or 64-bit) will match the calling application.
 ; *
 ; * Both linker and compiler options may be specified.  Compiler options will
 ; * be applied to inputs to this linker action which must be compiled from PTX.

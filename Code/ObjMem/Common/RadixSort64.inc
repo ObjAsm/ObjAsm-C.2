@@ -23,7 +23,7 @@ ResetRadixCounters macro
 endm                                                    ;On exit, eax = 0
 
 
-;Calc 32 bit data radix counts
+;Calc 32-bit data radix counts
 CountRadixData32 macro Arg:req, Src:req                 ;On entry eax must be zero
   .repeat                                               ;rax = 0
     movzx rcx, BYTE ptr [Src + rax + Arg]
@@ -33,7 +33,7 @@ CountRadixData32 macro Arg:req, Src:req                 ;On entry eax must be ze
   .until ZERO?
 endm
 
-;Calc 64 bit data radix counts
+;Calc 64-bit data radix counts
 CountRadixData64 macro Arg:req, Src:req                 ;On entry eax must be zero
   .repeat                                               ;rax = 0
     movzx rcx, BYTE ptr [Src + rax + Arg]
@@ -97,7 +97,7 @@ GetRadixCountToIndexNegFirst macro RevNegFloatOrder:=<FALSE>
 endm
 
 
-;Sort 32 bit data from Src to Dst buffer using the radix indices
+;Sort 32-bit data from Src to Dst buffer using the radix indices
 SortRadixData32 macro Arg:req, Dst:req, Src:req, RevNegFloatOrder:=<FALSE>
   shl rdx, $Log2(Sizeof(DWORD))                         ;rdx = (Count - 1)*sizeof(DWORD)
   .repeat
@@ -115,7 +115,7 @@ SortRadixData32 macro Arg:req, Dst:req, Src:req, RevNegFloatOrder:=<FALSE>
   .until SIGN?
 endm
 
-;Sort 64 bit data from Src to Dst buffer using the radix indices
+;Sort 64-bit data from Src to Dst buffer using the radix indices
 SortRadixData64 macro Arg:req, Dst:req, Src:req, RevNegFloatOrder:=<FALSE>
   shl rdx, $Log2(Sizeof(QWORD))                         ;rdx = (Count - 1)*sizeof(QWORD)
   .repeat
@@ -128,7 +128,7 @@ SortRadixData64 macro Arg:req, Dst:req, Src:req, RevNegFloatOrder:=<FALSE>
         add rax, rbx
       .endif
     endif
-    mrm QWORD ptr [Dst + rax*sizeof(QWORD)], [Src + rdx], rcx   ;Copy 64 bit data
+    mrm QWORD ptr [Dst + rax*sizeof(QWORD)], [Src + rdx], rcx   ;Copy 64-bit data
     sub edx, sizeof(QWORD)                              ;Loop until all data was processed
   .until SIGN?
 endm
@@ -153,20 +153,20 @@ SortRadixPtr macro Arg:req, Dst:req, Src:req, RevNegFloatOrder:=<FALSE>
 endm
 
 
-;32 bit data radix pass
+;32-bit data radix pass
 RadixPass32 macro Arg:req, Dst:req, Src:req
   ResetRadixCounters
   CountRadixData32 Arg, Src
   GetRadixCountToIndex
-  SortRadixData32 Arg, Dst, Src                         ;Copy data (32 bit data)
+  SortRadixData32 Arg, Dst, Src                         ;Copy data (32-bit data)
 endm
 
-;64 bit data radix pass
+;64-bit data radix pass
 RadixPass64 macro Arg:req, Dst:req, Src:req
   ResetRadixCounters
   CountRadixData64 Arg, Src
   GetRadixCountToIndex
-  SortRadixData64 Arg, Dst, Src                         ;Copy data (64 bit data)
+  SortRadixData64 Arg, Dst, Src                         ;Copy data (64-bit data)
 endm
 
 ;Pointed data radix pass

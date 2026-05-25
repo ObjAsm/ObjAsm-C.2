@@ -16,7 +16,7 @@ REM_SIGN  equ 2
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  syooDivRem / soqqDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instr.
-;             (256/128 bit) Dividend divided by (128/64 bit) Divisor = (128/64 bit) Quotient. 
+;             (256/128-bit) Dividend divided by (128/64-bit) Divisor = (128/64-bit) Quotient. 
 ; Arguments:  Arg1: Dividend signed low low word.
 ;             Arg2: Dividend signed high low word.
 ;             Arg3: Dividend signed low high word.

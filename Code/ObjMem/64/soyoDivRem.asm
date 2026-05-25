@@ -15,7 +15,7 @@ ProcName textequ <soyoDivRem>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  soyoDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instrunction.
-;             (256 bit) Dividend divided by (128 bit) Divisor = (128 bit) Quotient. 
+;             (256-bit) Dividend divided by (128-bit) Divisor = (128-bit) Quotient. 
 ; Arguments:  Arg1: Dividend signed low low word.
 ;             Arg2: Dividend signed high low word.
 ;             Arg3: Dividend signed low high word.

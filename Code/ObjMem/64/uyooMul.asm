@@ -15,7 +15,7 @@ ProcName textequ <uyooMul>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uyooMul
 ; Purpose:    Multiply 2 unsigned OWORDs with extended precision.
-;             (128 bit) Multiplicand multiplied by (128 bit) Multiplier = (256 bit) Product.
+;             (128-bit) Multiplicand multiplied by (128-bit) Multiplier = (256-bit) Product.
 ; Arguments:  Arg1: Multiplicand low unsigned word.
 ;             Arg2: Multiplicand high unsigned word.
 ;             Arg3: Multiplier low unsigned word.

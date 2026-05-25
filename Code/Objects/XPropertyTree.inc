@@ -90,7 +90,7 @@ ObjectEnd
 ; Features:
 ; --------
 ; - Same as XTreeView.
-; - Support for strings/32 bit integers/REAL4 floating point numbers/paths/files/colors and
+; - Support for strings/32-bit integers/REAL4 floating point numbers/paths/files/colors and
 ;   customized input.
 ;
 ; Some rules:

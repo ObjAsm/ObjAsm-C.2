@@ -139,7 +139,7 @@ LPDISPPARAMS typedef ptr DISPPARAMS
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     SUCCEEDED
 ; Purpose:   Check if HRESULT indicates succeed condition.
-; Arguments: Arg1: 32 bit register.
+; Arguments: Arg1: 32-bit register.
 
 SUCCEEDED macro Arg
   ifnb <Arg>
@@ -151,7 +151,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     SUCCEEDED
 ; Purpose:   Check if HRESULT indicates failed condition.
-; Arguments: Arg1: 32 bit register.
+; Arguments: Arg1: 32-bit register.
 
 FAILED macro Arg
   ifnb <Arg>

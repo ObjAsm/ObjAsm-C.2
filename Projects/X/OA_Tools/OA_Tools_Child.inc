@@ -468,9 +468,9 @@ Method OAT_Child.Run, uses xbx xsi
   .ifBitSet [xsi].dFlags, OATF_TEST_MX
     invoke StrCCatA, xbx, $OfsCStrA("Mixed mode, "), lengthof cInfo
   .elseIfBitSet [xsi].dFlags, OATF_TEST_32
-    invoke StrCCatA, xbx, $OfsCStrA("32 bit mode, "), lengthof cInfo
+    invoke StrCCatA, xbx, $OfsCStrA("32-bit mode, "), lengthof cInfo
   .elseIfBitSet [xsi].dFlags, OATF_TEST_64
-    invoke StrCCatA, xbx, $OfsCStrA("64 bit mode, "), lengthof cInfo
+    invoke StrCCatA, xbx, $OfsCStrA("64-bit mode, "), lengthof cInfo
   .endif
 
   .ifBitSet [xsi].dFlags, OATF_TEST_MTD

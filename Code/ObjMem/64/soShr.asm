@@ -21,7 +21,7 @@
 .code
 align ALIGN_CODE
 soShr proc
-; Handle shifts of 128 bits or more (if shifting 128 bits or more, the result
+; Handle shifts of 128-bits or more (if shifting 128-bits or more, the result
 ; depends only on the high order bit of rdx).
   .if cl < 128
     .if cl < 64

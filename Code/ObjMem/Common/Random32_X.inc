@@ -16,7 +16,7 @@ externdef dRandomSeed:DWORD
 .code
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  Random32
-; Purpose:    Generate a random 32 bit number in a given range [0..Limit-1].
+; Purpose:    Generate a random 32-bit number in a given range [0..Limit-1].
 ;             Park Miller random number algorithm. Written by Jaymeson Trudgen (NaN) and optimized
 ;             by Rickey Bowers Jr. (bitRAKE).
 ; Arguments:  Arg1: Range limit (max. = 07FFFFFFFh).

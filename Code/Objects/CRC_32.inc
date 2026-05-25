@@ -2,7 +2,7 @@
 ; Title:      CRC_32.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm support of 32 bit CRC objects.
+; Purpose:    ObjAsm support of 32-bit CRC objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
 ; ==================================================================================================
@@ -10,7 +10,7 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     CRC_32
-; Purpose:    Implement an object to calculate a 32 bit CRC value of a data stream.
+; Purpose:    Implement an object to calculate a 32-bit CRC value of a data stream.
 ; Link:       http://www.geocities.com/SiliconValley/Pines/8659/crc.htm
 
 Object CRC_32, CRC_32ID, Primer

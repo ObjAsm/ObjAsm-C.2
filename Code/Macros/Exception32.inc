@@ -2,7 +2,7 @@
 ; Title:      Exception32.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.1
-; Purpose:    ObjAsm 32 bit Exception Handling.
+; Purpose:    ObjAsm 32-bit Exception Handling.
 ; Notes:      Version C.1.1, March 2021
 ;               - .endc replaced by .endcatch and .endfy by .endfinally (HSE)
 ;             Version C.1.0, October 2017

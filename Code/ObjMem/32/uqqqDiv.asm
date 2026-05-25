@@ -14,7 +14,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqqqDiv
 ; Purpose:    Divide 2 unsigned QWORDs.
-;             (64 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 
+;             (64-bit) Dividend divided by (64-bit) Divisor = (64-bit) Quotient. 
 ; Arguments:  Arg1: Dividend unsigned low word.
 ;             Arg2: Dividend unsigned high word.
 ;             Arg3: Divisor unsigned low word.

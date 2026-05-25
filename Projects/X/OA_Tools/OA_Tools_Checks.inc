@@ -340,7 +340,7 @@ CheckRegInSentence macro
         .elseIfBitSet [xsi].dFlags, OATF_TEST_32
           cmp cl, 0                             ;Ignore mixed mode registers
           je @F
-          cmp cl, 64                            ;Ignore 64 bit registers
+          cmp cl, 64                            ;Ignore 64-bit registers
           je @F
         .endif
 

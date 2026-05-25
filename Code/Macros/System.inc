@@ -25,14 +25,14 @@
 ; SHORT                       |  S  | 16 bit | 16 bit
 ; USHORT, WORD                |  U  | 16 bit | 16 bit
 ; ----------------------------+-----+--------+-------
-; INT, LONG                   |  S  | 32 bit | 32 bit
-; UINT, ULONG, DWORD          |  U  | 32 bit | 32 bit
+; INT, LONG                   |  S  | 32-bit | 32-bit
+; UINT, ULONG, DWORD          |  U  | 32-bit | 32-bit
 ; ----------------------------+-----+--------+-------
-; INT_PTR, LONG_PTR, LPARAM   |  S  | 32 bit | 64 bit
-; UINT_PTR, ULONG_PTR, WPARAM |  U  | 32 bit | 64 bit
+; INT_PTR, LONG_PTR, LPARAM   |  S  | 32-bit | 64-bit
+; UINT_PTR, ULONG_PTR, WPARAM |  U  | 32-bit | 64-bit
 ; ----------------------------+-----+--------+-------
-; INT64, LONGLONG             |  S  | 64 bit | 64 bit
-; UINT64, ULONGLONG, QWORD    |  U  | 64 bit | 64 bit
+; INT64, LONGLONG             |  S  | 64-bit | 64-bit
+; UINT64, ULONGLONG, QWORD    |  U  | 64-bit | 64-bit
 
 
 ALIGN_CODE = @WordSize
@@ -549,7 +549,7 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
     else
       ifb <AuxReg>
         if TARGET_BITNESS eq 64
-          .err m2m - Not supported in 64 bit mode without an auxiliar register!
+          .err m2m - Not supported in 64-bit mode without an auxiliar register!
         else
           if ($$SrcSize eq @WordSize) and ($$DstSize eq @WordSize)
             push DWORD ptr SrcMem
@@ -786,7 +786,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
         $$LstRegMM textequ s2sCpy(vmovlps, vmovlps, $SubRegMM, mmword, 16, Dst, Src, %$$LstRegMM, %$$RegCntMM)
       endif
     else
-      ;In 64 bit: try first with gp registers and then with mm registers
+      ;In 64-bit: try first with gp registers and then with mm registers
       if $$RegCntGP ne 0
         $$LstRegGP textequ s2sCpy(mov, mov, $SubReg, QWORD, 8, Dst, Src, %$$LstRegGP, %$$RegCntGP)
       elseif $$RegCntMM ne 0
@@ -2994,7 +2994,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      RGB2BGR
 ; Purpose:    Convert the color from RGB to BGR as it is usually stored in memory.
-; Arguments:  Arg1: 32 bit register containeing the RGB/BRG color.
+; Arguments:  Arg1: 32-bit register containeing the RGB/BRG color.
 
 RGB2BGR macro Reg32                                     ;; AA RR GG BB
   rol Reg32, 8                                          ;; RR GG BB AA
@@ -4305,7 +4305,7 @@ LocReg macro ExpressionList:vararg
       %elseifidni <$$RegName>, <$SubReg($$RegName, 4)>
         %local $$SymName:DWORD
       %elseifidni <$$RegName>, <$SubReg($$RegName, 8)>
-        local $$SymName:DWORD                           ;Must be 32 bit
+        local $$SymName:DWORD                           ;Must be 32-bit
       else
         echo $$RegName - Unknown register size
       endif
@@ -4328,7 +4328,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $LocReg32
-; Purpose:    Replaces the Expression with the corresponding local or 32 bit register.
+; Purpose:    Replaces the Expression with the corresponding local or 32-bit register.
 ; Arguments:  SymbolName declared with LocReg.
 
 $LocReg32 macro SymbolName
@@ -4397,7 +4397,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $ArgReg32
-; Purpose:    Replaces the Expression with the corresponding argument or 32 bit register.
+; Purpose:    Replaces the Expression with the corresponding argument or 32-bit register.
 ; Arguments:  SymbolName.
 
 $ArgReg32 macro SymbolName
@@ -4436,7 +4436,7 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      pushaq
-; Purpose:    Simile to pushad but for 64 bit. Order of pushed values equal to pushad.
+; Purpose:    Simile to pushad but for 64-bit. Order of pushed values equal to pushad.
 ; Arguments:  None.
 ; Note:       rsp is not the value of the instruction begin, like it is using pushad.
 
@@ -4461,7 +4461,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      popaq
-; Purpose:    Simile to popaq but for 64 bit.
+; Purpose:    Simile to popaq but for 64-bit.
 ; Arguments:  None.
 
 popaq macro

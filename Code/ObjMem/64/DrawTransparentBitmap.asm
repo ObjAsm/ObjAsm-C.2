@@ -47,7 +47,7 @@ DrawTransparentBitmap proc hDC:HDC, hBitmap:HBITMAP, xStart:DWORD, yStart:DWORD,
   invoke DPtoLP, hTempDC, addr PntSize, 1                 ;Convert from device to
                                                           ; logical points
   ; WARNING: This function fails if the device coordinates exceed 27 bits, or if the
-  ;          converted logical coordinates exceed 32 bits. In the case of such an overflow,
+  ;          converted logical coordinates exceed 32-bits. In the case of such an overflow,
   ;          the results for all the points are undefined.
 
   ; Create some DCs to hold temporary data.

@@ -21,7 +21,7 @@
 .code
 align ALIGN_CODE
 IsLeapYear proc dYear:DWORD
-  ?mov ecx, dYear                                       ;In 32 bit, load ecx with the year
+  ?mov ecx, dYear                                       ;In 32-bit, load ecx with the year
   mov eax, ecx
   cDivMod 100                                           ;Calc eax = Year/100, edx = Year mod 100
   test edx, edx

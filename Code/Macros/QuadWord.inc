@@ -60,7 +60,7 @@ endm
 
 qdmov macro qWrd:req, dWrd:req
   ifidni <qWrd>, <edx:eax>
-    mov eax, (QUADWORD ptr qWrd2).LoDWord
+    mov eax, (QUADWORD ptr qWrd).LoDWord
     mov edx, 0                                          ;;Don't change flags
   else
     if (opattr dWrd) and 00010000b                      ;;is a register?
@@ -86,7 +86,7 @@ qShiftL macro
   test cx, 32                                           ;;Need to shift by another 32?
   jz   Done                                             ;;No, done.
   mov  edx, eax                                         ;;Left shift EDX:EAX
-  xor  eax, eax                                         ;;by 32 bits
+  xor  eax, eax                                         ;;by 32-bits
   Done:
 endm
 

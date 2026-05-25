@@ -130,7 +130,7 @@ Method TickCounter.Start, uses xbx xsi
       mov DWORD ptr [esi + sizeof DWORD].qTicksStart, edx
     else
       shl rdx, 32
-      or rax, rdx                                     ;Combine into 64 bit register
+      or rax, rdx                                     ;Combine into 64-bit register
       mov [rsi].qTicksStart, rax
     endif
     sub eax, eax                                      ;eax = 0
@@ -162,7 +162,7 @@ Method TickCounter.Stop, uses xbx xsi
       adc DWORD ptr [esi + sizeof DWORD].qTicksAcc, edx
     else
       shl rdx, 32
-      or rax, rdx                                     ;Combine into 64 bit register
+      or rax, rdx                                     ;Combine into 64-bit register
       sub rax, [rsi].qTicksStart
       sub rax, [rsi].qTicksLag
       add [rsi].qTicksAcc, rax

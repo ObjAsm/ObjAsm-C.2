@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
 ;             Version C.1.1, September 2019
-;               - Method "uses": skip 64 bit registers in 32 bit mode.
+;               - Method "uses": skip 64-bit registers in 32-bit mode.
 ;               - Undefined symbol warning added in $PushMethodArgs.
 ;             Version C.1.2, December 2020
 ;               - $MethodAddr can handle addresses of embedded objects.
@@ -16,10 +16,10 @@
 ;             Version C.1.4, August 2022
 ;               - Mitigation measures against multiple inclusion of object definition files.
 ;             Version C.1.5, September 2022
-;               - $PushMethodArgs renamend to $PushMethodArgs32 => intended for 32 bits.
-;               - Stack correction bug for vararg methods in 32 bit fixed.
+;               - $PushMethodArgs renamed to $PushMethodArgs32 => intended for 32-bits.
+;               - Stack correction bug for vararg methods in 32-bit fixed.
 ;             Version C.1.6, February 2025
-;               - SetObject corrected by HSE to support NameSapces.
+;               - SetObject corrected by HSE to support NameSpaces.
 ;             Version C.1.7, April 2025
 ;               - Override bug for Virtual methods corrected.
 ; ==================================================================================================
@@ -42,7 +42,7 @@
 ;  |    Table        ??EVENT_ENTRY #3                        ...          ...
 ;  |                 ...                                     ...          ...
 ;  |
-;  |  Object structures:  (64 bit offsets)
+;  |  Object structures:  (64-bit offsets)
 ;  |  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  |  Object Template (TPL)
 ;  |    (+00h) POINTER to the Dual Method Table (DMT) ---------
@@ -75,8 +75,8 @@
 P??EventEntry typedef ptr ??EVENT_ENTRY
 
 OBJECT_LOCK struc 1
-  dOwnerTheadID DWORD   ?
-  dLockCount    DWORD   ?
+  dOwnerThreadID  DWORD   ?
+  dLockCount      DWORD   ?
 OBJECT_LOCK ends
 POBJECT_LOCK typedef ptr OBJECT_LOCK
 
@@ -225,7 +225,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      BuildObjInherPath
-; Purpose:    Helper macro to put in 1 symbol the whole interitance path starting from Primer to
+; Purpose:    Helper macro to put in 1 symbol the whole inheritance path starting from Primer to
 ;             the final object and viceversa.
 ; Arguments:  Arg1: Mangled object name.
 ;             Arg2: Mangled ancestor name.
@@ -264,12 +264,12 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
     exitm
   endif
 
-  ??ObjName textequ ??ObjExpr                           ;;Global symbol used in all comming defs
+  ??ObjName textequ ??ObjExpr                           ;;Global symbol used in all coming defs
 
   %ifdef ??ObjExpr
     %??ObjName&_Error = ??OBJERR_REDEFINITION
     ??ObjRedefIndex = ??ObjRedefIndex + 1
-    @Err <Object Error: redefinition of ??ObjExpr>       ;;Alert about a second declaration
+    @Err <Object Error: redefinition of ??ObjExpr>      ;;Alert about a second declaration
     exitm
   endif
 
@@ -322,7 +322,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   %&??ObjName&_EvCount     = 0                          ;;Count of new added Events
 
   @CatStr(%??ObjName, <_InherFrwPath>) CatStr ??ObjName ;;Start forward path
-  @CatStr(%??ObjName, <_InherRevPath>) CatStr ??ObjName ;;Start forward path
+  @CatStr(%??ObjName, <_InherRevPath>) CatStr ??ObjName ;;Start reverse path
 
   if $$sz1 eq ??OBJERR_NONE
     if BuildObjInherPath(%??ObjName, %??AncName) eq FALSE
@@ -956,7 +956,7 @@ PrototypeMethod macro MglObjName:req, MtdName:req, Args:vararg
   endif
 
   if TARGET_BITNESS eq 32
-    if $$Flag eq FALSE                                  ;;In 32 bit, vararg requires c calling conv.
+    if $$Flag eq FALSE                                  ;;In 32-bit, vararg requires c calling conv.
       %@CatStr(MglObjName, %??MtdPfx, MtdName) proto c, $$sz1
       %@CatStr(<TYPE_>, MglObjName, %??MtdPfx, MtdName) typedef proto c, $$sz1
     else
@@ -1299,7 +1299,7 @@ endm
 ; Purpose:    Return method type.
 ; Arguments:  Arg1: Mangled object name.
 ;             Arg2: Mangled method name.
-; Retrun:     ??MtdType: ??MTDTYPE_UNKNOWN, ..., ??MTDTYPE_DYNAMIC
+; Return:     ??MtdType: ??MTDTYPE_UNKNOWN, ..., ??MTDTYPE_DYNAMIC
 ;             ??ImpObj: Mangled object name that implements the method.
 
 GetMtdType macro MglObjName:req, MglMtdName:req
@@ -1322,7 +1322,7 @@ endm
 ; Purpose:    Check if a method of an object is obsolete or not.
 ; Arguments:  Arg1: Mangled object name.
 ;             Arg2: Mangled method name.
-; Retrun:     FALSE: is NOT an obsolete method, TRUE: it is an obsolete method.
+; Return:     FALSE: is NOT an obsolete method, TRUE: it is an obsolete method.
 
 $IsObsoleteMethod macro MglObjName:req, MglMtdName:req
   $$Found = FALSE
@@ -1353,7 +1353,7 @@ endm
 ;             if it is a private method.
 ; Arguments:  Arg1: Mangled object name.
 ;             Arg2: Mangled method name.
-; Retrun:     TRUE: it is a virtual method, FALSE: is NOT a virtual method.
+; Return:     TRUE: it is a virtual method, FALSE: is NOT a virtual method.
 
 $IsPrivateMethod macro MglObjName:req, MglMtdName:req
   $$Found = FALSE
@@ -1898,12 +1898,12 @@ Override macro DstExpression:req, SrcExpression:req
             @Err <Override Error: invalid method type DstExpression>
             exitm
           else
-            @Err <Override Error: unkown method DstExpression>
+            @Err <Override Error: unknown method DstExpression>
             exitm
           endif
         endif
       else
-       @Err <Override Error: unkown object DstExpression>
+       @Err <Override Error: unknown object DstExpression>
        exitm
       endif
     endif
@@ -2284,7 +2284,7 @@ Method macro Expression:req, MtdOpts:=<>, Args:vararg
         ??CurrFrame = 0
       else
         if @InStr(1, <MtdOpts>, <:>) ne 0
-          @Err <Method Error: incrorrect method options>
+          @Err <Method Error: incorrect method options>
           exitm
         else
           $$UseRegs textequ <MtdOpts>
@@ -2306,7 +2306,7 @@ Method macro Expression:req, MtdOpts:=<>, Args:vararg
       endif
     endif
 
-    ;Skip 64 bit registers (those starting with "r") in 32 bit mode
+    ;Skip 64-bit registers (those starting with "r") in 32-bit mode
     $$UseRegs32 textequ <>
     $$Flag = 0
     %forc $$Char, <$$UseRegs>
@@ -2727,7 +2727,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetInstance32
-; Purpose:    Helper macro for 32 bit that returns the instance pointer in a register.
+; Purpose:    Helper macro for 32-bit that returns the instance pointer in a register.
 ; Arguments:  Arg1: Instance name.
 ;             Arg2: Used register.
 
@@ -2753,7 +2753,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      GetInstance64
-; Purpose:    Helper macro for 64 bit that returns the instance pointer in the rcx register.
+; Purpose:    Helper macro for 64-bit that returns the instance pointer in the rcx register.
 ; Arguments:  Arg1: Instance name.
 
 GetInstance64 macro InsName:req
@@ -3023,7 +3023,7 @@ endm
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
 ; Return:     TRUE if the parsing was successful, otherwise FALSE.
 ;             ??InsExpr, ??ObjExpr, ??MtdExpr. (??ObjExpr and ??MtdExpr are mangled).
-; Notes:      The challange from this macro is to avoid symbol expansion. E.g. GetObject is the name
+; Notes:      The challenge from this macro is to avoid symbol expansion. E.g. GetObject is the name
 ;             of a well known api. When we use it as the name of a method, it will get expanded to
 ;             __imp_GetObjectA, Which causes problems when parsing the input expression.
 ;             Possible syntax combinations:
@@ -3095,7 +3095,7 @@ endm
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
 ; Return:     TRUE if the parsing was successful, otherwise FALSE.
 ;             ??InsExpr, ??ObjExpr, ??MtdExpr. (??ObjExpr and ??MtdExpr are mangled).
-; Notes:      The challange from this macro is to avoid symbol expansion. E.g. GetObject is the name
+; Notes:      The challenge from this macro is to avoid symbol expansion. E.g. GetObject is the name
 ;             of a well known api. When we use it as the name of a method, it will get expanded to
 ;             __imp_GetObjectA, Which causes problems when parsing the input expression.
 ;             Possible syntax combinations:
@@ -3239,7 +3239,7 @@ endm
 ; Arguments:  Arg1: Expression of the form: "NameSpace:ObjName"
 ; Return:     TRUE if the parsing was successful, otherwise FALSE.
 ;             ??ObjExpr (mangled).
-; Notes:      The challange from this macro is to avoid symbol expansion. E.g. GetObject is the name
+; Notes:      The challenge from this macro is to avoid symbol expansion. E.g. GetObject is the name
 ;             of a well known api. When we use it as the name of a method, it will get expanded to
 ;             __imp_GetObjectA, Which causes problems when parsing the input expression.
 ;             Possible syntax combinations:
@@ -3479,7 +3479,7 @@ ICall macro Expression:req, Args:vararg
         mov edx, [$$IName]                              ;;Make indirection
         call (??ImpIfc ptr [edx]).??MtdExpr
 ;        if $$StackCorr ne 0
-;          add esp, $$StackCorr                          ;;Correct the stack §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+;          add esp, $$StackCorr                          ;;Correct the stack !!!!!!!!!!!!!!!!!!!!!!
 ;        endif
       else
         $$ProcType CatStr <TYPE_>, ??ImpIfc, ??MtdExpr
@@ -3570,7 +3570,7 @@ endm
 UnlockObjectAccess macro ObjInst:req
   dec ObjInst.ObjLock.dLockCount
   .if ZERO?
-    lock and ObjInst.ObjLock.dOwnerTheadID, 0           ;;Should be a simple mov ********
+    lock and ObjInst.ObjLock.dOwnerTheadID, 0
   .endif
 endm
 

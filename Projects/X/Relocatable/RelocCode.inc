@@ -213,7 +213,7 @@ ApiRelCall macro FuncName:req, Args:vararg
   Delta xax, @CatStr(@SubStr(%FuncName, 7, $$Pos - 7), <_Addr>)
   call POINTER ptr [xax]
 
-  if ($$Attr and OAT_LANGUAGE) eq OAT_LANG_C            ;;Exist only in 32 bit
+  if ($$Attr and OAT_LANGUAGE) eq OAT_LANG_C            ;;Exist only in 32-bit
     ifnb <Args>
       $$Count = 0
       for $$Arg, <Args>

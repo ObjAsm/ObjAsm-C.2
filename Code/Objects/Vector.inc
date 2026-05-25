@@ -81,7 +81,7 @@ ObjectEnd
 ; Macro:      .VecForEach
 ; Purpose:    Loop through all items of the TVector.
 ; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
+;             Arg2: Optional 32-bit index variable/register. It can not be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> Vector item.
 ; Example:    .VecForEach MyVector::SortedDataVector
@@ -174,7 +174,7 @@ endm                                                    ;; xax -> allocated obje
 ; Macro:      .VecForEachRev
 ; Purpose:    Loop through all items of the TVector in reverse order.
 ; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
+;             Arg2: Optional 32-bit index variable/register. It can not be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> TVector item.
 

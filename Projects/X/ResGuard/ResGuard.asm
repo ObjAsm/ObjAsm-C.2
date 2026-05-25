@@ -303,7 +303,7 @@ MethodEnd
 ; Return:     Nothing.
 
 InvokeOriginalAPI macro ApiName, ArgCount
-  ;At this point, all args are stored on the stack. In 64 bit mode, this was done by the compiler
+  ;At this point, all args are stored on the stack. In 64-bit mode, this was done by the compiler
   if TARGET_BITNESS eq 32
     Cnt = ArgCount
     repeat ArgCount                                     ;;Push all arguments creating a new call stack

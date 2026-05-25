@@ -55,7 +55,7 @@ PPtoPxmProc typedef ptr PtoPxmProc
 ; --------------------------------------------------------------------------------------------------
 ; Object:     Pixelmap
 ; Purpose:    Implement a Pixelmap object. Pixelmaps have a pixel color resolution of 8
-;             bits per color channel and 8 bits for an alfa channel. Total color depth of 32 bits.
+;             bits per color channel and 8 bits for an alfa channel. Total color depth of 32-bits.
 ; Links:      - http://www.3dsoftware.com/Programming/WindowsAPI/DIB_Section/  => hSection info
 ;             - http://student.kuleuven.be/~m0216922/CG/index.html
 ;             - http://www.teamten.com/lawrence/graphics/gamma/

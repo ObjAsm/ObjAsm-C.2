@@ -15,7 +15,7 @@
 ;             Arg2: Multiplicand unsigned high word.
 ;             Arg3: Multiplier unsigned low word.
 ;             Arg4: Multiplier unsigned high word.
-; Return:     xbx:xcx:xdx:xax = Unsigned product (128/256 bit).
+; Return:     xbx:xcx:xdx:xax = Unsigned product (128/256-bit).
 ; Note:       Don't include xbx in the uses clause.
 
 .code

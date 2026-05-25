@@ -2,7 +2,7 @@
 
 comment * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-      WINDOWS.INC for 32 bit MASM (Version 1.5 RELEASE October 2011)
+      WINDOWS.INC for 32-bit MASM (Version 1.5 RELEASE October 2011)
 
       This version is compatible with ML.EXE Version 8.0
 
@@ -139,7 +139,7 @@ LANGID                      typedef WORD
 OLECHAR                     typedef WORD
 FILEOP_FLAGS                typedef WORD
 
-; 32 bit  DWORD
+; 32-bit  DWORD
 ; ~~~~~~
 ABORTPROC                   typedef DWORD
 ACCESS_MASK                 typedef DWORD
@@ -311,7 +311,7 @@ WNDPROC                     typedef DWORD
 WPARAM                      typedef DWORD
 YIELDPROC                   typedef DWORD
 
-; 64 bit
+; 64-bit
 ; ~~~~~~
 LONG64                      typedef QWORD
 ULONG64                     typedef QWORD
@@ -361,7 +361,7 @@ PROGRESS_QUIET                   equ 3
 
 comment * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-      WINDOWS.INC for 32 bit MASM (Version 1.5 RELEASE October 2011)
+      WINDOWS.INC for 32-bit MASM (Version 1.5 RELEASE October 2011)
 
       This version is compatible with ML.EXE Version 8.0
 
@@ -382,7 +382,7 @@ comment * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
       Short history.
 
-      WINDOWS.INC for 32 bit MASM (Version 1.5 RELEASE October 2011)
+      WINDOWS.INC for 32-bit MASM (Version 1.5 RELEASE October 2011)
 
       This version is compatible with ML.EXE Version 8.0
 

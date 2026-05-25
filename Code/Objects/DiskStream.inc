@@ -426,10 +426,10 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Seek
 ; Purpose:    Move file POINTER to a new position.
-; Arguments:  Arg1: New 64 bit position.
+; Arguments:  Arg1: New 64-bit position.
 ;             Arg2: Seek mode parameter [STM_BEGIN, STM_CURRENT, STM_END]
 ; Return:     Nothing.
-; Note:       In 32 bit mode, use the following syntax
+; Note:       In 32-bit mode, use the following syntax
 ;             OCall xdi::DiskStream.Seek, QWORD ptr 0, STM_BEGIN
 
 Method DiskStream.Seek,, sqPosition:SQWORD, dSeekMode:DWORD

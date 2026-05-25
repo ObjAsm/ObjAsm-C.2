@@ -143,7 +143,7 @@ CalcChecksum proc uses xbx pBuffer:POINTER, dLen:DWORD
     sub edx, sizeof(WORD)                               ;Buffersize is always multiple of 2
   .endw
 
-  ;Take only 16 bits out of the 32 bit sum and add up the carries
+  ;Take only 16 bits out of the 32-bit sum and add up the carries
   .repeat
     mov ecx, eax
     shr ecx, 16

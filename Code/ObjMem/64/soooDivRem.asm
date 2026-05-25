@@ -14,7 +14,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooDivRem
 ; Purpose:    Divide 2 signed OWORDs.
-;             (128 bit) Dividend divided by (128 bit) Divisor = (128 bit) Quotient. 
+;             (128-bit) Dividend divided by (128-bit) Divisor = (128-bit) Quotient. 
 ; Arguments:  Arg1: Dividend signed low word.
 ;             Arg2: Dividend signed high word.
 ;             Arg3: Divisor signed low word.

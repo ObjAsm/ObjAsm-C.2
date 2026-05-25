@@ -2,7 +2,7 @@
 ; Title:      ExceptionDemo.asm
 ; Author:     G. Friedrich, October 2017
 ; Version:    C.1.0
-; Purpose:    ObjAsm 64 bit exception handling demonstration.
+; Purpose:    ObjAsm 64-bit exception handling demonstration.
 ; ==================================================================================================
 
 

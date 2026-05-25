@@ -47,7 +47,7 @@ DEFAULT_WIDTH     equ     250
 DEFAULT_HEIGHT    equ     350
 
 
-OATF_TEST_MX      equ     BIT00                         ;Mixed mode, can be 32 bit or 64 bit mode
+OATF_TEST_MX      equ     BIT00                         ;Mixed mode, can be 32-bit or 64-bit mode
 OATF_TEST_32      equ     BIT01                         ;Only BIT00, BIT01 or BIT02 can be set simultaniouly
 OATF_TEST_64      equ     BIT02
 

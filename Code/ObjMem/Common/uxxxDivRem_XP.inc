@@ -67,7 +67,7 @@ Normalize endp
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uyooDivRem / uoqqDivRem
 ; Purpose:    Calculate an unsigned extended precision division, emulating the div x86 instr.
-;             (256/128 bit) Dividend divided by (128/64 bit) Divisor = (128/64 bit) Quotient. 
+;             (256/128-bit) Dividend divided by (128/64-bit) Divisor = (128/64-bit) Quotient. 
 ; Arguments:  Arg1: Dividend unsigned low low word.
 ;             Arg2: Dividend unsigned high low word.
 ;             Arg3: Dividend unsigned low high word.
@@ -218,7 +218,7 @@ endif
   mov xcx, uxDivisorHi
   mov xbx, uxDivisorLo
 
-; Check for case when divisor has only 32/64 bits
+; Check for case when divisor has only 32/64-bits
   or xbx, xbx
   jnz @@MustDoLongDivision
   div xcx

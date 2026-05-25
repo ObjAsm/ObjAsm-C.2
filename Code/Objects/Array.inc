@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.0, November 2017
 ;               - Initial release.
 ;             Version C.1.1 August 2021
-;               - Indexing bug in 64 bit corrected.
+;               - Indexing bug in 64-bit corrected.
 ;             Version C.1.2 September 2023
 ;               - DimResize bug corrected.
 ; ==================================================================================================

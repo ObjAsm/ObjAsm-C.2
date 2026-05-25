@@ -30,7 +30,7 @@ Method NetComAddrCollection.Compare,, pItem1:PNETCOMADDR, pItem2:PNETCOMADDR
   sub ax, [xdx].NETCOMADDR.wFamily
   .if ZERO?
     .if [xcx].NETCOMADDR.wFamily == AF_INET
-      mov eax, DWORD ptr [xcx].NETCOMADDR.Address          ;This address fits in a 32 bit register
+      mov eax, DWORD ptr [xcx].NETCOMADDR.Address          ;This address fits in a 32-bit register
       sub eax, DWORD ptr [xdx].NETCOMADDR.Address
       DbgHex eax,, "NetComAddrCollection"
 ;      .if ZERO?

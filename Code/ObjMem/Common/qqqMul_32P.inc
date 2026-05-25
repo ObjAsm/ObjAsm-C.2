@@ -12,7 +12,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqqqMul/sqqqMul
 ; Purpose:    Multiply 2 signed/unsigned QWORDs.
-;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product. 
+;             (64-bit) Multiplicand multiplied by (64-bit) Multiplier = (64-bit) Product. 
 ; Arguments:  Arg1: Multiplicand low signed/unsigned word.
 ;             Arg2: Multiplicand high signed/unsigned word.
 ;             Arg3: Multiplier low signed/unsigned word.

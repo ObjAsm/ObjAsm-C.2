@@ -16,7 +16,7 @@
 .code
 align ALIGN_CODE
 GetSystemMillis proc pDest:PDTL_MILLIS
-  invoke GetTickCount64                                 ;In 32 bit, the 64 bit counter value
+  invoke GetTickCount64                                 ;In 32-bit, the 64-bit counter value
   mov xcx, pDest                                        ; is returned in edx::eax
   if TARGET_BITNESS eq 32
     mov [xcx].DTL_MILLIS.dLow, eax

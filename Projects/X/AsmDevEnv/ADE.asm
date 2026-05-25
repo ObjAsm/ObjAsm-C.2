@@ -27,7 +27,7 @@
 ;   - SEH protection
 ;   - Find and Replace functionality
 ;   - ChildWnd magnetic snapping
-;   - 32 and 64 bit release versions
+;   - 32 and 64-bit release versions
 ;   - Fast loading (~100MB/s) and rendering
 ;   - WM_QUERYENDSESSION logic
 ;   - File.New now has the option to select the editor template

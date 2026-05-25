@@ -13,7 +13,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooDiv
 ; Purpose:    Divide 2 signed OWORDs.
-;             (128 bit) Dividend divided by (128 bit) Divisor = (128 bit) Quotient. 
+;             (128-bit) Dividend divided by (128-bit) Divisor = (128-bit) Quotient. 
 ; Arguments:  Arg1: Dividend unsigned low word.
 ;             Arg2: Dividend unsigned high word.
 ;             Arg3: Divisor unsigned low word.

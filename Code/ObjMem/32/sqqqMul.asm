@@ -17,7 +17,7 @@ TypeArg equ <SDWORD>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqMul
 ; Purpose:    Multiply 2 signed QWORDs.
-;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product.
+;             (64-bit) Multiplicand multiplied by (64-bit) Multiplier = (64-bit) Product.
 ; Arguments:  Arg1: Multiplicand low signed word.
 ;             Arg2: Multiplicand high signed word.
 ;             Arg3: Multiplier low signed word.

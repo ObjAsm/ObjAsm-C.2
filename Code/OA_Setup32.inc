@@ -2,7 +2,7 @@
 ; Title:      OA_Setup32.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm Model Setup for 32 bit.
+; Purpose:    ObjAsm Model Setup for 32-bit.
 ; Notes:      Version C.1.0, November 2017
 ;             - Initial release.
 ; ==================================================================================================

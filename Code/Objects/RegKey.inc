@@ -402,7 +402,7 @@ MethodEnd
 ; Method:     RegKey.ValueSetDW
 ; Purpose:    Write a DWORD to the registry key value.
 ; Arguments:  Arg1: -> Value name string.
-;             Arg2: 32 bit value to set.
+;             Arg2: 32-bit value to set.
 ; Return:     eax = Error code.
 
 Method RegKey.ValueSetDW, uses xsi, pValueName:PSTRING, dValue:DWORD
@@ -475,7 +475,7 @@ MethodEnd
 ; Method:     RegKey.ValueSetQW
 ; Purpose:    Write a QWORD to the registry key value.
 ; Arguments:  Arg1: -> Value name string.
-;             Arg2: 64 bit value.
+;             Arg2: 64-bit value.
 ; Return:     eax = Error code.
 
 Method RegKey.ValueSetQW, uses xsi, pValueName:PSTRING, qValue:QWORD

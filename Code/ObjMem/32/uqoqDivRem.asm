@@ -15,7 +15,7 @@ ProcName textequ <uqoqDivRem>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqoqDivRem
 ; Purpose:    Calculate an unsigned extended precision division, emulating the div x86 instrunction.
-;             (128 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 
+;             (128-bit) Dividend divided by (64-bit) Divisor = (64-bit) Quotient. 
 ; Arguments:  Arg1: Dividend unsigned low low word.
 ;             Arg2: Dividend unsigned high low word.
 ;             Arg3: Dividend unsigned low high word.

@@ -2,7 +2,7 @@
 ; Title:      Exception64.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.1
-; Purpose:    ObjAsm 64 bit Exception Handling. See ...Code\ObjMem\64\EHandler.asm
+; Purpose:    ObjAsm 64-bit Exception Handling. See ...Code\ObjMem\64\EHandler.asm
 ; Notes:      Version C.1.1, March 2021
 ;               - .endc replaced by .endcatch and .endfy by .endfinally (HSE)
 ; Notes:      Version 1.0.0, October 2017
@@ -101,7 +101,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      .endcatch
-; Purpose:    32 bit compatibility macro.
+; Purpose:    32-bit compatibility macro.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       This macro can be ommited.
@@ -136,7 +136,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      .endfinally
-; Purpose:    32 bit compatibility macro.
+; Purpose:    32-bit compatibility macro.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       This macro can be ommited.
@@ -146,7 +146,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateExceptionHandler
-; Purpose:    Dummy for compatibility with 64 bit.
+; Purpose:    Dummy for compatibility with 64-bit.
 ; Arguments:  Arg1: Name of the handler to be created.
 ;             Arg2: Address of Unwind code.
 ;             Arg3: List of exceptions codes to deal with.

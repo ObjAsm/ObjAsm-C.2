@@ -13,9 +13,9 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  MulDiv64
 ; Purpose:    Multiply 2 signed QWORDs and divide the product by another signed QWORD 
-;             with 128 bit precision.
-;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier divided by (64 bit) Divisor = 
-;             (128 bit) Result. 
+;             with 128-bit precision.
+;             (64-bit) Multiplicand multiplied by (64-bit) Multiplier divided by (64-bit) Divisor = 
+;             (128-bit) Result. 
 ; Arguments:  Arg1: Signed multiplicand.
 ;             Arg2: Signed multiplier.
 ;             Arg3: Signed divisor.

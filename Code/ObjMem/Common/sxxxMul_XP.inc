@@ -11,12 +11,12 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sooyMul / sqqoMul
 ; Purpose:    Calculate a signed extended precision multiplication, emulating the imul x86 instr.
-;             (128/64 bit) Multiplicand multiplied by (128/64 bit) Multiplier = (256/128 bit) Prod. 
+;             (128/64-bit) Multiplicand multiplied by (128/64-bit) Multiplier = (256/128-bit) Prod. 
 ; Arguments:  Arg1: Multiplicand signed low word.
 ;             Arg2: Multiplicand signed high word.
 ;             Arg3: Multiplier signed low word.
 ;             Arg4: Multiplier signed high word.
-; Return:     xbx:xcx:xdx:xax = Signed product (256/128 bit).
+; Return:     xbx:xcx:xdx:xax = Signed product (256/128-bit).
 ; Note:       Don't include xbx in the uses clause.
 .code
 align ALIGN_CODE

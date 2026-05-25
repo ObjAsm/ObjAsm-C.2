@@ -7,9 +7,9 @@
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
 ;             Version C.1.1, October 2019
-;               - Arithmetic bug in StopWatch.Stop 32 bit corrected.
+;               - Arithmetic bug in StopWatch.Stop 32-bit corrected.
 ;             Version C.1.2, June 2024
-;               - Arithmetic bug in StopWatch.Stop 64 bit corrected.
+;               - Arithmetic bug in StopWatch.Stop 64-bit corrected.
 ; ==================================================================================================
 
 
