@@ -18,12 +18,12 @@
 ; Notes:      Output = Arg1.
 
 Vec4_SquareMagnitude_SSE macro xSrcReg:req, xAuxReg:req
-  mulps xmm&xSrcReg, xmm&xSrcReg                        ;;square vector elements
-  movaps xmm&xAuxReg, xmm&xSrcReg                       ;;make a copy
-  shufps xmm&xSrcReg, xmm&xAuxReg, 01001110b            ;;first addition of elements using shuffle
+  mulps xmm&xSrcReg, xmm&xSrcReg                        ;; Square vector elements
+  movaps xmm&xAuxReg, xmm&xSrcReg                       ;; Make a copy
+  shufps xmm&xSrcReg, xmm&xAuxReg, 01001110b            ;; First addition of elements using shuffle
   addps xmm&xSrcReg, xmm&xAuxReg
-  movaps xmm&xAuxReg, xmm&xSrcReg                       ;;make a copy
-  shufps xmm&xAuxReg, xmm&xAuxReg, 00010001b            ;;second addition of elements using shuffle
+  movaps xmm&xAuxReg, xmm&xSrcReg                       ;; Make a copy
+  shufps xmm&xAuxReg, xmm&xAuxReg, 00010001b            ;; Second addition of elements using shuffle
   addps xmm&xSrcReg, xmm&xAuxReg
 endm
 
@@ -36,7 +36,7 @@ endm
 
 Vec4_Magnitude_SSE macro xSrcReg:req, xAuxReg:req
   Vec4_SquareMagnitude_SSE xSrcReg, xAuxReg
-  sqrtps xmm&xSrcReg, xmm&xSrcReg                       ;;get the square root
+  sqrtps xmm&xSrcReg, xmm&xSrcReg                       ;; Get the square root
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ endm
 ; Link:       http://www.3dbuzz.com/vbforum/showthread.php?104753-HowTo-Inline-Assembly-amp-SSE-Vector-normalization-done-fast!
 
 Vec4_Normalize_SSE macro xSrcReg:req, xAuxReg1:req, xAuxReg2:req
-  movaps xmm&xAuxReg2, xmm&xSrcReg                      ;;make a copy
+  movaps xmm&xAuxReg2, xmm&xSrcReg                      ;; Make a copy
   Vec4_SquareMagnitude_SSE xSrcReg, xAuxReg1
   rsqrtps xmm&xSrcReg, xmm&xSrcReg
   mulps xmm&xSrcReg, xmm&xAuxReg2
@@ -62,21 +62,37 @@ endm
 ;             Arg3..4: xmm auxiliary registers.
 ; Link:       http://neilkemp.us/src/sse_tutorial/sse_tutorial.html
 ; Notes:      Output = Arg1.
+;             The w component of the result is undefined (cross product is 3D).
+;             Shuffle encoding: bits[7:6]=lane3 bits[5:4]=lane2 bits[3:2]=lane1 bits[1:0]=lane0
+;             0xC9 = 11 00 10 01b -> [w, x, z, y]  (src lanes: 3,0,2,1)
+;             0xD2 = 11 01 00 10b -> [w, y, x, z]  (src lanes: 3,1,0,2)
 
-Vec4_CrossProduct_SSE macro xSrcReg1:req, xSrcReg2:req, xAuxReg1, xAuxReg2
-  movaps xmm&xAuxReg1, xmm&xSrcReg1                     ;;make a copy of vector 1
-  movaps xmm&xAuxReg2, xmm&xSrcReg2                     ;;make a copy of vector 2
+Vec4_CrossProduct_SSE macro xSrcReg1:req, xSrcReg2:req, xAuxReg1:req, xAuxReg2:req
+  movaps xmm&xAuxReg1, xmm&xSrcReg1                     ;; Make a copy of vector a [ax, ay, az, aw]
+  movaps xmm&xAuxReg2, xmm&xSrcReg2                     ;; Make a copy of vector b [bx, by, bz, bw]
 
-  shufps xmm&xSrcReg1, xmm&xSrcReg1, 11011000b          ;;flip the middle elements of 1
-  shufps xmm&xSrcReg2, xmm&xSrcReg2, 11100001b          ;;flip first two elements of 2
-  mulps  xmm&xSrcReg1, xmm&xSrcReg2                     ;;multiply the modified register vectors
+  ;;--- Minuend: (a shuffled) * (b shuffled) ---
+  ;; xSrcReg1 -> [ay, az, ax, aw]   (0xC9 = 11 00 10 01b)
+  ;; xSrcReg2 -> [bz, bx, by, bw]   (0xD2 = 11 01 00 10b)
+  ;; product  -> [ay*bz, az*bx, ax*by, aw*bw]
+  shufps xmm&xSrcReg1, xmm&xSrcReg1, 11001001b          ;; [ay, az, ax, aw]
+  shufps xmm&xSrcReg2, xmm&xSrcReg2, 11010010b          ;; [bz, bx, by, bw]
+  mulps  xmm&xSrcReg1, xmm&xSrcReg2                     ;; [ay*bz, az*bx, ax*by, aw*bw]
 
-  shufps xmm&xAuxReg1, xmm&xAuxReg1, 11100001b          ;;flip first two elements of the a copy
-  shufps xmm&xAuxReg2, xmm&xAuxReg2, 11011000b          ;;flip the middle elements of the b copy
-  mulps xmm&xAuxReg1, xmm&xAuxReg2                      ;;multiply the modified register vectors
+  ;;--- Subtrahend: (a copy shuffled) * (b copy shuffled) ---
+  ;; xAuxReg1 -> [az, ax, ay, aw]   (0xD2 = 11 01 00 10b)
+  ;; xAuxReg2 -> [by, bz, bx, bw]   (0xC9 = 11 00 10 01b)
+  ;; product  -> [az*by, ax*bz, ay*bx, aw*bw]
+  shufps xmm&xAuxReg1, xmm&xAuxReg1, 11010010b          ;; [az, ax, ay, aw]
+  shufps xmm&xAuxReg2, xmm&xAuxReg2, 11001001b          ;; [by, bz, bx, bw]
+  mulps  xmm&xAuxReg1, xmm&xAuxReg2                     ;; [az*by, ax*bz, ay*bx, aw*bw]
 
-  subps xmm&xSrcReg1, xmm&xAuxReg1                      ;;subtract the two resulting register vectors
+  ;;--- Result: minuend - subtrahend ---
+  ;; [ay*bz - az*by,  az*bx - ax*bz,  ax*by - ay*bx,  aw*bw - aw*bw]
+  ;;       cx                cy               cz             (undef)
+  subps  xmm&xSrcReg1, xmm&xAuxReg1                     ;; Cross product in lanes 0..2, lane 3 undef
 endm
+
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_DotProduct_SSE
@@ -155,21 +171,21 @@ endm
 ; Notes:      Output = Arg1..4 xmm registers holding the MAT44 rows.
 
 Mat44_Transpose_SSE macro xReg1:req, xReg2:req, xReg3:req, xReg4:req, xRegAux:req
-  movaps xmm&xRegAux, xmm&xReg3                         ;;xmm&xRegAux: c4 c3 c2 c1
-  punpckldq xmm&xReg3, xmm&xReg4                        ;;xmm&xReg3:   d2 c2 d1 c1
-  punpckhdq xmm&xRegAux, xmm&xReg4                      ;;xmm&xRegAux: d4 c4 d3 c3
+  movaps xmm&xRegAux, xmm&xReg3                         ;; xmm&xRegAux: c4 c3 c2 c1
+  punpckldq xmm&xReg3, xmm&xReg4                        ;; xmm&xReg3:   d2 c2 d1 c1
+  punpckhdq xmm&xRegAux, xmm&xReg4                      ;; xmm&xRegAux: d4 c4 d3 c3
 
-  movaps xmm&xReg4, xmm&xReg1                           ;;xmm&xReg4:   a4 a3 a2 a1
-  punpckldq xmm&xReg1, xmm&xReg2                        ;;xmm&xReg1:   b2 a2 b1 a1
-  punpckhdq xmm&xReg4, xmm&xReg2                        ;;xmm&xReg4:   b4 a4 b3 a3
+  movaps xmm&xReg4, xmm&xReg1                           ;; xmm&xReg4:   a4 a3 a2 a1
+  punpckldq xmm&xReg1, xmm&xReg2                        ;; xmm&xReg1:   b2 a2 b1 a1
+  punpckhdq xmm&xReg4, xmm&xReg2                        ;; xmm&xReg4:   b4 a4 b3 a3
 
-  movaps xmm&xReg2, xmm&xReg1                           ;;xmm&xReg2:   b2 a2 b1 a1
-  punpcklqdq xmm&xReg1, xmm&xReg3                       ;;xmm&xReg1:   d1 c1 b1 a1
-  punpckhqdq xmm&xReg2, xmm&xReg3                       ;;xmm&xReg2:   d2 c2 b2 a2
+  movaps xmm&xReg2, xmm&xReg1                           ;; xmm&xReg2:   b2 a2 b1 a1
+  punpcklqdq xmm&xReg1, xmm&xReg3                       ;; xmm&xReg1:   d1 c1 b1 a1
+  punpckhqdq xmm&xReg2, xmm&xReg3                       ;; xmm&xReg2:   d2 c2 b2 a2
 
-  movaps xmm&xReg3, xmm&xReg4                           ;;xmm&xReg3:   b4 a4 b3 a3
-  punpckhqdq xmm&xReg4, xmm&xRegAux                     ;;xmm&xReg4:   d4 c4 b4 a4
-  punpcklqdq xmm&xReg3, xmm&xRegAux                     ;;xmm&xReg3:   d3 c3 b3 a3
+  movaps xmm&xReg3, xmm&xReg4                           ;; xmm&xReg3:   b4 a4 b3 a3
+  punpckhqdq xmm&xReg4, xmm&xRegAux                     ;; xmm&xReg4:   d4 c4 b4 a4
+  punpcklqdq xmm&xReg3, xmm&xRegAux                     ;; xmm&xReg3:   d3 c3 b3 a3
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -209,10 +225,10 @@ Mat44_Mult_Vec4_SSE macro xCol1, xCol2, xCol3, xCol4, xVec, xAux1, xAux2, xAux3
   movaps xmm&xAux2, xmm&xVec
   movaps xmm&xAux3, xmm&xVec
 
-  shufps xmm&xVec,  xmm&xVec,  00000000b                ;;broadcast x
-  shufps xmm&xAux1, xmm&xAux1, 01010101b                ;;broadcast y
-  shufps xmm&xAux2, xmm&xAux2, 10101010b                ;;broadcast z
-  shufps xmm&xAux3, xmm&xAux3, 11111111b                ;;broadcast w
+  shufps xmm&xVec,  xmm&xVec,  00000000b                ;; Broadcast x
+  shufps xmm&xAux1, xmm&xAux1, 01010101b                ;; Broadcast y
+  shufps xmm&xAux2, xmm&xAux2, 10101010b                ;; Broadcast z
+  shufps xmm&xAux3, xmm&xAux3, 11111111b                ;; Broadcast w
 
   mulps xmm&xVec,  xmm&xCol1
   mulps xmm&xAux1, xmm&xCol2

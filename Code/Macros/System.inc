@@ -38,10 +38,10 @@
 ALIGN_CODE = @WordSize
 ALIGN_DATA = 2*@WordSize
 
-MAGICROP        equ    0B8074Ah                         ;Raster operation code that allows halftones
+MAGICROP        equ    0B8074Ah                         ; Raster operation code that allows halftones
 
 ;Equates for @Cpu symbol
-CPU_286         equ    0000000000000100y                ;Use: if @Cpu and CPU_xxx ...
+CPU_286         equ    0000000000000100y                ; Use: if @Cpu and CPU_xxx ...
 CPU_386         equ    0000000000001000y
 CPU_486         equ    0000000000010000y
 CPU_586         equ    0000000000100000y
@@ -66,28 +66,28 @@ R13_SUBREGS textequ <-R13-R13D-R13W-R13B->
 R14_SUBREGS textequ <-R14-R14D-R14W-R14B->
 R15_SUBREGS textequ <-R15-R15D-R15W-R15B->
 
-;Segment definitions:
-;https://learn.microsoft.com/en-en/windows/win32/debug/pe-format
-;https://www.plantation-productions.com/Webster/www.artofasm.com/DOS/ch08/CH08-2.html#HEADING2-1
+; Segment definitions:
+; https://learn.microsoft.com/en-en/windows/win32/debug/pe-format
+; https://www.plantation-productions.com/Webster/www.artofasm.com/DOS/ch08/CH08-2.html#HEADING2-1
 
-;Use different sections to cluster the data in each seg. and merge them using the linker (/merge)
-;Note: after the linker merged the segments, they lose their original alignment!
+; Use different sections to cluster the data in each seg. and merge them using the linker (/merge)
+; Note: after the linker merged the segments, they lose their original alignment!
 
-SEG_TEXT    segment readonly public 'CONST'             ;.rdata, initialized, merged
+SEG_TEXT    segment readonly public 'CONST'             ; .rdata, initialized, merged
 SEG_TEXT    ends
-SEG_OBJID   segment readonly public 'CONST'             ;Obj. IDs = .rdata, initialized, merged
+SEG_OBJID   segment readonly public 'CONST'             ; Obj. IDs = .rdata, initialized, merged
 SEG_OBJID   ends
-SEG_OBJERR  segment readonly public 'CONST'             ;Obj. Errors = .rdata, initialized, merged
+SEG_OBJERR  segment readonly public 'CONST'             ; Obj. Errors = .rdata, initialized, merged
 SEG_OBJERR  ends
-SEG_PROF    segment public 'DATA'                       ;Read/Write - Profile data = .data, uninit.
-SEG_PROF    ends                                        ;§§ should be moved to the .data? segment
+SEG_PROF    segment public 'DATA'                       ; Read/Write - Profile data = .data, uninit.
+SEG_PROF    ends
 
 ;The following segment not merged by the linker.
 ;This guarantees that the segment is loaded with proper alignment (the default is the page size
 ;for the architecture).
 ;https://learn.microsoft.com/en-us/windows/win32/debug/pe-format
-SEG_TEXT_ALIGN  segment readonly public                 ;Like SEG_TEXT but it is not merged by the
-SEG_TEXT_ALIGN  ends                                    ;linker otherwise it'll lose its alignment
+SEG_TEXT_ALIGN  segment readonly public                 ; Like SEG_TEXT but it is not merged by the
+SEG_TEXT_ALIGN  ends                                    ;  linker otherwise it'll lose its alignment
 
 
 ??WordChars textequ <ABCDEFGHIJKLMNOPQRSTUVWXYZ_?@>
@@ -113,29 +113,29 @@ FPU_CONTEXT struc 1
   tST5          TBYTE   ?
   tST6          TBYTE   ?
   tST7          TBYTE   ?
-  Filler        DWORD   ?                 ;108 + 4 = 112 => multiple of 16!
+  Filler        DWORD   ?                 ; 108 + 4 = 112 => multiple of 16!
 FPU_CONTEXT ends
 PFPU_CONTEXT typedef ptr FPU_CONTEXT
 
 FPU_CONTEXT_SIZE = sizeof(FPU_CONTEXT)
 
-XMM_CONTEXT_SIZE = 512                    ;Storage memory must be aligned to 16
+XMM_CONTEXT_SIZE = 512                    ; Storage memory must be aligned to 16
 
-??StackAlignCount = 0                     ;Used with StackAlign & StackRestore
+??StackAlignCount = 0                     ; Used with StackAlign & StackRestore
 
 
 ;OpAttr test values   '   '   '   '
-OAT_REFERENCE     equ 0000000000000001b   ;Reference to a code label
-OAT_RELOCATABLE   equ 0000000000000010b   ;Memory variable ([xyz] or xyz, can contain a reg. [xax])
-OAT_IMMEDIATE     equ 0000000000000100b   ;Immediate value
-OAT_DIRECT_MEM    equ 0000000000001000b   ;Uses direct memory addressing
+OAT_REFERENCE     equ 0000000000000001b   ; Reference to a code label
+OAT_RELOCATABLE   equ 0000000000000010b   ; Memory variable ([xyz] or xyz, can contain a reg. [xax])
+OAT_IMMEDIATE     equ 0000000000000100b   ; Immediate value
+OAT_DIRECT_MEM    equ 0000000000001000b   ; Uses direct memory addressing
 
-OAT_REGISTER      equ 0000000000010000b   ;Symbol is a register
-OAT_NO_ERROR      equ 0000000000100000b   ;References not undefined and whitout error, usually 1
-OAT_SS_RELATIVE   equ 0000000001000000b   ;SS relative
-OAT_EXTERNAL      equ 0000000010000000b   ;References to an external label
+OAT_REGISTER      equ 0000000000010000b   ; Symbol is a register
+OAT_NO_ERROR      equ 0000000000100000b   ; References not undefined and without error, usually 1
+OAT_SS_RELATIVE   equ 0000000001000000b   ; SS relative
+OAT_EXTERNAL      equ 0000000010000000b   ; References to an external label
 
-OAT_LANGUAGE      equ 0000011100000000b   ;Test value
+OAT_LANGUAGE      equ 0000011100000000b   ; Test value
 OAT_LANG_NONE     equ 0000000000000000b
 OAT_LANG_C        equ 0000000100000000b
 OAT_LANG_SYSCALL  equ 0000001000000000b
@@ -225,11 +225,11 @@ endif
 $ArgRev macro ArgList:vararg
   $$RevList textequ <>
   %for $$RevArg, <ArgList>
-    $$RevList CatStr <$$RevArg>, <!,>, $$RevList        ;;Add in reverse order
+    $$RevList CatStr <$$RevArg>, <!,>, $$RevList        ;; Add in reverse order
   endm
 
   ifnb $$RevList
-    $$RevList SubStr $$RevList, 1, @SizeStr(%$$RevList) - 1 ;;Trim last comma
+    $$RevList SubStr $$RevList, 1, @SizeStr(%$$RevList) - 1 ;; Trim last comma
   endif
 
   exitm <$$RevList>
@@ -425,9 +425,9 @@ PushAll macro ArgList:vararg
       else
         if $IsFloat($$Arg)
           db 68h
-          REAL4 $$Arg                                   ;;push REAL4 value
+          REAL4 $$Arg                                   ;; Push REAL4 value
         else
-          push $$Arg                                    ;;push one argument and repeat
+          push $$Arg                                    ;; Push one argument and repeat
         endif
       endif
     endif
@@ -442,7 +442,7 @@ endm
 
 PopAll macro ArgList:vararg
   %for $$Arg, <ArgList>
-    pop $$Arg                                           ;;push one argument and repeat
+    pop $$Arg                                           ;; Pop one argument and repeat
   endm
 endm
 
@@ -465,23 +465,23 @@ endm
 PopAllRev macro ArgList:vararg
   $$ArgList textequ $ArgRev(ArgList)
   %for $$Arg, <$$ArgList>
-    pop $$Arg                                           ;;pop one argument and repeat
+    pop $$Arg                                           ;; Pop one argument and repeat
   endm
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      c2m
 ; Purpose:    Move a constant value to a QWORD, DWORD, WORD or BYTE memory address.
-; Arguments:  Arg1: destination memory symbol.
-;             Arg2: source constant value.
-;             Arg3: register used to move the memory content. If not specified, r13 is used.
+; Arguments:  Arg1: Destination memory symbol.
+;             Arg2: Source constant value.
+;             Arg3: Optional register used to move the content. If not specified, r13 is used.
 ; Return:     Nothing.
 
 c2m macro DstMem:req, SrcCst:req, AuxReg
   $$DstSize = type(DstMem)
 
-  if (opattr SrcCst) and (OAT_IMMEDIATE or OAT_REFERENCE)  ;;Is an immediate or reference value
-    if (opattr DstMem) and OAT_REGISTER                    ;;If DstMem is a register
+  if (opattr SrcCst) and (OAT_IMMEDIATE or OAT_REFERENCE)  ;; Is an immediate or reference value
+    if (opattr DstMem) and OAT_REGISTER                 ;; If DstMem is a register
       .err c2m - destination argument is not a memory address
       exitm
     endif
@@ -492,7 +492,7 @@ c2m macro DstMem:req, SrcCst:req, AuxReg
       ifb <AuxReg>
         .err c2m - Auxiliary register required!
       else
-        mov $SubReg(AuxReg, 8), SrcCst                     ;;Use mov in combination with AuxReg
+        mov $SubReg(AuxReg, 8), SrcCst                  ;; Use mov in combination with AuxReg
         mov DstMem, $SubReg(AuxReg, 8)
       endif
     endif
@@ -514,7 +514,7 @@ endm
 
 m2m macro DstMem:req, SrcMem:req, AuxReg
   $$DstSize = type(DstMem)
-  if (opattr SrcMem) and (OAT_IMMEDIATE or OAT_REFERENCE)   ;;Is an immediate or reference value
+  if (opattr SrcMem) and (OAT_IMMEDIATE or OAT_REFERENCE)   ;; Is an immediate or reference value
     $$SrcSize = $$DstSize
   else
     $$SrcSize = type(SrcMem)
@@ -531,9 +531,9 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
     $$SrcSize = $$DstSize
   endif
 
-  if (opattr DstMem) and OAT_REGISTER                   ;;If DstMem is a register
+  if (opattr DstMem) and OAT_REGISTER                   ;; If DstMem is a register
     if $$DstSize eq $$SrcSize
-      mov DstMem, SrcMem                                ;;use mov
+      mov DstMem, SrcMem                                ;; Use mov
     elseif $$DstSize gt $$SrcSize
       if $$DstSize eq 8 and $$SrcSize eq 4
         mov $SubReg(DstMem, 4), SrcMem
@@ -545,21 +545,21 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
     endif
   else
     if ((opattr SrcMem) and OAT_REGISTER) and ($$DstSize eq $$SrcSize)
-      mov DstMem, SrcMem                                ;;use mov
+      mov DstMem, SrcMem                                ;; Use mov
     else
       ifb <AuxReg>
         if TARGET_BITNESS eq 64
-          .err m2m - Not supported in 64-bit mode without an auxiliar register!
+          .err m2m - Not supported in 64-bit mode without an auxiliary register!
         else
           if ($$SrcSize eq @WordSize) and ($$DstSize eq @WordSize)
             push DWORD ptr SrcMem
             pop DWORD ptr DstMem
           else
-            .err m2m - Can not transfer different different argument sizes without an auxiliar register!
+            .err m2m - cannot transfer different argument sizes without an auxiliary register!
           endif
         endif
       else
-        if (opattr SrcMem) and OAT_REGISTER             ;;If SrcMem is a register
+        if (opattr SrcMem) and OAT_REGISTER             ;; If SrcMem is a register
           if $$DstSize gt $$SrcSize
             if $$DstSize eq 8
               if $$SrcSize eq 4
@@ -568,7 +568,7 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
                 movzx $SubReg(AuxReg, 4), SrcMem
               endif
             else
-              movzx $SubReg(AuxReg, $$DstSize), SrcMem  ;;use movzx; sign expansion is not supported
+              movzx $SubReg(AuxReg, $$DstSize), SrcMem  ;; Use movzx; sign expansion is not supported
             endif
             mov DstMem, $SubReg(AuxReg, $$DstSize)
           elseif $$DstSize eq $$SrcSize
@@ -582,11 +582,11 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
               if $$DstSize le 4
                 mov DstMem, SrcMem
               else
-                mov $SubReg(AuxReg, $$SrcSize), SrcMem  ;;Use mov in combination with AuxReg
+                mov $SubReg(AuxReg, $$SrcSize), SrcMem  ;; Use mov in combination with AuxReg
                 mov DstMem, $SubReg(AuxReg, $$DstSize)
               endif
             else
-              mov $SubReg(AuxReg, $$SrcSize), SrcMem    ;;Use mov in combination with AuxReg
+              mov $SubReg(AuxReg, $$SrcSize), SrcMem    ;; Use mov in combination with AuxReg
               mov DstMem, $SubReg(AuxReg, $$DstSize)
             endif
           elseif $$DstSize gt $$SrcSize
@@ -597,7 +597,7 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
                 movzx $SubReg(AuxReg, 4), SrcMem
               endif
             else
-              movzx $SubReg(AuxReg, $$DstSize), SrcMem  ;;use movzx; sign expansion is not supported
+              movzx $SubReg(AuxReg, $$DstSize), SrcMem  ;; Use movzx; sign expansion is not supported
             endif
             mov DstMem, $SubReg(AuxReg, $$DstSize)
           else
@@ -610,8 +610,8 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
 endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      mrm
-; Purpose:    Move a QWORD, DWORD, WORD or BYTE value from a memory address to another using
-;             always the auxiliary register.
+; Purpose:    Move a QWORD, DWORD, WORD or BYTE value from a memory address to another always using
+;             the auxiliary register.
 ; Arguments:  Arg1: destination memory symbol.
 ;             Arg2: source memory symbol.
 ;             Arg3: register used to move the memory content.
@@ -619,7 +619,7 @@ endm
 
 mrm macro DstMem:req, SrcMem:req, AuxReg:req
   $$DstSize = type(DstMem)
-  if (opattr SrcMem) and (OAT_IMMEDIATE or OAT_REFERENCE)   ;;Is an immediate or reference value
+  if (opattr SrcMem) and (OAT_IMMEDIATE or OAT_REFERENCE)   ;; Is an immediate or reference value
     $$SrcSize = $$DstSize
   else
     $$SrcSize = type(SrcMem)
@@ -635,24 +635,24 @@ mrm macro DstMem:req, SrcMem:req, AuxReg:req
     $$SrcSize = $$DstSize
   endif
 
-  if (opattr DstMem) and OAT_REGISTER                   ;;If DstMem is a register
+  if (opattr DstMem) and OAT_REGISTER                   ;; If DstMem is a register
     if $$DstSize eq $$SrcSize
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
-      mov DstMem, SrcMem
-    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;;Special case
+      mov DstMem, $SubReg(AuxReg, $$SrcSize)
+    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;; Special case
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
-      mov $SubReg(DstMem, $$SrcSize), SrcMem            ;;High32 are zeroed automatically by the CPU
+      mov $SubReg(DstMem, $$SrcSize), SrcMem            ;; High32 are zeroed automatically by the CPU
     elseif $$DstSize gt $$SrcSize
       movzx $SubReg(AuxReg, $$DstSize), SrcMem
       mov DstMem, $SubReg(AuxReg, $$DstSize)
     else
       .err mrm - destination size is smaller than source size!
     endif
-  elseif (opattr SrcMem) and OAT_REGISTER               ;;If SrcMem is a register
+  elseif (opattr SrcMem) and OAT_REGISTER               ;; If SrcMem is a register
     if $$DstSize eq $$SrcSize
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
       mov DstMem, $SubReg(AuxReg, $$SrcSize)
-    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;;Special case
+    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;; Special case
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
       mov DstMem, $SubReg(AuxReg, $$DstSize)
     elseif $$DstSize gt $$SrcSize
@@ -665,7 +665,7 @@ mrm macro DstMem:req, SrcMem:req, AuxReg:req
     if $$DstSize eq $$SrcSize
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
       mov DstMem, $SubReg(AuxReg, $$SrcSize)
-    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;;Special case
+    elseif $$DstSize eq 8 and $$SrcSize eq 4            ;; Special case
       mov $SubReg(AuxReg, $$SrcSize), SrcMem
       mov DstMem, $SubReg(AuxReg, $$DstSize)
     elseif $$DstSize gt $$SrcSize
@@ -699,11 +699,11 @@ endm
 ;             Try using vmovdqu later.
 
 s2sCpy macro Get, Put, RegSelector, RegType, UsedRegSize, DstStruc, SrcStruc, RegList, RegCnt
-  ;Do copy using the indicated registers and instructions
+  ;; Do copy using the indicated registers and instructions
   $$RegsUsed = 0
   $$RegSize = type(RegType)
   repeat ((($$DstStrucSize and -$$RegSize)/$$RegSize) + RegCnt - 1)/RegCnt
-    ;Load into registers
+    ;; Load into registers
     for $$Reg, <RegList>
       if $$SrcStrucSize ge $$RegSize
         Get RegSelector($$Reg, UsedRegSize), RegType ptr SrcStruc[$$SrcOffset]
@@ -711,11 +711,11 @@ s2sCpy macro Get, Put, RegSelector, RegType, UsedRegSize, DstStruc, SrcStruc, Re
         $$SrcOffset = $$SrcOffset + $$RegSize
         $$RegsUsed = $$RegsUsed + 1
         if $$RegsUsed gt RegCnt
-          $$RegsUsed = 1                                ;Cycle again from the beginning
+          $$RegsUsed = 1                                ;; Cycle again from the beginning
         endif
       endif
     endm
-    ;Write to memory
+    ;; Write to memory
     for $$Reg, <RegList>
       if $$DstStrucSize ge $$RegSize
         Put RegType ptr DstStruc[$$DstOffset], RegSelector($$Reg, UsedRegSize)
@@ -725,7 +725,7 @@ s2sCpy macro Get, Put, RegSelector, RegType, UsedRegSize, DstStruc, SrcStruc, Re
     endm
   endm
 
-  ;Rotate regs if necessary
+  ;; Rotate regs if necessary
   if $$RegsUsed eq 1
     if RegCnt gt 1
       $$Pos1 instr 1, <RegList>, <,>
@@ -740,7 +740,7 @@ s2sCpy macro Get, Put, RegSelector, RegType, UsedRegSize, DstStruc, SrcStruc, Re
 endm
 
 s2s macro Dst:req, Src:req, RegList:vararg
-  ;Build register lists
+  ;; Build register lists
   $$LstRegMM textequ <>
   $$RegCntMM = 0
   $$LstRegGP textequ <>
@@ -763,30 +763,30 @@ s2s macro Dst:req, Src:req, RegList:vararg
     $$LstRegGP SubStr $$LstRegGP, 2
   endif
 
-  ;Start copying
+  ;; Start copying
   $$SrcStrucSize = type(Src)
   $$DstStrucSize = type(Dst)
 
-  ;*************************************************************************************************
+  ;; *************************************************************************************************
   $$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
-  ;*************************************************************************************************
+  ;; *************************************************************************************************
 
   if $$SrcStrucSize eq $$DstStrucSize
     $$SrcOffset = 0
     $$DstOffset = 0
-    ;32 and 16 bytes: try first with mm registers
+    ;; 32 and 16 bytes: try first with mm registers
     if $$RegCntMM ne 0
       $$LstRegMM textequ s2sCpy(vmovups, vmovups, $SubRegMM, ymmword, 32, Dst, Src, %$$LstRegMM, %$$RegCntMM)
       $$LstRegMM textequ s2sCpy(vmovups, vmovups, $SubRegMM, xmmword, 16, Dst, Src, %$$LstRegMM, %$$RegCntMM)
     endif
 
-    ;8 bytes:
+    ;; 8 bytes:
     if TARGET_BITNESS eq 32
       if $$RegCntMM ne 0
         $$LstRegMM textequ s2sCpy(vmovlps, vmovlps, $SubRegMM, mmword, 16, Dst, Src, %$$LstRegMM, %$$RegCntMM)
       endif
     else
-      ;In 64-bit: try first with gp registers and then with mm registers
+      ;; In 64-bit: try first with gp registers and then with mm registers
       if $$RegCntGP ne 0
         $$LstRegGP textequ s2sCpy(mov, mov, $SubReg, QWORD, 8, Dst, Src, %$$LstRegGP, %$$RegCntGP)
       elseif $$RegCntMM ne 0
@@ -794,7 +794,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
       endif
     endif
 
-    ;Rest: use always general purpose registers
+    ;; Rest: use always general purpose registers
     if $$RegCntGP ne 0
       $$LstRegGP textequ s2sCpy(mov, mov, $SubReg, DWORD, 4, Dst, Src, %$$LstRegGP, %$$RegCntGP)
       $$LstRegGP textequ s2sCpy(mov, mov, $SubReg,  WORD, 2, Dst, Src, %$$LstRegGP, %$$RegCntGP)
@@ -941,7 +941,7 @@ FillStringB macro StrVar:req, Text:req
     mov DCHRW ptr StrVar[(??StrLen - 1)*2 + 4], $$j
   endif
 
-  mov DWORD ptr StrVar[0], 2*??StrLen                      ;;Set byte count
+  mov DWORD ptr StrVar[0], 2*??StrLen                      ;; Set byte count
   ??StrSize = sizeof(CHRW)*(??StrLen + 1) + sizeof(DWORD)
 endm
 
@@ -1114,7 +1114,7 @@ DoesTextMatchA? macro StrVar:req, Text:req, NoMatchLabel
     if ($$i and 3) eq 3
       cmp QCHRA ptr StrVar[($$i and -4)], $$j
       ifb <NoMatchLabel>
-        if $$k ne $$i + 1                               ;;Supress last "jne" instruction
+        if $$k ne $$i + 1                               ;; Suppress last "jne" instruction
           jne ExitLabel
         endif
       else
@@ -1173,7 +1173,7 @@ DoesTextMatchW? macro StrVar:req, Text:req, NoMatchLabel
     if ($$i and 1) eq 1
       cmp DCHRW ptr StrVar[($$i and -2)*2], $$j
       ifb <NoMatchLabel>
-        if $$k ne $$i + 1                               ;;Supress last "jne" instruction
+        if $$k ne $$i + 1                               ;; Suppress last "jne" instruction
           jne ExitLabel
         endif
       else
@@ -1234,7 +1234,7 @@ DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel
     if ($$i and 3) eq 3
       cmp QCHRA ptr StrVar[($$i and -4)], $$j
       ifb <NoMatchLabel>
-        if @SizeStr(&Text) ne $$i                       ;;Supress last "jne"
+        if @SizeStr(&Text) ne $$i                       ;; Suppress last "jne"
           jne ExitLabel
         endif
       else
@@ -1415,20 +1415,20 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
     $$CHR textequ <CHRW>
   endif
 
-  ;;Scan for ¦AT, ¦MT or ¦BI. They require pBegin
-  $$WF_Replace = 0                                      ;;Replace flag
+  ;; Scan for ¦AT, ¦MT or ¦BI. They require pBegin
+  $$WF_Replace = 0                                      ;; Replace flag
   $$WF_CharCount = 0
   $$WF_ReplType textequ <>
   $$BeginRequired = 0
   forc $$WF_Character, <Format>
     if $$BeginRequired eq 0
       $$WF_CharCount = $$WF_CharCount + 1
-      if $$WF_CharCount eq 1                            ;;Ignore first character = "
-      elseif $$WF_CharCount ne @SizeStr(Format)         ;;Ignore $$WF_LastChar character = "
+      if $$WF_CharCount eq 1                            ;; Ignore first character = "
+      elseif $$WF_CharCount ne @SizeStr(Format)         ;; Ignore $$WF_LastChar character = "
         $$WF_LastChar Catstr <$$WF_Character>
         if $$WF_Replace
           if @SizeStr(%$$WF_ReplType) eq 0
-            $$WF_ReplType Catstr <$$WF_Character>       ;;Get first char
+            $$WF_ReplType Catstr <$$WF_Character>       ;; Get first char
           else
             $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
             ifidn $$WF_ReplType, <AT>
@@ -1438,12 +1438,12 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             elseifidn $$WF_ReplType, <BI>
               $$BeginRequired = 1
             endif
-            $$WF_ReplType textequ <>                    ;;Reset replace type
+            $$WF_ReplType textequ <>                    ;; Reset replace type
             $$WF_Replace = 0
           endif
         else
           ifidn <&$$WF_Character>, ??WF_TriggerChar
-            $$WF_Replace = 1                            ;;Set replace flag
+            $$WF_Replace = 1                            ;; Set replace flag
           endif
         endif
       endif
@@ -1458,7 +1458,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
     mov pBegin, DstReg
   endif
 
-  ;;Start doing the job
+  ;; Start doing the job
   .code
   $$Count = 0
   for Arg, <Args>
@@ -1468,21 +1468,21 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
 
   $$WF_ArgCount = 0
   $$WF_Text textequ <>
-  $$WF_Replace = 0                                      ;;Replace flag
+  $$WF_Replace = 0                                      ;; Replace flag
   $$WF_CharCount = 0
   $$WF_ReplType textequ <>
-  $$WF_Escape = 0                                       ;;Escape flag
+  $$WF_Escape = 0                                       ;; Escape flag
 
   forc $$WF_Character, <Format>
     $$WF_CharCount = $$WF_CharCount + 1
-    if $$WF_CharCount eq 1                              ;;Ignore first character = "
-    elseif $$WF_CharCount ne @SizeStr(Format)           ;;Ignore $$WF_LastChar character = "
+    if $$WF_CharCount eq 1                              ;; Ignore first character = "
+    elseif $$WF_CharCount ne @SizeStr(Format)           ;; Ignore $$WF_LastChar character = "
       $$WF_LastChar Catstr <$$WF_Character>
       if $$WF_Replace
         if @SizeStr(%$$WF_ReplType) eq 0
-          $$WF_ReplType Catstr <$$WF_Character>         ;;Get first char
+          $$WF_ReplType Catstr <$$WF_Character>         ;; Get first char
         else
-          $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
+          $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;; Append second char
           ifidn $$WF_ReplType, <SB>
             $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
@@ -1942,13 +1942,13 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             endif
             sub xax, xcx
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
-              .while SDWORD ptr eax > 1               ;;Fill with spaces
+              .while SDWORD ptr eax > 1               ;; Fill with spaces
                 mov DCHRW ptr [DstReg], SPC shl 16 + SPC
                 add DstReg, sizeof(DCHRW)
                 sub eax, 2
               .endw
             else
-              .while SDWORD ptr eax > 3               ;;Fill with spaces
+              .while SDWORD ptr eax > 3               ;; Fill with spaces
                 mov QCHRA ptr [DstReg], "    "
                 add DstReg, sizeof(QCHRA)
                 sub eax, 4
@@ -1979,23 +1979,23 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
               shr xcx, 1
             endif
             sub xax, xcx
-            .if SDWORD ptr eax < 0                      ;;If negative, move pointer
+            .if SDWORD ptr eax < 0                      ;; If negative, move pointer
               mov DstReg, pBegin
               mov xcx, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               if TARGET_STR_TYPE eq STR_TYPE_WIDE
                 shl xcx, 1
               endif
               add DstReg, xcx
-              m2z $$CHR ptr [DstReg]                      ;;Set ZTC
+              m2z $$CHR ptr [DstReg]                    ;; Set ZTC
             .else
               if TARGET_STR_TYPE eq STR_TYPE_WIDE
-                .while SDWORD ptr eax > 1               ;;Fill with spaces
+                .while SDWORD ptr eax > 1               ;; Fill with spaces
                   mov DCHRW ptr [DstReg], SPC shl 16 + SPC
                   add DstReg, sizeof(DCHRW)
                   sub eax, 2
                 .endw
               else
-                .while SDWORD ptr eax > 3               ;;Fill with spaces
+                .while SDWORD ptr eax > 3               ;; Fill with spaces
                   mov QCHRA ptr [DstReg], "    "
                   add DstReg, sizeof(QCHRA)
                   sub eax, 4
@@ -2014,16 +2014,16 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             .endif
             $$WF_ArgCount = $$WF_ArgCount + 1
 
-          else                                          ;;No matching format specifiers found
-            $$WF_Text CatStr $$WF_Text, ??WF_TriggerChar, $$WF_ReplType  ;;Emit the format specifiers
+          else                                          ;; No matching format specifiers found
+            $$WF_Text CatStr $$WF_Text, ??WF_TriggerChar, $$WF_ReplType  ;; Emit the format specifiers
 
           endif
-          $$WF_Replace = 0                              ;;Reset replace flag
-          $$WF_ReplType textequ <>                      ;;Reset replace type
+          $$WF_Replace = 0                              ;; Reset replace flag
+          $$WF_ReplType textequ <>                      ;; Reset replace type
         endif
 
       elseif $$WF_Escape
-        $$WF_Escape = 0                                 ;;Reset escape flag
+        $$WF_Escape = 0                                 ;; Reset escape flag
         ifidn <$$WF_Character>, <n>
           $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
@@ -2109,16 +2109,16 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
         else
           $$WF_Text CatStr $$WF_Text, <\>;, <&$$WF_Character>
           ifidn <&$$WF_Character>, ??WF_TriggerChar
-            $$WF_Replace = 1                            ;;Set replace flag
+            $$WF_Replace = 1                            ;; Set replace flag
           else
             $$WF_Text CatStr $$WF_Text, <&$$WF_Character>
           endif
         endif
       else
         ifidn <&$$WF_Character>, ??WF_TriggerChar
-          $$WF_Replace = 1                              ;;Set replace flag
+          $$WF_Replace = 1                              ;; Set replace flag
         elseifidn <&$$WF_Character>, <\>
-          $$WF_Escape = 1                               ;;Set escape flag
+          $$WF_Escape = 1                               ;; Set escape flag
         else
           $$WF_Text CatStr $$WF_Text, <$$WF_Character>
         endif
@@ -2126,7 +2126,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
     endif
   endm
 
-  $$FillString [DstReg], %$$WF_Text                     ;;If there is something in the buffer
+  $$FillString [DstReg], %$$WF_Text                     ;; If there is something in the buffer
   if ??StrLen ne 0
     add DstReg, ??StrLen*sizeof($$CHR)
   endif
@@ -2162,10 +2162,10 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      IsCharTypeA?
-; Purpose:    Compare an ANSI character with a pedefined type of characters.
+; Purpose:    Compare an ANSI character with a predefined type of characters.
 ; Arguments:  Arg1: Character to be evaluated.
 ;             Arg2: Character type.
-;             Arg3: (optional) Character table
+;             Arg3: Optional character table.
 ; Return:     Flags. Zero indicates that the character is NOT of the char type.
 ;             On return, al contains the tested character.
 ; Example:    IsCharTypeA? [myString+5], CharTypeText
@@ -2181,21 +2181,21 @@ IsCharTypeA? macro CHARA:req, CharType:req
   ifndef CharLookupTableA
   .const
   CharLookupTableA label CHRA
-    ;  NUL  SOH  STX  ETX  EDT  ENQ  ACK  BEL  BS   TAB  LF   VF   FF   CR   SO   SI
+    ;; NUL  SOH  STX  ETX  EDT  ENQ  ACK  BEL  BS   TAB  LF   VF   FF   CR   SO   SI
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
-    ;  DLE  DC1  DC2  DC3  DC4  NAK  SYN  ETB  CAN  BM   SUB  ESC  FS   GS   RS   US
+    ;; DLE  DC1  DC2  DC3  DC4  NAK  SYN  ETB  CAN  BM   SUB  ESC  FS   GS   RS   US
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
-    ;  SPC    !    "    #    $    %    &    '    (    )    *    +    ,    -    .    /
+    ;; SPC    !    "    #    $    %    &    '    (    )    *    +    ,    -    .    /
     db 001h,014h,000h,001h,001h,004h,014h,000h,00Ch,00Ch,004h,004h,000h,004h,000h,004h  ;#, $
-    ;    0    1    2    3    4    5    6    7    8    9    :    ;    <    =    >    ?
+    ;;   0    1    2    3    4    5    6    7    8    9    :    ;    <    =    >    ?
     db 002h,002h,002h,002h,002h,002h,002h,002h,002h,002h,000h,000h,010h,010h,010h,011h  ;0..9, ?
-    ;    @    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O
+    ;;   @    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O
     db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ;@, A..O
-    ;    P    Q    R    S    T    U    V    W    X    Y    Z    [    \    ]    ^    _
+    ;;   P    Q    R    S    T    U    V    W    X    Y    Z    [    \    ]    ^    _
     db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,004h,008h,014h,001h  ;P..Z, _
-    ;    `    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o
+    ;;   `    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o
     db 000h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ;a..o
-    ;    p    q    r    s    t    u    v    w    x    y    z    {    |    }    ~
+    ;;   p    q    r    s    t    u    v    w    x    y    z    {    |    }    ~
     db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,014h,008h,014h,000h  ;p..z
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
@@ -2227,72 +2227,72 @@ endm
 ; Macro:      ($)Choose
 ; Purpose:    Choose returns a value from a list of choices based on an index value.
 ; Arguments:  Arg1: Index.
-;             Arg2: First choise.
+;             Arg2: First choice.
 ;             Arg3: Rest of choices.
-; Return:     Choosen value.
+; Return:     Chosen value.
 
-Choose macro Index:req, Choise1:req, Choises:vararg
-  local ChoiseCount, Choise
+Choose macro Index:req, Choice1:req, Choices:vararg
+  local ChoiceCount, Choice
 
-  ChoiseCount = 0
+  ChoiceCount = 0
   .if Index == 0
-    mov xax, Choise1
-    for Choise, <Choises>
-      ChoiseCount = ChoiseCount + 1
-      @CatStr(<.elseif Index == >, <&ChoiseCount>)
-      mov xax, Choise
+    mov xax, Choice1
+    for Choice, <Choices>
+      ChoiceCount = ChoiceCount + 1
+      @CatStr(<.elseif Index == >, <&ChoiceCount>)
+      mov xax, Choice
     endm
   .else
-    xor eax, eax          ;;Returns NULL
+    xor eax, eax          ;; Returns NULL
   .endif
 endm
 
-Choose32 macro Index:req, Choise1:req, Choises:vararg
-  local ChoiseCount, Choise
+Choose32 macro Index:req, Choice1:req, Choices:vararg
+  local ChoiceCount, Choice
 
-  ChoiseCount = 0
+  ChoiceCount = 0
   .if Index == 0
-    mov eax, Choise1
-    for Choise, <Choises>
-      ChoiseCount = ChoiseCount + 1
-      @CatStr(<.elseif Index == >, <&ChoiseCount>)
-      mov eax, Choise
+    mov eax, Choice1
+    for Choice, <Choices>
+      ChoiceCount = ChoiceCount + 1
+      @CatStr(<.elseif Index == >, <&ChoiceCount>)
+      mov eax, Choice
     endm
   .else
-    xor eax, eax          ;;Returns NULL
+    xor eax, eax          ;; Returns NULL
   .endif
 endm
 
-$Choose macro Index:req, Choise1:req, Choises:vararg
-  Choose Index, Choise1, Choises
+$Choose macro Index:req, Choice1:req, Choices:vararg
+  Choose Index, Choice1, Choices
   exitm <xax>
 endm
 
-$Choose32 macro Index:req, Choise1:req, Choises:vararg
-  Choose32 Index, Choise1, Choises
+$Choose32 macro Index:req, Choice1:req, Choices:vararg
+  Choose32 Index, Choice1, Choices
   exitm <eax>
 endm
 
-Choose1 macro Index:req, Choises:vararg
-  local ChoiseCount, Choise, ConstData
+Choose1 macro Index:req, Choices:vararg
+  local ChoiceCount, Choice, ConstData
 
   .const
-  ChoiseCount = 0
-  for Choise, <Choises>
-    ife ChoiseCount
-      ConstData dq Choise
+  ChoiceCount = 0
+  for Choice, <Choices>
+    ife ChoiceCount
+      ConstData dq Choice
     else
-      dq dChoise
+      dq Choice
     endif
-    ChoiseCount = ChoiseCount + 1
+    ChoiceCount = ChoiceCount + 1
   endm
 
   .code
-  .if Index <= ChoiseCount
-    if (opattr Index) and OAT_REGISTER                  ;;Is dIndex a register?
-      mov xax, [offset(ConstData) + @WordSize*dIndex]
+  .if Index <= ChoiceCount
+    if (opattr Index) and OAT_REGISTER                  ;; Is dIndex a register?
+      mov xax, [offset(ConstData) + @WordSize*Index]
     else
-      mov xax, dIndex
+      mov xax, Index
       mov xax, [offset(ConstData) + @WordSize*xax]
     endif
   .else
@@ -2300,8 +2300,8 @@ Choose1 macro Index:req, Choises:vararg
   .endif
 endm
 
-$Choose1 macro dIndex:req, dChoise1:req, dChoises:vararg
-  Choose1 dIndex, dChoise1, dChoises
+$Choose1 macro dIndex:req, dChoice1:req, dChoices:vararg
+  Choose1 dIndex, dChoice1, dChoices
   exitm <xax>
 endm
 
@@ -2368,7 +2368,7 @@ endm
 ;             floating point constant.
 
 $CReal4 macro Value
-  ;;Generate a symbol name according to the specified value
+  ;; Generate a symbol name according to the specified value
   ;; e.g. +0.25 => CR4_P0p25
   ;;      -0.55 => CR4_M0p55
   $$RealName CatStr <CR4_>
@@ -2387,7 +2387,7 @@ $CReal4 macro Value
   align @WordSize
   if $$RealDotPos eq 0
     $$RealName CatStr $$RealName, @SubStr(Value, $$StartPos), <p0>
-  else      ;Check for additional <+> or <-> in the exponent
+  else                                                  ;; Check for additional <+> or <-> in the exponent
     $$RealExpPos InStr $$RealDotPos + 1, <Value>, <e>
     if $$RealExpPos eq 0
       $$RealExpPos InStr $$RealDotPos + 1, <Value>, <E>
@@ -2414,7 +2414,7 @@ $CReal4 macro Value
     endif
   endif
 
-  ;;Check if it does exist
+  ;; Check if it does exist
 %   ifndef $$RealName
     .SegConst
       align @WordSize
@@ -2433,7 +2433,7 @@ $CReal4 macro Value
 endm
 
 $CReal8 macro Value
-  ;;Generate a symbol name according to the specified value
+  ;; Generate a symbol name according to the specified value
   ;; e.g. +0.25 => CR8_P0p25
   ;;      -0.55 => CR8_M0p55
   $$RealName CatStr <CR8_>
@@ -2451,7 +2451,7 @@ $CReal8 macro Value
   $$RealDotPos InStr $$StartPos, <Value>, <.>
   if $$RealDotPos eq 0
     $$RealName CatStr $$RealName, @SubStr(Value, $$StartPos), <p0>
-  else      ;Check for additional <+> or <-> in the exponent
+  else                                                  ;; Check for additional <+> or <-> in the exponent
     $$RealExpPos InStr $$RealDotPos + 1, <Value>, <e>
     if $$RealExpPos eq 0
       $$RealExpPos InStr $$RealDotPos + 1, <Value>, <E>
@@ -2478,7 +2478,7 @@ $CReal8 macro Value
     endif
   endif
 
-  ;;Check if it does exist
+  ;; Check if it does exist
 %   ifndef $$RealName
     .SegConst
       align @WordSize
@@ -2497,7 +2497,7 @@ $CReal8 macro Value
 endm
 
 $CReal10 macro Value
-  ;;Generate a symbol name according to the specified value
+  ;; Generate a symbol name according to the specified value
   ;; e.g. +0.25 => CR10_P0p25
   ;;      -0.55 => CR10_M0p55
   $$RealName CatStr <CR10_>
@@ -2515,7 +2515,7 @@ $CReal10 macro Value
   $$RealDotPos InStr $$StartPos, <Value>, <.>
   if $$RealDotPos eq 0
     $$RealName CatStr $$RealName, @SubStr(Value, $$StartPos), <p0>
-  else      ;Check for additional <+> or <-> in the exponent
+  else                                                  ;; Check for additional <+> or <-> in the exponent
     $$RealExpPos InStr $$RealDotPos + 1, <Value>, <e>
     if $$RealExpPos eq 0
       $$RealExpPos InStr $$RealDotPos + 1, <Value>, <E>
@@ -2542,7 +2542,7 @@ $CReal10 macro Value
     endif
   endif
 
-  ;;Check if it does exist
+  ;; Check if it does exist
 %   ifndef $$RealName
     .SegConst
       align @WordSize
@@ -2562,9 +2562,9 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $DReal??
-; Purpose:    Declare a floating point variable as a vaiable.
+; Purpose:    Declare a floating point value as a variable.
 ; Arguments:  Arg1: Value of the floating point variable.
-; Return:     Symbol of the floting point value.
+; Return:     Symbol of the floating point value.
 
 $DReal4 macro Value
   local Name
@@ -2590,9 +2590,9 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      sMax / $sMax
 ; Purpose:    Return the maximum of 2 signed values.
-; Arguments:  Arg1: First signed word.
-;             Arg2: Second signed word.
-;             Arg3: Optional destiantion register. Default is xax.
+; Arguments:  Arg1: First signed value.
+;             Arg2: Second signed value.
+;             Arg3: Optional destination register. Default is xax.
 ; Return:     DstReg/rax/eax/ax/al = Biggest signed value.
 
 sMax macro Var1:req, Var2:req, DstReg:=<xax>
@@ -2622,9 +2622,9 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      sMin / $sMin
 ; Purpose:    Return the minimum of 2 signed values.
-; Arguments:  Arg1: First signed word.
-;             Arg2: Second signed word.
-;             Arg3: Optional destiantion register. Default is xax.
+; Arguments:  Arg1: First signed value.
+;             Arg2: Second signed value.
+;             Arg3: Optional destination register. Default is xax.
 ; Return:     DstReg/rax/eax/ax/al = Smallest signed value.
 
 sMin macro Var1:req, Var2:req, DstReg:=<xax>
@@ -2654,9 +2654,9 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      uMax / $uMax
 ; Purpose:    Return the maximum of 2 values.
-; Arguments:  Arg1: First word.
-;             Arg2: Second word.
-;             Arg3: Optional destiantion register. Default is xax.
+; Arguments:  Arg1: First value.
+;             Arg2: Second value.
+;             Arg3: Optional destination register. Default is xax.
 ; Return:     DstReg/rax/eax/ax/al = Biggest value.
 
 uMax macro Var1:req, Var2:req, DstReg:=<xax>
@@ -2688,7 +2688,7 @@ endm
 ; Purpose:    Return the minimum of 2 values.
 ; Arguments:  Arg1: First value.
 ;             Arg2: Second value.
-;             Arg3: Optional destiantion register. Default is xax.
+;             Arg3: Optional destination register. Default is xax.
 ; Return:     DstReg/rax/eax/ax/al = Smallest value.
 
 uMin macro Var1:req, Var2:req, DstReg:=<xax>
@@ -2742,8 +2742,8 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $uMaxi / uMaxi
 ; Purpose:    Return the maximum of 2 values.
-; Arguments:  Arg1: Default rax = a, rcx = b
-; Return:     Reg1/rax/eax/ax/al = $uMaxi(a,b)
+; Arguments:  Arg1: Default rax = a, rcx = b.
+; Return:     Reg1/rax/eax/ax/al = $uMaxi(a,b).
 ; Uses:       Default are rax, rcx, rdx (Reg2 and AuxReg are trashed).
 
 uMaxi macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
@@ -2759,15 +2759,15 @@ uMaxi macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
 endm
 
 $uMaxi macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
-  Maxi Reg1, Reg2, AuxReg
+  uMaxi Reg1, Reg2, AuxReg
   exitm <Reg1>
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $sMaxi / sMaxi
 ; Purpose:    Return the maximum of 2 signed values.
-; Arguments:  rax = a, rdx = b
-; Return:     rax/eax/ax/al = min(a,b), rdx/edx/dx/dl = max(a,b)
+; Arguments:  rax = a, rdx = b.
+; Return:     rax/eax/ax/al = max(a,b), rdx/edx/dx/dl = min(a,b).
 ; Uses:       rax, rdx.
 
 sMaxi macro Var1:req, Var2:req
@@ -2777,11 +2777,11 @@ sMaxi macro Var1:req, Var2:req
     %ifdifi <Var1>, <rax>
       mov xax, Var1
     endif
-    sub xax, Var2                                       ;;a=a-b
-    cdq                                                 ;;Sign-extend of eax => edx::eax
-    not xdx                                             ;;d=0 if a<b,  d=-1  if a>=b
-    and xax, xdx                                        ;;a=0 if a<b,  a=a-b if a>=b
-    add xax, Var2                                       ;;a=b if a<b,  a=a   if a>=b
+    sub xax, Var2                                       ;; a=a-b
+    cdq                                                 ;; Sign-extend of eax => edx::eax
+    not xdx                                             ;; d=0 if a<b,  d=-1  if a>=b
+    and xax, xdx                                        ;; a=0 if a<b,  a=a-b if a>=b
+    add xax, Var2                                       ;; a=b if a<b,  a=a   if a>=b
   endif
 endm
 
@@ -2793,17 +2793,17 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      uMiniMaxi
 ; Purpose:    Return the minimum and maximun of 2 values.
-; Arguments:  Reg1, Reg2
-; Return:     Reg1 = min(Reg1, Reg2), Reg2 = max(Reg1, Reg2)
-; Uses:       Reg1, Reg2, AuxReg1, AuxReg2
+; Arguments:  Reg1, Reg2.
+; Return:     Reg1 = min(Reg1, Reg2), Reg2 = max(Reg1, Reg2).
+; Uses:       Reg1, Reg2, AuxReg1, AuxReg2.
 
 uMiniMaxi macro Reg1:=<xax>, Reg2:=<xbx>, AuxReg1:=<xcx>, AuxReg2:=<xdx>
   mov AuxReg2, Reg2
   sub AuxReg2, Reg1
   sbb AuxReg1, AuxReg1
   and AuxReg1, AuxReg2
-  add Reg1, AuxReg1                                     ;;Reg1 = min(Reg1, Reg2)
-  sub Reg2, AuxReg1                                     ;;Reg2 = max(Reg1, Reg2)
+  add Reg1, AuxReg1                                     ;; Reg1 = min(Reg1, Reg2)
+  sub Reg2, AuxReg1                                     ;; Reg2 = max(Reg1, Reg2)
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -2814,14 +2814,14 @@ endm
 ;             Arg3: AuxReg.
 ; Return:     rax/eax/ax/al = (Reg1 + Reg2)/2.
 ; Uses:       Default rax, rcx, rdx (AuxReg is trashed).
-; Note:       This algorithm can not overflow!
+; Note:       This algorithm cannot overflow!
 
 sMean macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
   ifidni <Reg1>, <AuxReg>
-    .err <sMean - use another auxiliar register.>
+    .err <sMean - use another auxiliary register.>
   else
     ifidni <Reg2>, <AuxReg>
-      .err <sMean - use another auxiliar register.>
+      .err <sMean - use another auxiliary register.>
     else
       mov AuxReg, Reg1
       xor AuxReg, Reg2
@@ -2833,18 +2833,18 @@ sMean macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
 endm
 
 $sMean macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
-  Mean Reg1, Reg2, AuxReg
+  sMean Reg1, Reg2, AuxReg
   exitm <Reg1>
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      LoadRegIfLessThan
 ; Purpose:    Compare Reg with a value and load it according to the result.
-; Arguments:  Arg1: Register to be comparend.
+; Arguments:  Arg1: Register to be compared.
 ;             Arg2: Than value or register.
 ;             Arg3: Then value or register.
 ;             Arg4: Otherwise value or register.
-;             Arg5: [optional] auxiliar register. Default edx.
+;             Arg5: Optional auxiliary register. Default edx.
 ; Return:     Register.
 
 LoadRegIfLessThan macro Reg:req, Than:req, Then:req, Otherwise:req, AuxReg:=<xdx>
@@ -2853,13 +2853,13 @@ LoadRegIfLessThan macro Reg:req, Than:req, Then:req, Otherwise:req, AuxReg:=<xdx
   ifidni <Otherwise>, <0>
     and xax, Then
   else
-    if (opattr Then) and OAT_REGISTER                   ;;Is Then a register?
+    if (opattr Then) and OAT_REGISTER                   ;; Is Then a register?
       sub Then, Otherwise
       and Reg, Then
       add Reg, Otherwise
     else
       ifidni <Reg>, <AuxReg>
-        .err <LoadRegIfLessThan - Register corruption, use another auxiliar register.>
+        .err <LoadRegIfLessThan - Register corruption, use another auxiliary register.>
       else
         ifdifi <AuxReg>, <Then>
           mov AuxReg, Then
@@ -2876,7 +2876,7 @@ endm
 ; Macro:      HiWord / $HiWord
 ; Purpose:    Retrieve the high WORD from a DWORD.
 ; Arguments:  Arg1: DWORD.
-; Return:     eax = High WORD.
+; Return:     eax = HiWord.
 
 HiWord macro Value, Reg:=<xax>
   ifdifi <Value>, <Reg>
@@ -2884,7 +2884,7 @@ HiWord macro Value, Reg:=<xax>
   endif
   shr Reg, 16
   if type(Reg) gt 4
-    and Reg, 0FFFFh                                     ;;Set to low WORD
+    and Reg, 0FFFFh                                     ;; Set to low WORD
   endif
 endm
 
@@ -2897,13 +2897,13 @@ endm
 ; Macro:      LoWord / $LoWord
 ; Purpose:    Retrieve the low WORD from a DWORD.
 ; Arguments:  Arg1: DWORD.
-; Return:     eax = Low WORD.
+; Return:     eax = LoWord.
 
 LoWord macro Value, Reg:=<xax>
   ifdifi <Value>, <Reg>
     mov Reg, Value
   endif
-  and Reg, 0FFFFh                                       ;;Set to low WORD
+  and Reg, 0FFFFh                                       ;; Set to low WORD
 endm
 
 $LoWord macro Value, Reg:=<xax>
@@ -2931,12 +2931,12 @@ endm
 ; Return:     Nothing.
 
 PushArgsFor macro ProcName:req, ArgList:vararg
-  $$Arg = (opattr ProcName) and OAT_LANGUAGE            ;;$$Arg = Calling convention
+  $$Arg = (opattr ProcName) and OAT_LANGUAGE            ;; $$Arg = Calling convention
   if $$Arg eq 0
     .err <Unknown procedure>
-  elseif ($$Arg and 0000010000000000b)                  ;;Pascal, Fortran, Basic => push from L->R
+  elseif ($$Arg and 0000010000000000b)                  ;; Pascal, Fortran, Basic => push from L->R
     PushAll ArgList
-  else                                                  ;;C, SYSCALL, STDCALL 0> push from R->L
+  else                                                  ;; C, SYSCALL, STDCALL 0> push from R->L
     PushAllRev ArgList
   endif
 endm
@@ -2994,7 +2994,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      RGB2BGR
 ; Purpose:    Convert the color from RGB to BGR as it is usually stored in memory.
-; Arguments:  Arg1: 32-bit register containeing the RGB/BRG color.
+; Arguments:  Arg1: 32-bit register containing the RGB/BRG color.
 
 RGB2BGR macro Reg32                                     ;; AA RR GG BB
   rol Reg32, 8                                          ;; RR GG BB AA
@@ -3049,10 +3049,10 @@ endm
 ; Arguments:  Arg1: Text representing a float.
 ; Link:       http://masm32.com/board/index.php?topic=4709.15
 ; Return:     TRUE for any REAL4/8/10 variable or decimal FP literal.
-; Autor:      qWord
+; Author:     qWord.
 ;
 $IsFloat macro Arg:req
-  ;handle memory operands and integer values
+  ;; Handle memory operands and integer values
   if (opattr Arg) AND 2
     if (type Arg) eq (type REAL4) OR (type Arg) eq (type REAL8) OR (type Arg) eq (type REAL10)
       exitm <-1>
@@ -3070,7 +3070,7 @@ $IsFloat macro Arg:req
   ;;   1    |    no     |   initial state
   ;;   2    |    no     |   sign
   ;;   3    |    no     |   integer digits
-  ;;   4    |    yes    |   decimal dot and (optional) fraction digits
+  ;;   4    |    yes    |   decimal dot and optional fraction digits
   ;;   5    |    no     |   exponent indicator
   ;;   6    |    no     |   exponent sign
   ;;   7    |    yes    |   exponent digits
@@ -3094,7 +3094,7 @@ $IsFloat macro Arg:req
   isflt_pos   = 1
   isflt_state = 1
   forc char,<&Arg>
-  ;  %echo CHAR <char>, STATE: @CatStr(%isflt_state), POS: @CatStr(%isflt_pos)
+  ;; %echo CHAR <char>, STATE: @CatStr(%isflt_state), POS: @CatStr(%isflt_pos)
     isflt_sigma substr <23 3344567 7 7>, isflt_state*2-1,2
     isflt_pos instr isflt_pos, <+-0123456789.0123456789Ee+-0123456789>, <&char>
     isflt_new_state substr <02233333333334444444444455667777777777>, isflt_pos+1,1
@@ -3121,8 +3121,8 @@ endm
 ;f4push macro r4Values:vararg
 ;    $$ArgList textequ $ArgRev(r4Values)
 ;%   for $$Arg, <$$ArgList>
-;      db 68h                                            ;;push opcode
-;      REAL4 $$Arg                                       ;;push argument = REAL4
+;      db 68h                                            ;; push opcode
+;      REAL4 $$Arg                                       ;; push argument = REAL4
 ;    endm
 ;endm
 ;
@@ -3133,9 +3133,9 @@ endm
 ;;             Arg2: REAL4 value.
 ;
 ;f4mov macro Destination:req, r4Value:req
-;    mov Destination, 0FFFFFFFFh                         ;;Compile this
-;    org $-4                                             ;;Replace 0FFFFFFFFh with
-;    REAL4 r4Value                                       ;;  the REAL4 value
+;    mov Destination, 0FFFFFFFFh                         ;; Compile this
+;    org $-4                                             ;; Replace 0FFFFFFFFh with
+;    REAL4 r4Value                                       ;;   the REAL4 value
 ;endm
 ;
 ; --------------------------------------------------------------------------------------------------
@@ -3199,7 +3199,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      IsPositive
 ; Purpose:    Return TRUE if the signed integer argument is >= 0, otherwise FALSE.
-; Arguments:  Arg1: SDWORD
+; Arguments:  Arg1: SDWORD/SQWORD.
 ; Return:     TRUE or FALSE.
 
 IsPositive macro Arg:req
@@ -3210,7 +3210,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      IsNegative
 ; Purpose:    Return TRUE if the signed integer argument is < 0, otherwise FALSE.
-; Arguments:  Arg1: SDWORD
+; Arguments:  Arg1: SDWORD/SQWORD.
 ; Return:     TRUE or FALSE.
 
 IsNegative macro Arg:req
@@ -3221,12 +3221,12 @@ endm
 ; Macro:      MSB32
 ; Purpose:    Compute the most significant "1" bit in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 MSB32 macro Reg32:req, AuxReg:=<edx>
   ifidni <Reg32>, <AuxReg>
-    .err <MSB32 - register corruption, use another auxiliar register.>
+    .err <MSB32 - register corruption, use another auxiliary register.>
   else
     $$Count = 1
     repeat 5
@@ -3246,12 +3246,12 @@ endm
 ; Macro:      LSB32
 ; Purpose:    Compute the least significant "1" bit in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 LSB32 macro Reg32:req, AuxReg:=<edx>
-  ifidni <Reg>, <AuxReg>
-    .err <LSB32 - register corruption, use another auxiliar register.>
+  ifidni <Reg32>, <AuxReg>
+    .err <LSB32 - register corruption, use another auxiliary register.>
   else
     mov AuxReg, Reg32
     neg Reg32
@@ -3263,12 +3263,12 @@ endm
 ; Macro:      NLPo2
 ; Purpose:    Compute the Next Largest Power of 2 of a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 NLPo2 macro Reg32:req, AuxReg:=<edx>
-  ifidni <Reg>, <AuxReg>
-    .err <NLPo2: register corruption, use another auxiliar register.>
+  ifidni <Reg32>, <AuxReg>
+    .err <NLPo2: register corruption, use another auxiliary register.>
   else
     $$Count = 1
     repeat 5
@@ -3285,12 +3285,12 @@ endm
 ; Macro:      PopulationCount32
 ; Purpose:    Count the number of "1"s in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 PopulationCount32 macro Reg32:req, AuxReg:=<edx>
   ifidni <Reg32>, <AuxReg>
-    .err <PopulationCount32 - register corruption, use another auxiliar register.>
+    .err <PopulationCount32 - register corruption, use another auxiliary register.>
   else
     mov AuxReg, Reg32
     shr Reg32, 1
@@ -3319,16 +3319,16 @@ endm
 ; Macro:      TZC32 Trailing Zero Count
 ; Purpose:    Count the number of trailing "0"s in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 TZC32 macro Reg32:req, AuxReg:=<edx>
   ifidni <Reg32>, <AuxReg>
-    .err <TZC32: register corruption, use another auxiliar register.>
+    .err <TZC32: register corruption, use another auxiliary register.>
   else
     LSB32 Reg32, AuxReg
     dec Reg32
-    PopulationCount Reg32, AuxReg
+    PopulationCount32 Reg32, AuxReg
   endif
 endm
 
@@ -3336,12 +3336,12 @@ endm
 ; Macro:      ReverseBits32
 ; Purpose:    Reverse the bits in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
-;             Arg2: (optional) Auxiliar register.
+;             Arg2: Optional auxiliary register.
 ; Return:     Result in input register.
 
 ReverseBits32 macro Reg32:req, AuxReg:=<edx>
   ifidni <Reg32>, <AuxReg>
-    .err <ReverseBits32 - Register corruption, use another auxiliar register.>
+    .err <ReverseBits32 - Register corruption, use another auxiliary register.>
   else
     mov AuxReg, Reg32
     and Reg32, 0AAAAAAAAh
@@ -3382,7 +3382,7 @@ endm
 ; Macro:      ReverseBitsShort32
 ; Purpose:    Reverse the bits in a DWORD.
 ; Arguments:  Arg1: Input register value.
-;             Arg2: Output regiter value.
+;             Arg2: Output register value.
 ; Return:     Result in input register.
 ; Note:       Uses ecx.
 
@@ -3402,21 +3402,21 @@ endm
 ; Arguments:  Arg1: Value (register)
 ;             Arg2: Bottom.
 ;             Arg3: Top.
-;             Arg4: (optional) Auxiliar register.
+;             Arg4: Optional auxiliary register.
 ; Return:     Value (Arg) is 0 if it is in range, otherwise -1.
 ; Note:       Add an inc to Arg to the end of the macro to return TRUE or FALSE.
 
 IsInRange? macro Arg:req, Bot:req, Top:req, AuxReg:=<xdx>
   ifidni <Arg>, <AuxReg>
-    .err <IsInRange? - Register corruption, use another auxiliar register.>
+    .err <IsInRange? - Register corruption, use another auxiliary register.>
   else
-    if (opattr Arg) and OAT_REGISTER                    ;;Is Arg a register?
-      cmp Top, Arg                                      ;;Set borrow flag for upper limit
-      sbb AuxReg, AuxReg                                ;;Make 1111 or 0000 mask
-      sub Arg, Bot                                      ;;Set borrow flag for lower limit
-      sbb Arg, Arg                                      ;;Make 1111 or 0000 mask
+    if (opattr Arg) and OAT_REGISTER                    ;; Is Arg a register?
+      cmp Top, Arg                                      ;; Set borrow flag for upper limit
+      sbb AuxReg, AuxReg                                ;; Make 1111 or 0000 mask
+      sub Arg, Bot                                      ;; Set borrow flag for lower limit
+      sbb Arg, Arg                                      ;; Make 1111 or 0000 mask
       or Arg, AuxReg                                    ;;Combine masks
-;;      inc Arg                                           ;;Convert to BOOL (TRUE / FALSE)
+;;      inc Arg                                           ;; Convert to BOOL (TRUE / FALSE)
     else
       .err <IsInRange? - Arg must be a register.>
     endif
@@ -3434,22 +3434,22 @@ endm
 ; Arguments:  Arg1: Value (register)
 ;             Arg2: Bottom
 ;             Arg3: Top
-;             Arg4: (optional) Auxiliar register
+;             Arg4: Optional auxiliary register
 ; Return:     Value (Arg) is 0 if it is in range, otherwise -1.
 ; Note:       Add an inc to Arg to the end of the macro to return TRUE or FALSE.
 
 IsNotBetween? macro Arg:req, Bot:req, Top:req, AuxReg:=<xdx>
   ifidni <Arg>, <AuxReg>
-    .err <IsNotBetween - register corruption, use another auxiliar register.>
+    .err <IsNotBetween - register corruption, use another auxiliary register.>
   else
-    if (opattr Arg) and OAT_REGISTER                    ;;Is Arg a register?
-      mov AuxArg, Arg
-      cmp Bot, Arg                                      ;;Set borrow flag for lower limit
-      sbb AuxReg, AuxReg                                ;;Make 1111 or 0000 mask
-      sub Arg, Top                                      ;;Set borrow flag for upper limit
-      sbb Arg, Arg                                      ;;Make 1111 or 0000 mask
-      and Arg, AuxReg                                   ;;Combine masks
-;;      inc Arg                                           ;;Convert to BOOL (TRUE / FALSE)
+    if (opattr Arg) and OAT_REGISTER                    ;; Is Arg a register?
+      mov AuxReg, Arg
+      cmp Bot, Arg                                      ;; Set borrow flag for lower limit
+      sbb AuxReg, AuxReg                                ;; Make 1111 or 0000 mask
+      sub Arg, Top                                      ;; Set borrow flag for upper limit
+      sbb Arg, Arg                                      ;; Make 1111 or 0000 mask
+      and Arg, AuxReg                                   ;; Combine masks
+;;      inc Arg                                           ;; Convert to BOOL (TRUE / FALSE)
     else
       .err <IsNotBetween - Arg must be a register.>
     endif
@@ -3467,15 +3467,15 @@ endm
 ; Note:       Source from Edgar Harris (Donkey).
 
 ClearLocals macro
-  mov xdx, xdi                                          ;;Preserve xdi
-  mov xcx, xbp                                          ;;Get the size of the stack
+  mov xdx, xdi                                          ;; Preserve xdi
+  mov xcx, xbp                                          ;; Get the size of the stack
   sub xcx, xsp
-  lea xdi, [xbp]                                        ;;Base of local variables
+  lea xdi, [xbp]                                        ;; Base of local variables
   sub xdi, xcx
   shr xcx, $Log2(@WordSize)
-  xor eax, eax                                          ;;Fill with zeros
+  xor eax, eax                                          ;; Fill with zeros
   rep stosx
-  mov xdi, xdx                                          ;;Restore xdi
+  mov xdi, xdx                                          ;; Restore xdi
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -3554,10 +3554,10 @@ endm
 ;          ??DbgTracePrcTicks  QWORD  0
 ;        SEG_PROF ends
 ;      endif
-;      inc ??DbgTracePrcCount                          ;;Increment access counter
+;      inc ??DbgTracePrcCount                          ;; Increment access counter
 ;      ;push eax
 ;      push rdx
-;      rdtsc                                           ;;Get current tick count
+;      rdtsc                                           ;; Get current tick count
 ;      sub ??DbgTracePrcTicks.LARGE_INTEGER.LowPart, eax
 ;      sbb ??DbgTracePrcTicks.LARGE_INTEGER.HighPart, edx
 ;      pop rdx
@@ -3620,8 +3620,8 @@ endm
 ;    ??DbgTracePrcTicks CatStr <PrcTck_>, <ProcName>
 ;    push eax
 ;    push edx
-;    rdtsc                                             ;;Get current tick count.
-;    add ??DbgTracePrcTicks.LARGE_INTEGER.LowPart, eax ;;Compute tick difference.
+;    rdtsc                                             ;; Get current tick count.
+;    add ??DbgTracePrcTicks.LARGE_INTEGER.LowPart, eax ;; Compute tick difference.
 ;    adc ??DbgTracePrcTicks.LARGE_INTEGER.HighPart, edx
 ;    pop edx
 ;    pop eax
@@ -3674,7 +3674,7 @@ endm
 ;  if LocalBytes gt 0
 ;    push xbp
 ;    mov xbp, xsp
-;    if LocalBytes ge PAGESIZE                         ;Defined in Model.inc
+;    if LocalBytes ge PAGESIZE                         ;; Defined in Model.inc
 ;      ;;Round up to next page size
 ;      $$MaxProbe = (LocalBytes + PAGESIZE - 1) and (-PAGESIZE)
 ;      $$CurrProbe = PAGESIZE
@@ -3742,7 +3742,7 @@ endm
 ; Macro:      FillMemByte
 ; Purpose:    Fill a memory range with a BYTE value.
 ; Arguments:  Arg1: Mem to be filled.
-;             Arg2: Mem size.
+;             Arg2: Mem byte size.
 ;             Arg3: BYTE value.
 ; Return:     Nothing.
 
@@ -3756,9 +3756,9 @@ FillMemByte macro Var:req, ByteSize:req, ByteVal:req
   if (ByteSize and 3) eq 1
     mov BYTE ptr Var[$$i], ByteVal
   elseif (ByteSize and 3) eq 2
-    mov WORD ptr Var[$$i], 256*(256*ByteVal + ByteVal) + ByteVal
+    mov WORD ptr Var[$$i], 256*ByteVal + ByteVal
   elseif (ByteSize and 3) eq 3
-    mov WORD ptr Var[$$i], 256*(256*ByteVal + ByteVal) + ByteVal
+    mov WORD ptr Var[$$i], 256*ByteVal + ByteVal
     mov BYTE ptr Var[$$i + 2], ByteVal
   endif
 endm
@@ -3792,9 +3792,9 @@ endm
 SaveFpuContext macro FpuContext:= <>
   ifb <FpuContext>
     sub xsp, FPU_CONTEXT_SIZE
-    fsave [xsp]                                         ;;This instruction reinitializes the FPU
+    fsave [xsp]                                         ;; This instruction reinitializes the FPU
   else
-    fsave FpuContext                                    ;;This instruction reinitializes the FPU
+    fsave FpuContext                                    ;; This instruction reinitializes the FPU
   endif
 endm
 
@@ -3881,7 +3881,7 @@ $SubReg macro Reg:req, RegSize:req
     .err <$SubReg - invalid register.>
     exitm <>
   else
-    $$Pos1 = $$Pos1 - 2             ;2 = length of "-|"
+    $$Pos1 = $$Pos1 - 2             ;; 2 = length of "-|"
 
     $$Flag = TRUE
     ;Search preceeding <-|-> marker
@@ -3989,24 +3989,24 @@ endm
 ;             Interrupt ticks are triggered each 100 ns! The count is monotone.
 ;             The count is gattered from a system shared memory area known as KUSER_SHARED_DATA,
 ;             which is always at the same location (7FFE0000h) on Windows systems since NT.
-; Arguments:  Arg1: (optional) Destination memory where the count should be stored (QWORD).
+; Arguments:  Arg1: Optional destination memory where the count should be stored (QWORD).
 ; Return:     rax = tick count.
 
 GetInterruptTicks macro Dest
   if TARGET_BITNESS eq 32
-    mov ecx, 7FFE0000h + 8                              ;KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
+    mov ecx, 7FFE0000h + 8                              ;; KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
     .while TRUE
-      mov edx, [ecx + 4]                                ;KSYSTEM_TIME.High1Time
-      mov eax, [ecx]                                    ;KSYSTEM_TIME.LowPart
-      .break .if edx == [ecx + 8]                       ;KSYSTEM_TIME.High2Time
+      mov edx, [ecx + 4]                                ;; KSYSTEM_TIME.High1Time
+      mov eax, [ecx]                                    ;; KSYSTEM_TIME.LowPart
+      .break .if edx == [ecx + 8]                       ;; KSYSTEM_TIME.High2Time
     .endw
     ifnb <Dest>
       mov DWORD ptr [Dest], eax
       mov DWORD ptr [Dest + 4], edx
     endif
   else
-    mov r11d, 7FFE0000h + 8                             ;KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
-    mov rax, [r11]                                      ;KSYSTEM_TIME.High1Time
+    mov r11d, 7FFE0000h + 8                             ;; KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
+    mov rax, [r11]                                      ;; KSYSTEM_TIME.High1Time
     ifnb <Dest>
       mov QWORD ptr [Dest], rax
     endif
@@ -4035,29 +4035,30 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      StackAlign
 ; Purpose:    Align down the stack to a specified boundary.
-; Arguments:  Boundary in bytes.
+; Arguments:  Arg1: Boundary in bytes.
+;             Arg2: Optional auxiliary register.
 ; Note:       Uses an auxiliary register, default is edx.
 
 if TARGET_BITNESS eq 32
   StackAlign macro Boundary:req, AuxReg:=<edx>
     if Boundary eq 4 or Boundary eq 8 or Boundary eq 16 or Boundary eq 32 or Boundary eq 64 or Boundary eq 128
-      ??StackAlignCount = ??StackAlignCount + 1           ;;Increment counter
-      mov AuxReg, esp                                     ;;Save esp
-      sub esp, 4                                          ;;Reserve room for a DWORD
-      and esp, not (Boundary - 1)                         ;;Align stack
-      mov [esp], AuxReg                                   ;;Save previous esp value
+      ??StackAlignCount = ??StackAlignCount + 1           ;; Increment counter
+      mov AuxReg, esp                                     ;; Save esp
+      sub esp, 4                                          ;; Reserve room for a DWORD
+      and esp, not (Boundary - 1)                         ;; Align stack
+      mov [esp], AuxReg                                   ;; Save previous esp value
     else
       .err <invalid alignment argument>
     endif
   endm
 else
-  StackAlign macro Boundary:req, AuxReg:=<r15>
+  StackAlign macro Boundary:req, AuxReg:=<r10>
     if Boundary eq 4 or Boundary eq 8 or Boundary eq 16 or Boundary eq 32 or Boundary eq 64 or Boundary eq 128
-      ??StackAlignCount = ??StackAlignCount + 1           ;;Increment counter
-      mov AuxReg, rsp                                     ;;Save esp
-      sub rsp, @WordSize                                  ;;Reserve room for a QWORD
-      and rsp, -Boundary                                  ;;Align stack
-      mov [rsp], AuxReg                                   ;;Save previous esp value
+      ??StackAlignCount = ??StackAlignCount + 1           ;; Increment counter
+      mov AuxReg, rsp                                     ;; Save rsp
+      sub rsp, @WordSize                                  ;; Reserve room for a QWORD
+      and rsp, -Boundary                                  ;; Align stack
+      mov [rsp], AuxReg                                   ;; Save previous rsp value
     else
       .err <StackAlign - invalid alignment.>
     endif
@@ -4075,10 +4076,10 @@ if TARGET_BITNESS eq 32
       ifnb <AdditionalSpace>
         add esp, &AdditionalSpace
       endif
-      pop esp                                             ;;Restore esp
-      ??StackAlignCount = ??StackAlignCount - 1           ;;Decrement counter
+      pop esp                                             ;; Restore esp
+      ??StackAlignCount = ??StackAlignCount - 1           ;; Decrement counter
     else
-      .err <invalid alignment restoration>
+      .err <StackRestore - invalid alignment.>
     endif
   endm
 else
@@ -4087,9 +4088,8 @@ else
       ifnb <AdditionalSpace>
         add rsp, &AdditionalSpace
       endif
-      pop r15
-      mov rsp, r15                                        ;;Restore rsp
-      ??StackAlignCount = ??StackAlignCount - 1           ;;Decrement counter
+      pop rsp                                             ;; Restore rsp
+      ??StackAlignCount = ??StackAlignCount - 1           ;; Decrement counter
     else
       .err <StackRestore - invalid alignment.>
     endif
@@ -4101,7 +4101,7 @@ endif
 ; Purpose:    Returns the simplified current segment name.
 ; Arguments:  None.
 
-$CurSeg  macro
+$CurSeg macro
   $$Arg textequ @CurSeg
   ifidn $$Arg, <CONST>
     exitm <.const>
@@ -4111,6 +4111,10 @@ $CurSeg  macro
     exitm <.data>
   elseifidn $$Arg, <_TEXT>
     exitm <.code>
+  elseifidn $$Arg, <SEG_TEXT_ALIGN>
+    exitm <SEG_TEXT_ALIGN segment>
+  elseifidn $$Arg, <SEG_TEXT>
+    exitm <SEG_TEXT segment>
   else
     exitm <>
   endif
@@ -4305,7 +4309,7 @@ LocReg macro ExpressionList:vararg
       %elseifidni <$$RegName>, <$SubReg($$RegName, 4)>
         %local $$SymName:DWORD
       %elseifidni <$$RegName>, <$SubReg($$RegName, 8)>
-        local $$SymName:DWORD                           ;Must be 32-bit
+        local $$SymName:DWORD                           ;; Must be 32-bit
       else
         echo $$RegName - Unknown register size
       endif
@@ -4345,7 +4349,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ArgReg
-; Purpose:    Declares the use of a symbol as a register or as an method argument argument.
+; Purpose:    Declares the use of a symbol as a register or as a method argument.
 ;             If TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
 ;             name, otherwise the method argument is used.
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
@@ -4402,7 +4406,7 @@ endm
 
 $ArgReg32 macro SymbolName
   ifb <??ObjectContext>
-    .err $ArgReg - out of method context
+    .err $ArgReg32 - out of method context
   else
     if (opattr @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)) and OAT_REGISTER
       exitm $SubReg(@CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName), 4)
@@ -4436,32 +4440,32 @@ endif
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      pushaq
-; Purpose:    Simile to pushad but for 64-bit. Order of pushed values equal to pushad.
+; Purpose:    Similar to pushad but for 64-bit. Order of pushed values equal to pushad.
 ; Arguments:  None.
 ; Note:       rsp is not the value of the instruction begin, like it is using pushad.
 
 pushaq macro
-  push rax                                              ;;15
-  push rcx                                              ;;14
-  push rdx                                              ;;13
-  push rbx                                              ;;12
-  push rsp                                              ;;11
-  push rbp                                              ;;10
-  push rsi                                              ;; 9
-  push rdi                                              ;; 8
-  push r8                                               ;; 7
-  push r9                                               ;; 6
-  push r10                                              ;; 5
-  push r11                                              ;; 4
-  push r12                                              ;; 3
-  push r13                                              ;; 2
-  push r14                                              ;; 1
-  push r15                                              ;; 0
+  push rax                                              ;; 15
+  push rcx                                              ;; 14
+  push rdx                                              ;; 13
+  push rbx                                              ;; 12
+  push rsp                                              ;; 11
+  push rbp                                              ;; 10
+  push rsi                                              ;;  9
+  push rdi                                              ;;  8
+  push r8                                               ;;  7
+  push r9                                               ;;  6
+  push r10                                              ;;  5
+  push r11                                              ;;  4
+  push r12                                              ;;  3
+  push r13                                              ;;  2
+  push r14                                              ;;  1
+  push r15                                              ;;  0
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      popaq
-; Purpose:    Simile to popaq but for 64-bit.
+; Purpose:    Similar to popad but for 64-bit.
 ; Arguments:  None.
 
 popaq macro
@@ -4593,7 +4597,6 @@ endm
 ; Return:     Nothing.
 
 @Err macro Text:=<>
-;  %echo Text
 % .err Text
 endm
 
@@ -4656,7 +4659,7 @@ endm
 Subroutine macro SubName:req
   %SubName:
   if TARGET_BITNESS eq 64
-    sub rsp, 38h                 ;Shadow space + ret address and keep aligned to 16
+    sub rsp, 38h                                ;; Shadow space + ret address and keep aligned to 16
   endif
 endm
 

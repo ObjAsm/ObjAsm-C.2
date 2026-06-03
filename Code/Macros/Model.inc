@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      Model.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm supporting macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
+;             Version C.1.1, May 2026
+;               - CPU feature support added to SysSetup.
 ; ==================================================================================================
 
 ; Notes about ObjAsm:
@@ -32,14 +34,13 @@
 ;        - so: SOWORD
 ;        - t: TBYTE
 ;        - c: CHR (CHRA, CHRW, CHRU)
-;        - sz: zero-terminated string (ANSI or WIDE)
 ;        - h: HANDLE
 ;        - p: POINTER
 ;        - pp: POINTER to a POINTER
 ;        - pv: POINTER to a vector
 ;        - v: Vector, e.g., VEC3 or VEC4
 ;        - m: matrix, e.g., MAT33 or MAT44
-;        - sz: zero-terminated string of CHR characters, usually defined as CONST
+;        - sz: zero-terminated string (ANSI or WIDE), usually defined as CONST
 ;        - r4: REAL4
 ;        - r8: REAL8
 ;        - r10: REAL10
@@ -64,7 +65,7 @@
 ;        ; Arguments:  Arg1: ...
 ;        ;             Arg2: ...
 ;        ; Return:     ...
-;  8. ObjAsm uses a dual method table (DMT) that fuses a virtual method table (VMT) with an
+;  8. ObjAsm uses a dual method table (DMT) that combines a virtual method table (VMT) with an
 ;     interface method table (IMT). The layout of the VMT is designed with negative offsets from
 ;     the table entry point. To have quick access to an event translation table (ETT), a POINTER
 ;     is inserted between the VMT and the IMT, shifting the VMT one entry back.
@@ -81,9 +82,8 @@
 ; 14. Communal paths and other basic definitions are defined in a file called OA_Setup64.inc
 ; 15. Including objects is done using the MakeObjects or LoadObjects macro. The first builds
 ;     the object source while the second loads the precompiled library file. Descendant objects
-;     must be loaded in inheritance order. Included or loaded objects have to be included or
-;     loaded again. If no path is prepended to the object name, the ObjPath communal directory
-;     is assumed.
+;     must be loaded in inheritance order. If no path is prepended to the object name, 
+;     the ObjPath communal directory is assumed.
 ; 16. An object may have virtual methods, invoked using the VMT and the OCall macro.
 ;     Interface methods use the IMT and may use ICall or OCall for their invocation.
 ; 17. Static methods use a direct call to the method implementation without any indirection.
@@ -126,17 +126,59 @@ else
   ASSEMBLER CatStr <M>, @Version
 endif
 
+;CPU SIMD Features
+CPU_FEATURE_SIMD_NONE     equ  01                       ; Scalar only
+CPU_FEATURE_SIMD_MMX      equ  02
+CPU_FEATURE_SIMD_SSE      equ  03
+CPU_FEATURE_SIMD_SSE2     equ  04                       ; Baseline for x86-64
+CPU_FEATURE_SIMD_SSE3     equ  05
+CPU_FEATURE_SIMD_SSSE3    equ  06                       ; Supplemental SSE3
+CPU_FEATURE_SIMD_SSE4_1   equ  07
+CPU_FEATURE_SIMD_SSE4_2   equ  08
+CPU_FEATURE_SIMD_AVX      equ  09
+CPU_FEATURE_SIMD_AVX2     equ  10
+CPU_FEATURE_SIMD_AVX512_F equ  11
+
+;CPU Orthogonal Features
+CPU_FEATURE_NONE          equ  00000001h
+CPU_FEATURE_FPU           equ  00000002h                ; Baseline for x86-64
+CPU_FEATURE_AVX512_DQ     equ  00000004h
+CPU_FEATURE_AVX512_IFMA   equ  00000008h
+CPU_FEATURE_AVX512_VBMI   equ  00000010h
+CPU_FEATURE_AVX512_VNNI   equ  00000020h
+CPU_FEATURE_FMA           equ  00000040h
+CPU_FEATURE_BMI1          equ  00000080h
+CPU_FEATURE_BMI2          equ  00000100h
+CPU_FEATURE_POPCNT        equ  00000200h
+CPU_FEATURE_LZCNT         equ  00000400h
+CPU_FEATURE_ABM           equ  00000800h
+CPU_FEATURE_AES           equ  00001000h
+CPU_FEATURE_PCLMULQDQ     equ  00002000h
+CPU_FEATURE_SHA           equ  00004000h
+CPU_FEATURE_VMX           equ  00008000h
+CPU_FEATURE_SVM           equ  00010000h
+CPU_FEATURE_CMPXCHG16B    equ  00020000h
+CPU_FEATURE_CX8           equ  00040000h                ; Baseline for x86-64
+CPU_FEATURE_CLFLUSH       equ  00080000h                ; Baseline for x86-64
+CPU_FEATURE_MONITOR_MWAIT equ  00100000h
+CPU_FEATURE_RDRAND        equ  00200000h
+CPU_FEATURE_RDSEED        equ  00400000h
+CPU_FEATURE_LAHF_SAHF     equ  00800000h
+
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      SysSetup
 ; Purpose:    Load and configure standard modules.
-; Arguments:  Support level: OOP, WIN32/WIN64, CON32/CON64, NUI32/NUI64, LIB32/LIB64.
-;             Debug Switches : INFO, TRACE, RESGUARD, STKGUARD
+; Arguments:  Support level: OOP, WIN32/WIN64, CON32/CON64, NUI32/NUI64, LIB32/LIB64, DLL32/DLL64,
+;             UEFI32/UEFI64.
+;             String type: ANSI_STRING or WIDE_STRING
+;             Debug switches : INFO, TRACE, RESGUARD, STKGUARD
+;             CPU switches: MMX, SSE, SSE2, etc. 
 ;             Source identification: "..." (also used as LOG file name)
-;             Default string type: ANSI_STRING or WIDE_STRING
+;             SUFFIX: any text used as file suffix.
 ; Return:     Nothing.
 
 DEBUG macro DbgArgs:vararg
-  ifndef ISABLE_DEBUG                                   ;;Use assembler option /D<ISABLE_DEBUG>
+  ifndef ISABLE_DEBUG                                   ;; Use assembler option /D<ISABLE_DEBUG>
     $$DbgArgs equ DbgArgs                               ;;   to disable application debugging
     exitm <DEBUG_TRUE>
   else
@@ -145,59 +187,27 @@ DEBUG macro DbgArgs:vararg
   endif
 endm
 
-RESGUARD_LOADED           =    0                     ;Set these flags
-STKGUARDING               =    0
-TRACING                   =    0
-DEBUGGING                 =    0
+CPU macro SimdTarget:=<NONE>, CpuFeatureList:vararg
+  TARGET_CPU_SIMD_FEATURES  = CPU_FEATURE_SIMD_&SimdTarget
+  TARGET_CPU_FEATURES = CPU_FEATURE_NONE
+  %for $$CpuFeature, <CpuFeatureList>
+    TARGET_CPU_FEATURES = TARGET_CPU_FEATURES or @CatStr(<CPU_FEATURE_>, $$CpuFeature)
+  endm
+  exitm <CPU_FEATURES>                                  ;; Sentinel value consumed by SysSetup
+endm
 
-
-;CPU SIMD Features
-CPU_FEATURE_SIMD_MMX      equ  02
-CPU_FEATURE_SIMD_SSE      equ  03
-CPU_FEATURE_SIMD_SSE2     equ  04
-CPU_FEATURE_SIMD_SSE3     equ  05
-CPU_FEATURE_SIMD_SSSE3    equ  06
-CPU_FEATURE_SIMD_SSE4_1   equ  07
-CPU_FEATURE_SIMD_SSE4_2   equ  08
-CPU_FEATURE_SIMD_AVX      equ  09
-CPU_FEATURE_SIMD_AVX2     equ  10
-CPU_FEATURE_SIMD_AVX512_F equ  11
-
-;CPU Orthogonal Features
-CPU_FEATURE_FPU           equ  00000001h
-CPU_FEATURE_AVX512_DQ     equ  00000002h
-CPU_FEATURE_AVX512_IFMA   equ  00000004h
-CPU_FEATURE_AVX512_VBMI   equ  00000008h
-CPU_FEATURE_AVX512_VNNI   equ  00000010h
-CPU_FEATURE_FMA           equ  00000020h
-CPU_FEATURE_BMI1          equ  00000040h
-CPU_FEATURE_BMI2          equ  00000080h
-CPU_FEATURE_POPCNT        equ  00000100h
-CPU_FEATURE_LZCNT         equ  00000200h
-CPU_FEATURE_ABM           equ  00000400h
-CPU_FEATURE_AES           equ  00000800h
-CPU_FEATURE_PCLMULQDQ     equ  00001000h
-CPU_FEATURE_SHA           equ  00002000h
-CPU_FEATURE_VMX           equ  00004000h
-CPU_FEATURE_SVM           equ  00008000h
-CPU_FEATURE_CMPXCHG16B    equ  00010000h
-CPU_FEATURE_CX8           equ  00020000h
-CPU_FEATURE_CLFLUSH       equ  00040000h
-CPU_FEATURE_MONITOR_MWAIT equ  00080000h
-CPU_FEATURE_RDRAND        equ  00100000h
-CPU_FEATURE_RDSEED        equ  00200000h
-CPU_FEATURE_LAHF_SAHF     equ  00400000h
-
-TARGET_CPU_FEATURES       = CPU_FEATURE_FPU
-TARGET_CPU_SIMD_FEATURES  = CPU_FEATURE_SIMD_SSE
+RESGUARD_LOADED           =         0                   ;; Set these flags
+STKGUARDING               =         0
+TRACING                   =         0
+DEBUGGING                 =         0
 
 STR_TYPE_ANSI             equ       1
 STR_TYPE_WIDE             equ       2
-TARGET_STR_TYPE           =         STR_TYPE_WIDE       ;Default WIDE strings
+TARGET_STR_TYPE           =         STR_TYPE_WIDE       ;; Default WIDE strings
 TARGET_STR_AFFIX          textequ   <W>
 
-OOP_DISABLED              equ       1                   ;OOP support disabled.
-OOP_ENABLED               equ       2                   ;OOP support enabled.
+OOP_DISABLED              equ       1                   ;; OOP support disabled.
+OOP_ENABLED               equ       2                   ;; OOP support enabled.
 TARGET_OOP                =         OOP_DISABLED
 
 BIN_FORMAT_EXE            equ       1
@@ -205,18 +215,18 @@ BIN_FORMAT_DLL            equ       2
 BIN_FORMAT_LIB            equ       3
 TARGET_BIN_FORMAT         =         BIN_FORMAT_EXE
 
-USER_INTERFACE_NONE       equ       1                   ;No user interface
-USER_INTERFACE_GUI        equ       2                   ;Graphical user interface
-USER_INTERFACE_CLI        equ       3                   ;Command line interface
-TARGET_USER_INTERFACE     =         USER_INTERFACE_GUI  ;Default: Window
+USER_INTERFACE_NONE       equ       1                   ;; No user interface
+USER_INTERFACE_GUI        equ       2                   ;; Graphical user interface
+USER_INTERFACE_CLI        equ       3                   ;; Command line interface
+TARGET_USER_INTERFACE     =         USER_INTERFACE_GUI  ;; Default: Window
 
-TARGET_BITNESS            =         32                  ;Default 32-bit
+TARGET_BITNESS            =         32                  ;; Default 32-bit
 TARGET_ARCH_STRING        textequ   <x86>
 
 PLATFORM_NONE             equ       1
 PLATFORM_UEFI             equ       2
 PLATFORM_WINDOWS          equ       3
-PLATFORM_OTHER            equ       4                   ;E.g. Linux distros
+PLATFORM_OTHER            equ       4                   ;; E.g. Linux distros
 TARGET_PLATFORM           =         PLATFORM_WINDOWS
 
 MODE_RLS                  equ       1
@@ -230,12 +240,15 @@ DEBUGGING                 =         0
 
 
 SysSetup macro Arguments:vararg
+  TARGET_CPU_SIMD_FEATURES  = CPU_FEATURE_SIMD_NONE
+  TARGET_CPU_FEATURES       = CPU_FEATURE_FPU           ;; FPU is always present in current CPUs
+
   for Argument, <Arguments>
-    ifidni <Argument>, <WIDE_STRING>                    ;;WIDE string support
+    ifidni <Argument>, <WIDE_STRING>                    ;; WIDE string support
       TARGET_STR_TYPE = STR_TYPE_WIDE
       TARGET_STR_AFFIX textequ <W>
       UNICODE equ 1
-    elseifidni <Argument>, <ANSI_STRING>                ;;ANSI string support
+    elseifidni <Argument>, <ANSI_STRING>                ;; ANSI string support
       TARGET_STR_TYPE = STR_TYPE_ANSI
       TARGET_STR_AFFIX textequ <A>
 
@@ -333,13 +346,23 @@ SysSetup macro Arguments:vararg
       TARGET_PLATFORM = PLATFORM_UEFI
 
     elseifidni <Argument>, <SUFFIX>
-      ;Skip it now, it is processed by OA_TARGET.cmd
+      ; Skip it now, it is processed by OA_TARGET.cmd
+
+    elseifidni <Argument>, <CPU_FEATURES>
+      ; Skip
 
     else
       echo SysSetup - Invalid argument
       echo
     endif
   endm
+
+;  if TARGET_BITNESS eq 64
+;    if TARGET_CPU_SIMD_FEATURES lt CPU_FEATURE_SIMD_SSE2
+;      TARGET_CPU_SIMD_FEATURES = CPU_FEATURE_SIMD_SSE2
+;    endif
+;    TARGET_CPU_FEATURES = TARGET_CPU_FEATURES or (CPU_FEATURE_FPU or CPU_FEATURE_CX8 or CPU_FEATURE_CLFLUSH)
+;  endif
 
 
   if TARGET_BITNESS eq 32
@@ -370,7 +393,7 @@ SysSetup macro Arguments:vararg
   endif
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    if TARGET_BIN_FORMAT ne BIN_FORMAT_LIB                ;;Only load libs when target is not a lib
+    if TARGET_BIN_FORMAT ne BIN_FORMAT_LIB              ;; Only load libs when target is not a lib
       % includelib &LibPath&Windows\GDI32.lib
       % includelib &LibPath&Windows\Kernel32.lib
       % includelib &LibPath&Windows\User32.lib
@@ -392,8 +415,8 @@ SysSetup macro Arguments:vararg
 
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    externdef hInstance:HINSTANCE                       ;;Export hInstance symbol
-    externdef hProcessHeap:HANDLE                       ;;Export hProcessHeap symbol
+    externdef hInstance:HINSTANCE                       ;; Export hInstance symbol
+    externdef hProcessHeap:HANDLE                       ;; Export hProcessHeap symbol
   elseif TARGET_PLATFORM eq PLATFORM_UEFI
     externdef hImage:EFI_HANDLE
     externdef pSystemTable:POINTER
@@ -403,38 +426,38 @@ SysSetup macro Arguments:vararg
     externdef pConsoleIn:PCONIN
   endif
 
-  externdef p1stOMD:POINTER                             ;;Export p1stOMD symbol
+  externdef p1stOMD:POINTER                             ;; Export p1stOMD symbol
 
   ;;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   if TARGET_OOP eq OOP_ENABLED
     echo OOP Support:    ENABLED
-    IMPLEMENT         = TRUE                            ;;Default = implement object methods
-    MAKETEMPL         = TRUE                            ;;Default = create object templates
-    SHOWINHERITANCE   = TRUE                            ;;Output the object inheritance path
-    CREATETYPEDEFS    = TRUE                            ;;Emits TYPEDEF object POINTER information
-    % include &MacPath&Objects.inc                      ;;Here is our OOP support! => ObjAsm
+    IMPLEMENT         = TRUE                            ;; Default = implement object methods
+    MAKETEMPL         = TRUE                            ;; Default = create object templates
+    SHOWINHERITANCE   = TRUE                            ;; Output the object inheritance path
+    CREATETYPEDEFS    = TRUE                            ;; Emits TYPEDEF object POINTER information
+    % include &MacPath&Objects.inc                      ;; Here is our OOP support! => ObjAsm
 
     if DEBUGGING
-      SEG_OBJID segment                                   ;;Define a new segment
+      SEG_OBJID segment                                 ;; Define a new segment
         ??ObjIDTableStart equ $
-      SEG_OBJID ends                                      ;;Switch back to previous segment
+      SEG_OBJID ends                                    ;; Switch back to previous segment
       ??ObjIDTableCount = 0
 
-      SEG_OBJERR segment                                  ;;Define a new segment
+      SEG_OBJERR segment                                ;; Define a new segment
         ??ObjErrTableStart equ $
-      SEG_OBJERR ends                                     ;;Switch back to previous segment
+      SEG_OBJERR ends                                   ;; Switch back to previous segment
       ??ObjErrTableCount = 0
 
     endif
-    % include &ObjPath&ObjIDs.inc                       ;;These include files must follow the
-    % include &ObjPath&ObjErrs.inc                      ;;  previous segment definitions
+    % include &ObjPath&ObjIDs.inc                       ;; These include files must follow the
+    % include &ObjPath&ObjErrs.inc                      ;;   previous segment definitions
   else
     echo OOP Support:    DISABLED
-    IMPLEMENT         = FALSE                           ;;Don't implement unless MakeObject is used
-    MAKETEMPL         = FALSE                           ;;Don't create any object template
-    SHOWINHERITANCE   = FALSE                           ;;Don't output the inheritance path
-    CREATETYPEDEFS    = FALSE                           ;;Don't emit TYPEDEF object POINTER info
+    IMPLEMENT         = FALSE                           ;; Don't implement unless MakeObject is used
+    MAKETEMPL         = FALSE                           ;; Don't create any object template
+    SHOWINHERITANCE   = FALSE                           ;; Don't output the inheritance path
+    CREATETYPEDEFS    = FALSE                           ;; Don't emit TYPEDEF object POINTER info
   endif
 
   if TARGET_PLATFORM eq PLATFORM_NONE
@@ -461,9 +484,9 @@ SysSetup macro Arguments:vararg
     echo Binary Format:  DLL
   elseif TARGET_BIN_FORMAT eq BIN_FORMAT_LIB
     echo Binary Format:  LIB
-    IMPLEMENT         = FALSE                           ;;Don't implement unless MakeObject is used
-    MAKETEMPL         = FALSE                           ;;Don't create any object template
-    SHOWINHERITANCE   = FALSE                           ;;Don't output the inheritance path
+    IMPLEMENT         = FALSE                           ;; Don't implement unless MakeObject is used
+    MAKETEMPL         = FALSE                           ;; Don't create any object template
+    SHOWINHERITANCE   = FALSE                           ;; Don't output the inheritance path
   endif
 
   if TARGET_BITNESS eq 32
@@ -482,17 +505,17 @@ SysSetup macro Arguments:vararg
 
   if DEBUGGING
     if TARGET_BITNESS eq 64
-      ??StackBase equ <rbp>                             ;;Set default
-      option stackbase:??StackBase                      ;;Use rbp as stackbase for easier debugging
+      ??StackBase equ <rbp>                             ;; Set default
+      option stackbase:??StackBase                      ;; Use rbp as stackbase for easier debugging
     endif
 
     % include &MacPath&DebugShare.inc
 
-    DBG_SAVE_CPU_CONTEXT = TRUE                         ;;Debug macros preserve the CPU context
-    DBG_SAVE_XMM_CONTEXT = TRUE                         ;;Debug macros preserve the XMM context
-    DBG_SAVE_FPU_CONTEXT = TRUE                         ;;Debug macros preserve the FPU context
+    DBG_SAVE_CPU_CONTEXT = TRUE                         ;; Debug macros preserve the CPU context
+    DBG_SAVE_XMM_CONTEXT = TRUE                         ;; Debug macros preserve the XMM context
+    DBG_SAVE_FPU_CONTEXT = TRUE                         ;; Debug macros preserve the FPU context
 
-    DBG_DEVICE textequ <WND>                            ;;Default debug device
+    DBG_DEVICE textequ <WND>                            ;; Default debug device
     DBG_TRACE = FALSE
     DBG_INFO  = FALSE
     DBG_SHOW_TIME_STAMP = FALSE
@@ -530,13 +553,13 @@ SysSetup macro Arguments:vararg
       endif
     endm
 
-    externdef dDbgDev:DWORD                           ;;Export dDbgDev symbol
-    externdef dDbgOpt:DWORD                           ;;Export dDbgOpt symbol
+    externdef dDbgDev:DWORD                           ;; Export dDbgDev symbol
+    externdef dDbgOpt:DWORD                           ;; Export dDbgOpt symbol
     externdef hDbgInternet:HANDLE
     externdef pDbgIpStrA:PSTRINGA
     externdef wDbgIpPort:WORD
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      externdef DbgCritSect:CRITICAL_SECTION          ;;Export DbgCritSect symbol
+      externdef DbgCritSect:CRITICAL_SECTION          ;; Export DbgCritSect symbol
     endif
 
     if TARGET_BIN_FORMAT eq BIN_FORMAT_LIB
@@ -556,7 +579,6 @@ SysSetup macro Arguments:vararg
       externdef szDbgFPU7:CHRA
       externdef szDbgMemFmt:CHRA
       externdef szDbgElipsis:CHRA
-      externdef szDbgInvalid:CHRA
       externdef szDbgPoint2:CHRA
       externdef szDbgComma:CHRA
       externdef szDbgCtrCls:CHRW
@@ -569,9 +591,9 @@ SysSetup macro Arguments:vararg
     else
 
       ifb $$sz1
-        CStrW szDbgSrc, @CatStr(<!">, %@FileName, <!">) ;;Use the Project File Name
+        CStrW szDbgSrc, @CatStr(<!">, %@FileName, <!">) ;; Use the Project File Name
       else
-        CStrW szDbgSrc, $$sz1                           ;;Use the specified name
+        CStrW szDbgSrc, $$sz1                           ;; Use the specified name
       endif
 
       .data
@@ -612,9 +634,9 @@ SysSetup macro Arguments:vararg
 
       if STKGUARDING ne FALSE
         if TARGET_BITNESS eq 32
-          xStkGrdCookie  DWORD  0                       ;;Create Cookie variable
+          xStkGrdCookie  DWORD  0                       ;; Create Cookie variable
         else
-          xStkGrdCookie  QWORD  0                       ;;Create Cookie variable
+          xStkGrdCookie  QWORD  0                       ;; Create Cookie variable
         endif
       endif
 
@@ -656,7 +678,7 @@ endm
 ; Purpose:    Initialize the model and internal variables.
 ; Arguments:  Windows:
 ;               Arg1: Instance HANDLE. If not specified, the Module HANDLE is loaded into hInstance.
-;               Arg2: unused.
+;               Arg2: Unused.
 ;             UEFI:
 ;               Arg1: Image HANDLE.
 ;               Arg2: -> SystemTable.
@@ -665,17 +687,19 @@ SysInit macro Arg1, Arg2
 .data
   align ALIGN_DATA
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    hInstance         HINSTANCE   0                     ;;Module instance
-    hProcessHeap      HANDLE      0                     ;;Process Heap HANDLE
-    ifidn DBG_DEVICE, <NET>
-      pDbgIpStrA    PSTRINGA    $OfsCStrA(DBG_IP_ADDR)
-      wDbgIpPort    WORD        DBG_IP_PORT
-      hDbgInternet  HINTERNET   0
-    else
-      pDbgIpStrA    PSTRINGA    NULL
-      wDbgIpPort    WORD        0
-      hDbgInternet  HANDLE      0                       ;;HINTERNET but defined as HANDLE to avoid
-    endif                                               ;;inclusion of unnecessary headers
+    hInstance         HINSTANCE   0                     ;; Module instance
+    hProcessHeap      HANDLE      0                     ;; Process Heap HANDLE
+    if DEBUGGING
+      ifidn DBG_DEVICE, <NET>
+        pDbgIpStrA    PSTRINGA    $OfsCStrA(DBG_IP_ADDR)
+        wDbgIpPort    WORD        DBG_IP_PORT
+        hDbgInternet  HINTERNET   0
+      else
+        pDbgIpStrA    PSTRINGA    NULL
+        wDbgIpPort    WORD        0
+        hDbgInternet  HANDLE      0                     ;; HINTERNET but defined as HANDLE to avoid
+      endif                                             ;; inclusion of unnecessary headers
+    endif
   elseif TARGET_PLATFORM eq PLATFORM_UEFI
     hImage            EFI_HANDLE  0
     pSystemTable      POINTER     NULL
@@ -686,18 +710,18 @@ SysInit macro Arg1, Arg2
   endif
 
   if TARGET_OOP eq OOP_ENABLED
-    p1stOMD     POINTER     ??1stOMD                    ;;-> 1st item in object metadata chain
+    p1stOMD     POINTER     ??1stOMD                    ;; -> 1st item in object metadata chain
   endif
 
 .code
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    ifnb <Arg1>                                         ;;Used for DLLs
+    ifnb <Arg1>                                         ;; Used for DLLs
       m2m hInstance, Arg1, xax
     else
-      mov hInstance, $invoke(GetModuleHandle, NULL)     ;;Retrieves module instance HANDLE
+      mov hInstance, $invoke(GetModuleHandle, NULL)     ;; Retrieves module instance HANDLE
     endif
 
-    mov hProcessHeap, $invoke(GetProcessHeap)           ;;Get and save the process heap HANDLE
+    mov hProcessHeap, $invoke(GetProcessHeap)           ;; Get and save the process heap HANDLE
 
     if DEBUGGING
       invoke InitializeCriticalSectionEx, addr DbgCritSect, 4000, 0
@@ -840,7 +864,7 @@ SysInit macro Arg1, Arg2
     endif
 
     if STKGUARDING ne FALSE
-      rdtsc                                             ;;Generate a run-time random QWORD cookie
+      rdtsc                                             ;; Generate a run-time random QWORD cookie
       xor xax, xdx
       mov xStkGrdCookie, xax
     endif

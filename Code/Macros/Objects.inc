@@ -149,7 +149,7 @@ $ObjInst macro Expression:req
     @Err <$ObjInst Error: syntax error in Expression>
     exitm <>
   else
-    exitm @CatStr(<??>, %??ObjExpr, <_Init {}>)        ;;Referenced structure
+    exitm @CatStr(<??>, %??ObjExpr, <_Init {}>)        ;; Referenced structure
   endif
 endm
 
@@ -239,13 +239,13 @@ BuildObjInherPath macro MglObjName:req, MglAncName:=<>
       @CatStr(MglObjName, <_InherRevPath>) textequ \
         @CatStr(%@CatStr(MglObjName, <_InherRevPath>), <,>, MglAncName)
       $$Inher CatStr <MglAncName>, <_Inherit>
-      %exitm <BuildObjInherPath(MglObjName, %$$Inher)>  ;;Use recursion
+      %exitm <BuildObjInherPath(MglObjName, %$$Inher)>  ;; Use recursion
     else
       @Err <BuildObjInherPath Error: undefined ancestor MglAncName>
-      exitm <FALSE>                                     ;;Error
+      exitm <FALSE>                                     ;; Error
     endif
   else
-    exitm <TRUE>                                        ;;OK
+    exitm <TRUE>                                        ;; OK
   endif
 endm
 
@@ -264,12 +264,12 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
     exitm
   endif
 
-  ??ObjName textequ ??ObjExpr                           ;;Global symbol used in all coming defs
+  ??ObjName textequ ??ObjExpr                           ;; Global symbol used in all coming defs
 
   %ifdef ??ObjExpr
     %??ObjName&_Error = ??OBJERR_REDEFINITION
     ??ObjRedefIndex = ??ObjRedefIndex + 1
-    @Err <Object Error: redefinition of ??ObjExpr>      ;;Alert about a second declaration
+    @Err <Object Error: redefinition of ??ObjExpr>      ;; Alert about a second declaration
     exitm
   endif
 
@@ -286,13 +286,13 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   endif
 
   $$sz1 CatStr ??ObjName, <_Error>
-  $$sz1 = ??OBJERR_NONE                                 ;;Reset error flag
+  $$sz1 = ??OBJERR_NONE                                 ;; Reset error flag
 
   $$Count = 0
   repeat ??ObjectCount
     if @CatStr(<OBJECTID_>, %$$Count) eq ObjTypeID
       %??ObjName&_Error = ??OBJERR_TYPE_ID
-      @Err <Object Error: type ID duplication ObjTypeID>    ;;Don't stop compilation here
+      @Err <Object Error: type ID duplication ObjTypeID>    ;; Don't stop compilation here
       exitm
     endif
     $$Count = $$Count + 1
@@ -302,31 +302,31 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
     ??ObjectCount = ??ObjectCount + 1
   endif
 
-  ??MethodAccess = ??MTDACCESS_PUBLIC                   ;;Set default method access
+  ??MethodAccess = ??MTDACCESS_PUBLIC                   ;; Set default method access
 
-  ifb <AncExpr>                                         ;;Ancestor
+  ifb <AncExpr>                                         ;; Ancestor
     %&??ObjName&_Inherit equ <>
   else
     %&??ObjName&_Inherit textequ <??AncName>
   endif
-  %&??ObjName&_TypeID      equ ObjTypeID                ;;Type ID
-  %&??ObjName&_IfcMtdCount = 0                          ;;Count of new added interface methods
-  %&??ObjName&_VtlMtdCount = 0                          ;;Count of new added virtual methods
-  %&??ObjName&_DynMtdCount = 0                          ;;Count of new added dynamic methods
-  %&??ObjName&_StcMtdCount = 0                          ;;Count of new added static methods
-  %&??ObjName&_ExtMtdCount = 0                          ;;Count of new added external bound methods
-  %&??ObjName&_IlnMtdCount = 0                          ;;Count of new added inline methods
-  %&??ObjName&_VCount      = 0                          ;;Count of new added variables
-  %&??ObjName&_OMCount     = 0                          ;;Count of methods to override
-  %&??ObjName&_OVCount     = 0                          ;;Count of variables to override
-  %&??ObjName&_EvCount     = 0                          ;;Count of new added Events
+  %&??ObjName&_TypeID      equ ObjTypeID                ;; Type ID
+  %&??ObjName&_IfcMtdCount = 0                          ;; Count of new added interface methods
+  %&??ObjName&_VtlMtdCount = 0                          ;; Count of new added virtual methods
+  %&??ObjName&_DynMtdCount = 0                          ;; Count of new added dynamic methods
+  %&??ObjName&_StcMtdCount = 0                          ;; Count of new added static methods
+  %&??ObjName&_ExtMtdCount = 0                          ;; Count of new added external bound methods
+  %&??ObjName&_IlnMtdCount = 0                          ;; Count of new added inline methods
+  %&??ObjName&_VCount      = 0                          ;; Count of new added variables
+  %&??ObjName&_OMCount     = 0                          ;; Count of methods to override
+  %&??ObjName&_OVCount     = 0                          ;; Count of variables to override
+  %&??ObjName&_EvCount     = 0                          ;; Count of new added Events
 
-  @CatStr(%??ObjName, <_InherFrwPath>) CatStr ??ObjName ;;Start forward path
-  @CatStr(%??ObjName, <_InherRevPath>) CatStr ??ObjName ;;Start reverse path
+  @CatStr(%??ObjName, <_InherFrwPath>) CatStr ??ObjName ;; Start forward path
+  @CatStr(%??ObjName, <_InherRevPath>) CatStr ??ObjName ;; Start reverse path
 
   if $$sz1 eq ??OBJERR_NONE
     if BuildObjInherPath(%??ObjName, %??AncName) eq FALSE
-      %$$sz1 = ??OBJERR_UNK_ANCESTOR                    ;;Error flag that prevents further compilation
+      %$$sz1 = ??OBJERR_UNK_ANCESTOR                    ;; Error flag that prevents further compilation
     endif
 
     ;Build a Object-ID to Object-Name lookup table for debugging purposes
@@ -359,7 +359,7 @@ endm
 
 ObjectEnd macro
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
-    ;;Create unreferenced template structure.
+    ;; Create unreferenced template structure.
     ??OMCount = CreateOMList(%??ObjName)
     ??RMCount = 0
 
@@ -369,37 +369,37 @@ ObjectEnd macro
     ??IMCount = CountInterfaceMethods(%??ObjName)
 
     %??&??ObjName&_VMT struc 1
-      CreateVirtualMethodTable %??ObjName, <FALSE>      ;;Create uninitialized VMT.
+      CreateVirtualMethodTable %??ObjName, <FALSE>      ;; Create uninitialized VMT.
     %??&??ObjName&_VMT ends
 
-    %??ObjName struc 1                                  ;;Template: struc holding vars & dyn. meths.
-      POINTER ?                                         ;;Placeholder (-> Dual Method Table)
-      CreateDynamicTemplate %??ObjName, <FALSE>         ;;Create uninitialized dynamic struc (DYN).
+    %??ObjName struc 1                                  ;; Template: struc holding vars & dyn. meths.
+      POINTER ?                                         ;; Placeholder (-> Dual Method Table)
+      CreateDynamicTemplate %??ObjName, <FALSE>         ;; Create uninitialized dynamic struc (DYN).
     %??ObjName ends
 
     %if ??IMCount gt 0
       %??&??ObjName&_IMT struc 1
-        CreateInterfaceMethodTable %??ObjName, <FALSE>  ;;Create uninitialized IMT.
+        CreateInterfaceMethodTable %??ObjName, <FALSE>  ;; Create uninitialized IMT.
       %??&??ObjName&_IMT ends
 
-      %??&??ObjName&_DMT struc 1                        ;;Start uninitialized DMT.
+      %??&??ObjName&_DMT struc 1                        ;; Start uninitialized DMT.
         %??&??ObjName&_VMT    {}
-        POINTER ?                                       ;;Placeholder (-> ETT)
+        POINTER ?                                       ;; Placeholder (-> ETT)
         %??&??ObjName&_IMT    {}
       %??&??ObjName&_DMT ends
     else
-      %??&??ObjName&_DMT struc 1                        ;;Start uninitialized DMT.
+      %??&??ObjName&_DMT struc 1                        ;; Start uninitialized DMT.
         %??&??ObjName&_VMT    {}
-        POINTER ?                                       ;;Placeholder (-> ETT)
+        POINTER ?                                       ;; Placeholder (-> ETT)
       %??&??ObjName&_DMT ends
     endif
 
-    if MAKETEMPL ne FALSE                               ;;If MAKETEMPL is TRUE
-      %??&??ObjName&_Events struc 1                     ;;Event structure definition.
-        CreateEventList %??ObjName                      ;;Create Event list.
+    if MAKETEMPL ne FALSE                               ;; If MAKETEMPL is TRUE
+      %??&??ObjName&_Events struc 1                     ;; Event structure definition.
+        CreateEventList %??ObjName                      ;; Create Event list.
       %??&??ObjName&_Events ends
 
-      %CreateTemplate ??ObjName                         ;;Create initialized object template.
+      %CreateTemplate ??ObjName                         ;; Create initialized object template.
       public @CatStr(<TPL_>, %??ObjName)
       public @CatStr(<TPL_>, %??ObjName, <_DMT>)
     else
@@ -412,10 +412,10 @@ ObjectEnd macro
     endif
   endif
 
-  .code                                                 ;;Switch to code
+  .code                                                 ;; Switch to code
 
-  if IMPLEMENT ne FALSE and MAKETEMPL ne FALSE          ;;Now include external methods only
-                                                        ;;  if we use MakeObjects!
+  if IMPLEMENT ne FALSE and MAKETEMPL ne FALSE          ;; Now include external methods only
+                                                        ;;   if we use MakeObjects!
     ??ExternFilePath SubStr @FileCur, 1, @SizeStr(%@FileCur) - 3
 
     $$Count = 0
@@ -460,7 +460,7 @@ InterfaceAbstract macro MtdName:req, Args:vararg
     %&??ObjName&_IfcMtdCount = $$Index
     @CatStr(%??ObjName, <_IfcMethodName_>, %$$Index) textequ <MtdName>
 
-    ;;Set a mark. If you prefer, you can set it equal to an offset of an error handler procedure.
+    ;; Set a mark. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_IfcMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
     @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_INTERFACE
@@ -503,7 +503,7 @@ VirtualAbstract macro MtdName:req, Args:vararg
     %&??ObjName&_VtlMtdCount = $$Index
     @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
 
-    ;;Set a mark. If you prefer, you can set it to an error handler procedure address.
+    ;; Set a mark. If you prefer, you can set it to an error handler procedure address.
     %@CatStr(%??ObjName, <_VtlMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
     @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_VIRTUAL
@@ -546,7 +546,7 @@ DynamicAbstract macro MtdName:req, Args:vararg
     %&??ObjName&_DynMtdCount = $$Index
     @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
 
-    ;;Set a marker. If you prefer, you can set it equal to an offset of an error handler procedure.
+    ;; Set a marker. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_DynMtdProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
     @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_DYNAMIC
@@ -587,7 +587,7 @@ endm
 
 StaticMethod macro MtdName:req, Args:vararg
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
-    ;;Check if this StaticMethod already exists
+    ;; Check if this StaticMethod already exists
     $$OName textequ <??ObjName>
     while TRUE
       %ifdef @CatStr(%$$OName, %??MtdPfx, MtdName)
@@ -634,7 +634,7 @@ endm
 
 InlineMethod macro MtdName:req, Args:vararg
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
-    ;;Check if this InlineMethod exists
+    ;; Check if this InlineMethod exists
     $$OName textequ <??ObjName>
     while TRUE
       %ifdef @CatStr(%$$OName, $$MtdPfx, MtdName)
@@ -889,7 +889,7 @@ LoadObjects macro FileNameList:vararg
     endif
     %include &$$IncObjPath&&$$FileName&.inc
   endm
-  IMPLEMENT = TRUE                                      ;;Restore defaults
+  IMPLEMENT = TRUE                                      ;; Restore defaults
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -899,7 +899,7 @@ endm
 
 MakeObjects macro FileNameList:vararg
   for $$FileName:req, <FileNameList>
-    IMPLEMENT = TRUE                                    ;;In case it was reseted
+    IMPLEMENT = TRUE                                    ;; In case it was reseted
     if @InStr(1, $$FileName, <\>) eq 0
       $$IncObjPath textequ <&ObjPath&>
     else
@@ -907,7 +907,7 @@ MakeObjects macro FileNameList:vararg
     endif
     %include &$$IncObjPath&&$$FileName&.inc
   endm
-  IMPLEMENT = TRUE                                      ;;In case it was reseted
+  IMPLEMENT = TRUE                                      ;; In case it was reseted
 endm
 ;
 ; --------------------------------------------------------------------------------------------------
@@ -925,7 +925,7 @@ VirtualObjects macro FileNameList:req
     endif
     %include $$FName.inc
   endm
-  IMPLEMENT = TRUE                                      ;;Set defaults
+  IMPLEMENT = TRUE                                      ;; Set defaults
   MAKETEMPL = TRUE
 endm
 
@@ -937,18 +937,18 @@ endm
 ;             Arg3: List of argument types.
 
 PrototypeMethod macro MglObjName:req, MtdName:req, Args:vararg
-  $$sz1 textequ <:ptr &MglObjName&>                     ;;First argument is always pSelf
+  $$sz1 textequ <:ptr &MglObjName&>                     ;; First argument is always pSelf
   $$ArgCount = 0
   $$Flag = TRUE
   ifnb <Args>
     for $$Arg:req, <&Args>
-      if $$Flag ne FALSE                                ;;Ignore the rest if $$Flag = FALSE
-        ifidn <$$Arg>, <?>                              ;;Unknown number of arguments
-          $$ArgCount = -1 - $$ArgCount                  ;;Set a negative value!
+      if $$Flag ne FALSE                                ;; Ignore the rest if $$Flag = FALSE
+        ifidn <$$Arg>, <?>                              ;; Unknown number of arguments
+          $$ArgCount = -1 - $$ArgCount                  ;; Set a negative value!
           $$Flag = FALSE
           $$sz1 CatStr $$sz1, <,:VARARG>
         else
-          $$ArgCount = $$ArgCount + 1                   ;;Pointer size
+          $$ArgCount = $$ArgCount + 1                   ;; Pointer size
           $$sz1 CatStr $$sz1, <,:>, <&$$Arg>
         endif
       endif
@@ -956,7 +956,7 @@ PrototypeMethod macro MglObjName:req, MtdName:req, Args:vararg
   endif
 
   if TARGET_BITNESS eq 32
-    if $$Flag eq FALSE                                  ;;In 32-bit, vararg requires c calling conv.
+    if $$Flag eq FALSE                                  ;; In 32-bit, vararg requires c calling conv.
       %@CatStr(MglObjName, %??MtdPfx, MtdName) proto c, $$sz1
       %@CatStr(<TYPE_>, MglObjName, %??MtdPfx, MtdName) typedef proto c, $$sz1
     else
@@ -1031,7 +1031,7 @@ endm
 ;             Arg2: with (TRUE) or without (FALSE) member initialization.
 
 CreateInterfaceMethodTable macro MglObjName:req, Init:=<TRUE>
-  %for $$TestObject, <@CatStr(MglObjName, <_InherFrwPath>)>  ;;Use forward list
+  %for $$TestObject, <@CatStr(MglObjName, <_InherFrwPath>)>  ;; Use forward list
     $$ACount = 0
     repeat @CatStr($$TestObject, <_IfcMtdCount>)
       $$ACount = $$ACount + 1
@@ -1043,16 +1043,16 @@ CreateInterfaceMethodTable macro MglObjName:req, Init:=<TRUE>
         $$sz4 CatStr <OvrMtd_Name_>, %$$TCount
         ifidn $$sz1, $$sz4
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <ObsoleteErrorProc>            ;;Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;;Erase the name of the IMT
+          ifidn <$$sz3>, <ObsoleteErrorProc>            ;; Erase it but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the name of the IMT
           endif
           ??RMCount = ??RMCount + 1
         endif
       endm
       ifidn <Init>, <TRUE>
-        $$sz1 POINTER $$sz3                             ;;Remove method prefix
+        $$sz1 POINTER $$sz3                             ;; Remove method prefix
       else
-        $$sz1 POINTER ?                                 ;;Remove method prefix
+        $$sz1 POINTER ?                                 ;; Remove method prefix
       endif
     endm
   endm
@@ -1066,7 +1066,7 @@ endm
 ; Note:       This VMT is in reverse order to make place for the IMT!
 
 CreateVirtualMethodTable macro MglObjName:req, Init:=<TRUE>
-  %for $$TestObject, <@CatStr(MglObjName, <_InherRevPath>)>;;Use reverse list
+  %for $$TestObject, <@CatStr(MglObjName, <_InherRevPath>)>;; Use reverse list
     $$ACount = @CatStr($$TestObject, <_VtlMtdCount>)
     repeat @CatStr($$TestObject, <_VtlMtdCount>)
       $$sz1 CatStr <$$TestObject>, <_VtlMethodName_>, %$$ACount
@@ -1077,8 +1077,8 @@ CreateVirtualMethodTable macro MglObjName:req, Init:=<TRUE>
         $$sz4 CatStr <OvrMtd_Name_>, %$$TCount
         ifidn $$sz1, $$sz4
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <ObsoleteErrorProc>            ;;Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;;Erase the name of the VMT
+          ifidn <$$sz3>, <ObsoleteErrorProc>            ;; Erase it but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the name of the VMT
           endif
           ??RMCount = ??RMCount + 1
         endif
@@ -1103,29 +1103,29 @@ endm
 
 CreateTemplate macro MglObjName:req
   ??OMCount = CreateOMList(MglObjName)
-  ??RMCount = 0                                         ;;Initialize to zero
+  ??RMCount = 0                                         ;; Initialize to zero
 
   ??OVCount = CreateOVList(MglObjName)
-  ??RVCount = 0                                         ;;Initialize to zero
+  ??RVCount = 0                                         ;; Initialize to zero
 
   ??IMCount = CountInterfaceMethods(MglObjName)
 
-  %??&MglObjName&_Init struc 1                          ;;Structure holding vars & dynamic methods
-    %POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT>)) + \ ;;-> Dual Method Table
+  %??&MglObjName&_Init struc 1                          ;; Structure holding vars & dynamic methods
+    %POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT>)) + \ ;; -> Dual Method Table
              sizeof(??&MglObjName&_VMT) + sizeof(POINTER)
-    CreateDynamicTemplate MglObjName, <TRUE>            ;;Create initialized dynamic (DYN) struc
+    CreateDynamicTemplate MglObjName, <TRUE>            ;; Create initialized dynamic (DYN) struc
   %??&MglObjName&_Init ends
 
   %??&MglObjName&_DMT_Init struc 1
-    CreateVirtualMethodTable MglObjName, <TRUE>         ;;Create VMT initialized structure
-    %POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT>)) + \ ;;-> end of structure
-             sizeof(??&MglObjName&_DMT) + 2*sizeof(DWORD)   ;;2 IDs
+    CreateVirtualMethodTable MglObjName, <TRUE>         ;; Create VMT initialized structure
+    %POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT>)) + \ ;; -> end of structure
+             sizeof(??&MglObjName&_DMT) + 2*sizeof(DWORD)    ;; 2 IDs
     %if ??IMCount gt 0
-      CreateInterfaceMethodTable MglObjName, <TRUE>     ;;Create initialized IMT structure
+      CreateInterfaceMethodTable MglObjName, <TRUE>     ;; Create initialized IMT structure
     endif
   %??&MglObjName&_DMT_Init ends
 
-  ifdif %??OMCount, %??RMCount                          ;;Check if all was overridden
+  ifdif %??OMCount, %??RMCount                          ;; Check if all was overridden
     %echo @CatStr(MglObjName, < has a method definition problem>)
     %echo @CatStr(<Number of overwritten methods: >, %??OMCount)
     %echo @CatStr(<Number of redefined methods:   >, %??RMCount)
@@ -1134,7 +1134,7 @@ CreateTemplate macro MglObjName:req
     .code
     exitm
   endif
-  ifdif %??OVCount, %??RVCount                          ;;Check if all was overridden
+  ifdif %??OVCount, %??RVCount                          ;; Check if all was overridden
     %echo @CatStr(MglObjName, < has a variable definition problem>)
     %echo @CatStr(<Number of overwritten variables: >, %??OVCount)
     %echo @CatStr(<Number of redefined variables:   >, %??RVCount)
@@ -1146,38 +1146,38 @@ CreateTemplate macro MglObjName:req
 
   .data
   align ALIGN_DATA
-  ;;Stores a POINTER to the next object metadata
+  ;; Stores a POINTER to the next object metadata
   POINTER ??1stOMD
-  ??1stOMD = $ - sizeof(POINTER)                        ;;Store this address in the ??1stOMD symbol
+  ??1stOMD = $ - sizeof(POINTER)                        ;; Store this address in the ??1stOMD symbol
 
-  ;;Store sizeof(object TPL)
+  ;; Store sizeof(object TPL)
   %XWORD sizeof(MglObjName)
 
-  ;;Creates the template for the object methods and variables
+  ;; Creates the template for the object methods and variables
   @CatStr(<TPL_>, MglObjName, < ??>, MglObjName, <_Init>) {}
 
   align ALIGN_DATA
-  ;;Creates the Dual Method Table
+  ;; Creates the Dual Method Table
   @CatStr(<TPL_>, MglObjName, <_DMT ??>, MglObjName, <_DMT_Init>) {}
 
-  ;;Stores IDs
-  DWORD @CatStr(MglObjName, <_TypeID>)                  ;;Store object type ID
+  ;; Stores IDs
+  DWORD @CatStr(MglObjName, <_TypeID>)                  ;; Store object type ID
   $$sz1 CatStr <MglObjName>, <_Inherit>
-  %ifb <$$sz1>                                          ;;Check if ancestor exists
-    DWORD 0                                             ;;NO => store 0
+  %ifb <$$sz1>                                          ;; Check if ancestor exists
+    DWORD 0                                             ;; NO => store 0
   else
-    DWORD @CatStr(%$$sz1, <_TypeID>)                    ;;YES => store ancestor type ID
+    DWORD @CatStr(%$$sz1, <_TypeID>)                    ;; YES => store ancestor type ID
   endif
 
-  ;;Set the number of events handled by the object
+  ;; Set the number of events handled by the object
   %QWORD sizeof(??&MglObjName&_Events) / sizeof(??EVENT_ENTRY)
 
-  ;;Create the events list (unnamed)
+  ;; Create the events list (unnamed)
   %if sizeof(??&MglObjName&_Events) gt 0
     @CatStr(<??>, MglObjName, <_Events>) {}
   endif
 
-  ;;Checks if the logical structure has the same size as the template structure
+  ;; Checks if the logical structure has the same size as the template structure
   if sizeof(@CatStr(MglObjName)) ne sizeof(@CatStr(<TPL_>, MglObjName))
     @Err <CreateTemplate Error: object structure error in MglObjName>
     ??&MglObjName&_Error = ??OBJERR_TEMPLATE
@@ -1194,7 +1194,7 @@ endm
 
 CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
   %for $$TestObject, <@CatStr(MglObjName, <_InherFrwPath>)>
-    ;;--- Dynamic Methods ------------------------------------------------------------------
+    ;; --- Dynamic Methods ------------------------------------------------------------------
     $$ACount = 0
     repeat @CatStr($$TestObject, <_DynMtdCount>)
       $$ACount = $$ACount + 1
@@ -1205,8 +1205,8 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
         $$TCount = $$TCount + 1
         %ifidn <$$sz1>, <@CatStr(<OvrMtd_Name_>, %$$TCount)>
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <??OBSOLETE_ERROR_PROC>        ;;Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;;Erase the name of the template
+          ifidn <$$sz3>, <??OBSOLETE_ERROR_PROC>        ;; Erase it but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the name of the template
           endif
           ??RMCount = ??RMCount + 1
         endif
@@ -1218,7 +1218,7 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
       endif
     endm
 
-    ;;--- Vars -----------------------------------------------------------------------------
+    ;; --- Vars -----------------------------------------------------------------------------
     $$ACount = 0
     repeat @CatStr($$TestObject, <_VCount>)
       $$ACount = $$ACount + 1
@@ -1240,7 +1240,7 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
         if @InStr(1, %$$sz3, <{>) eq 1
 %         $$sz1 $$sz2 {}
         else
-          $$sz4 textequ <$Lower($$sz3)>                 ;;Convert to lowercase
+          $$sz4 textequ <$Lower($$sz3)>                 ;; Convert to lowercase
           ??Pos1 = @InStr(1, %$$sz4, < dup>)
           if ??Pos1 gt 0
             if @InStr(1, %$$sz4, <{>) gt 0
@@ -1271,15 +1271,15 @@ CreateEventList macro MglObjName:req
       if $IsObsoleteMethod(MglObjName, $$sz1)
       else
         %for ??EventID:req, <@CatStr($$TestObject, <_EvIDs_>, %$$Index)>
-          ;;Message & relative method offset
+          ;; Message & relative method offset
           GetMtdType MglObjName, %$$sz1
           DWORD ??EventID
           WORD  @CatStr($$TestObject, <_EvFlags_>, %$$Index)
           WORD  ??MtdType
           if ??MtdType eq ??MTDTYPE_STATIC
-            POINTER offset(@CatStr(MglObjName, %$$sz1)) ;;Method address
+            POINTER offset(@CatStr(MglObjName, %$$sz1)) ;; Method address
           elseif ??MtdType eq ??MTDTYPE_VIRTUAL
-            POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT.>, %$$sz1)) ;;Address into the DMT
+            POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT.>, %$$sz1)) ;; Address into the DMT
           elseif ??MtdType eq ??MTDTYPE_INTERFACE
             POINTER offset(@CatStr(<TPL_>, MglObjName, <_DMT.>, %$$sz1))
           elseif ??MtdType eq ??MTDTYPE_DYNAMIC
@@ -1311,7 +1311,7 @@ GetMtdType macro MglObjName:req, MglMtdName:req
       %ifdef $$sz2
         ??MtdType = $$sz2
         ??ImpObj textequ <$$TestObject>
-        exitm                                           ;;Exit the for loop
+        exitm                                           ;; Exit the for loop
       endif
     endm
   endif
@@ -1335,12 +1335,12 @@ $IsObsoleteMethod macro MglObjName:req, MglMtdName:req
           %ifidn <MglMtdName>, <@CatStr($$TestObject, <_OvrMtdName_>, %$$ACount)>
             %ifidn <@CatStr($$TestObject, <_OvrMtdProc_>, %$$ACount)>, <??OBSOLETE_ERROR_PROC>
               $$Found = TRUE
-              exitm                                     ;;Exit the for loop
+              exitm                                     ;; Exit the for loop
             endif
           endif
         endm
       else
-        exitm                                           ;;Exit the for loop
+        exitm                                           ;; Exit the for loop
       endif
     endm
   endif
@@ -1364,11 +1364,11 @@ $IsPrivateMethod macro MglObjName:req, MglMtdName:req
         %ifdef $$sz
           %if $$sz eq ??MTDACCESS_PRIVATE
             $$Found = TRUE
-            exitm                                       ;;Exit the for loop
+            exitm                                       ;; Exit the for loop
           endif
         endif
       else
-        exitm                                           ;;Exit the for loop
+        exitm                                           ;; Exit the for loop
       endif
     endm
   endif
@@ -1397,7 +1397,7 @@ $MethodAddr macro Expression:req
     exitm <NULL>
   else
     %ifdef ??ObjExpr
-      %GetMtdType ??ObjExpr, ??MtdExpr                  ;;Updates ??MtdType & ??ImpObj
+      %GetMtdType ??ObjExpr, ??MtdExpr                  ;; Updates ??MtdType & ??ImpObj
       if ??MtdType eq ??MTDTYPE_STATIC
         exitm @CatStr(<offset(>, %??ImpObj, %??MtdExpr, <)>)
 
@@ -1406,11 +1406,11 @@ $MethodAddr macro Expression:req
           mov xax, @CatStr(<offset(TPL_>, %??ImpObj, <)>)
           mov xax, POINTER ptr [xax]
         else
-          if (opattr ??InsExpr) and OAT_REGISTER        ;;Is ??InsExpr a register?
-            mov xax, POINTER ptr [??InsExpr]            ;;Get address of VMT
+          if (opattr ??InsExpr) and OAT_REGISTER        ;; Is ??InsExpr a register?
+            mov xax, POINTER ptr [??InsExpr]            ;; Get address of VMT
           else
             if type(??InsExpr) eq @WordSize
-              mov xax, ??InsExpr                          ;;??InsExpr is not a register => load it
+              mov xax, ??InsExpr                        ;; ??InsExpr is not a register => load it
             else
               $$Attributes = opattr(??InsExpr)
               if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE)) or \
@@ -1420,7 +1420,7 @@ $MethodAddr macro Expression:req
                 mov xax, ??InsExpr
               endif
             endif
-            mov xax, POINTER ptr [xax]                  ;;Get address of VMT
+            mov xax, POINTER ptr [xax]                  ;; Get address of VMT
           endif
         endif
         %exitm <@CatStr(<(??>, %??ObjExpr, <_VMT ptr [xax - ??>, %??ObjExpr, \
@@ -1429,10 +1429,10 @@ $MethodAddr macro Expression:req
       elseif ??MtdType eq ??MTDTYPE_INTERFACE
         %ifb <??InsExpr>
           mov xax, @CatStr(<offset(TPL_>, %??ImpObj, <_DMT) + sizeof(??>, %??ImpObj, <_VMT)>)) + \
-                   sizeof(POINTER)                      ;;xax -> IMT of the implementing object
+                   sizeof(POINTER)                      ;; xax -> IMT of the implementing object
         else
-          if (opattr ??InsExpr) and OAT_REGISTER        ;;Is ??InsExpr a register?
-            mov xax, POINTER ptr [??InsExpr]            ;;Get address of IMT
+          if (opattr ??InsExpr) and OAT_REGISTER        ;; Is ??InsExpr a register?
+            mov xax, POINTER ptr [??InsExpr]            ;; Get address of IMT
           else
             $$Attributes = opattr(??InsExpr)
             if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE)) or \
@@ -1441,18 +1441,18 @@ $MethodAddr macro Expression:req
             else
               mov xax, ??InsExpr
             endif
-            mov xax, POINTER ptr [xax]                  ;;Get address of IMT from this instance
+            mov xax, POINTER ptr [xax]                  ;; Get address of IMT from this instance
           endif
         endif
-        exitm @CatStr(<(??>, %??ObjExpr, <_IMT ptr [xax]).>, %??MtdExpr) ;;Ret mtd addr in IMT
+        exitm @CatStr(<(??>, %??ObjExpr, <_IMT ptr [xax]).>, %??MtdExpr) ;; Ret mtd addr in IMT
 
       elseif ??MtdType eq ??MTDTYPE_DYNAMIC
         %ifb <??InsExpr>
-          mov xax, @CatStr(<offset(TPL_>, %??ImpObj, <.>, %??MtdExpr, <)>) ;;Get member addr in DYN.
-          exitm <POINTER ptr [xax]>                     ;;Return method address
+          mov xax, @CatStr(<offset(TPL_>, %??ImpObj, <.>, %??MtdExpr, <)>) ;; Get member addr in DYN.
+          exitm <POINTER ptr [xax]>                     ;; Return method address
         else
-          if (opattr ??InsExpr) and OAT_REGISTER        ;;Is ??InsExpr a register?
-            %exitm <(??ObjExpr ptr [??InsExpr]).??MtdExpr>;;Return method address in instance data
+          if (opattr ??InsExpr) and OAT_REGISTER        ;; Is ??InsExpr a register?
+            %exitm <(??ObjExpr ptr [??InsExpr]).??MtdExpr>;; Return method address in instance data
           else
             $$Attributes = opattr(??InsExpr)
             if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE)) or \
@@ -1461,7 +1461,7 @@ $MethodAddr macro Expression:req
             else
               mov xax, ??InsExpr
             endif
-            %exitm <(??ObjExpr ptr [xax]).??MtdExpr>    ;;Return method address in instance data
+            %exitm <(??ObjExpr ptr [xax]).??MtdExpr>    ;; Return method address in instance data
           endif
         endif
 
@@ -1500,13 +1500,13 @@ endm
 New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
   PreParseExpr Expression
 
-  ;;Get ??MtdExpr
+  ;; Get ??MtdExpr
   if ??Pos3 ne 0
     @Err <New Error: method Expression not allowed>
     exitm
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
@@ -1525,7 +1525,7 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
     endif
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   endif
@@ -1562,7 +1562,7 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
   else
     @Err <New Error: undefined object Expression>
   endif
-endm                                                    ;;xax -> allocated object instance
+endm                                                    ;; xax -> allocated object instance
 
 $New macro Args:vararg
   New Args
@@ -1612,7 +1612,7 @@ endm
 Kill macro Expression:req, Args:vararg
   PreParseExpr Expression
 
-  ;;Get ??MtdExpr
+  ;; Get ??MtdExpr
   if ??Pos3 ne 0
     ??MtdExpr CatStr ??MtdPfx, @SubStr(<Expression>, ??Pos3 + 1)
   else
@@ -1621,7 +1621,7 @@ Kill macro Expression:req, Args:vararg
     endif
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       if ??Pos3 ne 0
@@ -1658,7 +1658,7 @@ Kill macro Expression:req, Args:vararg
     endif
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   else
@@ -1675,20 +1675,20 @@ Kill macro Expression:req, Args:vararg
   endif
 
   if TARGET_BITNESS eq 32
-    %push ??InsExpr                                     ;;Save pInstance onto stack
-    %MethodInvoke FALSE, ??InsExpr, ??ObjExpr, ??MtdExpr, Args  ;;Call destructor method
-    pop eax                                             ;;Little overhead: pop eax; push eax
-    MemFree eax                                         ;;Dispose object instance from memory
+    %push ??InsExpr                                     ;; Save pInstance onto stack
+    %MethodInvoke FALSE, ??InsExpr, ??ObjExpr, ??MtdExpr, Args  ;; Call destructor method
+    pop eax                                             ;; Little overhead: pop eax; push eax
+    MemFree eax                                         ;; Dispose object instance from memory
   else
     ifdifi ??InsExpr, <rcx>
       mov rcx, ??InsExpr
     endif
     push rcx
-    sub rsp, 28h                                        ;;Align again + new homing area
-    %MethodInvoke FALSE, rcx, ??ObjExpr, ??MtdExpr, Args  ;;Call destructor method
+    sub rsp, 28h                                        ;; Align again + new homing area
+    %MethodInvoke FALSE, rcx, ??ObjExpr, ??MtdExpr, Args  ;; Call destructor method
     add rsp, 28h
     pop r8
-    MemFree r8                                          ;;Dispose object instance from memory
+    MemFree r8                                          ;; Dispose object instance from memory
   endif
 endm
 
@@ -1700,7 +1700,7 @@ endm
 ;             Arg3: (optional) Instance POINTER. Default is pSelf.
 
 SetObject macro Register:req, ObjName:=<>, pInstance
-  if (opattr Register) and OAT_REGISTER                 ;;Is pInstance a register?
+  if (opattr Register) and OAT_REGISTER                 ;; Is pInstance a register?
     ifb <ObjName>
       $$OName textequ <??ObjectContext>
     else
@@ -1713,11 +1713,11 @@ SetObject macro Register:req, ObjName:=<>, pInstance
     endif
 
     %ifb <??RegisterCasted>
-      ??RegisterCasted textequ <Register>             ;;Set first member in global list
-      ??ObjectAssumed textequ $$OName                 ;;Set first member in global list
+      ??RegisterCasted textequ <Register>             ;; Set first member in global list
+      ??ObjectAssumed textequ $$OName                 ;; Set first member in global list
     else
-      ??RegisterCasted CatStr <Register>, <!,>, ??RegisterCasted  ;;Add more members
-      ??ObjectAssumed CatStr $$OName, <!,>, ??ObjectAssumed       ;;Add more members
+      ??RegisterCasted CatStr <Register>, <!,>, ??RegisterCasted  ;; Add more members
+      ??ObjectAssumed CatStr $$OName, <!,>, ??ObjectAssumed       ;; Add more members
     endif
 
     ifb <pInstance>
@@ -1755,16 +1755,16 @@ endm
 ;             Arg3: (optional) Instance POINTER. Default is pSelf.
 
 SetOwner macro RegName:req, ObjName:req, pInstance:=<pSelf>
-  if (opattr RegName) and OAT_REGISTER                  ;;Is RegName a register?
+  if (opattr RegName) and OAT_REGISTER                  ;; Is RegName a register?
     %ifb <??RegisterCasted>
-      ??RegisterCasted textequ <RegName>                ;;Set first member in list
+      ??RegisterCasted textequ <RegName>                ;; Set first member in list
       ??ObjectAssumed CatStr ??ObjPfx, <ObjName>
     else
-      ??RegisterCasted CatStr <RegName>, <!,>, ??RegisterCasted  ;;Add more members
+      ??RegisterCasted CatStr <RegName>, <!,>, ??RegisterCasted  ;; Add more members
       ??ObjectAssumed CatStr ??ObjPfx, <ObjName>, <!,>, ??ObjectAssumed
     endif
 
-    if (opattr pInstance) and OAT_REGISTER              ;;Is pInstance a register?
+    if (opattr pInstance) and OAT_REGISTER              ;; Is pInstance a register?
       mov RegName, ($Obj(Primer) ptr [pInstance]).pOwner
     else
       ifdifi <RegName>, <pInstance>
@@ -1787,19 +1787,19 @@ endm
 
 ReleaseObject macro RegName
   ifnb <RegName>
-    assume RegName:NOTHING                              ;;Use indicated register
-    ??RegisterCasted textequ <>                         ;;Reset the list
+    assume RegName:NOTHING                              ;; Use indicated register
+    ??RegisterCasted textequ <>                         ;; Reset the list
   else
     %ifnb <??RegisterCasted>
       $$Pos1 Instr ??RegisterCasted, <!,>
       if $$Pos1 eq 0
-        assume ??RegisterCasted:NOTHING                 ;;Last member in list
-        ??RegisterCasted textequ <>                     ;;Reset list
+        assume ??RegisterCasted:NOTHING                 ;; Last member in list
+        ??RegisterCasted textequ <>                     ;; Reset list
       else
-        assume @SubStr(%??RegisterCasted, 1, $$Pos1 - 1):NOTHING  ;;Use first memeber in list
-        ??RegisterCasted SubStr ??RegisterCasted, $$Pos1 + 1      ;;Delete first member in list
+        assume @SubStr(%??RegisterCasted, 1, $$Pos1 - 1):NOTHING  ;; Use first memeber in list
+        ??RegisterCasted SubStr ??RegisterCasted, $$Pos1 + 1      ;; Delete first member in list
         $$Pos1 Instr ??ObjectAssumed, <!,>
-        ??ObjectAssumed SubStr ??ObjectAssumed, $$Pos1 + 1        ;;Delete first member in list
+        ??ObjectAssumed SubStr ??ObjectAssumed, $$Pos1 + 1        ;; Delete first member in list
       endif
     endif
   endif
@@ -1834,11 +1834,11 @@ Override macro DstExpression:req, SrcExpression:req
           if ??MtdType eq ??MTDTYPE_INTERFACE
             $$Txo textequ @CatStr(<??>, %??ObjExpr, <_IMT>)
             if type(??InsExpr) eq @WordSize
-              if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?
-                mov xdx, POINTER ptr [??InsExpr]        ;;Make DMT indirection
+              if (opattr ??InsExpr) and OAT_REGISTER    ;; Is ??InsExpr a register?
+                mov xdx, POINTER ptr [??InsExpr]        ;; Make DMT indirection
               else
                 mov xcx, ??InsExpr
-                mov xdx, POINTER ptr [xcx]              ;;Make DMT indirection
+                mov xdx, POINTER ptr [xcx]              ;; Make DMT indirection
               endif
             else
               $$Attributes = opattr(??InsExpr)
@@ -1848,18 +1848,18 @@ Override macro DstExpression:req, SrcExpression:req
               else
                 mov xcx, offset(??InsExpr)
               endif
-              mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
+              mov xdx, POINTER ptr [xcx]                ;; Make DMT indirection
             endif
             mov xcx, $$OffsetText
             mov ($$Txo ptr [xdx]).??MtdExpr, xcx
           elseif ??MtdType eq ??MTDTYPE_VIRTUAL
             $$Txo textequ @CatStr(<??>, %??ObjExpr, <_VMT>)
             if type(??InsExpr) eq @WordSize
-              if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?
-                mov xdx, POINTER ptr [??InsExpr]        ;;Make DMT indirection
+              if (opattr ??InsExpr) and OAT_REGISTER    ;; Is ??InsExpr a register?
+                mov xdx, POINTER ptr [??InsExpr]        ;; Make DMT indirection
               else
                 mov xcx, ??InsExpr
-                mov xdx, POINTER ptr [xcx]              ;;Make DMT indirection
+                mov xdx, POINTER ptr [xcx]              ;; Make DMT indirection
               endif
             else
               $$Attributes = opattr(??InsExpr)
@@ -1869,13 +1869,13 @@ Override macro DstExpression:req, SrcExpression:req
               else
                 mov xcx, offset(??InsExpr)
               endif
-              mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
+              mov xdx, POINTER ptr [xcx]                ;; Make DMT indirection
             endif
             mov xcx, $$OffsetText
             mov ($$Txo ptr [xdx - sizeof($$Txo) - sizeof(POINTER)]).??MtdExpr, xcx
           elseif ??MtdType eq ??MTDTYPE_DYNAMIC
             if type(??InsExpr) eq @WordSize
-              if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?
+              if (opattr ??InsExpr) and OAT_REGISTER    ;; Is ??InsExpr a register?
                 mov xdx, $$OffsetText
                 mov (??ObjExpr ptr [??InsExpr]).??MtdExpr, xdx
               else
@@ -1957,7 +1957,7 @@ $MethodPrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
     ??DbgTraceMtdCount CatStr <MtdCnt_>, <ProcName>
     ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
 
-    ;;Create trace variables in the SEG_PROF
+    ;; Create trace variables in the SEG_PROF
     %ifndef ??DbgTraceMtdCount
       SEG_PROF segment
         ??DbgTraceMtdCount  DWORD  0
@@ -1965,33 +1965,33 @@ $MethodPrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
       SEG_PROF ends
     endif
 
-    ;;Do the tracing job
+    ;; Do the tracing job
     ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Startup>)), <_Startup>
-      inc ??DbgTraceMtdCount                          ;;Increment access counter
+      inc ??DbgTraceMtdCount                          ;; Increment access counter
       push eax
       push edx
-      rdtsc                                           ;;Get current tick count
+      rdtsc                                           ;; Get current tick count
       sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
       sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
       pop edx
       pop eax
     else
       ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Shutdown>)), <_Shutdown>
-        inc ??DbgTraceMtdCount                        ;;Increment access counter
+        inc ??DbgTraceMtdCount                        ;; Increment access counter
         push eax
         push edx
-        rdtsc                                         ;;Get current tick count
+        rdtsc                                         ;; Get current tick count
         sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
         sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
         pop edx
         pop eax
       else
         push eax
-        mov eax, POINTER ptr [esp + 08]               ;;Get instance pointer from stack
-        .if eax == ??pDbgTraceInstance                ;;Check if it is the correct instance
-          inc ??DbgTraceMtdCount                      ;;Increment access counter
+        mov eax, POINTER ptr [esp + 08]               ;; Get instance pointer from stack
+        .if eax == ??pDbgTraceInstance                ;; Check if it is the correct instance
+          inc ??DbgTraceMtdCount                      ;; Increment access counter
           push edx
-          rdtsc                                       ;;Get current tick count
+          rdtsc                                       ;; Get current tick count
           sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
           sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
           pop edx
@@ -2002,34 +2002,34 @@ $MethodPrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
   endif
 
   if ??CurrFrame eq 1
-    ;;Create stack frame
-    if (ParamBytes + LocalBytes) gt 0                 ;;If both are zero, we can omit the
-      push ebp                                        ;;  stack frame
+    ;; Create stack frame
+    if (ParamBytes + LocalBytes) gt 0                 ;; If both are zero, we can omit the
+      push ebp                                        ;;   stack frame
       mov ebp, esp
       if STKGUARDING ne FALSE
-        push xStkGrdCookie                            ;;Push the Cookie on the stack
+        push xStkGrdCookie                            ;; Push the Cookie on the stack
         ??ExtraBytes = ??ExtraBytes + 4
       endif
 
-      ;;Unrolled stack probing
+      ;; Unrolled stack probing
       if LocalBytes + ??ExtraBytes ge PAGESIZE
-      ;;Calc the furthest memory to probe and round up to next memory page
+      ;; Calc the furthest memory to probe and round up to next memory page
         ??MaxProbe = (LocalBytes + ??ExtraBytes + PAGESIZE - 1) and (- PAGESIZE)
         ??CurrProbe = PAGESIZE
         while ??CurrProbe le ??MaxProbe
-          mov [ebp - ??CurrProbe], eax                ;;Probe stack now
+          mov [ebp - ??CurrProbe], eax                ;; Probe stack now
           ??CurrProbe = ??CurrProbe + PAGESIZE
         endm
       endif
 
-      if LocalBytes gt 0                              ;;Reserve room for the local vars
-        add esp, not LocalBytes - 1                   ;;Same as 'sub esp, LocalBytes'
+      if LocalBytes gt 0                              ;; Reserve room for the local vars
+        add esp, not LocalBytes - 1                   ;; Same as 'sub esp, LocalBytes'
       endif
     endif
 
-    ;;Save registers declared with 'uses'
+    ;; Save registers declared with 'uses'
     ifnb RegList
-      for ??Register, RegList                         ;;Push declared registers
+      for ??Register, RegList                         ;; Push declared registers
         push ??Register
       endm
     endif
@@ -2050,28 +2050,28 @@ endm
 
 MethodEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserParams
   if ??CurrFrame eq 1
-    ;;Restore registers declared with 'uses'; The list is just reversed
+    ;; Restore registers declared with 'uses'; The list is just reversed
     ifnb RegList
-      for ??Register, RegList                           ;;Pop off declared registers
-        pop ??Register                                  ;;They are in inverse order from
-      endm                                              ;;  the prologue call
+      for ??Register, RegList                           ;; Pop off declared registers
+        pop ??Register                                  ;; They are in inverse order from
+      endm                                              ;;   the prologue call
     endif
 
-    if (ParamBytes + LocalBytes) gt 0                   ;;Stack frame removement
+    if (ParamBytes + LocalBytes) gt 0                   ;; Stack frame removement
       if STKGUARDING ne FALSE
         lea esp, [ebp - 4]
-        pop ebp                                         ;;ebp = Cookie
-        pushfd                                          ;;Save Flags in the place taken by the Cookie
-        cmp ebp, xStkGrdCookie                          ;;Is Cookie unchanged?
+        pop ebp                                         ;; ebp = Cookie
+        pushfd                                          ;; Save Flags in the place taken by the Cookie
+        cmp ebp, xStkGrdCookie                          ;; Is Cookie unchanged?
         jz @F
-        sub esp, LocalBytes + 20                        ;;Preserve Stack values for diagnosis
+        sub esp, LocalBytes + 20                        ;; Preserve Stack values for diagnosis
         ; call StkGrdCallback
         lea esp, [esp + LocalBytes + 20]
         .if ZERO?
-          @CatStr(<int >, <3>)                          ;;Breakpoint to start debugging here
+          @CatStr(<int >, <3>)                          ;; Breakpoint to start debugging here
         .endif
       @@:
-        popfd                                           ;;Restore Flags
+        popfd                                           ;; Restore Flags
         pop ebp
       else
         leave
@@ -2081,13 +2081,13 @@ MethodEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPar
 
   if TRACING ne FALSE
     ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
-    ;;Do the tracing job
+    ;; Do the tracing job
     pushfd
     ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Startup>)), <_Startup>
       push eax
       push edx
-      rdtsc                                             ;;Get current tick count
-      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;;Compute tick difference
+      rdtsc                                             ;; Get current tick count
+      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;; Compute tick difference
       adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
       pop edx
       pop eax
@@ -2095,18 +2095,18 @@ MethodEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPar
       ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Shutdown>)), <_Shutdown>
         push eax
         push edx
-        rdtsc                                           ;;Get current tick count
-        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;;Compute tick difference
+        rdtsc                                           ;; Get current tick count
+        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;; Compute tick difference
         adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
         pop edx
         pop eax
       else
         push eax
-        mov eax, POINTER ptr [esp + 12]                 ;;Get instance pointer from stack
-        .if eax == ??pDbgTraceInstance                  ;;Check if it is the correct instance
+        mov eax, POINTER ptr [esp + 12]                 ;; Get instance pointer from stack
+        .if eax == ??pDbgTraceInstance                  ;; Check if it is the correct instance
           push edx
-          rdtsc                                         ;;Get current tick count
-          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;;Compute tick difference
+          rdtsc                                         ;; Get current tick count
+          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;; Compute tick difference
           adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
           pop edx
         .endif
@@ -2116,7 +2116,7 @@ MethodEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPar
     popfd
   endif
 
-  ;;Correct stack or leave it to caller?
+  ;; Correct stack or leave it to caller?
   if (Flags and 010000y) or (ParamBytes eq 0)
     ret
   else
@@ -2139,7 +2139,7 @@ $NoFramePrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserP
     ??DbgTraceMtdCount CatStr <MtdCnt_>, <ProcName>
     ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
 
-    ;;Create trace variables in the SEG_PROF
+    ;; Create trace variables in the SEG_PROF
     %ifndef ??DbgTraceMtdCount
       SEG_PROF segment
         ??DbgTraceMtdCount  DWORD  0
@@ -2147,33 +2147,33 @@ $NoFramePrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserP
       SEG_PROF ends
     endif
 
-    ;;Do the tracing job
+    ;; Do the tracing job
     ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Startup>)), <_Startup>
-      inc ??DbgTraceMtdCount                            ;;Increment access counter
+      inc ??DbgTraceMtdCount                            ;; Increment access counter
       push eax
       push edx
-      rdtsc                                             ;;Get current tick count
+      rdtsc                                             ;; Get current tick count
       sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
       sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
       pop edx
       pop eax
     else
       ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Shutdown>)), <_Shutdown>
-        inc ??DbgTraceMtdCount                          ;;Increment access counter
+        inc ??DbgTraceMtdCount                          ;; Increment access counter
         push eax
         push edx
-        rdtsc                                           ;;Get current tick count
+        rdtsc                                           ;; Get current tick count
         sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
         sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
         pop edx
         pop eax
       else
         push eax
-        mov eax, POINTER ptr [esp + 08]                 ;;Get instance pointer from stack
-        .if eax == ??pDbgTraceInstance                  ;;Check if it is the correct instance
-          inc ??DbgTraceMtdCount                      ;;Increment access counter
+        mov eax, POINTER ptr [esp + 08]                 ;; Get instance pointer from stack
+        .if eax == ??pDbgTraceInstance                  ;; Check if it is the correct instance
+          inc ??DbgTraceMtdCount                        ;; Increment access counter
           push edx
-          rdtsc                                       ;;Get current tick count
+          rdtsc                                         ;; Get current tick count
           sub ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax
           sbb ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
           pop edx
@@ -2202,13 +2202,13 @@ NoFrameEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
   endif
 
   if TRACING ne FALSE
-    ;;Do the tracing job
+    ;; Do the tracing job
     pushfd
     ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Startup>)), <_Startup>
       push eax
       push edx
-      rdtsc                                             ;;Get current tick count
-      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;;Compute tick difference
+      rdtsc                                             ;; Get current tick count
+      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;; Compute tick difference
       adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
       pop edx
       pop eax
@@ -2216,18 +2216,18 @@ NoFrameEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
       ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Shutdown>)), <_Shutdown>
         push eax
         push edx
-        rdtsc                                           ;;Get current tick count
-        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;;Compute tick difference
+        rdtsc                                           ;; Get current tick count
+        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;; Compute tick difference
         adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
         pop edx
         pop eax
       else
         push eax
-        mov eax, POINTER ptr [esp + 12]                 ;;Get instance pointer from stack
-        .if eax == ??pDbgTraceInstance                  ;;Check if it is the correct instance
+        mov eax, POINTER ptr [esp + 12]                 ;; Get instance pointer from stack
+        .if eax == ??pDbgTraceInstance                  ;; Check if it is the correct instance
           push edx
-          rdtsc                                       ;;Get current tick count
-          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;;Compute tick difference
+          rdtsc                                         ;; Get current tick count
+          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;; Compute tick difference
           adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
           pop edx
         .endif
@@ -2237,7 +2237,7 @@ NoFrameEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
     popfd
   endif
 
-  ;;Correct stack or leave it to caller?
+  ;; Correct stack or leave it to caller?
   if (Flags and 010000y) or (ParamBytes eq 0)
     ret
   else
@@ -2257,8 +2257,8 @@ Method macro Expression:req, MtdOpts:=<>, Args:vararg
   if $$Pos1 ne 0
     $$OName CatStr ??ObjPfx, @SubStr(<Expression>, 1, $$Pos1 - 1)
     $$PName CatStr ??MtdPfx, @SubStr(<Expression>, $$Pos1 + 1)
-    ??ObjectContext textequ $$OName                     ;;Define global symbol
-    ??MethodContext textequ $$PName                     ;;Define global symbol
+    ??ObjectContext textequ $$OName                     ;; Define global symbol
+    ??MethodContext textequ $$PName                     ;; Define global symbol
   else
     @Err <Method Error: method missing>
     exitm
@@ -2270,7 +2270,7 @@ Method macro Expression:req, MtdOpts:=<>, Args:vararg
     exitm
   endif
 
-  ??CurrFrame = 1                                       ;;Set default
+  ??CurrFrame = 1                                       ;; Set default
 
   if TARGET_BITNESS eq 32
     OPTION PROLOGUE:$MethodPrologue32
@@ -2369,22 +2369,22 @@ MethodEnd macro
   %for $$Register, <??RegisterCasted>
     assume $$Register:NOTHING
   endm
-  ??RegisterCasted textequ <>                         ;;Reset global symbol
-  ??ObjectAssumed textequ <>                          ;;Reset global symbol
+  ??RegisterCasted textequ <>                         ;; Reset global symbol
+  ??ObjectAssumed textequ <>                          ;; Reset global symbol
 
-  @@EOM:                                              ;;"End Of Method" label
-  ret                                                 ;;This triggers the epilogue generation
+  @@EOM:                                              ;; "End Of Method" label
+  ret                                                 ;; This triggers the epilogue generation
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
     @CatStr(%??ObjectContext, %??MethodContext, < endp>)
   else
     @CatStr(%??ObjectContext, %??ObjRedefIndex, %??MethodContext, < endp>)
   endif
-  ??ObjectContext textequ <>                          ;;Reset global symbol
-  ??MethodContext textequ <>                          ;;Reset global symbol
+  ??ObjectContext textequ <>                          ;; Reset global symbol
+  ??MethodContext textequ <>                          ;; Reset global symbol
 
   if TARGET_BITNESS eq 32
-    OPTION PROLOGUE:PrologueDef                       ;;Set default prologue and
-    OPTION EPILOGUE:EpilogueDef                       ;; epilogue generation
+    OPTION PROLOGUE:PrologueDef                       ;; Set default prologue and
+    OPTION EPILOGUE:EpilogueDef                       ;;  epilogue generation
   endif
 endm
 
@@ -2430,13 +2430,13 @@ ExitMethod macro Expression
         ifidni @SubStr(Expression, 1),  <.if>
           Expression
             jmp @@EOM
-          @CatStr(<.endif>)                               ;;Hide this line
+          @CatStr(<.endif>)                             ;; Hide this line
         endif
       else
         ifidn <Expression>, <0>
           xor eax, eax
           echo 1111111111111
-        elseifidni <Expression>, <xax>                  ;;Skip all these possibilities
+        elseifidni <Expression>, <xax>                  ;; Skip all these possibilities
         elseifidni <Expression>, <rax>
         elseifidni <Expression>, <eax>
         elseifidni <Expression>, <ax>
@@ -2586,8 +2586,8 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
         ??ParamCount = ??ParamCount + 1
         $$StackCorrection = $$StackCorrection + @WordSize
       else
-        ifidn @SubStr($$Arg, 1, 1), </>                 ;;Don't push this argument
-          if $$ArgPushed                                ;;Check if we have yet pushed something
+        ifidn @SubStr($$Arg, 1, 1), </>                 ;; Don't push this argument
+          if $$ArgPushed                                ;; Check if we have yet pushed something
             @Err <$PushMethodArgs32 Error: can't use "/" escape before a pushed argument.>
             $$ErrFlag = TRUE
             exitm <0>
@@ -2604,20 +2604,20 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
         else
           ??FloatFirstChar textequ @SubStr($$Arg, 1, 1)
           if (@InStr(1, <-0123456789>, %??FloatFirstChar) ne 0) and (@InStr(1, $$Arg, <.>) ne 0)
-            db 68h                                      ;;push opcode
-            REAL4 $$Arg                                 ;;push argument = REAL4
+            db 68h                                      ;; push opcode
+            REAL4 $$Arg                                 ;; push argument = REAL4
             ??ParamCount = ??ParamCount + 1
             $$StackCorrection = $$StackCorrection + @WordSize
           else
-            if (opattr $$Arg) and 00010000b             ;;$$Arg is register
+            if (opattr $$Arg) and 00010000b             ;; $$Arg is register
               ??RegSize SizeStr <$$Arg>
-              if ??RegSize eq 3                         ;;eax, ebx, ecx, edx, esi, esi, esp, esp
+              if ??RegSize eq 3                         ;; eax, ebx, ecx, edx, esi, esi, esp, esp
                 push $$Arg
                 ??ParamCount = ??ParamCount + 1
                 $$StackCorrection = $$StackCorrection + @WordSize
               elseif ??RegSize eq 2
                 ??Char SubStr <$$Arg>, 2, 1
-                %ifidni <??Char>, <l>                   ;;al, bl, cl, dl
+                %ifidni <??Char>, <l>                   ;; al, bl, cl, dl
                   $$EaxUsed = TRUE
                   push WORD ptr 0
                   movzx ax, $$Arg
@@ -2625,7 +2625,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                   ??ParamCount = ??ParamCount + 1
                   $$StackCorrection = $$StackCorrection + @WordSize
                 else
-                  %ifidni <??Char>, <h>                 ;;ah, bh, ch, dh
+                  %ifidni <??Char>, <h>                 ;; ah, bh, ch, dh
                     $$EaxUsed = TRUE
                     push WORD ptr 0
                     movzx ax, $$Arg
@@ -2634,7 +2634,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                     $$StackCorrection = $$StackCorrection + @WordSize
                   else
                     push WORD ptr 0
-                    push $$Arg                          ;;ax, bx, cx, dx, si, di, sp, bp
+                    push $$Arg                          ;; ax, bx, cx, dx, si, di, sp, bp
                     ??ParamCount = ??ParamCount + 1
                     $$StackCorrection = $$StackCorrection + @WordSize
                   endif
@@ -2645,9 +2645,9 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                 exitm
               endif
             else
-              if (opattr $$Arg) and OAT_IMMEDIATE       ;;Immediate expression
+              if (opattr $$Arg) and OAT_IMMEDIATE       ;; Immediate expression
                 $$ArgSize = type($$Arg)
-                if $$ArgSize eq 8                       ;;In case that the argument is a QWORD
+                if $$ArgSize eq 8                       ;; In case that the argument is a QWORD
                   push DWORD ptr ($$Arg and 0FFFFFFFFh)
                   push DWORD ptr ($$Arg shr 32)
                   $$StackCorrection = $$StackCorrection + 2*@WordSize
@@ -2695,15 +2695,15 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
         %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
         @Err <$PushMethodArgs32 Error: too few arguments or argument type mismatch.>
       endif
-      exitm <0>                                         ;;Regular call => stack balance by callee
+      exitm <0>                                         ;; Regular call => stack balance by callee
     else
-      if ??ParamCount lt (-1-ArgCount)                  ;;vararg
+      if ??ParamCount lt (-1-ArgCount)                  ;; vararg
         @Err <$PushMethodArgs32 Error: too few arguments or argument type mismatch.>
         %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
         exitm <0>
       else
-        %exitm <$$StackCorrection>                      ;;Return number of bytes to remove
-      endif                                             ;; from stack by the caller
+        %exitm <$$StackCorrection>                      ;; Return number of bytes to remove
+      endif                                             ;;  from stack by the caller
     endif
   endif
 endm
@@ -2732,8 +2732,8 @@ endm
 ;             Arg2: Used register.
 
 $GetInstance32 macro InsName:req, Reg:req
-  if type(InsName) eq @WordSize                         ;;If type = @WordSize, then it isn't an
-    if (opattr InsName) and OAT_REGISTER                ;;  Object instance
+  if type(InsName) eq @WordSize                         ;; If type = @WordSize, then it isn't an
+    if (opattr InsName) and OAT_REGISTER                ;;   Object instance
       exitm <InsName>
     else
       mov Reg, InsName
@@ -2757,8 +2757,8 @@ endm
 ; Arguments:  Arg1: Instance name.
 
 GetInstance64 macro InsName:req
-  if type(InsName) eq @WordSize                         ;;If type = @WordSize, then it isn't an
-    if (opattr InsName) and OAT_REGISTER                ;;  Object instance
+  if type(InsName) eq @WordSize                         ;; If type = @WordSize, then it isn't an
+    if (opattr InsName) and OAT_REGISTER                ;;   Object instance
       ifdifi <InsName>, <rcx>
         mov rcx, InsName
       endif
@@ -2782,13 +2782,13 @@ endm
 ; Arguments:  Arg1: Method arguments.
 
 SetVarargPassedParams macro Args
-  ;;Only if VARARG, we load eax with the total number of passed arguments
-  if $$DeclaredParamCount lt 0                          ;;If negative => VARARG
+  ;; Only if VARARG, we load eax with the total number of passed arguments
+  if $$DeclaredParamCount lt 0                          ;; If negative => VARARG
     $$PassedParamCount = $GetParamCount(Args)
     if $$PassedParamCount eq 0
       xor eax, eax
     else
-      mov eax, $$PassedParamCount                       ;;eax = Total number of passed arguments,
+      mov eax, $$PassedParamCount                       ;; eax = Total number of passed arguments,
     endif
   endif
 endm
@@ -2810,7 +2810,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
     if @CatStr(MglObjName, <_Error>) eq ??OBJERR_NONE
       $$Result = $IsPrivateMethod(MglObjName, MglMtdName)
       if $$Result eq 1
-        %ifdifi <??ObjectContext>, <MglObjName>         ;;Check scope
+        %ifdifi <??ObjectContext>, <MglObjName>         ;; Check scope
           @Err <MethodInvoke Error: private method can't be called from within current context>
           exitm
         endif
@@ -2819,12 +2819,12 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
         exitm
       endif
 
-      if $IsObsoleteMethod(MglObjName, MglMtdName)      ;;Obsolete method
+      if $IsObsoleteMethod(MglObjName, MglMtdName)      ;; Obsolete method
         %@Err <@CatStr(<MethodInvoke Error: obsolete method >, MglObjName, <.>, MglMtdName)>
         exitm
 
       else
-        GetMtdType MglObjName, MglMtdName               ;;Updates ??MtdType & ??ImpObj
+        GetMtdType MglObjName, MglMtdName               ;; Updates ??MtdType & ??ImpObj
         if ??MtdType eq ??MTDTYPE_UNKNOWN
           %@Err <@CatStr(<MethodInvoke Error: unknown method >, MglObjName, <.>, MglMtdName)>
           exitm
@@ -2832,7 +2832,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
         else
           ;********************************************************************************
           if ??MtdType eq ??MTDTYPE_INLINE
-            pushcontext assumes                         ;;Save context assume values
+            pushcontext assumes                         ;; Save context assume values
             ;Use default proc assume values
             assume xax:NOTHING, xbx:NOTHING, xcx:NOTHING, xdx:NOTHING, xdi:NOTHING, xsi:NOTHING
             assume fs:ERROR, gs:ERROR, es:ERROR
@@ -2843,7 +2843,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
               @CatStr(%??ImpObj, MglMtdName, < >, InsName, <,>, <Args>)
             endif
 
-            popcontext assumes                          ;;Restore context assume values
+            popcontext assumes                          ;; Restore context assume values
           else
             $$DeclaredParamCount = $GetDeclaredParamCount(MglObjName, MglMtdName)
             $$ProcType CatStr <TYPE_>, ??ImpObj, <MglMtdName>
@@ -2867,7 +2867,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                 SetVarargPassedParams <Args>
                 call @CatStr(%??ImpObj, MglMtdName)
                 if $$StackCorr gt 0
-                  add esp, $$StackCorr                  ;;Correct the stack in case of vararg
+                  add esp, $$StackCorr                  ;; Correct the stack in case of vararg
                 endif
               else
                 if type(InsName) ne @WordSize
@@ -2886,7 +2886,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                 else
                   %invoke $$ProcType ptr [0], $$IName, Args
                 endif
-                org $ - 7                               ;;Discard call instruction [FF142500000000]
+                org $ - 7                               ;; Discard call instruction [FF142500000000]
                 SetVarargPassedParams <Args>
                 call @CatStr(%??ImpObj, MglMtdName)
               endif
@@ -2901,14 +2901,14 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                   push $$IName
                   SetVarargPassedParams <Args>
                   if UseTPL eq FALSE
-                    mov edx, POINTER ptr [$$IName]      ;;Make DMT indirection
+                    mov edx, POINTER ptr [$$IName]      ;; Make DMT indirection
                     call ($$Txo ptr [edx - sizeof(@CatStr(<??>, MglObjName, <_VMT>)) - sizeof(POINTER)]).&MglMtdName
                   else
                     $$SName textequ <TPL_&MglObjName&_DMT>
                     call ($$Txo ptr [$$SName]).&MglMtdName
                   endif
                   if $$StackCorr gt 0
-                  add esp, $$StackCorr                  ;;Correct the stack in case of vararg
+                  add esp, $$StackCorr                  ;; Correct the stack in case of vararg
                   endif
                 else
                   GetInstance64 InsName
@@ -2918,15 +2918,15 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                     %invoke $$ProcType ptr [0], rcx, Args
                   endif
 
-                  org $ - 7                             ;;Discard call instruction [FF142500000000]
+                  org $ - 7                             ;; Discard call instruction [FF142500000000]
                   if UseTPL eq FALSE
-                    mov r11, [rcx]                      ;;Make DMT indirection
+                    mov r11, [rcx]                      ;; Make DMT indirection
                     $$SName textequ <r11 - sizeof(@CatStr(<??>, MglObjName, <_VMT>)) - sizeof(POINTER)>
                   else
                     $$SName textequ <TPL_&MglObjName&_DMT>
                   endif
                   SetVarargPassedParams <Args>
-                  call ($$Txo ptr [$$SName]).&MglMtdName  ;;Call method
+                  call ($$Txo ptr [$$SName]).&MglMtdName  ;; Call method
                 endif
 
               ;******************************************************************************
@@ -2944,7 +2944,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                     call ($$Txo ptr [$$SName]).&MglMtdName
                   endif
                   if $$StackCorr gt 0
-                    add esp, $$StackCorr                ;;Correct the stack in case of vararg
+                    add esp, $$StackCorr                ;; Correct the stack in case of vararg
                   endif
                 else
                   GetInstance64 InsName
@@ -2954,14 +2954,14 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                     %invoke $$ProcType ptr [0], rcx, Args
                   endif
 
-                  org $ - 7                             ;;Discard call instruction [FF142500000000]
+                  org $ - 7                             ;; Discard call instruction [FF142500000000]
                   if UseTPL eq FALSE
                     $$SName textequ <rcx>
                   else
                     $$SName textequ <TPL_&MglObjName>
                   endif
                   SetVarargPassedParams <Args>
-                  call ($$Txo ptr [$$SName]).&MglMtdName  ;;Call method
+                  call ($$Txo ptr [$$SName]).&MglMtdName  ;; Call method
                 endif
               else
                 @Err <MethodInvoke Error: logic error>
@@ -2990,7 +2990,7 @@ PreParseExpr macro Expression:req
   ??ObjExpr textequ <>
   ??MtdExpr textequ <>
 
-  ;;Get separator positions
+  ;; Get separator positions
   ??Pos1 InStr <Expression>, <::>
   if ??Pos1 ne 0
     if ??Pos1 + 1 lt @SizeStr(<Expression>)
@@ -3034,7 +3034,7 @@ endm
 ;               - Mtd
 
 $ParseMtdExpr macro Expression:req
-  ;;Get ??MtdExpr
+  ;; Get ??MtdExpr
   if ??Pos3 ne 0
     ??MtdExpr CatStr ??MtdPfx, @SubStr(<Expression>, ??Pos3 + 1)
   else
@@ -3043,7 +3043,7 @@ $ParseMtdExpr macro Expression:req
     endif
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       if ??Pos3 ne 0
@@ -3082,7 +3082,7 @@ $ParseMtdExpr macro Expression:req
     endif
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   endif
@@ -3106,7 +3106,7 @@ endm
 ;               - Mtd
 
 $ParseCallExpr macro Expression:req
-  ;;Get ??MtdExpr
+  ;; Get ??MtdExpr
   if ??Pos3 ne 0
     ??MtdExpr CatStr ??MtdPfx, @SubStr(<Expression>, ??Pos3 + 1)
   else
@@ -3115,7 +3115,7 @@ $ParseCallExpr macro Expression:req
     endif
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   else
@@ -3128,7 +3128,7 @@ $ParseCallExpr macro Expression:req
     endif
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       if ??Pos3 ne 0
@@ -3206,7 +3206,7 @@ $ParseInstExpr macro Expression:req
     exitm <FALSE>
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
@@ -3219,7 +3219,7 @@ $ParseInstExpr macro Expression:req
     exitm <FALSE>
   endif
 
-  ;;Get ??InsExpr
+  ;; Get ??InsExpr
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   else
@@ -3251,7 +3251,7 @@ $ParseObjExpr macro Expression:req
     exitm <FALSE>
   endif
 
-  ;;Get ??ObjExpr
+  ;; Get ??ObjExpr
   if ??Pos2 ne 0
     ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
                      ??ObjPfxSep, \
@@ -3335,18 +3335,18 @@ DCall macro Expression:req, Args:vararg
   if $ParseCallExpr(Expression) eq FALSE
     .err <DCall - invalid syntax: Expression>
   else
-    %GetMtdType ??ObjExpr, ??MtdExpr                    ;;Returns ??MtdType & ??ImpObj
+    %GetMtdType ??ObjExpr, ??MtdExpr                    ;; Returns ??MtdType & ??ImpObj
     if ??MtdType eq ??MTDTYPE_UNKNOWN
       .err <DCall - unknown method: Expression>
 
     elseif ??MtdType eq ??MTDTYPE_INLINE
-      ;;Save context assume values
+      ;; Save context assume values
       pushcontext assumes
-      ;;Use standard proc assume values
+      ;; Use standard proc assume values
       assume xax:NOTHING, xbx:NOTHING, xcx:NOTHING, xdx:NOTHING, xdi:NOTHING, xsi:NOTHING
       assume fs:ERROR, gs:ERROR, es:ERROR
 
-      ;;Call macro
+      ;; Call macro
       %ifb <Args>
         @CatStr(%??ImpObj, %??MtdExpr, < >, %??InsExpr)
       else
@@ -3364,7 +3364,7 @@ DCall macro Expression:req, Args:vararg
         SetVarargPassedParams <Args>
         call @CatStr(%??ImpObj, %??MtdExpr)
         if $$StackCorr gt 0
-          add esp, $$StackCorr                          ;;Correct the stack in case of vararg
+          add esp, $$StackCorr                          ;; Correct the stack in case of vararg
         endif
       else
         $$ProcType CatStr <TYPE_>, <&??ImpObj>, <&??MtdExpr>
@@ -3374,7 +3374,7 @@ DCall macro Expression:req, Args:vararg
         else
           %invoke $$ProcType ptr [0], rcx, Args
         endif
-        org $ - 7                                       ;;Discard call instruction [FF142500000000]
+        org $ - 7                                       ;; Discard call instruction [FF142500000000]
         SetVarargPassedParams <Args>
         call @CatStr(%??ImpObj, %??MtdExpr)
       endif
@@ -3408,12 +3408,12 @@ endm
 
 $GetImpIfc macro IName:req, MName:req
   ??sz1 textequ <&IName&&MName&>
-  %ifdef ??sz1                                          ;;Check for this symbol
-    exitm <IName>                                       ;;  (=> prototype from STD_METHOD)
+  %ifdef ??sz1                                          ;; Check for this symbol
+    exitm <IName>                                       ;;   (=> prototype from STD_METHOD)
   else
     ??Inher CatStr <IName>, <_Inherit>
     %ifdef ??Inher
-      exitm <$GetImpIfc(%??Inher, MName)>               ;;Use recursion
+      exitm <$GetImpIfc(%??Inher, MName)>               ;; Use recursion
     else
       exitm <>
     endif
@@ -3436,21 +3436,21 @@ ICall macro Expression:req, Args:vararg
     ??IfcExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos3 - ??Pos1 - 2)
     ??MtdExpr CatStr <_>, @SubStr(<Expression>, ??Pos3 + 1)
 
-    ??ImpIfc textequ $GetImpIfc(@CatStr(%??IfcExpr, <Vtbl>), %??MtdExpr)     ;;<Interface>Vtbl
+    ??ImpIfc textequ $GetImpIfc(@CatStr(%??IfcExpr, <Vtbl>), %??MtdExpr)     ;; <Interface>Vtbl
     ifnb ??ImpIfc
       %ifdef @CatStr(%??ImpIfc, %??MtdExpr, <_ArgCount>)
-        ;;If it was previously calculated, then use that result.
+        ;; If it was previously calculated, then use that result.
         $$ArgCount = @CatStr(%??ImpIfc, %??MtdExpr, <_ArgCount>)
         ifdif <??ImpIfc>, @CatStr(%??IfcExpr, <Vtbl>)
           @CatStr(%??IfcExpr, <Vtbl>, %??MtdExpr, <_ArgCount>) = $$ArgCount
         endif
       else
-        ;;Calculate $$ArgCount here to reduce the nesting level!
+        ;; Calculate $$ArgCount here to reduce the nesting level!
         $$sz1 textequ <>
         $$ArgCount = 0
         ifnb <Args>
           %for $$Arg:req, <@CatStr(%??ImpIfc, %??MtdExpr, <_Args>)>
-            %ifidn <@SubStr(<$$Arg>, 1, 1)>, <:>        ;;Strip ':' to provide OA32 compatibility
+            %ifidn <@SubStr(<$$Arg>, 1, 1)>, <:>        ;; Strip ':' to provide OA32 compatibility
               $$Strip SubStr <$$Arg>, 2
             else
               $$Strip textequ <$$Arg>
@@ -3470,16 +3470,16 @@ ICall macro Expression:req, Args:vararg
         endif
         @CatStr(%??IfcExpr, <Vtbl>, %??MtdExpr, <_ArgCount>) = $$ArgCount
       endif
-      $$DeclaredParamCount = $$ArgCount                 ;;Does include the instance pointer
+      $$DeclaredParamCount = $$ArgCount                 ;; Does include the instance pointer
 
       if TARGET_BITNESS eq 32
         $$StackCorr = $PushMethodArgs32(%$$ArgCount - 1, Args)
         $$IName textequ $GetInstance32(%??InsExpr, edx)
         push $$IName
-        mov edx, [$$IName]                              ;;Make indirection
+        mov edx, [$$IName]                              ;; Make indirection
         call (??ImpIfc ptr [edx]).??MtdExpr
 ;        if $$StackCorr ne 0
-;          add esp, $$StackCorr                          ;;Correct the stack !!!!!!!!!!!!!!!!!!!!!!
+;          add esp, $$StackCorr                          ;; Correct the stack !!!!!!!!!!!!!!!!!!!!!!
 ;        endif
       else
         $$ProcType CatStr <TYPE_>, ??ImpIfc, ??MtdExpr
@@ -3490,8 +3490,8 @@ ICall macro Expression:req, Args:vararg
           %invoke $$ProcType ptr [0], rcx, Args
         endif
 
-        org $ - 7                                       ;;Discard call instruction [FF142500000000]
-        mov r11, [rcx]                                  ;;Make indirection
+        org $ - 7                                       ;; Discard call instruction [FF142500000000]
+        mov r11, [rcx]                                  ;; Make indirection
         call (??ImpIfc ptr [r11]).??MtdExpr
       endif
     else
@@ -3514,24 +3514,24 @@ endm
 ;             Arg3: [Optional] Error ID. Sets the first ID in a series of error messages.
 
 AddErrMsg macro SymName:req, Description:=<>, ErrID:=<>
-  ifnb <ErrID>                                          ;;Check if an ID was specified
-    ERROR_BASE = ErrID                                  ;; => overwrite previous value
+  ifnb <ErrID>                                          ;; Check if an ID was specified
+    ERROR_BASE = ErrID                                  ;;  => overwrite previous value
   endif
 
   if DEBUGGING
-    ??ObjErrTableCount = ??ObjErrTableCount + 1         ;;Track the number of error table entries
+    ??ObjErrTableCount = ??ObjErrTableCount + 1         ;; Track the number of error table entries
     SEG_OBJERR segment
-      DWORD ERROR_BASE                                  ;;Add the ID to the object error table
-      ifnb <Description>                                ;;If a description was specified,
-        PSTRING $OfsTStrA("&SymName&: ", &Description)  ;; => add it into the 2nd const segment
+      DWORD ERROR_BASE                                  ;; Add the ID to the object error table
+      ifnb <Description>                                ;; If a description was specified,
+        PSTRING $OfsTStrA("&SymName&: ", &Description)  ;;  => add it into the 2nd const segment
       else
-        PSTRING $OfsTStrA("&SymName&")                  ;; => alternatively store the Err name only
+        PSTRING $OfsTStrA("&SymName&")                  ;;  => alternatively store the Err name only
       endif
     SEG_OBJERR ends
   endif
 
-  SymName equ ERROR_BASE                                ;;Declare the symbol
-  ERROR_BASE = ERROR_BASE + 1                           ;;Increment for next declaration
+  SymName equ ERROR_BASE                                ;; Declare the symbol
+  ERROR_BASE = ERROR_BASE + 1                           ;; Increment for next declaration
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -3549,19 +3549,19 @@ LockObjectAccess macro ObjInst:req
   mov ecx, eax
 
   @@1:
-  .if ObjInst.ObjLock.dOwnerTheadID == 0                ;;No lock?
+  .if ObjInst.ObjLock.dOwnerTheadID == 0                ;; No lock?
     xor eax, eax
     lock cmpxchg ObjInst.ObjLock.dOwnerTheadID, ecx
     jnz @@1
     inc ObjInst.ObjLock.dLockCount
   .else
-    .if ecx == ObjInst.ObjLock.dOwnerTheadID            ;;Continue thread execution
-      inc ObjInst.ObjLock.dLockCount                    ;;Increment LockCount
+    .if ecx == ObjInst.ObjLock.dOwnerTheadID            ;; Continue thread execution
+      inc ObjInst.ObjLock.dLockCount                    ;; Increment LockCount
     .else
-      invoke Sleep, 0                                   ;;A value of zero causes the thread to
-                                                        ;;relinquish the remainder of its time
-                                                        ;;slice to any other thread of equal
-                                                        ;;priority that is ready to run
+      invoke Sleep, 0                                   ;; A value of zero causes the thread to
+                                                        ;; relinquish the remainder of its time
+                                                        ;; slice to any other thread of equal
+                                                        ;; priority that is ready to run
       jmp @@0
     .endif
   .endif
@@ -3574,26 +3574,26 @@ UnlockObjectAccess macro ObjInst:req
   .endif
 endm
 
-;LockObjectAccess macro ObjInst:req                      ;;See P4 "IA-32 Intel® Architecture Optimi-
-;  local @@0, @@1                                        ;;  zation Reference Manual" page 7-24
+;LockObjectAccess macro ObjInst:req                      ;; See P4 "IA-32 Intel® Architecture Optimi-
+;  local @@0, @@1                                        ;;   zation Reference Manual" page 7-24
 ;
 ;  invoke GetCurrentThreadId
 ;  mov ecx, eax
 ;  xor eax, eax
 ;
 ;  @@0:
-;  cmpxchg ObjInst.ObjLock.dOwnerTheadID, ecx            ;;Implicit lock prefix
-;  ht                                                    ;;Override default
+;  cmpxchg ObjInst.ObjLock.dOwnerTheadID, ecx            ;; Implicit lock prefix
+;  ht                                                    ;; Override default
 ;  jz @@1
-;  _Pause_                                               ;;Wait a bit
-;  jmp @@0                                               ;;Spinn again
-;  @@1:                                                    ;;Continue thread execution
-;  inc ObjInst.ObjLock.dLockCount                        ;;Increment dLockCount
+;  _Pause_                                               ;; Wait a bit
+;  jmp @@0                                               ;; Spinn again
+;  @@1:                                                  ;; Continue thread execution
+;  inc ObjInst.ObjLock.dLockCount                        ;; Increment dLockCount
 ;endm
 ;
 ;UnlockObjectAccess macro ObjInst:req
-;    dec ObjInst.ObjLock.dLockCount                      ;;Decrement dLockCount
-;    cmovz ObjInst.ObjLock.dOwnerTheadID, 0              ;;If zero => reset ThreadID
+;    dec ObjInst.ObjLock.dLockCount                      ;; Decrement dLockCount
+;    cmovz ObjInst.ObjLock.dOwnerTheadID, 0              ;; If zero => reset ThreadID
 ;endm
 ;
 ;; --------------------------------------------------------------------------------------------------
@@ -3608,28 +3608,28 @@ endm
 ;
 ;MethodEpilogue macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserParams
 ;  if ??CurrFrame eq 1
-;    ;;Restore registers declared with 'uses'; The list is just reversed
+;    ;; Restore registers declared with 'uses'; The list is just reversed
 ;    ifnb RegList
-;      for $$Register, RegList                           ;;Pop off declared registers
-;        pop $$Register                                  ;;They are in inverse order from
-;      endm                                              ;;  the prologue call
+;      for $$Register, RegList                           ;; Pop off declared registers
+;        pop $$Register                                  ;; They are in inverse order from
+;      endm                                              ;;   the prologue call
 ;    endif
 ;
-;    if (ParamBytes + LocalBytes) gt 0                   ;;Stack frame removement
+;    if (ParamBytes + LocalBytes) gt 0                   ;; Stack frame removement
 ;      if STKGUARDING ne FALSE
 ;        lea rsp, [rbp - @WordSize]
-;        pop rbp                                         ;;ebp = Cookie
-;        pushfd                                          ;;Save Flags in the place taken by the Cookie
-;        cmp rbp, qStkGrdCookie                          ;;Is Cookie unchanged?
+;        pop rbp                                         ;; ebp = Cookie
+;        pushfd                                          ;; Save Flags in the place taken by the Cookie
+;        cmp rbp, qStkGrdCookie                          ;; Is Cookie unchanged?
 ;        jz @F
-;        sub rsp, LocalBytes + 20                        ;;Preserve Stack values for diagnosis
+;        sub rsp, LocalBytes + 20                        ;; Preserve Stack values for diagnosis
 ;        call StkGrdCallback
 ;        lea rsp, [rsp + LocalBytes + 20]
 ;        .if ZERO?
-;          @CatStr(<int >, <3>)                          ;;Breakpoint to start debugging here
+;          @CatStr(<int >, <3>)                          ;; Breakpoint to start debugging here
 ;        .endif
 ;@@
-;        popfd                                           ;;Restore Flags
+;        popfd                                           ;; Restore Flags
 ;        pop rbp
 ;      else
 ;        leave
@@ -3639,13 +3639,13 @@ endm
 ;
 ;  if TRACING ne FALSE
 ;    ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
-;    ;;Do the tracing job
+;    ;; Do the tracing job
 ;    pushfd
 ;    ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Startup>)), <_Startup>
 ;      push rax
 ;      push rdx
-;      rdtsc                                             ;;Get current tick count
-;      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;;Compute tick difference
+;      rdtsc                                             ;; Get current tick count
+;      add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax      ;; Compute tick difference
 ;      adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
 ;      pop rdx
 ;      pop rax
@@ -3653,18 +3653,18 @@ endm
 ;      ifidn @SubStr(<ProcName>, @InStr(1, <ProcName>, <_Shutdown>)), <_Shutdown>
 ;        push rax
 ;        push rdx
-;        rdtsc                                           ;;Get current tick count
-;        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;;Compute tick difference
+;        rdtsc                                           ;; Get current tick count
+;        add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax    ;; Compute tick difference
 ;        adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
 ;        pop rdx
 ;        pop rax
 ;      else
 ;        push rax
-;        mov rax, POINTER ptr [rsp + 24]                 ;;Get instance POINTER from stack
-;        .if rax == ??pDbgTraceInstance                  ;;Check if it is the correct instance
+;        mov rax, POINTER ptr [rsp + 24]                 ;; Get instance POINTER from stack
+;        .if rax == ??pDbgTraceInstance                  ;; Check if it is the correct instance
 ;          push rdx
-;          rdtsc                                         ;;Get current tick count
-;          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;;Compute tick difference
+;          rdtsc                                         ;; Get current tick count
+;          add ??DbgTraceMtdTicks.QUADWORD.LoDWord, eax  ;; Compute tick difference
 ;          adc ??DbgTraceMtdTicks.QUADWORD.HiDWord, edx
 ;          pop rdx
 ;        .endif
@@ -3674,7 +3674,7 @@ endm
 ;    popfd
 ;  endif
 ;
-;  ;;Correct stack or leave it to caller?
+;  ;; Correct stack or leave it to caller?
 ;  if (Flags and 010000y) or (ParamBytes eq 0)
 ;    ret
 ;  else
@@ -3693,22 +3693,22 @@ endm
 ;;             Arg6: Additional macro arguments.
 ;
 ;$StkGrdPrologue macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserParams
-;  ;;Create stack frame
-;  if (ParamBytes ne 0) or (LocalBytes ne 0)             ;;If both are zero, we can omit the stack frame
+;  ;; Create stack frame
+;  if (ParamBytes ne 0) or (LocalBytes ne 0)             ;; If both are zero, we can omit the stack frame
 ;    push rbp
 ;    mov rbp, rsp
-;    push qStkGrdCookie                                  ;;Push the Cookie on the stack
+;    push qStkGrdCookie                                  ;; Push the Cookie on the stack
 ;    if LocalBytes ne 0
 ;      add rsp, -LocalBytes
 ;    endif
 ;  endif
 ;
-;  ;;Save registers declared with 'uses'
+;  ;; Save registers declared with 'uses'
 ;  ifnb RegList
-;    for $$Register, RegList                             ;;Push declared registers
+;    for $$Register, RegList                             ;; Push declared registers
 ;      push $$Register
 ;    endm
 ;  endif
 ;
-;  exitm %LocalBytes + sizeof(qStkGrdCookie)             ;;Make Room for the Cookie
+;  exitm %LocalBytes + sizeof(qStkGrdCookie)             ;; Make Room for the Cookie
 ;endm

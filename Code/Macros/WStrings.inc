@@ -50,9 +50,9 @@
 ;             Resulting WIDE string:  Note: "Director's cut" + CRLF
 
 StringW macro StrName, QuotedText:vararg
-  ;;Because the forc handles the backslash as an escape character, we add an
-  ;;backslash charater to mimic the behaviour of the StringA macro.
-  ;;JWASM 2.07B don't need this workaround.
+  ;; Because the forc handles the backslash as an escape character, we add an
+  ;; backslash charater to mimic the behaviour of the StringA macro.
+  ;; JWASM 2.07B don't need this workaround.
   ifdef __JWASM__
     $$Text textequ <QuotedText>
     goto Continue
@@ -82,7 +82,7 @@ StringW macro StrName, QuotedText:vararg
   endif
 
 :Continue
-  ;;Continue regular processing
+  ;; Continue regular processing
   $$StrStart = $
 
   $$CharCount = 0
@@ -108,7 +108,7 @@ StringW macro StrName, QuotedText:vararg
   StrName WORD $$CharCount dup(?)
   org $ - $$CharCount*2
 
-  ;;Continue regular processing
+  ;; Continue regular processing
   $$SrcLine textequ < dw >
 % for $$SubText, <$$Text>
     $$NumFlag textequ <0>
@@ -116,7 +116,7 @@ StringW macro StrName, QuotedText:vararg
 %   ifdif <$$QuotationMark>, <">
 %     ifdif <$$QuotationMark>, <'>
         $$NumFlag textequ <1>
-        if $$SubText gt 0FFFFh        ;;Maximum 2 bytes
+        if $$SubText gt 0FFFFh        ;; Maximum 2 bytes
           .err <WIDE string numeric input out of range>
         endif
         $$Sentence textequ @CatStr(%$$SrcLine, <$$SubText>, <,>)
@@ -128,12 +128,12 @@ StringW macro StrName, QuotedText:vararg
       if @SizeStr(<$$SubText>) ne 2
         $$Count = 0
 %       forc $$Char, <$$SubText>
-          ;;Strip quotation marks
+          ;; Strip quotation marks
 %         if ($$Count ne 0) and ($$Count ne (@SizeStr(<$$SubText>) - 1))
             if @SizeStr(%$$SrcLine) gt 95
-              ;;Output $$Sentence
+              ;; Output $$Sentence
 %             $$Sentence
-              ;;Initiate new $$SubText
+              ;; Initiate new $$SubText
               $$SrcLine textequ <dw >
               $$Sentence textequ <>
             endif
@@ -148,24 +148,24 @@ StringW macro StrName, QuotedText:vararg
       endif
     endif
 
-    ;;Output $$Sentence
+    ;; Output $$Sentence
 %   $$Sentence
-    ;;Initiate new $$SubText
+    ;; Initiate new $$SubText
     $$SrcLine textequ <dw >
   endm
-  ;;Set ZTC
+  ;; Set ZTC
   CHRW 0
-  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC
-  ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character count without ZTC
+  ??StrSize = $ - $$StrStart                            ;; ??StrSize includes the ZTC
+  ??StrLength = ??StrSize/2 - 1                         ;; ??StrLength = character count without ZTC
 endm
 
-ExtendStringW macro QuotedText:vararg                   ;;Extends a Str definition overcomming the line length limit
-  org $ - sizeof(CHR)                                   ;;Overwrite last ZTC
-  ??LastStrSize = ??StrSize - sizeof(CHR)               ;;Remember previous values
+ExtendStringW macro QuotedText:vararg                   ;; Extends a Str definition overcomming the line length limit
+  org $ - sizeof(CHR)                                   ;; Overwrite last ZTC
+  ??LastStrSize = ??StrSize - sizeof(CHR)               ;; Remember previous values
   ??LastStrLength = ??StrLength - 1                     
-  StringW, QuotedText                                   ;;Define string continuation
-  ??StrSize = ??StrSize + ??LastStrSize                 ;;??StrSize includes the ZTC
-  ??StrLength = ??StrLength + ??LastStrLength           ;;??StrLength = character count without ZTC
+  StringW, QuotedText                                   ;; Define string continuation
+  ??StrSize = ??StrSize + ??LastStrSize                 ;; ??StrSize includes the ZTC
+  ??StrLength = ??StrLength + ??LastStrLength           ;; ??StrLength = character count without ZTC
 endm
 
 CStrW macro TextReference:req, QuotedText:vararg

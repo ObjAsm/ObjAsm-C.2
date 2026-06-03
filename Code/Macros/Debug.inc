@@ -40,7 +40,7 @@
 ;  - DbgClose, DbgCloseAll, DbgCloseTxt, DbgCloseBmp, DbgCloseCht
 ;  - DbgClear, DbgClearAll, DbgClearTxt, DbgClearBmp, DbgClearCht
 ;  - DbgLine, DbgLine2, DbgText, DbgTextF, DbgWarning
-;  - DbgBkgnd, DbgBkgndTxt, DbgBkgndBmp, DbgFrontTxt, DbgFrontBmp, DbgFront
+;  - DbgBkgnd, DbgBkgndTxt, DbgBkgndBmp
 ;  - DbgFlashWnd, DbgFlashMenu, DbgTileHor, DbgTileVer, DbgCascade, DbgArrange
 ;  - DbgZoomIn, DbgZoomInTxt, DbgZoomInBmp, DbgZoomOut, DbgZoomOutTxt, DbgZoomOutBmp
 ;  - DbgCloseWnd, DbgPinWnd, DbgFrontWnd, DbgFront, DbgFrontTxt, DbgFrontBmp

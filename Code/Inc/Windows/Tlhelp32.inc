@@ -92,13 +92,13 @@ ifndef _INC_TOOLHELP32
     LPPROCESSENTRY32 typedef ptr PROCESSENTRY32
     Process32First proto WIN_STD_CALL_CONV :HANDLE, :LPPROCESSENTRY32
     Process32Next proto WIN_STD_CALL_CONV :HANDLE, :LPPROCESSENTRY32
-    ifdef UNICODE
-      Process32First equ <Process32FirstW>
-      Process32Next equ <Process32NextW>
-      PROCESSENTRY32 equ <PROCESSENTRY32W>
-      PPROCESSENTRY32 equ <PPROCESSENTRY32W>
-      LPPROCESSENTRY32 equ <LPPROCESSENTRY32W>
-    endif
+;    ifdef UNICODE
+;      Process32First equ <Process32FirstW>
+;      Process32Next equ <Process32NextW>
+;      PROCESSENTRY32 equ <PROCESSENTRY32W>
+;      PPROCESSENTRY32 equ <PPROCESSENTRY32W>
+;      LPPROCESSENTRY32 equ <LPPROCESSENTRY32W>
+;    endif
     THREADENTRY32 struct
       dwSize DWORD ?
       cntUsage DWORD ?
@@ -150,13 +150,13 @@ ifndef _INC_TOOLHELP32
     LPMODULEENTRY32 typedef ptr MODULEENTRY32
     Module32First proto WIN_STD_CALL_CONV :HANDLE, :LPMODULEENTRY32
     Module32Next proto WIN_STD_CALL_CONV :HANDLE, :LPMODULEENTRY32
-    ifdef UNICODE
-      Module32First equ <Module32FirstW>
-      Module32Next equ <Module32NextW>
-      MODULEENTRY32 equ <MODULEENTRY32W>
-      PMODULEENTRY32 equ <PMODULEENTRY32W>
-      LPMODULEENTRY32 equ <LPMODULEENTRY32W>
-    endif
+;    ifdef UNICODE
+;      Module32First equ <Module32FirstW>
+;      Module32Next equ <Module32NextW>
+;      MODULEENTRY32 equ <MODULEENTRY32W>
+;      PMODULEENTRY32 equ <PMODULEENTRY32W>
+;      LPMODULEENTRY32 equ <LPMODULEENTRY32W>
+;    endif
     ifdef __cplusplus
       ;[...]
     endif

@@ -1675,7 +1675,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov xdx, [xsi].pToolbarFile
   OCall [xsi].pRebar::Rebar.InsertBand, [xdx].$Obj(Toolbar).hWnd, ebx, eax
 
-  FillString LogFnt.lfFaceName, <DBG_FONT_TEXT>
+  FillString LogFnt.lfFaceName, <%DBG_FONT_TEXT>
 
   mov hDC, $invoke(GetDC, [xsi].hWnd)
   invoke GetDeviceCaps, hDC, LOGPIXELSY

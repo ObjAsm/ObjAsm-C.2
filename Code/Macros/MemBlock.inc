@@ -116,25 +116,22 @@ MemBlockFree_X endp
 ; Procedure:  MemBlockClone
 ; Purpose:    Clone a MemBlock.
 ; Arguments:  Arg1: -> MemBlock.bPayload
-; Return:     xax -> Cloned MemBlock.bPayload
+; Return:     xax -> Cloned MemBlock.bPayload or NULL if failed.
 ; Note:       MemBlockHeader.wFlags are set to MBF_DYNAMIC || MBF_WRITABLE
 
 .code
 align ALIGN_CODE
-MemBlockClone_X proc uses xbx xdi pMemBlockPayload:POINTER
-  ?mov xcx, pMemBlockPayload
-  lea xax, [xcx - MEMBLOCK_HEADER_SIZE]
-  mov ebx, [xax].MemBlockHeader.dSize
-  add ebx, MEMBLOCK_HEADER_SIZE
-  MemAlloc xbx
+MemBlockClone_X proc uses xbx xsi pMemBlockPayload:POINTER
+  ?mov xcx, pMemBlockPayload                            ; xcx -> source bPayload
+  lea xbx, [xcx - MEMBLOCK_HEADER_SIZE]                 ; xbx -> source MemBlockHeader
+  invoke MemBlockAlloc_X, [xbx].MemBlockHeader.dSize    ; xax -> new bPayload or NULL
   test xax, xax
-  jz @@Error
-  mov xdi, xax
-  mov xcx, pMemBlockPayload
-  lea xdx, [xcx - MEMBLOCK_HEADER_SIZE]
-  invoke MemClone, xax, xdx, ebx
-  mov xax, xdi
-  mov [xdi].MemBlockHeader.wFlags, MBF_DYNAMIC or MBF_WRITABLE
+  jz @@Error                                            ; Propagate NULL on failure
+  mov xsi, xax                                          ; xsi -> new payload
+  invoke MemClone, xax, pMemBlockPayload, [xbx].MemBlockHeader.dUsed  ; eax = number of copied bytes
+  mov [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, eax          ; Restore source dUsed
+  mov [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags, MBF_DYNAMIC or MBF_WRITABLE
+  mov xax, xsi                                          ; xax -> new payload
 @@Error:
   ret
 MemBlockClone_X endp

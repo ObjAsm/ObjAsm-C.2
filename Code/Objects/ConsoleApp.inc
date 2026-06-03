@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ConsoleApp.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.1.3
 ; Purpose:    ObjAsm support of ConsoleApp objects.
 ; Link:       https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session
 ; Notes:      Version C.1.0, April 2024
@@ -10,6 +10,16 @@
 ;               - PrintLn bug corrected by HSE.
 ;             Version C.1.2, September 2025
 ;               - Added some functions based on fearless console x64 and some minor changes.
+;             Version C.1.3, May 2026
+;               - HideCursor/ShowCursor: cci.dwSize set to 25.
+;               - GetInputChar: loop exit condition now tests bKeyDown as a separate field.
+;               - Init: AttachConsole/AllocConsole removed.
+;               - Init: hConsole opened via CONOUT$ for direct console access independent of
+;                 stdout redirection. Done: hConsole closed.
+;               - Write/WriteLn added and all other methods that must always reach the physical
+;                 console (ClearScreen, SetCursorPos, etc.) now use hConsole instead of hOutput.
+;                 hOutput continues to be used only by Print/PrintLn so that redirected output
+;                 is forwarded correctly.
 ; ==================================================================================================
 
 
@@ -39,10 +49,14 @@ Object ConsoleApp, ConsoleAppID, Streamable
   VirtualMethod     SpinnerProc
   VirtualMethod     StartSpinner
   VirtualMethod     StopSpinner
+  VirtualMethod     Write,            PSTRING
+  VirtualMethod     WriteLn,          PSTRING
 
+  DefineVariable    dFlags,           DWORD,    0
   DefineVariable    hError,           HANDLE,   0
   DefineVariable    hInput,           HANDLE,   0
-  DefineVariable    hOutput,          HANDLE,   0
+  DefineVariable    hOutput,          HANDLE,   0       ;Follows redirection; used by Print(Ln)
+  DefineVariable    hConsole,         HANDLE,   0       ;Physical console; used by Write(Ln) etc.
   DefineVariable    hTimerQueue,      HANDLE,   0
   DefineVariable    pSetConsoleIcon,  POINTER,  NULL    ;SetConsoleIcon API proc
   DefineVariable    hSpinnerTimer,    HANDLE,   0
@@ -51,6 +65,16 @@ Object ConsoleApp, ConsoleAppID, Streamable
   DefineVariable    SpinnerPosition,  POINT,    {0, 0}
   DefineVariable    cSpinnerPosChar,  CHR,      ' '
 ObjectEnd
+
+
+CAF_REDIRECTED      equ   BIT00    ; stdout is redirected
+CAF_INTERACTIVE     equ   BIT01    ; stdin is a real console handle
+CAF_OWNCONSOLE      equ   BIT02    ; Process owns the console; window closes on exit
+CAF_HOST_CMD        equ   BIT03    ; Parent shell is cmd.exe
+CAF_HOST_PS         equ   BIT04    ; Parent shell is powershell.exe or pwsh.exe
+CAF_HOST_WT         equ   BIT05    ; Wrapped in Windows Terminal (WT_SESSION set)
+CAF_HOST_CONEMU     equ   BIT06    ; Wrapped in ConEmu (ConEmuPID set)
+CAF_HOST_EXPLORER   equ   BIT07    ; Parent process is explorer.exe
 
 
 ;Additional color definitions
@@ -87,6 +111,16 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 
 if IMPLEMENT
 
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  PROCESSENTRY32_ textequ <PROCESSENTRY32>
+  Process32First_ textequ <Process32First>
+  Process32Next_  textequ <Process32Next>
+else
+  PROCESSENTRY32_ textequ <PROCESSENTRY32W>
+  Process32First_ textequ <Process32FirstW>
+  Process32Next_  textequ <Process32NextW>
+endif
+
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.ClearScreen
 ; Purpose:    Remove the screen content.
@@ -98,24 +132,21 @@ Method ConsoleApp.ClearScreen, uses xsi
   local coord:COORD, csbi:CONSOLE_SCREEN_BUFFER_INFO
 
   SetObject xsi
-  invoke GetConsoleScreenBufferInfo, [xsi].hOutput, addr csbi
+  invoke GetConsoleScreenBufferInfo, [xsi].hConsole, addr csbi
   .if eax != 0
-    mov eax, csbi.dwSize                                ;2 word values returned for screen size
-
-    ;Extract the 2 values and multiply them together
-    mov ebx, eax
-    shr eax, 16
-    mul bx
+    movzx eax, csbi.dwSize.X
+    movzx ecx, csbi.dwSize.Y
+    mul ecx
     mov dCharCellCount, eax
 
     mov coord.X, 0
     mov coord.Y, 0
 
-    invoke FillConsoleOutputCharacter, [xsi].hOutput, ' ', dCharCellCount, \
+    invoke FillConsoleOutputCharacter, [xsi].hConsole, ' ', dCharCellCount, \
                                        addr coord, addr dCharsWritten
-    invoke FillConsoleOutputAttribute, [xsi].hOutput, csbi.wAttributes, dCharCellCount, \
+    invoke FillConsoleOutputAttribute, [xsi].hConsole, csbi.wAttributes, dCharCellCount, \
                                        addr coord, addr dCharsWritten
-    invoke SetConsoleCursorPosition, [xsi].hOutput, addr coord
+    invoke SetConsoleCursorPosition, [xsi].hConsole, addr coord
   .endif
 MethodEnd
 
@@ -127,8 +158,18 @@ MethodEnd
 
 Method ConsoleApp.Done, uses xsi
   SetObject xsi
+
+  ;Delete the timer queue and wait for all callbacks to finish before closing handles.
+  ;INVALID_HANDLE_VALUE makes DeleteTimerQueueEx block until pending callbacks return.
+  invoke DeleteTimerQueueEx, [xsi].hTimerQueue, INVALID_HANDLE_VALUE
+
+  ;Close hConsole only if it was separately opened (stdout was redirected).
+  ;When not redirected hConsole == hOutput and must not be closed twice.
+  .ifBitSet [xsi].dFlags, CAF_REDIRECTED
+    invoke CloseHandle, [xsi].hConsole
+  .endif
   invoke FreeConsole
-  invoke DeleteTimerQueueEx, [xsi].hTimerQueue, NULL
+
   ACall xsi.Done
 MethodEnd
 
@@ -150,18 +191,17 @@ MethodEnd
 ; Method:     ConsoleApp.GetCursorPos
 ; Purpose:    Return the current cursor position.
 ; Arguments:  None.
-; Return:     Nothing.
-; Note:       eax = x position or -1 if failed.
+; Return:     eax = x position or -1 if failed.
 ;             ecx = y position or -1 if failed.
 
 Method ConsoleApp.GetCursorPos
   local csbi:CONSOLE_SCREEN_BUFFER_INFO
 
   SetObject xcx
-  invoke GetConsoleScreenBufferInfo, [xcx].hOutput, addr csbi
+  invoke GetConsoleScreenBufferInfo, [xcx].hConsole, addr csbi
   .if eax != 0
-    movzx eax, WORD ptr csbi.dwCursorPosition
-    movzx ecx, word ptr [csbi + sizeof WORD].dwCursorPosition
+    movzx eax, csbi.dwCursorPosition.X
+    movzx ecx, csbi.dwCursorPosition.Y
   .else
     mov eax, -1
     mov ecx, -1
@@ -198,7 +238,7 @@ Method ConsoleApp.GetInputChar, uses xsi
   .repeat
     invoke ReadConsoleInput, [xsi].hInput, addr InpRec, 1, addr dRecCnt
     movzx edx, WORD ptr InpRec.EventType
-  .until (edx == KEY_EVENT) && (edx == InpRec.Event_.KeyEvent.bKeyDown)
+  .until (edx == KEY_EVENT) && (InpRec.Event_.KeyEvent.bKeyDown != 0)
   movzx eax, CHRW ptr InpRec.Event_.KeyEvent.uChar.UnicodeChar
   mov ecx, InpRec.Event_.KeyEvent.dwControlKeyState
   mov edx, DWORD ptr InpRec.Event_.KeyEvent.wVirtualKeyCode
@@ -213,9 +253,7 @@ MethodEnd
 Method ConsoleApp.GetInputCharUC
   SetObject xcx
   OCall xcx.GetInputChar
-  .if eax >= 'a' && eax <= 'z'
-    sub eax, 'a' - 'A'
-  .endif
+  invoke CharUpper, xax                                 ; Handles full Unicode uppercase mapping
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -242,10 +280,10 @@ Method ConsoleApp.HideCursor
   local cci:CONSOLE_CURSOR_INFO
 
   SetObject xax
-  mov cci.dwSize, sizeof cci
+  mov cci.dwSize, 25                                    ;Cursor fill percentage (1-100)
   mov cci.bVisible, FALSE
   lea xdx, cci
-  invoke SetConsoleCursorInfo, [xax].hOutput, xdx
+  invoke SetConsoleCursorInfo, [xax].hConsole, xdx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -253,50 +291,162 @@ MethodEnd
 ; Purpose:    Initialize the ConsoleApp object.
 ; Arguments:  Arg1: -> Owner.
 ; Return:     Nothing.
+; Note:       For a console subsystem executable, Windows has already set up valid standard
+;             handles before entry. AttachConsole/AllocConsole are therefore not called.
+;             hOutput stores the inherited stdout handle and follows any redirection.
+;             When stdout is a real console handle (GetConsoleMode succeeds), hConsole
+;             reuses hOutput so that WriteConsole operates on the same handle and the
+;             console Unicode mode is preserved, fixing wide-string output.
+;             When stdout is redirected (GetConsoleMode fails), hConsole is opened
+;             directly on CONOUT$ so Write/WriteLn and all console control methods
+;             always reach the physical console regardless of redirection.
 
 Method ConsoleApp.Init, uses xsi, pOwner:POINTER
+  local pe32:PROCESSENTRY32_
+  local dMode:DWORD, cBuffer[MAX_PATH]:CHR
+  local hSnapshot:HANDLE, dParentPID:DWORD, dCurrentPID:DWORD
+  local dPIDs[16]:DWORD                                 ; Buffer for attached process IDs (DWORDs)
+
   SetObject xsi
   ACall xsi.Init, pOwner
-  invoke AttachConsole, ATTACH_PARENT_PROCESS
-  .if eax == 0
-    invoke AllocConsole
-  .endif
+  mov [xsi].dFlags, 0
+
   mov [xsi].hError,  $invoke(GetStdHandle, STD_ERROR_HANDLE)
   mov [xsi].hInput,  $invoke(GetStdHandle, STD_INPUT_HANDLE)
   mov [xsi].hOutput, $invoke(GetStdHandle, STD_OUTPUT_HANDLE)
 
+  ; --- Detect stdout redirection ---
+  invoke GetConsoleMode, [xsi].hOutput, addr dMode
+  .if eax != 0
+    mov xax, [xsi].hOutput
+  .else
+    BitSet [xsi].dFlags, CAF_REDIRECTED
+    invoke CreateFile, $OfsCStr("CONOUT$"), \
+                       GENERIC_READ or GENERIC_WRITE, FILE_SHARE_WRITE, \
+                       NULL, OPEN_EXISTING, 0, 0
+    .if xax == INVALID_HANDLE_VALUE
+      mov xax, [xsi].hOutput
+    .endif
+  .endif
+  mov [xsi].hConsole, xax
+
+  ; --- Detect interactive session ---
+  invoke GetConsoleMode, [xsi].hInput, addr dMode
+  .if eax != 0
+    BitSet [xsi].dFlags, CAF_INTERACTIVE
+  .endif
+
   mov [xsi].hTimerQueue, $invoke(CreateTimerQueue)
+
+  ; --- Host detection ---
+
+  ; 1. Windows Terminal: check WT_SESSION env var (cheapest)
+  invoke GetEnvironmentVariable, $OfsCStr("WT_SESSION"), addr cBuffer, sizeof cBuffer
+  .if eax != 0
+    BitSet [xsi].dFlags, CAF_HOST_WT
+  .endif
+
+  ; 2. ConEmu: check ConEmuPID env var
+  invoke GetEnvironmentVariable, $OfsCStr("ConEmuPID"), addr cBuffer, sizeof cBuffer
+  .if eax != 0
+    BitSet [xsi].dFlags, CAF_HOST_CONEMU
+  .endif
+
+  ; 3. Walk the process list to find our parent and check its name
+  invoke GetCurrentProcessId
+  mov dCurrentPID, eax
+  mov dParentPID, 0
+
+  invoke CreateToolhelp32Snapshot, TH32CS_SNAPPROCESS, 0
+  .if xax != INVALID_HANDLE_VALUE
+    mov hSnapshot, xax
+    mov pe32.dwSize, sizeof PROCESSENTRY32W
+
+    invoke Process32First, hSnapshot, addr pe32
+    .while eax != 0
+      mov eax, pe32.th32ProcessID
+      .if eax == dCurrentPID
+        mov eax, pe32.th32ParentProcessID
+        mov dParentPID, eax
+        .break
+      .endif
+      invoke Process32Next_, hSnapshot, addr pe32
+    .endw
+
+    .if dParentPID != 0
+      invoke Process32First_, hSnapshot, addr pe32
+      .while eax != 0
+        mov eax, pe32.th32ProcessID
+        .if eax == dParentPID
+          invoke StrIComp, addr pe32.szExeFile, $OfsCStrW("cmd.exe")
+          .if eax == 0
+            BitSet [xsi].dFlags, CAF_HOST_CMD
+          .endif
+          invoke StrIComp, addr pe32.szExeFile, $OfsCStrW("powershell.exe")
+          .if eax == 0
+            BitSet [xsi].dFlags, CAF_HOST_PS
+          .endif
+          invoke StrIComp, addr pe32.szExeFile, $OfsCStrW("pwsh.exe")
+          .if eax == 0
+            BitSet [xsi].dFlags, CAF_HOST_PS
+          .endif
+          invoke StrIComp, addr pe32.szExeFile, $OfsCStrW("explorer.exe")
+          .if eax == 0
+            BitSet [xsi].dFlags, CAF_HOST_EXPLORER
+          .endif
+          .break
+        .endif
+        invoke Process32Next_, hSnapshot, addr pe32
+      .endw
+    .endif
+
+    invoke CloseHandle, hSnapshot
+  .endif
+  
+  invoke GetConsoleProcessList, addr dPIDs, lengthof(dPIDs)
+  .if eax <= 1
+    ; Only one process attached = we own the console = window will close on exit
+    BitSet [xsi].dFlags, CAF_OWNCONSOLE
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.Print
-; Purpose:    Output a message on the console.
+; Purpose:    Output a message on the console. Output can be redirected!
 ; Arguments:  Arg1: -> Message.
 ; Return:     Nothing.
 
 Method ConsoleApp.Print, uses xbx, pMessage:PSTRING
-  local dCharsWritten:DWORD
+  local dWritten:DWORD
 
   invoke StrLength, pMessage
-  lea xbx, dCharsWritten
   SetObject xcx
-  invoke WriteConsole, [xcx].hOutput, pMessage, eax, xbx, NULL
+  lea xbx, dWritten
+  .ifBitSet [xcx].dFlags, CAF_REDIRECTED
+    invoke WriteFile, [xcx].hOutput, pMessage, addr [eax*sizeof(CHR)], xbx, NULL
+  .else
+    invoke WriteConsole, [xcx].hConsole, pMessage, eax, xbx, NULL
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.PrintLn
-; Purpose:    Output a message and a line break on the console.
+; Purpose:    Output a message and a line break on the console. Output can be redirected!
 ; Arguments:  Arg1: -> Message. If NULL, only CRLF is printed.
 ; Return:     Nothing.
 
 Method ConsoleApp.PrintLn, uses xsi, pMessage:PSTRING
-  local dCharsWritten:DWORD
+  local dWritten:DWORD
 
   SetObject xsi
   .if pMessage != NULL
     OCall xsi.Print, pMessage
   .endif
-  invoke WriteConsole, [xsi].hOutput, addr cCRLF, 2, addr dCharsWritten, NULL
+  .ifBitSet [xsi].dFlags, CAF_REDIRECTED
+    invoke WriteFile, [xsi].hOutput, addr cCRLF, 2*sizeof(CHR), addr dWritten, NULL
+  .else
+    invoke WriteConsole, [xsi].hConsole, addr cCRLF, 2, addr dWritten, NULL
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -311,7 +461,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.SetCursorPos
-; Purpose:    Set console caption text.
+; Purpose:    Set the cursor position.
 ; Arguments:  Arg1: X character cell coordinate.
 ;             Arg2: Y character cell coordinate.
 ; Return:     Nothing.
@@ -321,7 +471,7 @@ Method ConsoleApp.SetCursorPos,, dCoordX:DWORD, dCoordY:DWORD
   mov edx, dCoordY
   shl edx, 16
   mov dx, WORD ptr dCoordX
-  invoke SetConsoleCursorPosition, [xax].hOutput, edx
+  invoke SetConsoleCursorPosition, [xax].hConsole, edx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -335,7 +485,7 @@ MethodEnd
 
 Method ConsoleApp.SetColor,, wColorSetting:WORD
   SetObject xax
-  invoke SetConsoleTextAttribute, [xax].hOutput, wColorSetting
+  invoke SetConsoleTextAttribute, [xax].hConsole, wColorSetting
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -344,7 +494,7 @@ MethodEnd
 ; Arguments:  Arg1: X character cell coordinate.
 ;             Arg2: Y character cell coordinate.
 ;             Arg3: Progress [0..MaxProgress]
-;             Arg7: Max progress value
+;             Arg4: Max progress value
 ; Return:     Nothing.
 
 Method ConsoleApp.SetProgressBar, uses xbx xsi, dCoordX:DWORD, dCoordY:DWORD, \
@@ -360,7 +510,7 @@ Method ConsoleApp.SetProgressBar, uses xbx xsi, dCoordX:DWORD, dCoordY:DWORD, \
   mov eax, dProgress
   cmp eax, ebx
   cmovg eax, ebx
-  
+
   lea xdx, cBuffer
   mov CHR ptr [xdx], '['
   add xdx, sizeof(CHR)
@@ -377,15 +527,15 @@ Method ConsoleApp.SetProgressBar, uses xbx xsi, dCoordX:DWORD, dCoordY:DWORD, \
   .endw
   mov CHR ptr [xdx], ']'
   add ebx, 2
-  invoke WriteConsole, [xsi].hOutput, addr cBuffer, ebx, addr dCharsWritten, NULL
+  invoke WriteConsole, [xsi].hConsole, addr cBuffer, ebx, addr dCharsWritten, NULL
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.SetIcon
-; Purpose:    Set the console cursor.
-; Arguments:  None.
+; Purpose:    Set the console icon.
+; Arguments:  Arg1: Icon handle.
 ; Return:     Nothing.
-; Note:       THE SetConsoleIcon API is not exported, so we need to get the proc address first.
+; Note:       The SetConsoleIcon API is not exported, so we need to get the proc address first.
 
 TypeSetConsoleIcon typedef proto :HANDLE
 
@@ -398,7 +548,9 @@ Method ConsoleApp.SetIcon, uses xsi, hIcon:HICON
   .else
     mov xax, [xsi].pSetConsoleIcon
   .endif
-  invoke TypeSetConsoleIcon ptr xax, hIcon
+  .if xax != NULL
+    invoke TypeSetConsoleIcon ptr xax, hIcon
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -411,10 +563,10 @@ Method ConsoleApp.ShowCursor
   local cci:CONSOLE_CURSOR_INFO
 
   SetObject xax
-  mov cci.dwSize, sizeof cci
+  mov cci.dwSize, 25                                    ;Cursor fill percentage (1-100)
   mov cci.bVisible, TRUE
   lea xdx, cci
-  invoke SetConsoleCursorInfo, [xax].hOutput, xdx
+  invoke SetConsoleCursorInfo, [xax].hConsole, xdx
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -441,7 +593,7 @@ Method ConsoleApp.SpinnerProc, uses xsi
   inc eax
   and eax, 3
   mov [xsi].dSpinnerStep, eax
-  invoke WriteConsole, [xsi].hOutput, addr cBuffer, 1, addr dCharsWritten, NULL
+  invoke WriteConsole, [xsi].hConsole, addr cBuffer, 1, addr dCharsWritten, NULL
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -461,7 +613,7 @@ Method ConsoleApp.StartSpinner, uses xsi
       mov [xsi].SpinnerPosition.y, ecx
       mov coord.X, ax
       mov coord.Y, cx
-      invoke ReadConsoleOutputCharacter, [xsi].hOutput, addr [xsi].cSpinnerPosChar, 1, \
+      invoke ReadConsoleOutputCharacter, [xsi].hConsole, addr [xsi].cSpinnerPosChar, 1, \
                                          coord, addr dCharsRead
       OCall xsi.HideCursor
       invoke CreateTimerQueueTimer, addr [xsi].hSpinnerTimer, [xsi].hTimerQueue, \
@@ -481,16 +633,47 @@ Method ConsoleApp.StopSpinner, uses xsi
   local dCharsWritten:DWORD, coord:COORD
 
   SetObject xsi
-  invoke DeleteTimerQueueTimer, [xsi].hTimerQueue, [xsi].hSpinnerTimer, NULL
+  invoke DeleteTimerQueueTimer, [xsi].hTimerQueue, [xsi].hSpinnerTimer, INVALID_HANDLE_VALUE
   mov [xsi].hSpinnerTimer, 0
   mov eax, [xsi].SpinnerPosition.x
   mov ecx, [xsi].SpinnerPosition.y
   mov coord.X, ax
   mov coord.Y, cx
-  invoke WriteConsoleOutputCharacter, [xsi].hOutput, addr [xsi].cSpinnerPosChar, 1, \
+  invoke WriteConsoleOutputCharacter, [xsi].hConsole, addr [xsi].cSpinnerPosChar, 1, \
                                       coord, addr dCharsWritten
   OCall xsi.SetCursorPos, [xsi].SpinnerPosition.x, [xsi].SpinnerPosition.y
   OCall xsi.ShowCursor
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ConsoleApp.Write
+; Purpose:    Output a message on the console ONLY.
+; Arguments:  Arg1: -> Message.
+; Return:     Nothing.
+
+Method ConsoleApp.Write, uses xbx, pMessage:PSTRING
+  local dCharsWritten:DWORD
+
+  invoke StrLength, pMessage
+  lea xbx, dCharsWritten
+  SetObject xcx
+  invoke WriteConsole, [xcx].hConsole, pMessage, eax, xbx, NULL
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ConsoleApp.WriteLn
+; Purpose:    Output a message and a line break on the console ONLY.
+; Arguments:  Arg1: -> Message. If NULL, only CRLF is printed.
+; Return:     Nothing.
+
+Method ConsoleApp.WriteLn, uses xsi, pMessage:PSTRING
+  local dCharsWritten:DWORD
+
+  SetObject xsi
+  .if pMessage != NULL
+    OCall xsi.Write, pMessage
+  .endif
+  invoke WriteConsole, [xsi].hConsole, addr cCRLF, 2, addr dCharsWritten, NULL
 MethodEnd
 
 endif

@@ -15,21 +15,16 @@
 SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ; Load OOP files and basic OS support
 % include &MacPath&fMath.inc
 
-; ==================================================================================================
 
+; --------------------------------------------------------------------------------------------------
 ; Values for performance test
+
 .const
   r8Numerator   REAL8   100000.0
   r8Denominator REAL8   10.0
 .data
   r8Result      REAL8   0.0
   FpuEnv        BYTE    108 dup(0)
-
-; ==================================================================================================
-
-
-SIZE_OF_STAT  equ 10000                     ; Determines the statistical relevance
-BOUND_OF_LOOP equ 100                       ; Number of iterations per measurement (must be > 1)
 
 ProcedureUnderGlass0 macro                  ; Lightweight test procedure
   mov xax, 1
@@ -53,14 +48,19 @@ ProcedureUnderGlass macro
   ProcedureUnderGlass1                      ; Select here the procedure you want tho test
 endm
 
-include PaoloniWin.inc
+; --------------------------------------------------------------------------------------------------
 
+SIZE_OF_STAT  equ 10000                     ; Determines the statistical relevance
+BOUND_OF_LOOP equ 100                       ; Number of iterations per measurement (must be > 1)
+
+include PaoloniWin.inc                      ; Include Paoloni's measurement procedures
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  start
-; Purpose:    Entry point.
+; Purpose:    Application entry point.
 ; Arguments:  None.
 ; Return:     Nothing.
+
 start proc
   SysInit                                   ; Runtime model initialization
   invoke Benchmark                          ; Run the full measurement
@@ -70,4 +70,5 @@ start proc
   SysDone                                   ; Runtime model shutdown
   ret
 start endp
-end start
+
+end

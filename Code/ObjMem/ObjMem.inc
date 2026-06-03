@@ -167,11 +167,27 @@ endif
 
 BStrSize proto :POINTER
 StrSizeA proto :POINTER
+StrSizeA_SSE2 proto :POINTER
+StrSizeA_AVX proto :POINTER
 StrSizeW proto :POINTER
+StrSizeW_SSE2 proto :POINTER
+StrSizeW_AVX proto :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  StrSize textequ <StrSizeA>
+  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
+    StrSize textequ <StrSizeA_AVX>
+  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
+    StrSize textequ <StrSizeA_SSE2>
+  else
+    StrSize textequ <StrSizeA>
+  endif
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  StrSize textequ <StrSizeW>
+  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
+    StrSize textequ <StrSizeW_AVX>
+  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
+    StrSize textequ <StrSizeW_SSE2>
+  else
+    StrSize textequ <StrSizeW>
+  endif
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
@@ -1863,44 +1879,210 @@ _alloca_probe_16 proto c
 _alloca_8  equ _alloca_probe_8
 _alloca_16 equ _alloca_probe_16
 
-
-;IsHardwareFeaturePresent equates
-IHFP_FPU    equ   00    ;FP coprocessor
-IHFP_VME    equ   01    ;Virtual 8086 Enhancements
-IHFP_DE     equ   02    ;Debugging Extensions
-IHFP_PSE    equ   03    ;Page Size Extension
-IHFP_TSC    equ   04    ;Availability of RDTSC instruction
-IHFP_MSR    equ   05    ;Availability of RDMSR and WRMSR instructions
-IHFP_PAE    equ   06    ;Physical Address Extension
-IHFP_MCE    equ   07    ;Machine Check Exception
-IHFP_CX8    equ   08    ;Availability of CMPXCH8B instruction
-IHFP_APIC   equ   09    ;Advanced Programmable Interrupt Controller present
-;Reserved   equ   10    ;Reserved for Intel CPUs
-IHFP_SEP    equ   11    ;Availability of SYSENTER and SYSEXIT instructions
-IHFP_MTTR   equ   12    ;Memory type range registers present
-IHFP_PGE    equ   13    ;PTE Global Bits present
-IHFP_MCA    equ   14    ;Machine Check Architecture present
-IHFP_CMOV   equ   15    ;Availability of CMOVxx instructions
-IHFP_PAT    equ   16    ;Page Attribute Table present
-IHFP_PSE36  equ   17    ;Extended 4MB page size
-IHFP_PSN    equ   18    ;Processor Serial Number (96 bit)
-IHFP_CLFSH  equ   19    ;Availability of CLFLUSH instruction
-;Reserved   equ   20    ;Reserved for Intel CPUs
-IHFP_DS     equ   21    ;Debug Store present
-IHFP_ACPI   equ   22    ;The processor has MSRs to monitor its temperaure
-IHFP_MMX    equ   23    ;Availability of MMX technology
-IHFP_FXSR   equ   24    ;Availability of FXSAVE anf FXSTOR instructions
-IHFP_SSE    equ   25    ;Availability of SSE technology
-IHFP_SSE2   equ   26    ;Availability of SSE2 technology
-IHFP_SS     equ   27    ;Self Snoop
-IHFP_HT     equ   28    ;Availability of HyperThreading
-IHFP_TM     equ   29    ;Thermal monitor present
-;Reserved   equ   30    ;Reserved for Intel CPUs
-IHFP_3DNOW2 equ   30    ;Extended 3DNow technology only for AMD processors
-IHFP_PBE    equ   31    ;Pending Break Enable for Intel CPUs
-IHFP_3DNOW  equ   31    ;3DNow technology only for AMD processors for AMD CPUs
-IHFP_SSE3   equ   32    ;Availability of SSE3 technology
-
+; ICFP_xxx - feature index constants
+ICFP_FPU              equ   0    ; Floating Point Unit on-chip (FPU)
+ICFP_VME              equ   1    ; Virtual 8086 Mode Extensions (VME)
+ICFP_DE               equ   2    ; Debugging Extensions (DE)
+ICFP_PSE              equ   3    ; Page Size Extension 4 MB pages (PSE)
+ICFP_TSC              equ   4    ; Time Stamp Counter (TSC/RDTSC)
+ICFP_MSR              equ   5    ; Model Specific Registers (MSR)
+ICFP_PAE              equ   6    ; Physical Address Extension (PAE)
+ICFP_MCE              equ   7    ; Machine Check Exception (MCE)
+ICFP_CX8              equ   8    ; CMPXCHG8B instruction
+ICFP_APIC             equ   9    ; APIC on-chip
+ICFP_INTL_RSVD_10     equ  10    ; Intel Reserved EDX bit 10 (always returns FALSE)
+ICFP_SEP              equ  11    ; Fast System Call (SYSENTER/SYSEXIT)
+ICFP_MTRR             equ  12    ; Memory Type Range Registers (MTRR)
+ICFP_PGE              equ  13    ; Page Global Enable (PGE)
+ICFP_MCA              equ  14    ; Machine Check Architecture (MCA)
+ICFP_CMOV             equ  15    ; Conditional Move (CMOVcc)
+ICFP_PAT              equ  16    ; Page Attribute Table (PAT)
+ICFP_PSE36            equ  17    ; 36-bit Page Size Extension (PSE-36)
+ICFP_PSN              equ  18    ; Processor Serial Number (PSN)
+ICFP_CLFSH            equ  19    ; CLFLUSH instruction
+ICFP_INTL_RSVD_20     equ  20    ; Intel Reserved EDX bit 20 (always returns FALSE)
+ICFP_DS               equ  21    ; Debug Store (DS)
+ICFP_ACPI             equ  22    ; Thermal Monitor and Software Clock (ACPI)
+ICFP_MMX              equ  23    ; MMX Technology
+ICFP_FXSR             equ  24    ; FXSAVE/FXRSTOR instructions
+ICFP_SSE              equ  25    ; SSE instructions
+ICFP_SSE2             equ  26    ; SSE2 instructions
+ICFP_SS               equ  27    ; Self Snoop (SS)
+ICFP_HTT              equ  28    ; Hyper-Threading Technology (HTT)
+ICFP_TM               equ  29    ; Thermal Monitor (TM)
+ICFP_INTL_RSVD_30     equ  30    ; Intel Reserved EDX bit 30 (always returns FALSE)
+ICFP_PBE              equ  31    ; Pending Break Enable (PBE)
+ICFP_SSE3             equ  32    ; SSE3 instructions
+ICFP_PCLMULQDQ        equ  33    ; Carry-less Multiplication (PCLMULQDQ)
+ICFP_DTES64           equ  34    ; 64-bit DS Area (DTES64)
+ICFP_MONITOR          equ  35    ; MONITOR/MWAIT instructions
+ICFP_DS_CPL           equ  36    ; CPL Qualified Debug Store (DS-CPL)
+ICFP_VMX              equ  37    ; Virtual Machine Extensions (VT-x/VMX)
+ICFP_SMX              equ  38    ; Safer Mode Extensions (TXT/SMX)
+ICFP_EIST             equ  39    ; Enhanced Intel SpeedStep (EIST)
+ICFP_TM2              equ  40    ; Thermal Monitor 2 (TM2)
+ICFP_SSSE3            equ  41    ; Supplemental SSE3 (SSSE3)
+ICFP_CNXT_ID          equ  42    ; L1 Data Cache Context ID (CNXT-ID)
+ICFP_SDBG             equ  43    ; Silicon Debug MSR (SDBG)
+ICFP_FMA              equ  44    ; Fused Multiply-Add 3-operand (FMA3)
+ICFP_CX16             equ  45    ; CMPXCHG16B instruction
+ICFP_xTPR             equ  46    ; xTPR Update Control
+ICFP_PDCM             equ  47    ; Perfmon and Debug Capability MSR (PDCM)
+ICFP_PCID             equ  48    ; Process Context Identifiers (PCID)
+ICFP_DCA              equ  49    ; Direct Cache Access (DCA)
+ICFP_SSE41            equ  50    ; SSE 4.1 instructions (SSE4.1)
+ICFP_SSE42            equ  51    ; SSE 4.2 instructions (SSE4.2)
+ICFP_x2APIC           equ  52    ; x2APIC support
+ICFP_MOVBE            equ  53    ; MOVBE instruction
+ICFP_POPCNT           equ  54    ; POPCNT instruction
+ICFP_TSC_DEADLINE     equ  55    ; TSC Deadline timer
+ICFP_AES              equ  56    ; AES-NI instructions (AES)
+ICFP_XSAVE            equ  57    ; XSAVE/XRSTOR/XSETBV/XGETBV
+ICFP_OSXSAVE          equ  58    ; OS enabled XSAVE
+ICFP_AVX              equ  59    ; OS enabled and hardware support AVX
+ICFP_F16C             equ  60    ; 16-bit FP conversion (F16C)
+ICFP_RDRAND           equ  61    ; RDRAND instruction
+ICFP_HYPERVISOR       equ  62    ; Hypervisor present
+ICFP_SYSCALL_EX       equ  63    ; SYSCALL/SYSRET (AMD64)
+ICFP_NX               equ  64    ; No-Execute bit (NX/XD)
+ICFP_AMD_MMXEXT       equ  65    ; AMD MMX Extensions
+ICFP_AMD_FFXSR        equ  66    ; FXSAVE/FXRSTOR optimisations
+ICFP_1GB_PAGE         equ  67    ; 1 GB page support (PDPE1GB)
+ICFP_RDTSCP_EX        equ  68    ; RDTSCP + IA32_TSC_AUX
+ICFP_LM               equ  69    ; Long Mode 64-bit (EM64T/AMD64)
+ICFP_AMD_3DNOWEXT     equ  70    ; AMD 3DNow! Extensions
+ICFP_AMD_3DNOW        equ  71    ; AMD 3DNow!
+ICFP_LAHF64           equ  72    ; LAHF/SAHF in 64-bit mode
+ICFP_AMD_SVM          equ  73    ; AMD-V Virtualisation (SVM)
+ICFP_LZCNT            equ  74    ; LZCNT/POPCNT (ABM)
+ICFP_AMD_SSE4A        equ  75    ; SSE4a instructions
+ICFP_AMD_MISALIGN     equ  76    ; Misaligned SSE support
+ICFP_AMD_3DNOW_PF     equ  77    ; 3DNow! Prefetch
+ICFP_AMD_XOP          equ  78    ; XOP instructions
+ICFP_AMD_FMA4         equ  79    ; FMA4 instructions
+ICFP_AMD_TBM          equ  80    ; Trailing Bit Manipulation (TBM)
+ICFP_FSGSBASE         equ  81    ; RDFSBASE/RDGSBASE/WRFSBASE/WRGSBASE
+ICFP_TSC_ADJUST       equ  82    ; IA32_TSC_ADJUST MSR
+ICFP_SGX              equ  83    ; Software Guard Extensions (SGX)
+ICFP_BMI1             equ  84    ; Bit Manipulation Instructions 1 (BMI1)
+ICFP_HLE              equ  85    ; Hardware Lock Elision (HLE)
+ICFP_AVX2             equ  86    ; AVX2 instructions
+ICFP_SMEP             equ  87    ; Supervisor Mode Execution Prevention (SMEP)
+ICFP_BMI2             equ  88    ; Bit Manipulation Instructions 2 (BMI2)
+ICFP_ERMS             equ  89    ; Enhanced REP MOVSB/STOSB (ERMS)
+ICFP_INVPCID          equ  90    ; INVPCID instruction
+ICFP_RTM              equ  91    ; Restricted Transactional Memory (RTM)
+ICFP_PQM              equ  92    ; Platform QoS Monitoring (PQM/RDT-M)
+ICFP_MPX              equ  93    ; Memory Protection Extensions (MPX)
+ICFP_PQE              equ  94    ; Platform QoS Enforcement (PQE/RDT-A)
+ICFP_AVX512F          equ  95    ; AVX-512 Foundation (AVX512F)
+ICFP_AVX512DQ         equ  96    ; AVX-512 Doubleword/Quadword (AVX512DQ)
+ICFP_RDSEED           equ  97    ; RDSEED instruction
+ICFP_ADX              equ  98    ; Multi-Precision Add-Carry (ADX/ADCX/ADOX)
+ICFP_SMAP             equ  99    ; Supervisor Mode Access Prevention (SMAP)
+ICFP_AVX512IFMA       equ 100    ; AVX-512 Integer Fused Multiply-Add (AVX512IFMA)
+ICFP_CLFLUSHOPT       equ 101    ; CLFLUSHOPT instruction
+ICFP_CLWB             equ 102    ; Cache Line Write-Back (CLWB)
+ICFP_PT               equ 103    ; Intel Processor Trace (PT)
+ICFP_AVX512PF         equ 104    ; AVX-512 Prefetch (AVX512PF/Xeon Phi)
+ICFP_AVX512ER         equ 105    ; AVX-512 Exp/Reciprocal (AVX512ER/Xeon Phi)
+ICFP_AVX512CD         equ 106    ; AVX-512 Conflict Detection (AVX512CD)
+ICFP_SHA              equ 107    ; SHA-1/SHA-256 hardware instructions (SHA)
+ICFP_AVX512BW         equ 108    ; AVX-512 Byte/Word instructions (AVX512BW)
+ICFP_AVX512VL         equ 109    ; AVX-512 Vector Length extensions (AVX512VL)
+ICFP_PREFETCHWT1      equ 110    ; PREFETCHWT1 instruction (Xeon Phi)
+ICFP_AVX512VBMI       equ 111    ; AVX-512 Vector Byte Manipulation (AVX512VBMI)
+ICFP_UMIP             equ 112    ; User Mode Instruction Prevention (UMIP)
+ICFP_PKU              equ 113    ; Protection Keys for User-mode pages (PKU)
+ICFP_OSPKE            equ 114    ; OS has enabled Protection Keys (OSPKE)
+ICFP_WAITPKG          equ 115    ; UMONITOR/UMWAIT/TPAUSE (WAITPKG)
+ICFP_AVX512VBMI2      equ 116    ; AVX-512 Vector Byte Manipulation 2 (AVX512VBMI2)
+ICFP_CET_SS           equ 117    ; CET Shadow Stack (CET-SS)
+ICFP_GFNI             equ 118    ; Galois Field New Instructions (GFNI)
+ICFP_VAES             equ 119    ; Vector AES 256/512-bit (VAES)
+ICFP_VPCLMULQDQ       equ 120    ; Vector PCLMULQDQ 256/512-bit (VPCLMULQDQ)
+ICFP_AVX512VNNI       equ 121    ; AVX-512 Vector Neural Network (AVX512VNNI)
+ICFP_AVX512BITALG     equ 122    ; AVX-512 Bit Algorithms (AVX512BITALG)
+ICFP_TME              equ 123    ; Total Memory Encryption (TME)
+ICFP_AVX512VPOPCNTDQ  equ 124    ; AVX-512 Vector POPCNT DW/QW (AVX512VPOPCNTDQ)
+ICFP_LA57             equ 125    ; 5-level paging 57-bit VA (LA57)
+ICFP_RDPID            equ 126    ; RDPID instruction
+ICFP_KL               equ 127    ; Key Locker (LOADIWKEY)
+ICFP_BUS_LOCK_DETECT  equ 128    ; Bus Lock Detection
+ICFP_CLDEMOTE         equ 129    ; CLDEMOTE instruction
+ICFP_MOVDIRI          equ 130    ; MOVDIRI instruction
+ICFP_MOVDIR64B        equ 131    ; MOVDIR64B instruction
+ICFP_ENQCMD           equ 132    ; ENQCMD/ENQCMDS
+ICFP_SGX_LC           equ 133    ; SGX Launch Configuration (SGX-LC)
+ICFP_PKS              equ 134    ; Protection Keys Supervisor (PKS)
+ICFP_AVX512_4VNNIW    equ 135    ; AVX-512 4-register Neural Net Word (AVX5124VNNIW)
+ICFP_AVX512_4FMAPS    equ 136    ; AVX-512 4-register FMA Single (AVX5124FMAPS)
+ICFP_FSRM             equ 137    ; Fast Short REP MOV (FSRM)
+ICFP_UINTR            equ 138    ; User Interrupts (UINTR)
+ICFP_AVX512VP2INTER   equ 139    ; AVX-512 Vector Pair Intersection (AVX512VP2INTERSECT)
+ICFP_SRBDS_CTRL       equ 140    ; SRBDS Mitigation MSR
+ICFP_MD_CLEAR         equ 141    ; VERW clears CPU fill buffers (MDS mitigation)
+ICFP_TSX_FORCE_ABORT  equ 142    ; RTM_FORCE_ABORT MSR
+ICFP_SERIALIZE        equ 143    ; SERIALIZE instruction
+ICFP_HYBRID           equ 144    ; Hybrid processor (P+E cores)
+ICFP_TSXLDTRK         equ 145    ; TSX Suspend Load Address Tracking (TSXLDTRK)
+ICFP_PCONFIG          equ 146    ; PCONFIG instruction
+ICFP_LBR_ARCH         equ 147    ; Architectural Last Branch Records (ARCH_LBR)
+ICFP_CET_IBT          equ 148    ; CET Indirect Branch Tracking (CET-IBT)
+ICFP_AMX_BF16         equ 149    ; AMX BFloat16 (AMX-BF16)
+ICFP_AVX512_FP16      equ 150    ; AVX-512 FP16 (AVX512FP16/Sapphire Rapids+)
+ICFP_AMX_TILE         equ 151    ; AMX Tile architecture (AMX-TILE)
+ICFP_AMX_INT8         equ 152    ; AMX INT8 matrix operations (AMX-INT8)
+ICFP_INTEL_IBRS_IBPB  equ 153    ; IA32_SPEC_CTRL MSR - IBRS/IBPB (Intel only)
+ICFP_INTEL_STIBP      equ 154    ; Single Thread Indirect Branch Predictors (Intel only)
+ICFP_INTEL_L1D_FLUSH  equ 155    ; L1D cache flush MSR (Intel only)
+ICFP_INTEL_ARCH_CAP   equ 156    ; IA32_ARCH_CAPABILITIES MSR (Intel only)
+ICFP_INTEL_CORE_CAP   equ 157    ; IA32_CORE_CAPABILITIES MSR (Intel only)
+ICFP_INTEL_SSBD       equ 158    ; Speculative Store Bypass Disable (Intel only)
+ICFP_SHA512           equ 159    ; SHA-512 hardware acceleration
+ICFP_SM3              equ 160    ; SM3 hash (Chinese standard)
+ICFP_SM4              equ 161    ; SM4 cipher (Chinese standard)
+ICFP_RAO_INT          equ 162    ; Remote Atomic Operations (RAO-INT)
+ICFP_AVX_VNNI         equ 163    ; AVX-VNNI INT8 dot AVX2 width
+ICFP_AVX512_BF16      equ 164    ; AVX-512 BFloat16 (AVX512BF16)
+ICFP_LASS             equ 165    ; Linear Address Space Separation (LASS)
+ICFP_CMPCCXADD        equ 166    ; CMPccXADD instructions
+ICFP_FZRM             equ 167    ; Zero-length REP MOVSB
+ICFP_FSRS             equ 168    ; Fast Short REP STOSB
+ICFP_FSRCS            equ 169    ; Fast Short REP CMPSB/SCASB
+ICFP_FRED             equ 170    ; Flexible Return/Event Delivery (FRED)
+ICFP_LKGS             equ 171    ; LKGS instruction
+ICFP_WRMSRNS          equ 172    ; Non-serialising WRMSR (WRMSRNS)
+ICFP_AMX_FP16         equ 173    ; AMX FP16 matrix operations (AMX-FP16)
+ICFP_HRESET           equ 174    ; HRESET instruction
+ICFP_AVX_IFMA         equ 175    ; AVX-IFMA 52-bit
+ICFP_LAM              equ 176    ; Linear Address Masking (LAM)
+ICFP_MSRLIST          equ 177    ; RDMSRLIST/WRMSRLIST
+ICFP_AVX_VNNI_INT8    equ 178    ; AVX-VNNI-INT8
+ICFP_AVX_NE_CONVERT   equ 179    ; AVX-NE-CONVERT
+ICFP_AMX_COMPLEX      equ 180    ; AMX Complex matrix operations (AMX-COMPLEX)
+ICFP_AVX_VNNI_INT16   equ 181    ; AVX-VNNI-INT16
+ICFP_PREFETCHI        equ 182    ; PREFETCHIT0/1 instructions
+ICFP_USER_MSR         equ 183    ; User-mode MSR access (URDMSR/UWRMSR)
+ICFP_AVX10            equ 184    ; AVX10 (converged vector ISA)
+ICFP_APX_F            equ 185    ; APX Foundation (R16-R31, NDD, NF, ...)
+ICFP_PSFD             equ 186    ; Predictive Store Forwarding Disable (PSFD)
+ICFP_IPRED_DIS        equ 187    ; IPRED_DIS MSR control
+ICFP_RRSBA_CTRL       equ 188    ; RRSBA behaviour control
+ICFP_DDPD_U           equ 189    ; Data-dependent prefetch disable (DDPD)
+ICFP_BHI_CTRL         equ 190    ; Branch History Injection control (BHI_CTRL)
+ICFP_MCDT_NO          equ 191    ; MXCSR config-dependent timing
+ICFP_XSAVEOPT         equ 192    ; XSAVEOPT instruction
+ICFP_XSAVEC           equ 193    ; XSAVEC + compacted XRSTOR
+ICFP_XGETBV_ECX1      equ 194    ; XGETBV with ECX=1
+ICFP_XSAVES           equ 195    ; XSAVES/XRSTORS instructions
+ICFP_AESKLE           equ 196    ; AES Key Locker
+ICFP_WIDE_KL          equ 197    ; Wide Key Locker 256/512-bit
+ICFP_PLATFORM_KL      equ 198    ; Platform Key Locker
+ICFP_AMD_IBRS_IBPB    equ 199    ; IBRS/IBPB support (AMD only)
+ICFP_AMD_STIBP        equ 200    ; Single Thread Indirect Branch Predictors (AMD only)
+ICFP_AMD_SSBD         equ 201    ; Speculative Store Bypass Disable (AMD only)
+ICFP_COUNT            equ 202    ; Must equal highest index + 1
 
 ;Objects
 if TARGET_BITNESS eq 64

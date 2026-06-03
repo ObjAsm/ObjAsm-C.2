@@ -16,8 +16,8 @@
 ;             the matching method is called, otherwise the default proc is invoked.
 ; Arguments:  Default procedure name and common parameters.
 ; Return:     Nothing.
-; Note:       - uses xsi -> object instance.
-;             - the event handler receives the event ID (WM_XXX, ...) in eax.
+; Note:       - Uses xsi -> object instance.
+;             - The event handler receives the event ID (WM_XXX, ...) in eax.
 
 DispatchEvent macro DefProc:=<>, uMsg:=<uMsg>, wParam:=<wParam>, lParam:=<lParam>
   local @@Found, @@Exit, @@DispatchEventJumpTable, @@Static, @@VirtualInterface, @@Dynamic
@@ -37,45 +37,45 @@ DispatchEvent macro DefProc:=<>, uMsg:=<uMsg>, wParam:=<wParam>, lParam:=<lParam
     $$Reg2 textequ <r11>
   endif
 .code
-  mov $$Reg1, POINTER ptr [xsi]                         ;;$$Reg1 -> Dual Method Table
-  mov $$Reg2, [$$Reg1 - sizeof(POINTER)]                ;;$$Reg2 -> Event Translation Table
-  mov xcx, [$$Reg2]                                     ;;Number of ??EVENT_ENTRYs in table (XWORD)
-  add $$Reg2, sizeof(QWORD)                             ;;-> first ??EVENT_ENTRY
+  mov $$Reg1, POINTER ptr [xsi]                         ;; $$Reg1 -> Dual Method Table
+  mov $$Reg2, [$$Reg1 - sizeof(POINTER)]                ;; $$Reg2 -> Event Translation Table
+  mov xcx, [$$Reg2]                                     ;; Number of ??EVENT_ENTRY items in table
+  add $$Reg2, sizeof(QWORD)                             ;; -> first ??EVENT_ENTRY
   test xcx, xcx                                           
   .while !ZERO?                                         
-    mov eax, [$$Reg2].??EVENT_ENTRY.dID                 ;;Recover EventID
+    mov eax, [$$Reg2].??EVENT_ENTRY.dID                 ;; Read EventID
     cmp eax, uMsg                                       
-    je @@Found                                          ;;EventID found! No hint is necessary.
-    add $$Reg2, sizeof(??EVENT_ENTRY)                   ;;Goto next ??EVENT_ENTRY
+    je @@Found                                          ;; EventID found!
+    add $$Reg2, sizeof(??EVENT_ENTRY)                   ;; Goto next ??EVENT_ENTRY
     dec xcx                                             
   .endw
 
   ifnb <DefProc>
-@@DefProc:  invoke DefProc, uMsg, wParam, lParam        ;;The label should be on the same line!
-  else                                                  ;; This way, if a macro is included
-    xor eax, eax                                        ;; it expands before the @@DefProc label!
+@@DefProc:  invoke DefProc, uMsg, wParam, lParam        ;; The label must be on the same line so
+  else                                                  ;;   that, if a macro is used, it expands
+    xor eax, eax                                        ;;   before the @@DefProc label.
   endif
   jmp @@Exit
 @@Found:
-  movzx xcx, WORD ptr [$$Reg2].??EVENT_ENTRY.wType      ;;xcx = Method type 1..4, eax = uMsg
+  movzx xcx, WORD ptr [$$Reg2].??EVENT_ENTRY.wType      ;; xcx = Method type 1..4, eax = uMsg
   test ecx, ecx
   jz @@EOM
   if TARGET_BITNESS eq 32
     jmp POINTER ptr [@@DispatchEventJumpTable + xcx*sizeof(POINTER) - sizeof(POINTER)] ;;Read & jump
   else
     mov r10, offset(@@DispatchEventJumpTable) - sizeof(POINTER)
-    jmp POINTER ptr [r10 + xcx*sizeof(POINTER)]         ;;Read jump table and jump
+    jmp POINTER ptr [r10 + xcx*sizeof(POINTER)]         ;; Read jump table and jump
   endif
 
 @@Static:
   invoke ??P_EventHandler ptr ([$$Reg2].??EVENT_ENTRY.pHandler), xsi, wParam, lParam
   jmp @@Exit
 @@VirtualInterface:
-  mov $$Reg2, [$$Reg2].??EVENT_ENTRY.pHandler           ;;Offset into DMT
+  mov $$Reg2, [$$Reg2].??EVENT_ENTRY.pHandler           ;; Offset into DMT
   invoke ??P_EventHandler ptr [$$Reg2], xsi, wParam, lParam
   jmp @@Exit
 @@Dynamic:
-  mov $$Reg2, [$$Reg2].??EVENT_ENTRY.pHandler           ;;$$Reg2 = offset into object instance
+  mov $$Reg2, [$$Reg2].??EVENT_ENTRY.pHandler           ;; $$Reg2 = offset into object instance
   invoke ??P_EventHandler ptr [xsi + $$Reg2], xsi, wParam, lParam
 @@Exit:
 endm
@@ -132,7 +132,7 @@ endm
 ; Purpose:    Return the instance POINTER of the object that subclassed a system window.
 ; Arguments:  Arg1: Object name.
 ;             Arg2: Window HANDLE.
-;             Arg2: Optional index to allow multiple subclassings.
+;             Arg3: Optional index to allow multiple subclassings.
 ; Return:     rax -> Instance.
 ; Note:       xsi has to point to the object instance!
 
@@ -143,8 +143,8 @@ GetSubclassingInst macro Expression:req, hWnd:req, Index:=<0>
   else
     $$sz1 CatStr ??ObjExpr, <_Subclass_>, <Index>
     %ifndef $$sz1
-      %CStr $$sz1, "&$$sz1"                               ;;Data section is required for some
-    endif                                                 ;;  UNICODE conversions
+      %CStr $$sz1, "&$$sz1"                               ;; Data section is required for some
+    endif                                                 ;;   UNICODE conversions
     %invoke GetProp, hWnd, offset($$sz1)
   endif
 endm
@@ -159,7 +159,7 @@ endm
 ; Purpose:    Copy the coordinates from the source to the destination RECT.
 ; Arguments:  Arg1: Destination RECT structure.
 ;             Arg2: Source RECT structure.
-;             Arg3: optional registers to be used to copy the RECT content.
+;             Arg3: Optional registers to be used to copy the RECT content.
 ; Return:     Nothing.
 
 CloneRect macro DstRct:req, SrcRct:req, AuxRegs:vararg
@@ -201,7 +201,7 @@ endm
 ; Purpose:    Move a RECT by a specified X/Y value.
 ; Arguments:  Arg1: -> RECT structure.
 ;             Arg2: X size to move.
-;             Arg3: (optional) Y size to move.
+;             Arg3: Optional Y size to move.
 ; Return:     Nothing.
 
 MoveRect macro Rect:req, dSX:req, dSY:=<>
@@ -242,7 +242,7 @@ endm
 ; Return:     Nothing.
 
 EnableDlgControl macro hDlg:req, dCtrlID:req, dAction:=<TRUE>
-  invoke GetDlgItem, hDlg, dCtrlID                      ;;Get control HANDLE
+  invoke GetDlgItem, hDlg, dCtrlID                      ;; Get control HANDLE
   invoke EnableWindow, xax, dAction
 endm
 
@@ -254,27 +254,28 @@ endm
 ;             Arg2: Control ID.
 
 EnableDlgCtrlNotif macro hDlg:req, dCtrlID:req
-  invoke GetDlgItem, hDlg, dCtrlID                      ;;Get control HANDLE
-  push xax                                              ;;Store it
-  sub xsp, @WordSize + 20h                              ;;Alignment + reserve homing space
-  invoke GetWindowLongPtr, xax, GWL_EXSTYLE             ;;By default WS_EX_NOPARENTNOTIFY is set!
-  BitClr eax, WS_EX_NOPARENTNOTIFY                      ;;Clear it
+  invoke GetDlgItem, hDlg, dCtrlID                      ;; Get control HANDLE
+  push xax                                              ;; Store it
+  sub xsp, @WordSize + 20h                              ;; Alignment + reserve homing space
+  invoke GetWindowLongPtr, xax, GWL_EXSTYLE             ;; By default WS_EX_NOPARENTNOTIFY is set!
+  BitClr eax, WS_EX_NOPARENTNOTIFY                      ;; Clear it
   add xsp, @WordSize + 20h                              
-  pop xcx                                               ;;Recover control HANDLE
-  invoke SetWindowLongPtr, xcx, GWL_EXSTYLE, xax        ;;Restore modified ExStyle
+  pop xcx                                               ;; Recover control HANDLE
+  invoke SetWindowLongPtr, xcx, GWL_EXSTYLE, xax        ;; Restore modified ExStyle
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      PntS2Pnt
 ; Purpose:    Convert the POINTS contained in PntS into a POINT contained in Pnt.
-; Arguments:  POINT, POINTS
+; Arguments:  Arg1: POINT
+;             Arg2: POINTS
 ; Return:     Nothing.
 
 PntS2Pnt macro Pnt:req, PntS:req
   ifidni <PntS>, <eax>
-    .err <PntS2Pnt - input can not be eax>
+    .err <PntS2Pnt - input cannot be eax>
   elseifidni <PntS>, <rax>
-    .err <PntS2Pnt - input can not be rax>
+    .err <PntS2Pnt - input cannot be rax>
   endif
   if type(PntS) eq 8
     mov rax, PntS
@@ -282,15 +283,15 @@ PntS2Pnt macro Pnt:req, PntS:req
     mov eax, PntS
   endif
   shr eax, 16
-  cwde                                                  ;;Converts negative integers too
-  mov Pnt.y, eax                                        ;;Pnt.y = height
+  cwde                                                  ;; Converts negative integers too
+  mov Pnt.y, eax                                        ;; Pnt.y = height
   if type(PntS) eq 8
     mov rax, PntS
   else
     mov eax, PntS
   endif
-  cwde                                                  ;;Converts negative integers too
-  mov Pnt.x, eax                                        ;;Pnt.x= width
+  cwde                                                  ;; Converts negative integers too
+  mov Pnt.x, eax                                        ;; Pnt.x = width
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -302,7 +303,7 @@ endm
 
 PntS2Regs macro PntS:req, Reg32:=<ecx>
   ifidni <PntS>, <eax>
-    .err <PntS2Pnt - input can not be eax>
+    .err <PntS2Regs - input can not be eax>
   endif
   if type(PntS) eq 8
     mov rax, PntS
@@ -310,14 +311,14 @@ PntS2Regs macro PntS:req, Reg32:=<ecx>
     mov eax, PntS
   endif
   shr eax, 16
-  cwde                                                  ;;Converts negative integers too
-  mov Reg32, eax                                        ;;Reg32 = y
+  cwde                                                  ;; Converts negative integers too
+  mov Reg32, eax                                        ;; Reg32 = y
   if type(PntS) eq 8
     mov rax, PntS
   else
     mov eax, PntS
   endif
-  cwde                                                  ;;eax = x
+  cwde                                                  ;; eax = x
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -458,7 +459,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ClrWndStyleEx
 ; Purpose:    Clear the extended style flag of a window.
-; Arguments:  Arg1: Extenden style flag.
+; Arguments:  Arg1: Extended style flag.
 ; Note:       Uses volatile registers.
 
 ClrWndStyleEx macro hWnd:req, dExStyle:req

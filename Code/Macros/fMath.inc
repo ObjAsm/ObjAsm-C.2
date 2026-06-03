@@ -14,97 +14,97 @@
 ;         An exponent of 7Fh is zero - note the one bit is implied - so the number is one (1).
 
 ;General purpose functions
-;fildReg          Load a CPU register containing an integer onto the FPU stack.
-;fistReg          Store the integer part of the FPU st(0) register to a CPU register.
-;fistpReg         Store the integer part of the FPU st(0) register to a CPU register & pops it.
-;fldReg           Load a CPU register containing a REAL4 onto the FPU stack.
-;fstReg           Store the FPU st(0) register to a CPU register in REAL4 format.
-;fstpReg          Store and pops the FPU st(0) register to a CPU register in REAL4 format.
-;fSgn             Compute {if st0 < 0 => -1, if st0 = 0 => 0, if st0 > 0 => 1}.
-;fCheckStatus     Check the status word of the FPU to detect fp computation errors.
-;fGetFlags        Set EFlags with FPU status flags.
-;fUnload          Unload several stack registers.
-;fSetPrecision    Set the precision bits in the control register.
-;MULTI_FPU        Condense FPU instructions onto one line.
-;fMin             Return the smallest value of 2 floats.
-;fMax             Return the largeest value of 2 floats.
-;fAbsMin          Return the absolute smallest value of 2 floats.
-;fAbsMax          Return the absolute largest value of 2 floats.
+;fildReg            Load a CPU register containing an integer onto the FPU stack.
+;fistReg            Store the integer part of the FPU st(0) register to a CPU register.
+;fistpReg           Store the integer part of the FPU st(0) register to a CPU register & pops it.
+;fldReg             Load a CPU register containing a REAL4 onto the FPU stack.
+;fstReg             Store the FPU st(0) register to a CPU register in REAL4 format.
+;fstpReg            Store and pops the FPU st(0) register to a CPU register in REAL4 format.
+;fSgn               Compute {if st0 < 0 => -1, if st0 = 0 => 0, if st0 > 0 => 1}.
+;fCheckStatus       Check the status word of the FPU to detect fp computation errors.
+;fGetFlags          Set EFlags with FPU status flags.
+;fUnload            Unload several stack registers.
+;fSetPrecision      Set the precision bits in the control register.
+;MULTI_FPU          Condense FPU instructions onto one line.
+;fMin               Return the smallest value of 2 floats.
+;fMax               Return the largest value of 2 floats.
+;fAbsMin            Return the absolute smallest value of 2 floats.
+;fAbsMax            Return the absolute largest value of 2 floats.
 
 ;Rounding functions
-;fRnd             Round to an integer the content of st0.
-;fRndUp           Round up to an integer the content of st0.
-;fRndDn           Round down to an integer the content of st0.
-;fInt             Compute the integer part of the content of st0.
-;fFrac            Compute the fractional part of the content of st0.
-;fRound           Round the content of st0 to x decimals.
+;fRnd               Round to an integer the content of st0.
+;fRndUp             Round up to an integer the content of st0.
+;fRndDn             Round down to an integer the content of st0.
+;fInt               Compute the integer part of the content of st0.
+;fFrac              Compute the fractional part of the content of st0.
+;fRound             Round the content of st0 to x decimals.
 
 ;Power functions
-;fExp2            Compute 2^x = 2^st0.
-;fExpN            Compute e^x = e^st0.
-;fPower           Compute x^y = st0^st(1).
-;fLogN            Compute the neperian logarithm of st0.
-;fExpT            Compute 10^x = 10^st0.
-;fLogT            Compute the logarithm base 10 of st0.
-;fLog             Compute Log(st0, st1) = Log2(st0)/Log2(st1).
+;fExp2              Compute 2^x = 2^st0.
+;fExpN              Compute e^x = e^st0.
+;fPower             Compute x^y = st0^st(1).
+;fLogN              Compute the neperian logarithm of st0.
+;fExpT              Compute 10^x = 10^st0.
+;fLogT              Compute the logarithm base 10 of st0.
+;fLog               Compute Log(st0, st1) = Log2(st0)/Log2(st1).
 
 ;Trigonometric functions (Argument range |x| < 2^63 in radians)
-;fFitTrigRange    Reduces the value in st0 to fit in the range of trig. functions: |x| < 2^63.
-;fTan             Compute tan(st0).
-;fSec             Compute 1 / cos(st0).
-;fCsc             Compute 1 / sin(st0).
-;fCot             Compute 1 / tan(st0).
+;fFitTrigRange      Reduces the value in st0 to fit in the range of trig. functions: |x| < 2^63.
+;fTan               Compute tan(st0).
+;fSec               Compute 1 / cos(st0).
+;fCsc               Compute 1 / sin(st0).
+;fCot               Compute 1 / tan(st0).
 
 ;Inverse trigonometric functions (Argument range |x| <= 1, return value in radians)
-;fArcSin          Compute arctan(st0 / sqrt((1 - st0)(1 + st0))).
-;fArcCos          Compute arctan(sqrt((1 - st0)(1 + st0)) / st0).
-;fArcTan          Compute arctan(st0).
-;fArcSec          Compute arctan(sqrt((st0 - 1)(st0 + 1))).
-;fArcCsc          Compute arctan(1 / sqrt((st0 - 1)(st0 + 1))).
-;fArcCot          Compute arctan(1 / st0).
+;fArcSin            Compute arctan(st0 / sqrt((1 - st0)(1 + st0))).
+;fArcCos            Compute arctan(sqrt((1 - st0)(1 + st0)) / st0).
+;fArcTan            Compute arctan(st0).
+;fArcSec            Compute arctan(sqrt((st0 - 1)(st0 + 1))).
+;fArcCsc            Compute arctan(1 / sqrt((st0 - 1)(st0 + 1))).
+;fArcCot            Compute arctan(1 / st0).
 
 ;Hyperbolic functions
-;fSinh            Compute (exp(st0) - exp(-st0)) / 2.
-;fCosh            Compute (exp(st0) + exp(-st0)) / 2.
-;fTanh            Compute (exp(st0) - exp(-st0)) / (exp(st0) + exp(-st0)).
-;fSech            Compute 2 / (exp(st0) + exp(-st0)).
-;fCsch            Compute 2 / (exp(st0) - exp(-st0)).
-;fCoth            Compute (exp(st0) + exp(-st0)) / (exp(st0) - exp(-st0)).
+;fSinh              Compute (exp(st0) - exp(-st0)) / 2.
+;fCosh              Compute (exp(st0) + exp(-st0)) / 2.
+;fTanh              Compute (exp(st0) - exp(-st0)) / (exp(st0) + exp(-st0)).
+;fSech              Compute 2 / (exp(st0) + exp(-st0)).
+;fCsch              Compute 2 / (exp(st0) - exp(-st0)).
+;fCoth              Compute (exp(st0) + exp(-st0)) / (exp(st0) - exp(-st0)).
 
 ;Inverse Hyperbolic functions
-;fArcSinh         Compute logN(st0 + Sqr(st0 * st0 + 1)).
-;fArcCosh         Compute logN(st0 + Sqr(st0 * st0 - 1)).
-;fArcTanh         Compute logN((1 + st0) / (1 - st0)) / 2.
-;fArcSech         Compute logN((Sqr(-st0 * st0 + 1) + 1) / st0).
-;fArcCsch         Compute logN((1 + sqrt(1 + st0*st0)) / st0).
-;fArcCoth         Compute logN((st0 + 1) / (st0 - 1)) / 2.
+;fArcSinh           Compute logN(st0 + Sqr(st0 * st0 + 1)).
+;fArcCosh           Compute logN(st0 + Sqr(st0 * st0 - 1)).
+;fArcTanh           Compute logN((1 + st0) / (1 - st0)) / 2.
+;fArcSech           Compute logN((Sqr(-st0 * st0 + 1) + 1) / st0).
+;fArcCsch           Compute logN((1 + sqrt(1 + st0*st0)) / st0).
+;fArcCoth           Compute logN((st0 + 1) / (st0 - 1)) / 2.
 
 ;String representation
-;fldStr           Load in st0 the pointed string representation of a floating point number.
-;fstStr           Store in memory the string representation of the FP number in st0.
+;fldStr             Load in st0 the pointed string representation of a floating point number.
+;fstStr             Store in memory the string representation of the FP number in st0.
 
 ;Condition jumps
-;fjg              Jump if Greater.
-;fjl              Jump if Less.
-;fje              Jump if Equal.
-;fjne             Jump if Not Equal.
-;fjge             Jump if Greater or Equal.
-;fjle             Jump if Less or Equal.
-;fjnc             Jump if Non-Comparable.
+;fjg                Jump if Greater.
+;fjl                Jump if Less.
+;fje                Jump if Equal.
+;fjne               Jump if Not Equal.
+;fjge               Jump if Greater or Equal.
+;fjle               Jump if Less or Equal.
+;fjnc               Jump if Non-Comparable.
 
 ;CPU REAL4 comparison
-;fcmp             Fast way to compare floats with sign using the CPU.
-;fIsZero          Fast way to determine if a float is zero.
-;fIsNegative      Fast way to determine if a float is negative.
-;fIsPositive      Fast way to determine if a float is positive.
+;fcmp               Fast way to compare floats with sign using the CPU.
+;fIsZero            Fast way to determine if a float is zero.
+;fIsNegative        Fast way to determine if a float is negative.
+;fIsPositive        Fast way to determine if a float is positive.
 
 ;Comparisons
-;fIsLess          Compare 2 floats and set eax to TRUE if the 1st < 2nd.
-;fIsLessOrEqual   Compare 2 floats and set eax to TRUE if the 1st <= 2nd.
-;fIsGreater       Compare 2 floats and set eax to TRUE if the 1st > 2nd.
-;IsGreaterOrEqual Compare 2 floats and set eax to TRUE if the 1st >= 2nd.
-;fIsAbsLess       Compare 2 floats and set eax to TRUE if the |1st| < |2nd|.
-;fIsAbsGreater    Compare 2 floats and set eax to TRUE if the |1st| > |2nd|.
+;fIsLess            Compare 2 floats and set eax to TRUE if the 1st < 2nd.
+;fIsLessOrEqual     Compare 2 floats and set eax to TRUE if the 1st <= 2nd.
+;fIsGreater         Compare 2 floats and set eax to TRUE if the 1st > 2nd.
+;fIsGreaterOrEqual  Compare 2 floats and set eax to TRUE if the 1st >= 2nd.
+;fIsAbsLess         Compare 2 floats and set eax to TRUE if the |1st| < |2nd|.
+;fIsAbsGreater      Compare 2 floats and set eax to TRUE if the |1st| > |2nd|.
 
 
 fStatusWord record fIsBusy:1, fC3:1, fStackPtr:3, fC2:1, fC1:1, fC0:1, fExpt:1, fStackFault:1, \
@@ -156,12 +156,12 @@ fildReg macro RegName:req
     else
       sub xsp, @WordSize
       mov [xsp], RegName
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fild QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fild DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fild WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fild BYTE ptr [xsp]
+      else
+        .err fildReg
       endif
     endif
     add xsp, @WordSize
@@ -184,12 +184,12 @@ fistReg macro RegName:req
       fist XWORD ptr [xsp]
       pop RegName
     else
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fist QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fist DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fist WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fist BYTE ptr [xsp]
+      else
+        .err fistReg
       endif
       mov RegName, [xsp]
       add xsp, @WordSize
@@ -213,12 +213,12 @@ fistpReg macro RegName:req
       fistp XWORD ptr [xsp]
       pop RegName
     else
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fistp QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fistp DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fistp WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fistp BYTE ptr [xsp]
+      else
+        .err fistpReg
       endif
       mov RegName, [xsp]
       add xsp, @WordSize
@@ -244,12 +244,12 @@ fldReg macro RegName:req
     else
       sub xsp, @WordSize
       mov [xsp], RegName
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fld QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fld DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fld WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fld BYTE ptr [xsp]
+      else
+        .err fldReg
       endif
     endif
     add xsp, @WordSize
@@ -272,12 +272,12 @@ fstReg macro RegName:req
       fst XWORD ptr [xsp]
       pop RegName
     else
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fst QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fst DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fst WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fst BYTE ptr [xsp]
+      else
+        .err fstReg
       endif
       mov RegName, [xsp]
       add xsp, @WordSize
@@ -301,12 +301,12 @@ fstpReg macro RegName:req
       fstp XWORD ptr [xsp]
       pop RegName
     else
-      if ??RegSize eq 4
+      if ??RegSize eq 8
+        fstp QWORD ptr [xsp]
+      elseif ??RegSize eq 4
         fstp DWORD ptr [xsp]
-      elseif ??RegSize eq 2
-        fstp WORD ptr [xsp]
-      elseif ??RegSize eq 1
-        fstp BYTE ptr [xsp]
+      else
+        .err fstpReg
       endif
       mov RegName, [xsp]
       add xsp, @WordSize
@@ -318,7 +318,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fSgn
-; Purpose:    Compute the signum function of the content os st0.
+; Purpose:    Compute the signum function of the content of st0.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       st7 must be empty.
@@ -333,8 +333,8 @@ fSgn macro
   cmova eax, $CReal4(-1.0)                              ;; Move if above
   cmovb eax, $CReal4(+1.0)                              ;; Move if below
   fstp st(0)                                            ;; Pop st0 from stack
-  mov [xsp], xax                                        ;; Load result in reserved room in stack
-  fld XWORD ptr [xsp]                                   ;; Load result in st0 from stack
+  mov [xsp], eax                                        ;; Load result in reserved room in stack
+  fld DWORD ptr [xsp]                                   ;; Load result in st0 from stack
   add xsp, @WordSize                                    ;; Restore stack
 endm
 
@@ -384,7 +384,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fSetPrecision
-; Purpose:    Ses the precision bits in the control register.
+; Purpose:    Sets the precision bits in the control register.
 ; Arguments:  Arg1: Precision (REAL4, REAL8, REAL10).
 ; Return:     Nothing.
 ; Notes:      00 = 24 bits (REAL4)
@@ -623,20 +623,9 @@ fExp2 macro                     ;; st0      st1      st2
   f2xm1                         ;; 2^frac-1 2^int(x) ?         Compute 2xm1
   fld1                          ;; 1        2^frac-1 2^int(x)  Load 1
   faddp st(1), st(0)            ;; 2^frac   2^int(x) ?         Add st0 and st1 and pop
-  fmulp st(1), st(0)            ;; 2^x      ?        ?         Multiplay st1 by st0 and pop
+  fmulp st(1), st(0)            ;; 2^x      ?        ?         Multiply st1 by st0 and pop
 endm                               
-                                   
-fExp2_ macro                    ;; st0      st1      st2
-  fld st(0)                     ;; x        x        ?         Duplicate st0
-  frndint                       ;; int(x)   x        ?         Round to integer
-  fsub st(1), st(0)             ;; int(x)   frac(x)  ?         Compute fractional part of x
-  fxch                          ;; int(x)   2^int(x) frac(x)   Exchange st0 and st1
-  f2xm1                         ;; 2^frac-1 2^int(x) ?         Compute 2xm1
-  fld1                          ;; 1        int(x)   frac(x)   Load 1
-  fadd                             
-  fscale                        ;; 2^int(x) int(x)   frac(x)   Scale 1 by int(x)
-  fstp st(1)                    ;; 2^int(x) frac(x)  ?         Eliminate st0 and pop
-endm
+
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fExpN
 ; Purpose:    Compute st(0) = e^st0.
@@ -678,7 +667,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      fLogT
-; Purpose:    Calculate the logarithm base 10 of st0 and sotres it in st0.
+; Purpose:    Calculate the logarithm base 10 of st0 and stores it in st0.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       st7 must be empty.
@@ -701,7 +690,7 @@ fPower macro
   fxch                                                  ;; Swap st0 and st1
   fyl2x                                                 ;; Compute 1*Log2(x)
   fmulp st(1), st(0)                                    ;; Compute y*Log2(x)
-  fExp2                                                 ;; Comput2 2^(x*Log2(y)) = x^y
+  fExp2                                                 ;; Compute 2^(y*Log2(x)) = x^y
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1128,7 +1117,7 @@ endm
 
 fjl macro DestinationLabel:req
   fGetFlags
-  jb DestinationLabel                                   ; ;Conditional jump
+  jb DestinationLabel                                   ;;Conditional jump
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -1274,7 +1263,7 @@ endm
 
 ;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsPositive
-;; Purpose:   If val > 0 => TRUE, else => FALSE.
+;; Purpose:   If val >= 0 => TRUE, else => FALSE. +0 is positive.
 
 fIsPositive macro val:req
   xor eax, eax                                          ;; FALSE
@@ -1284,12 +1273,12 @@ endm
 
 $fIsPositive macro val:req
   fIsPositive val
-  exitm <rax>
+  exitm <xax>
 endm
 
 ;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsNegative
-;; Purpose:   If val < 0 => TRUE, else => FALSE.
+;; Purpose:   If val <= 0 => TRUE, else => FALSE. -0 is negative.
 
 fIsNegative macro val:req
   xor eax, eax                                          ;; FALSE
@@ -1345,7 +1334,7 @@ fIsLessOrEqual macro val1:req, val2:req
   fld val2
   fcomip st(0), st(1)
   fstp st(0)
-  seta al
+  setae al
 endm
 
 $fIsLessOrEqual macro val1:req, val2:req
