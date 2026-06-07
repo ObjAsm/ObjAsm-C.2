@@ -1782,14 +1782,17 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
           elseifidn $$WF_ReplType, <CA>
             m2m CHRA ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
             add DstReg, sizeof(CHRA)
+            $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <CW>
             m2m CHRW ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
             add DstReg, sizeof(CHRW)
+            $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <CT>
             m2m $$CHR ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
             add DstReg, sizeof($$CHR)
+            $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <GD>
             $$FillText [DstReg], <%$$WF_Text>
