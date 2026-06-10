@@ -1387,13 +1387,13 @@ endif
 ;                 n  Carriage Return and Line Feed
 ;                 r  Carriage Return
 ;                 l  Line Feed
-;                 0  ZTC
 ;                 t  Horizontal Tab
+;                 0  ZTC
 ;                 [  "<" character
 ;                 ]  ">" character
 ;                 :  "!" character
-;                 ´  "'" character
-;                 `  """ character
+;                 ´  "'" character    (better -)
+;                 `  """ character    (better =)
 ;                 \  "\" character
 ;
 ;             - Format specifiers and escape sequences are case sensitive.

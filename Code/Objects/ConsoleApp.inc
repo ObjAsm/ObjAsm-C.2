@@ -20,6 +20,7 @@
 ;                 console (ClearScreen, SetCursorPos, etc.) now use hConsole instead of hOutput.
 ;                 hOutput continues to be used only by Print/PrintLn so that redirected output
 ;                 is forwarded correctly.
+;               - ClearScreen bug corrected and adaptet for Windows Terminal.
 ; ==================================================================================================
 
 
@@ -57,6 +58,8 @@ Object ConsoleApp, ConsoleAppID, Streamable
   DefineVariable    hInput,           HANDLE,   0
   DefineVariable    hOutput,          HANDLE,   0       ;Follows redirection; used by Print(Ln)
   DefineVariable    hConsole,         HANDLE,   0       ;Physical console; used by Write(Ln) etc.
+  DefineVariable    dInputMode,       DWORD,    0
+  DefineVariable    dOutputMode,      DWORD,    0
   DefineVariable    hTimerQueue,      HANDLE,   0
   DefineVariable    pSetConsoleIcon,  POINTER,  NULL    ;SetConsoleIcon API proc
   DefineVariable    hSpinnerTimer,    HANDLE,   0
@@ -106,6 +109,380 @@ BACKGROUND_INTENSE_YELLOW   equ (BACKGROUND_YELLOW or BACKGROUND_INTENSITY)
 BACKGROUND_INTENSE_CYAN     equ (BACKGROUND_CYAN or BACKGROUND_INTENSITY)
 BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 
+
+; ============================================================
+; VT / ANSI / xterm   Escape Sequence Reference
+; ============================================================
+
+; --- Cursor movement -----------------------------------------
+; ESC[H                    Move cursor to home (0,0) (CUP)
+; ESC[{r};{c}H             Move cursor to row r, column c (CUP)
+; ESC[{r};{c}f             Move cursor to row r, column c (HVP)
+; ESC[#A                   Move cursor up # lines (CUU)
+; ESC[#B                   Move cursor down # lines (CUD)
+; ESC[#C                   Move cursor right # columns (CUF)
+; ESC[#D                   Move cursor left # columns (CUB)
+; ESC[#E                   Move to beginning of next line, # lines down (CNL)
+; ESC[#F                   Move to beginning of prev line, # lines up (CPL)
+; ESC[#G                   Move cursor to column # (CHA)
+; ESC[#d                   Move cursor to row # (VPA)
+; ESC[#e                   Move cursor down # rows (VPR)
+; ESC[#`                   Move cursor to column # (HPA) — same as CHA
+; ESC[#a                   Move cursor right # columns (HPR) — same as CUF
+; ESC[6n                   Request cursor position — terminal replies ESC[r;cR (CPR)
+; ESC[?6n                  Extended cursor position report — terminal replies ESC[?r;cR
+; ESC[s                    Save cursor position (SCO / SCOSC)
+; ESC[u                    Restore cursor position (SCO / SCORC)
+; ESC 7                    Save cursor position + attributes (DECSC)
+; ESC 8                    Restore cursor position + attributes (DECRC)
+
+; --- Erase ---------------------------------------------------
+; ESC[J  / ESC[0J          Erase from cursor to end of screen (ED)
+; ESC[1J                   Erase from cursor to beginning of screen (ED)
+; ESC[2J                   Erase entire visible screen (ED)
+; ESC[3J                   Erase saved scrollback lines (xterm extension)
+; ESC[?J / ESC[?0J         Selective erase to end of screen (DECSED)
+; ESC[?1J                  Selective erase to beginning of screen (DECSED)
+; ESC[?2J                  Selective erase entire screen (DECSED)
+; ESC[K  / ESC[0K          Erase from cursor to end of line (EL)
+; ESC[1K                   Erase from start of line to cursor (EL)
+; ESC[2K                   Erase entire current line (EL)
+; ESC[?K / ESC[?0K         Selective erase to end of line (DECSEL)
+; ESC[?1K                  Selective erase to beginning of line (DECSEL)
+; ESC[?2K                  Selective erase entire line (DECSEL)
+
+; --- Insert / Delete -----------------------------------------
+; ESC[#@                   Insert # blank characters at cursor (ICH)
+; ESC[#P                   Delete # characters at cursor (DCH)
+; ESC[#X                   Erase # characters at cursor, no shift (ECH)
+; ESC[#L                   Insert # blank lines above cursor (IL)
+; ESC[#M                   Delete # lines from cursor down (DL)
+
+; --- Scroll --------------------------------------------------
+; ESC[#S                   Scroll up # lines (SU)
+; ESC[#T                   Scroll down # lines (SD)
+; ESC[{t};{b}r             Set scroll region: top=t, bottom=b (DECSTBM)
+; ESC[{l};{r}s             Set left/right margins l and r (DECSLRM — requires DECLRMM)
+; ESC M                    Reverse index — scroll down one if at top of region (RI)
+
+; --- Rectangular area operations (VT400+) -------------------
+; ESC[{Pt};{Pl};{Pb};{Pr};{Ps}$r   Change attributes in rectangle (DECCARA)
+; ESC[{Pt};{Pl};{Pb};{Pr};{Ps}$t   Reverse attributes in rectangle (DECRARA)
+; ESC[{Pt};{Pl};{Pb};{Pr};{Ps}$v   Copy rectangular area (DECCRA)
+; ESC[{Pt};{Pl};{Pb};{Pr};{Pp}$w   Request present cursor position report (DECRQPSR)
+; ESC[{Pt};{Pl};{Pb};{Pr};{Ps}$x   Fill rectangle with character (DECFRA)
+; ESC[{Pt};{Pl};{Pb};{Pr}$z        Erase rectangle (DECERA)
+; ESC[{Pt};{Pl};{Pb};{Pr}${        Selective erase rectangle (DECSERA)
+
+; --- SGR — Reset & text attributes --------------------------
+; ESC[0m                   Reset all attributes
+; ESC[1m                   Bold
+; ESC[2m                   Dim / faint
+; ESC[3m                   Italic
+; ESC[4m                   Underline (single)
+; ESC[4:0m                 Underline — no underline (alias for ESC[24m)
+; ESC[4:1m                 Underline — single (default when ESC[4m used)
+; ESC[4:2m                 Underline — double
+; ESC[4:3m                 Underline — curly / wavy
+; ESC[4:4m                 Underline — dotted
+; ESC[4:5m                 Underline — dashed
+; ESC[5m                   Blink (slow, < 150 times/min)
+; ESC[6m                   Blink rapid (>= 150 times/min) — rarely supported
+; ESC[7m                   Reverse video (swap fg/bg)
+; ESC[8m                   Conceal / hidden
+; ESC[9m                   Strikethrough (crossed-out)
+; ESC[10m                  Primary (default) font
+; ESC[11m–ESC[19m          Alternate fonts 1–9
+; ESC[20m                  Fraktur / gothic (rarely supported)
+; ESC[21m                  Doubly underlined (or reset bold in some terminals)
+; ESC[22m                  Reset bold and dim (normal intensity)
+; ESC[23m                  Reset italic and fraktur
+; ESC[24m                  Reset underline
+; ESC[25m                  Reset blink
+; ESC[26m                  Proportional spacing (ECMA-48; rarely supported)
+; ESC[27m                  Reset reverse video
+; ESC[28m                  Reset conceal (reveal)
+; ESC[29m                  Reset strikethrough
+; ESC[50m                  Reset proportional spacing
+; ESC[51m                  Framed
+; ESC[52m                  Encircled
+; ESC[53m                  Overlined
+; ESC[54m                  Reset framed and encircled
+; ESC[55m                  Reset overlined
+; ESC[73m                  Superscript (mintty / VTE extension)
+; ESC[74m                  Subscript (mintty / VTE extension)
+; ESC[75m                  Reset superscript and subscript
+
+; --- SGR — Standard colors -----------------------------------
+; ESC[30m–ESC[37m          Foreground: Black Red Green Yellow Blue Magenta Cyan White
+; ESC[38;5;{n}m            Foreground: 256-color index n (0–255)
+; ESC[38;2;{r};{g};{b}m    Foreground: 24-bit RGB true color
+; ESC[38;2:{r}:{g}:{b}m    Foreground: 24-bit RGB (colon-separated, ISO 8613-6 form)
+; ESC[39m                  Foreground: default color
+; ESC[40m–ESC[47m          Background: Black Red Green Yellow Blue Magenta Cyan White
+; ESC[48;5;{n}m            Background: 256-color index n (0–255)
+; ESC[48;2;{r};{g};{b}m    Background: 24-bit RGB true color
+; ESC[48;2:{r}:{g}:{b}m    Background: 24-bit RGB (colon-separated)
+; ESC[49m                  Background: default color
+; ESC[58;5;{n}m            Underline color: 256-color index n
+; ESC[58;2;{r};{g};{b}m    Underline color: 24-bit RGB (xterm/VTE/kitty)
+; ESC[59m                  Underline color: default
+
+; --- SGR — Bright / high-intensity colors --------------------
+; ESC[90m–ESC[97m          Foreground: Bright Black … Bright White (aixterm extension)
+; ESC[100m–ESC[107m        Background: Bright Black … Bright White (aixterm extension)
+
+; --- SGR — Character protection -----------------------------
+; ESC[0"q                  DECSCA — unprotected (default)
+; ESC[1"q                  DECSCA — protected (not erased by DECSED/DECSEL)
+; ESC[2"q                  DECSCA — unprotected
+
+; --- Cursor appearance ---------------------------------------
+; ESC[?25l                 Hide cursor (DECTCEM off)
+; ESC[?25h                 Show cursor (DECTCEM on)
+; ESC[?12h                 Enable cursor blinking
+; ESC[?12l                 Disable cursor blinking
+; ESC[0 q                  Cursor shape: default (terminal-defined)
+; ESC[1 q                  Cursor shape: blinking block
+; ESC[2 q                  Cursor shape: steady block
+; ESC[3 q                  Cursor shape: blinking underline
+; ESC[4 q                  Cursor shape: steady underline
+; ESC[5 q                  Cursor shape: blinking bar (I-beam)
+; ESC[6 q                  Cursor shape: steady bar (I-beam)
+
+; --- Screen / buffer -----------------------------------------
+; ESC[?1049h               Switch to alternate screen buffer (saves cursor)
+; ESC[?1049l               Return to main screen buffer (restores cursor)
+; ESC[?47h                 Enter alternate screen (older — no cursor save)
+; ESC[?47l                 Exit alternate screen (older)
+; ESC[?1047h               Switch to alternate screen buffer (xterm)
+; ESC[?1047l               Return to main screen buffer (xterm)
+; ESC[?2004h               Enable bracketed paste mode
+; ESC[?2004l               Disable bracketed paste mode
+
+; --- Window / terminal size queries (xterm) -----------------
+; ESC[14t                  Report terminal window size in pixels ? ESC[4;height;widtht
+; ESC[16t                  Report cell size in pixels ? ESC[6;height;widtht
+; ESC[18t                  Report terminal size in characters ? ESC[8;rows;colst
+; ESC[19t                  Report screen size in characters
+; ESC[20t                  Report icon label ? ESC]L{label}ESC\
+; ESC[21t                  Report window title ? ESC]l{title}ESC\
+; ESC[22;0t                Save window title (and icon) to stack
+; ESC[22;1t                Save icon label to stack
+; ESC[22;2t                Save window title to stack
+; ESC[23;0t                Restore window title (and icon) from stack
+; ESC[23;1t                Restore icon label from stack
+; ESC[23;2t                Restore window title from stack
+
+; --- DEC private modes (h = set, l = reset) -----------------
+; ESC[?1h  / ESC[?1l       Application / normal cursor keys (DECCKM)
+; ESC[?2l                  VT52 mode (DECANM) — no set; use ESC[?2h to leave
+; ESC[?3h  / ESC[?3l       132 / 80 column mode (DECCOLM)
+; ESC[?4h  / ESC[?4l       Smooth / jump scroll (DECSCLM)
+; ESC[?5h  / ESC[?5l       Reverse / normal screen video (DECSCNM)
+; ESC[?6h  / ESC[?6l       Origin relative / absolute (DECOM)
+; ESC[?7h  / ESC[?7l       Auto-wrap on / off (DECAWM)
+; ESC[?8h  / ESC[?8l       Auto-repeat keys on / off (DECARM)
+; ESC[?9h  / ESC[?9l       X10 mouse reporting on / off
+; ESC[?10h / ESC[?10l      Show / hide toolbar (rxvt)
+; ESC[?12h / ESC[?12l      Blinking cursor on / off (AT&T 610)
+; ESC[?18h / ESC[?18l      Print form feed on / off (DECPFF)
+; ESC[?19h / ESC[?19l      Print extent full screen / scrolling region (DECPEX)
+; ESC[?25h / ESC[?25l      Show / hide cursor (DECTCEM)
+; ESC[?30h / ESC[?30l      Show / hide scrollbar (rxvt)
+; ESC[?35h / ESC[?35l      Font-shifting on / off (rxvt)
+; ESC[?38h / ESC[?38l      Tektronix mode on / off (DECTEK)
+; ESC[?40h / ESC[?40l      Allow / disallow 80?132 column mode (xterm)
+; ESC[?41h / ESC[?41l      more(1) fix on / off (xterm)
+; ESC[?42h / ESC[?42l      National replacement character set on / off (DECNRCM)
+; ESC[?44h / ESC[?44l      Margin bell on / off (xterm)
+; ESC[?45h / ESC[?45l      Reverse-wraparound on / off (xterm)
+; ESC[?46h / ESC[?46l      Logging on / off (xterm — requires compile-time option)
+; ESC[?47h / ESC[?47l      Alternate screen on / off (older form)
+; ESC[?66h / ESC[?66l      Application / normal numeric keypad (DECNKM)
+; ESC[?67h / ESC[?67l      Backspace key sends BS / DEL (DECBKM)
+; ESC[?69h / ESC[?69l      Left/right margin mode on / off (DECLRMM)
+; ESC[?80h / ESC[?80l      Sixel display — sixel scrolling on / off
+; ESC[?95h / ESC[?95l      Do not clear screen on DECCOLM change (xterm)
+; ESC[?1000h / ESC[?1000l  X10-compatible mouse button reporting on / off
+; ESC[?1001h / ESC[?1001l  Hilite mouse tracking on / off (highlight mode)
+; ESC[?1002h / ESC[?1002l  Button-event mouse tracking on / off
+; ESC[?1003h / ESC[?1003l  Any-event mouse tracking on / off
+; ESC[?1004h / ESC[?1004l  Focus in/out events on / off
+; ESC[?1005h / ESC[?1005l  UTF-8 extended mouse coordinate encoding on / off
+; ESC[?1006h / ESC[?1006l  SGR extended mouse coordinate encoding on / off
+; ESC[?1007h / ESC[?1007l  Alternate scroll on / off (xterm — mouse wheel ? cursor keys in alt screen)
+; ESC[?1010h / ESC[?1010l  Scroll to bottom on tty output on / off (rxvt)
+; ESC[?1011h / ESC[?1011l  Scroll to bottom on key press on / off (rxvt)
+; ESC[?1015h / ESC[?1015l  URXVT extended mouse coordinate encoding on / off
+; ESC[?1016h / ESC[?1016l  SGR pixel mouse coordinate encoding on / off
+; ESC[?1034h / ESC[?1034l  Interpret meta key on / off (xterm — sets 8th bit)
+; ESC[?1035h / ESC[?1035l  Special modifiers for alt and num lock on / off (xterm)
+; ESC[?1036h / ESC[?1036l  Send ESC when meta key is pressed on / off (xterm)
+; ESC[?1037h / ESC[?1037l  Send DEL from the editing-keypad Delete key on / off (xterm)
+; ESC[?1039h / ESC[?1039l  Alt sends ESC on / off (xterm)
+; ESC[?1040h / ESC[?1040l  Keep selection even if not highlighted on / off (xterm)
+; ESC[?1041h / ESC[?1041l  Use Clipboard selection on / off (xterm)
+; ESC[?1042h / ESC[?1042l  Enable urgency on bell on / off (xterm)
+; ESC[?1043h / ESC[?1043l  Enable raising window on bell on / off (xterm)
+; ESC[?1044h / ESC[?1044l  Reuse most recent data copied to clipboard on / off (xterm)
+; ESC[?1046h / ESC[?1046l  Enable / disable switching to alternate screen buffer (xterm)
+; ESC[?1047h / ESC[?1047l  Alternate screen buffer on / off (xterm)
+; ESC[?1048h / ESC[?1048l  Save / restore cursor (xterm)
+; ESC[?1049h / ESC[?1049l  Save cursor + switch to alternate screen / restore (xterm)
+; ESC[?2004h / ESC[?2004l  Bracketed paste mode on / off
+; ESC[?2026h / ESC[?2026l  Synchronized output on / off (xterm 379+, kitty, etc.)
+
+; --- ANSI modes (h = set, l = reset) ------------------------
+; ESC[2h  / ESC[2l         Keyboard locked / unlocked (KAM)
+; ESC[4h  / ESC[4l         Insert / replace mode (IRM)
+; ESC[12h / ESC[12l        Local echo off / on (SRM)
+; ESC[20h / ESC[20l        Newline / linefeed mode (LNM)
+
+; --- Tab stops -----------------------------------------------
+; HT   (0x09)              Advance to next tab stop
+; ESC H                    Set tab stop at current column (HTS)
+; ESC[g  / ESC[0g          Clear tab stop at current column (TBC)
+; ESC[3g                   Clear all tab stops (TBC)
+; ESC[{n}I                 Move forward # tab stops (CHT)
+; ESC[{n}Z                 Move backward # tab stops (CBT)
+
+; --- Margins -------------------------------------------------
+; ESC[{t};{b}r             Set top/bottom scroll margins (DECSTBM)
+; ESC[{l};{r}s             Set left/right margins (DECSLRM — requires DECLRMM enabled)
+
+; --- Character sets and encoding ----------------------------
+; ESC ( A                  Designate G0 = UK character set
+; ESC ( B                  Designate G0 = US ASCII (default)
+; ESC ( 0                  Designate G0 = DEC special graphics (line drawing)
+; ESC ) B                  Designate G1 = US ASCII
+; ESC ) 0                  Designate G1 = DEC special graphics
+; ESC * B                  Designate G2 = US ASCII (VT220+)
+; ESC + B                  Designate G3 = US ASCII (VT220+)
+; ESC N                    Single shift G2 (SS2) — next char from G2 set
+; ESC O                    Single shift G3 (SS3) — next char from G3 set
+; ESC ~                    Invoke G1 into GR (LS1R)
+; ESC n                    Invoke G2 into GL (LS2)
+; ESC }                    Invoke G2 into GR (LS2R)
+; ESC o                    Invoke G3 into GL (LS3)
+; ESC |                    Invoke G3 into GR (LS3R)
+; ESC % @                  Return to ISO 2022 / ECMA-35 (default coding)
+; ESC % G                  Select UTF-8 encoding
+
+; --- Device / status -----------------------------------------
+; ESC[0c                   Primary device attributes (DA1) — terminal replies ESC[?{params}c
+; ESC[>0c                  Secondary device attributes (DA2) — terminal replies ESC[>{Pp};{Pv};{Pc}c
+; ESC[=0c                  Tertiary device attributes (DA3) — terminal replies DCS!|{data}ST
+; ESC Z                    Identify terminal (DECID) — same reply as DA1
+; ESC[5n                   Device status report — terminal replies ESC[0n (ok) or ESC[3n (error)
+; ESC[6n                   Cursor position report — terminal replies ESC[{r};{c}R
+; ESC[?6n                  Extended cursor position — terminal replies ESC[?{r};{c}R
+; ESC[?15n                 Printer status — terminal replies ESC[?{n}n
+; ESC[?25n                 User-defined key (UDK) status
+; ESC[?26n                 Keyboard dialect report
+; ESC[!p                   Soft terminal reset (DECSTR)
+; ESC[{pg};{pc}"p          Set conformance level (DECSCL)
+; ESC[#p                   Push video attributes onto stack (XTPUSHSGR / XTSAVE)
+; ESC[#{q}                 Pop video attributes from stack (XTPOPSGR / XTRESTORE)
+; ESC[>{n}m                Set/reset key modifier options (xterm modifyOtherKeys)
+; ESC[?{n}m                Query key modifier options (xterm)
+
+; --- Keyboard / key modifiers (xterm) -----------------------
+; ESC[>4;{n}m              Set modifyOtherKeys: 0=off 1=enabled 2=all keys
+; ESC[>4m                  Reset modifyOtherKeys
+; ESC[?4m                  Query modifyOtherKeys
+
+; --- VT52 mode sequences (after ESC[?2l) --------------------
+; ESC A                    Cursor up
+; ESC B                    Cursor down
+; ESC C                    Cursor right
+; ESC D                    Cursor left
+; ESC F                    Enter graphics mode
+; ESC G                    Exit graphics mode
+; ESC H                    Cursor to home
+; ESC I                    Reverse line feed
+; ESC J                    Erase to end of screen
+; ESC K                    Erase to end of line
+; ESC Y {r} {c}            Direct cursor address (row and col as 0x20 + value)
+; ESC Z                    Identify — terminal replies ESC/Z
+; ESC =                    Application keypad
+; ESC >                    Normal keypad
+; ESC <                    Exit VT52 mode (return to ANSI/VT100)
+
+; --- OSC — Operating System Commands -------------------------
+; (Terminated by BEL 0x07 or ST = ESC \)
+; ESC]0;{title}BEL         Set icon name and window title
+; ESC]1;{name}BEL          Set icon name only
+; ESC]2;{title}BEL         Set window title only
+; ESC]3;{prop=val}BEL      Set X11 window property
+; ESC]4;{n};{spec}BEL      Set palette color n (spec = rgb:rr/gg/bb or X11 name)
+; ESC]4;{n};?BEL           Query palette color n — terminal replies ESC]4;n;rgb:...BEL
+; ESC]5;{n};{spec}BEL      Set special color n
+; ESC]5;{n};?BEL           Query special color n
+; ESC]6;{url}BEL           Set current working document URI (some terminals)
+; ESC]7;{url}BEL           Set current working directory URI (iTerm2 / VTE)
+; ESC]8;;{url}BEL          Hyperlink start (OSC 8)
+; ESC]8;;BEL               Hyperlink end
+; ESC]9;{msg}BEL           Desktop notification / toast (Windows Terminal)
+; ESC]9;4;{state};{pct}BEL Taskbar progress (Windows Terminal): state 0=off 1=normal 2=error 3=indeterminate 4=paused
+; ESC]10;{color}BEL        Set default foreground color
+; ESC]10;?BEL              Query default foreground color
+; ESC]11;{color}BEL        Set default background color
+; ESC]11;?BEL              Query default background color
+; ESC]12;{color}BEL        Set cursor color
+; ESC]12;?BEL              Query cursor color
+; ESC]13;{color}BEL        Set mouse foreground color
+; ESC]14;{color}BEL        Set mouse background color
+; ESC]15;{color}BEL        Set Tektronix foreground color
+; ESC]16;{color}BEL        Set Tektronix background color
+; ESC]17;{color}BEL        Set highlight foreground color
+; ESC]18;{color}BEL        Set Tektronix cursor color
+; ESC]19;{color}BEL        Set highlight background color
+; ESC]46;{path}BEL         Set log file path (xterm)
+; ESC]50;{spec}BEL         Set font (xterm)
+; ESC]51;{args}BEL         Emacs shell (xterm — used by Emacs)
+; ESC]52;{pc};{data}BEL    Manipulate clipboard (OSC 52); pc = clipboard target (c=clipboard), data = base64 or ? to query
+; ESC]104;{n}BEL           Reset palette color n (omit n = reset all)
+; ESC]105;{n}BEL           Reset special color n
+; ESC]110BEL               Reset default foreground color
+; ESC]111BEL               Reset default background color
+; ESC]112BEL               Reset cursor color
+; ESC]113BEL               Reset mouse foreground color
+; ESC]114BEL               Reset mouse background color
+; ESC]115BEL               Reset Tektronix foreground color
+; ESC]116BEL               Reset Tektronix background color
+; ESC]133;A BEL            Shell integration: prompt start (FTCS_PROMPT)
+; ESC]133;B BEL            Shell integration: prompt end (FTCS_COMMAND_START)
+; ESC]133;C BEL            Shell integration: command executed (FTCS_COMMAND_EXECUTED)
+; ESC]133;D;{code} BEL     Shell integration: command finished, exit code (FTCS_COMMAND_FINISHED)
+; ESC]1337;SetMark BEL     Add scroll mark / command mark (iTerm2 / Windows Terminal)
+; ESC]1337;CurrentDir={path}BEL  Report current directory (iTerm2)
+; ESC]1337;File={args}:{base64}BEL  Inline image protocol (iTerm2 imgcat)
+
+; --- Miscellaneous -------------------------------------------
+; ESC[#}                   XTPUSHSGR — push SGR attributes onto stack
+; ESC[#{                   XTPOPSGR  — pop SGR attributes from stack
+; ESC[0x                   DECREQTPARM — request terminal parameters; terminal replies ESC[{params}x
+; ESC[{n}y                 DECTST — invoke confidence tests (n=2: power-up test)
+; ESC[1~                   Home key (application keypad / editing)
+; ESC[2~                   Insert key
+; ESC[3~                   Delete key
+; ESC[4~                   End key
+; ESC[5~                   Page up
+; ESC[6~                   Page down
+; ESC OP                   F1  (SS3 P)
+; ESC OQ                   F2  (SS3 Q)
+; ESC OR                   F3  (SS3 R)
+; ESC OS                   F4  (SS3 S)
+; ESC[15~                  F5
+; ESC[17~                  F6
+; ESC[18~                  F7
+; ESC[19~                  F8
+; ESC[20~                  F9
+; ESC[21~                  F10
+; ESC[23~                  F11
+; ESC[24~                  F12
+
 ; ==================================================================================================
 
 
@@ -128,25 +505,27 @@ endif
 ; Return:     Nothing.
 
 Method ConsoleApp.ClearScreen, uses xsi
-  local dCharCellCount:DWORD, dCharsWritten:DWORD
-  local coord:COORD, csbi:CONSOLE_SCREEN_BUFFER_INFO
+  local dCharCellCount:DWORD, dCharsWritten:DWORD, csbi:CONSOLE_SCREEN_BUFFER_INFO
 
   SetObject xsi
-  invoke GetConsoleScreenBufferInfo, [xsi].hConsole, addr csbi
-  .if eax != 0
-    movzx eax, csbi.dwSize.X
-    movzx ecx, csbi.dwSize.Y
-    mul ecx
-    mov dCharCellCount, eax
-
-    mov coord.X, 0
-    mov coord.Y, 0
-
-    invoke FillConsoleOutputCharacter, [xsi].hConsole, ' ', dCharCellCount, \
-                                       addr coord, addr dCharsWritten
-    invoke FillConsoleOutputAttribute, [xsi].hConsole, csbi.wAttributes, dCharCellCount, \
-                                       addr coord, addr dCharsWritten
-    invoke SetConsoleCursorPosition, [xsi].hConsole, addr coord
+  .ifBitClr [xsi].dFlags, CAF_REDIRECTED
+    .ifBitSet [xsi].dFlags, CAF_HOST_WT or CAF_HOST_PS
+      invoke WriteConsole, [xsi].hConsole, $OfsCStr(27, "[2J", 27, "[3J", 27, "[H"), \
+                           ??StrLength, addr dCharsWritten, NULL
+    .else
+      invoke GetConsoleScreenBufferInfo, [xsi].hConsole, addr csbi
+      .if eax != 0
+        movzx eax, csbi.dwSize.X
+        mul csbi.dwSize.Y
+        mov dCharCellCount, eax
+    
+        invoke FillConsoleOutputCharacter, [xsi].hConsole, ' ', dCharCellCount, \
+                                           COORD ptr 0, addr dCharsWritten
+        invoke FillConsoleOutputAttribute, [xsi].hConsole, csbi.wAttributes, dCharCellCount, \
+                                           COORD ptr 0, addr dCharsWritten
+        invoke SetConsoleCursorPosition, [xsi].hConsole, COORD ptr 0
+      .endif
+    .endif
   .endif
 MethodEnd
 
@@ -302,8 +681,7 @@ MethodEnd
 ;             always reach the physical console regardless of redirection.
 
 Method ConsoleApp.Init, uses xsi, pOwner:POINTER
-  local pe32:PROCESSENTRY32_
-  local dMode:DWORD, cBuffer[MAX_PATH]:CHR
+  local pe32:PROCESSENTRY32_, cBuffer[MAX_PATH]:CHR
   local hSnapshot:HANDLE, dParentPID:DWORD, dCurrentPID:DWORD
   local dPIDs[16]:DWORD                                 ; Buffer for attached process IDs (DWORDs)
 
@@ -316,7 +694,7 @@ Method ConsoleApp.Init, uses xsi, pOwner:POINTER
   mov [xsi].hOutput, $invoke(GetStdHandle, STD_OUTPUT_HANDLE)
 
   ; --- Detect stdout redirection ---
-  invoke GetConsoleMode, [xsi].hOutput, addr dMode
+  invoke GetConsoleMode, [xsi].hOutput, addr [xsi].dOutputMode
   .if eax != 0
     mov xax, [xsi].hOutput
   .else
@@ -331,7 +709,7 @@ Method ConsoleApp.Init, uses xsi, pOwner:POINTER
   mov [xsi].hConsole, xax
 
   ; --- Detect interactive session ---
-  invoke GetConsoleMode, [xsi].hInput, addr dMode
+  invoke GetConsoleMode, [xsi].hInput, addr [xsi].dInputMode
   .if eax != 0
     BitSet [xsi].dFlags, CAF_INTERACTIVE
   .endif
