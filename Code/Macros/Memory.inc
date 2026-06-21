@@ -184,7 +184,7 @@ MemAlloc macro MemSize:req, Flags:=<MEM_DEFAULT>
   endif
 endm
 
-$MemAlloc macro MemSize:req, Flags:=<0>
+$MemAlloc macro MemSize:req, Flags:=<MEM_DEFAULT>
   MemAlloc <MemSize>, <Flags>
   exitm <xax>
 endm
@@ -220,7 +220,7 @@ MemReAlloc macro MemPtr:req, MemSize:req, Flags:=<0>
       .endif
     endif
   elseif TARGET_PLATFORM eq PLATFORM_UEFI
-    ;Not implemented
+    echo <MemReAlloc not implemented>
   endif
 endm
 
@@ -268,6 +268,11 @@ MemFree macro MemPtr:req, Flags:=<0>
             DbgWarning "MemFree failed (1)"
           .endif
         endif
+        test eax, eax
+        setz al
+        movzx eax, al
+      .else
+        xor eax, eax
       .endif
     else
       invoke MemFree_UEFI, MemPtr
@@ -276,6 +281,9 @@ MemFree macro MemPtr:req, Flags:=<0>
           DbgWarning "MemFree failed (2)"
         .endif
       endif
+      test eax, eax
+      setz al
+      movzx eax, al
     endif
   endif
 endm
@@ -288,10 +296,14 @@ endm
 
 MemCheck macro MemPtr:=<NULL>
   if DEBUGGING
-    invoke HeapValidate, hProcessHeap, HEAP_NO_SERIALIZE, MemPtr
-    .if eax == 0
-      DbgWarning "Process heap corrupted"
-    .endif
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      invoke HeapValidate, hProcessHeap, HEAP_NO_SERIALIZE, MemPtr
+      .if eax == 0
+        DbgWarning "Process heap corrupted"
+      .endif
+    else
+      echo <MemCheck not implemented>
+    endif
   endif
 endm
 
@@ -444,6 +456,7 @@ BitUpd equ <BitUpdate>
 ; Purpose:    Jump if a bit is set.
 ; Arguments:  Arg1: Bit holding variable.
 ;             Arg2: Bit to be tested for (ie: BIT12)
+;             Arg3: Jmp destination if bit set.
 ; Return:     Nothing.
 
 JmpIfBitSet macro Var:req, Bit:req, Location:req
@@ -456,6 +469,7 @@ endm
 ; Purpose:    Jump if a bit is not set.
 ; Arguments:  Arg1: Bit holding variable.
 ;             Arg2: Bit to be tested for (ie: BIT12)
+;             Arg3: Jmp destination if bit not set.
 ; Return:     Nothing.
 
 JmpIfBitClr macro Var:req, Bit:req, Location:req
@@ -558,8 +572,6 @@ else
       .endw
       sub rsp, rcx
       mov rax, rsp
-      sub rsp, @WordSize
-      add rcx, @WordSize
       push rcx
     endif
   endm

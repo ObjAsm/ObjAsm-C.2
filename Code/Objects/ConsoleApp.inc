@@ -54,19 +54,19 @@ Object ConsoleApp, ConsoleAppID, Streamable
   VirtualMethod     WriteLn,          PSTRING
 
   DefineVariable    dFlags,           DWORD,    0
-  DefineVariable    hError,           HANDLE,   0
-  DefineVariable    hInput,           HANDLE,   0
-  DefineVariable    hOutput,          HANDLE,   0       ;Follows redirection; used by Print(Ln)
-  DefineVariable    hConsole,         HANDLE,   0       ;Physical console; used by Write(Ln) etc.
+  DefineVariable    hError,           HANDLE,   INVALID_HANDLE_VALUE
+  DefineVariable    hInput,           HANDLE,   INVALID_HANDLE_VALUE
+  DefineVariable    hOutput,          HANDLE,   INVALID_HANDLE_VALUE  ;Follows redirection; used by Print(Ln)
+  DefineVariable    hConsole,         HANDLE,   INVALID_HANDLE_VALUE  ;Physical console; used by Write(Ln) etc.
   DefineVariable    dInputMode,       DWORD,    0
   DefineVariable    dOutputMode,      DWORD,    0
-  DefineVariable    hTimerQueue,      HANDLE,   0
-  DefineVariable    pSetConsoleIcon,  POINTER,  NULL    ;SetConsoleIcon API proc
-  DefineVariable    hSpinnerTimer,    HANDLE,   0
+  DefineVariable    hTimerQueue,      HANDLE,   INVALID_HANDLE_VALUE
+  DefineVariable    hSpinnerTimer,    HANDLE,   INVALID_HANDLE_VALUE
   DefineVariable    dSpinnerStep,     DWORD,    0       ;0..3
   DefineVariable    dSpinnerWaitTime, DWORD,    150     ;ms
   DefineVariable    SpinnerPosition,  POINT,    {0, 0}
   DefineVariable    cSpinnerPosChar,  CHR,      ' '
+  DefineVariable    pSetConsoleIcon,  POINTER,  NULL    ;SetConsoleIcon API proc
 ObjectEnd
 
 
@@ -127,10 +127,10 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[#G                   Move cursor to column # (CHA)
 ; ESC[#d                   Move cursor to row # (VPA)
 ; ESC[#e                   Move cursor down # rows (VPR)
-; ESC[#`                   Move cursor to column # (HPA) — same as CHA
-; ESC[#a                   Move cursor right # columns (HPR) — same as CUF
-; ESC[6n                   Request cursor position — terminal replies ESC[r;cR (CPR)
-; ESC[?6n                  Extended cursor position report — terminal replies ESC[?r;cR
+; ESC[#`                   Move cursor to column # (HPA) - same as CHA
+; ESC[#a                   Move cursor right # columns (HPR) - same as CUF
+; ESC[6n                   Request cursor position - terminal replies ESC[r;cR (CPR)
+; ESC[?6n                  Extended cursor position report - terminal replies ESC[?r;cR
 ; ESC[s                    Save cursor position (SCO / SCOSC)
 ; ESC[u                    Restore cursor position (SCO / SCORC)
 ; ESC 7                    Save cursor position + attributes (DECSC)
@@ -162,8 +162,8 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[#S                   Scroll up # lines (SU)
 ; ESC[#T                   Scroll down # lines (SD)
 ; ESC[{t};{b}r             Set scroll region: top=t, bottom=b (DECSTBM)
-; ESC[{l};{r}s             Set left/right margins l and r (DECSLRM — requires DECLRMM)
-; ESC M                    Reverse index — scroll down one if at top of region (RI)
+; ESC[{l};{r}s             Set left/right margins l and r (DECSLRM - requires DECLRMM)
+; ESC M                    Reverse index - scroll down one if at top of region (RI)
 
 ; --- Rectangular area operations (VT400+) -------------------
 ; ESC[{Pt};{Pl};{Pb};{Pr};{Ps}$r   Change attributes in rectangle (DECCARA)
@@ -174,20 +174,20 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[{Pt};{Pl};{Pb};{Pr}$z        Erase rectangle (DECERA)
 ; ESC[{Pt};{Pl};{Pb};{Pr}${        Selective erase rectangle (DECSERA)
 
-; --- SGR — Reset & text attributes --------------------------
+; --- SGR - Reset & text attributes --------------------------
 ; ESC[0m                   Reset all attributes
 ; ESC[1m                   Bold
 ; ESC[2m                   Dim / faint
 ; ESC[3m                   Italic
 ; ESC[4m                   Underline (single)
-; ESC[4:0m                 Underline — no underline (alias for ESC[24m)
-; ESC[4:1m                 Underline — single (default when ESC[4m used)
-; ESC[4:2m                 Underline — double
-; ESC[4:3m                 Underline — curly / wavy
-; ESC[4:4m                 Underline — dotted
-; ESC[4:5m                 Underline — dashed
+; ESC[4:0m                 Underline - no underline (alias for ESC[24m)
+; ESC[4:1m                 Underline - single (default when ESC[4m used)
+; ESC[4:2m                 Underline - double
+; ESC[4:3m                 Underline - curly / wavy
+; ESC[4:4m                 Underline - dotted
+; ESC[4:5m                 Underline - dashed
 ; ESC[5m                   Blink (slow, < 150 times/min)
-; ESC[6m                   Blink rapid (>= 150 times/min) — rarely supported
+; ESC[6m                   Blink rapid (>= 150 times/min) - rarely supported
 ; ESC[7m                   Reverse video (swap fg/bg)
 ; ESC[8m                   Conceal / hidden
 ; ESC[9m                   Strikethrough (crossed-out)
@@ -213,7 +213,7 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[74m                  Subscript (mintty / VTE extension)
 ; ESC[75m                  Reset superscript and subscript
 
-; --- SGR — Standard colors -----------------------------------
+; --- SGR - Standard colors -----------------------------------
 ; ESC[30m–ESC[37m          Foreground: Black Red Green Yellow Blue Magenta Cyan White
 ; ESC[38;5;{n}m            Foreground: 256-color index n (0–255)
 ; ESC[38;2;{r};{g};{b}m    Foreground: 24-bit RGB true color
@@ -228,14 +228,14 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[58;2;{r};{g};{b}m    Underline color: 24-bit RGB (xterm/VTE/kitty)
 ; ESC[59m                  Underline color: default
 
-; --- SGR — Bright / high-intensity colors --------------------
+; --- SGR - Bright / high-intensity colors --------------------
 ; ESC[90m–ESC[97m          Foreground: Bright Black … Bright White (aixterm extension)
 ; ESC[100m–ESC[107m        Background: Bright Black … Bright White (aixterm extension)
 
-; --- SGR — Character protection -----------------------------
-; ESC[0"q                  DECSCA — unprotected (default)
-; ESC[1"q                  DECSCA — protected (not erased by DECSED/DECSEL)
-; ESC[2"q                  DECSCA — unprotected
+; --- SGR - Character protection -----------------------------
+; ESC[0"q                  DECSCA - unprotected (default)
+; ESC[1"q                  DECSCA - protected (not erased by DECSED/DECSEL)
+; ESC[2"q                  DECSCA - unprotected
 
 ; --- Cursor appearance ---------------------------------------
 ; ESC[?25l                 Hide cursor (DECTCEM off)
@@ -253,7 +253,7 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; --- Screen / buffer -----------------------------------------
 ; ESC[?1049h               Switch to alternate screen buffer (saves cursor)
 ; ESC[?1049l               Return to main screen buffer (restores cursor)
-; ESC[?47h                 Enter alternate screen (older — no cursor save)
+; ESC[?47h                 Enter alternate screen (older - no cursor save)
 ; ESC[?47l                 Exit alternate screen (older)
 ; ESC[?1047h               Switch to alternate screen buffer (xterm)
 ; ESC[?1047l               Return to main screen buffer (xterm)
@@ -276,7 +276,7 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 
 ; --- DEC private modes (h = set, l = reset) -----------------
 ; ESC[?1h  / ESC[?1l       Application / normal cursor keys (DECCKM)
-; ESC[?2l                  VT52 mode (DECANM) — no set; use ESC[?2h to leave
+; ESC[?2l                  VT52 mode (DECANM) - no set; use ESC[?2h to leave
 ; ESC[?3h  / ESC[?3l       132 / 80 column mode (DECCOLM)
 ; ESC[?4h  / ESC[?4l       Smooth / jump scroll (DECSCLM)
 ; ESC[?5h  / ESC[?5l       Reverse / normal screen video (DECSCNM)
@@ -297,12 +297,12 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[?42h / ESC[?42l      National replacement character set on / off (DECNRCM)
 ; ESC[?44h / ESC[?44l      Margin bell on / off (xterm)
 ; ESC[?45h / ESC[?45l      Reverse-wraparound on / off (xterm)
-; ESC[?46h / ESC[?46l      Logging on / off (xterm — requires compile-time option)
+; ESC[?46h / ESC[?46l      Logging on / off (xterm - requires compile-time option)
 ; ESC[?47h / ESC[?47l      Alternate screen on / off (older form)
 ; ESC[?66h / ESC[?66l      Application / normal numeric keypad (DECNKM)
 ; ESC[?67h / ESC[?67l      Backspace key sends BS / DEL (DECBKM)
 ; ESC[?69h / ESC[?69l      Left/right margin mode on / off (DECLRMM)
-; ESC[?80h / ESC[?80l      Sixel display — sixel scrolling on / off
+; ESC[?80h / ESC[?80l      Sixel display - sixel scrolling on / off
 ; ESC[?95h / ESC[?95l      Do not clear screen on DECCOLM change (xterm)
 ; ESC[?1000h / ESC[?1000l  X10-compatible mouse button reporting on / off
 ; ESC[?1001h / ESC[?1001l  Hilite mouse tracking on / off (highlight mode)
@@ -311,12 +311,12 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC[?1004h / ESC[?1004l  Focus in/out events on / off
 ; ESC[?1005h / ESC[?1005l  UTF-8 extended mouse coordinate encoding on / off
 ; ESC[?1006h / ESC[?1006l  SGR extended mouse coordinate encoding on / off
-; ESC[?1007h / ESC[?1007l  Alternate scroll on / off (xterm — mouse wheel ? cursor keys in alt screen)
+; ESC[?1007h / ESC[?1007l  Alternate scroll on / off (xterm - mouse wheel ? cursor keys in alt screen)
 ; ESC[?1010h / ESC[?1010l  Scroll to bottom on tty output on / off (rxvt)
 ; ESC[?1011h / ESC[?1011l  Scroll to bottom on key press on / off (rxvt)
 ; ESC[?1015h / ESC[?1015l  URXVT extended mouse coordinate encoding on / off
 ; ESC[?1016h / ESC[?1016l  SGR pixel mouse coordinate encoding on / off
-; ESC[?1034h / ESC[?1034l  Interpret meta key on / off (xterm — sets 8th bit)
+; ESC[?1034h / ESC[?1034l  Interpret meta key on / off (xterm - sets 8th bit)
 ; ESC[?1035h / ESC[?1035l  Special modifiers for alt and num lock on / off (xterm)
 ; ESC[?1036h / ESC[?1036l  Send ESC when meta key is pressed on / off (xterm)
 ; ESC[?1037h / ESC[?1037l  Send DEL from the editing-keypad Delete key on / off (xterm)
@@ -349,7 +349,7 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 
 ; --- Margins -------------------------------------------------
 ; ESC[{t};{b}r             Set top/bottom scroll margins (DECSTBM)
-; ESC[{l};{r}s             Set left/right margins (DECSLRM — requires DECLRMM enabled)
+; ESC[{l};{r}s             Set left/right margins (DECSLRM - requires DECLRMM enabled)
 
 ; --- Character sets and encoding ----------------------------
 ; ESC ( A                  Designate G0 = UK character set
@@ -359,8 +359,8 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC ) 0                  Designate G1 = DEC special graphics
 ; ESC * B                  Designate G2 = US ASCII (VT220+)
 ; ESC + B                  Designate G3 = US ASCII (VT220+)
-; ESC N                    Single shift G2 (SS2) — next char from G2 set
-; ESC O                    Single shift G3 (SS3) — next char from G3 set
+; ESC N                    Single shift G2 (SS2) - next char from G2 set
+; ESC O                    Single shift G3 (SS3) - next char from G3 set
 ; ESC ~                    Invoke G1 into GR (LS1R)
 ; ESC n                    Invoke G2 into GL (LS2)
 ; ESC }                    Invoke G2 into GR (LS2R)
@@ -370,14 +370,14 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC % G                  Select UTF-8 encoding
 
 ; --- Device / status -----------------------------------------
-; ESC[0c                   Primary device attributes (DA1) — terminal replies ESC[?{params}c
-; ESC[>0c                  Secondary device attributes (DA2) — terminal replies ESC[>{Pp};{Pv};{Pc}c
-; ESC[=0c                  Tertiary device attributes (DA3) — terminal replies DCS!|{data}ST
-; ESC Z                    Identify terminal (DECID) — same reply as DA1
-; ESC[5n                   Device status report — terminal replies ESC[0n (ok) or ESC[3n (error)
-; ESC[6n                   Cursor position report — terminal replies ESC[{r};{c}R
-; ESC[?6n                  Extended cursor position — terminal replies ESC[?{r};{c}R
-; ESC[?15n                 Printer status — terminal replies ESC[?{n}n
+; ESC[0c                   Primary device attributes (DA1) - terminal replies ESC[?{params}c
+; ESC[>0c                  Secondary device attributes (DA2) - terminal replies ESC[>{Pp};{Pv};{Pc}c
+; ESC[=0c                  Tertiary device attributes (DA3) - terminal replies DCS!|{data}ST
+; ESC Z                    Identify terminal (DECID) - same reply as DA1
+; ESC[5n                   Device status report - terminal replies ESC[0n (ok) or ESC[3n (error)
+; ESC[6n                   Cursor position report - terminal replies ESC[{r};{c}R
+; ESC[?6n                  Extended cursor position - terminal replies ESC[?{r};{c}R
+; ESC[?15n                 Printer status - terminal replies ESC[?{n}n
 ; ESC[?25n                 User-defined key (UDK) status
 ; ESC[?26n                 Keyboard dialect report
 ; ESC[!p                   Soft terminal reset (DECSTR)
@@ -404,19 +404,19 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC J                    Erase to end of screen
 ; ESC K                    Erase to end of line
 ; ESC Y {r} {c}            Direct cursor address (row and col as 0x20 + value)
-; ESC Z                    Identify — terminal replies ESC/Z
+; ESC Z                    Identify - terminal replies ESC/Z
 ; ESC =                    Application keypad
 ; ESC >                    Normal keypad
 ; ESC <                    Exit VT52 mode (return to ANSI/VT100)
 
-; --- OSC — Operating System Commands -------------------------
+; --- OSC - Operating System Commands -------------------------
 ; (Terminated by BEL 0x07 or ST = ESC \)
 ; ESC]0;{title}BEL         Set icon name and window title
 ; ESC]1;{name}BEL          Set icon name only
 ; ESC]2;{title}BEL         Set window title only
 ; ESC]3;{prop=val}BEL      Set X11 window property
 ; ESC]4;{n};{spec}BEL      Set palette color n (spec = rgb:rr/gg/bb or X11 name)
-; ESC]4;{n};?BEL           Query palette color n — terminal replies ESC]4;n;rgb:...BEL
+; ESC]4;{n};?BEL           Query palette color n - terminal replies ESC]4;n;rgb:...BEL
 ; ESC]5;{n};{spec}BEL      Set special color n
 ; ESC]5;{n};?BEL           Query special color n
 ; ESC]6;{url}BEL           Set current working document URI (some terminals)
@@ -440,7 +440,7 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC]19;{color}BEL        Set highlight background color
 ; ESC]46;{path}BEL         Set log file path (xterm)
 ; ESC]50;{spec}BEL         Set font (xterm)
-; ESC]51;{args}BEL         Emacs shell (xterm — used by Emacs)
+; ESC]51;{args}BEL         Emacs shell (xterm - used by Emacs)
 ; ESC]52;{pc};{data}BEL    Manipulate clipboard (OSC 52); pc = clipboard target (c=clipboard), data = base64 or ? to query
 ; ESC]104;{n}BEL           Reset palette color n (omit n = reset all)
 ; ESC]105;{n}BEL           Reset special color n
@@ -460,10 +460,10 @@ BACKGROUND_INTENSE_MAGENTA  equ (BACKGROUND_MAGENTA or BACKGROUND_INTENSITY)
 ; ESC]1337;File={args}:{base64}BEL  Inline image protocol (iTerm2 imgcat)
 
 ; --- Miscellaneous -------------------------------------------
-; ESC[#}                   XTPUSHSGR — push SGR attributes onto stack
-; ESC[#{                   XTPOPSGR  — pop SGR attributes from stack
-; ESC[0x                   DECREQTPARM — request terminal parameters; terminal replies ESC[{params}x
-; ESC[{n}y                 DECTST — invoke confidence tests (n=2: power-up test)
+; ESC[#}                   XTPUSHSGR - push SGR attributes onto stack
+; ESC[#{                   XTPOPSGR  - pop SGR attributes from stack
+; ESC[0x                   DECREQTPARM - request terminal parameters; terminal replies ESC[{params}x
+; ESC[{n}y                 DECTST - invoke confidence tests (n=2: power-up test)
 ; ESC[1~                   Home key (application keypad / editing)
 ; ESC[2~                   Insert key
 ; ESC[3~                   Delete key
@@ -537,15 +537,20 @@ MethodEnd
 
 Method ConsoleApp.Done, uses xsi
   SetObject xsi
+  .if [xsi].hSpinnerTimer != INVALID_HANDLE_VALUE
+    OCall xsi.StopSpinner
+  .endif
 
   ;Delete the timer queue and wait for all callbacks to finish before closing handles.
   ;INVALID_HANDLE_VALUE makes DeleteTimerQueueEx block until pending callbacks return.
   invoke DeleteTimerQueueEx, [xsi].hTimerQueue, INVALID_HANDLE_VALUE
+  mov [xsi].hTimerQueue, INVALID_HANDLE_VALUE
 
   ;Close hConsole only if it was separately opened (stdout was redirected).
   ;When not redirected hConsole == hOutput and must not be closed twice.
-  .ifBitSet [xsi].dFlags, CAF_REDIRECTED
-    invoke CloseHandle, [xsi].hConsole
+  mov xcx, [xsi].hConsole
+  .if xcx != [xsi].hOutput && xcx != INVALID_HANDLE_VALUE
+    invoke CloseHandle, xcx
   .endif
   invoke FreeConsole
 
@@ -740,7 +745,7 @@ Method ConsoleApp.Init, uses xsi, pOwner:POINTER
     mov hSnapshot, xax
     mov pe32.dwSize, sizeof PROCESSENTRY32W
 
-    invoke Process32First, hSnapshot, addr pe32
+    invoke Process32First_, hSnapshot, addr pe32
     .while eax != 0
       mov eax, pe32.th32ProcessID
       .if eax == dCurrentPID
@@ -984,7 +989,7 @@ Method ConsoleApp.StartSpinner, uses xsi
   local dCharsRead:DWORD, coord:COORD
 
   SetObject xsi
-  .if [xsi].hTimerQueue != 0
+  .if [xsi].hTimerQueue != INVALID_HANDLE_VALUE && [xsi].hSpinnerTimer == INVALID_HANDLE_VALUE
     OCall xsi.GetCursorPos
     .if eax != -1
       mov [xsi].SpinnerPosition.x, eax
@@ -1012,7 +1017,7 @@ Method ConsoleApp.StopSpinner, uses xsi
 
   SetObject xsi
   invoke DeleteTimerQueueTimer, [xsi].hTimerQueue, [xsi].hSpinnerTimer, INVALID_HANDLE_VALUE
-  mov [xsi].hSpinnerTimer, 0
+  mov [xsi].hSpinnerTimer, INVALID_HANDLE_VALUE
   mov eax, [xsi].SpinnerPosition.x
   mov ecx, [xsi].SpinnerPosition.y
   mov coord.X, ax

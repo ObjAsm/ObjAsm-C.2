@@ -28,10 +28,10 @@ LOCALE_SYSTEM_DEFAULT equ 800h
 
 if TARGET_BITNESS eq 64
   option stackbase:rbp
-  ExecDispatch proc uses xdi xsi, pIDispatch:POINTER, dDispID:DWORD, wDispType:WORD, \
+  ExecDispatch proc uses rdi rsi, pIDispatch:POINTER, dDispID:DWORD, wDispType:WORD, \
                                   dArgCount:DWORD, dRetType:DWORD, Args:VARARG
 else
-  ExecDispatch proc c uses xdi xsi, pIDispatch:POINTER, dDispID:DWORD, wDispType:WORD, \
+  ExecDispatch proc c uses edi esi, pIDispatch:POINTER, dDispID:DWORD, wDispType:WORD, \
                                     dArgCount:DWORD, dRetType:DWORD, Args:VARARG
 endif
   local xSP:XWORD, dArgIndexError:DWORD
@@ -44,9 +44,9 @@ endif
   mov DispParams.cArgs, ecx
   lea xsi, Args                                         ;xsi -> argument types
   lea xdx, [xsi + xcx*sizeof(DWORD)]                    ;All passed VT_xxx are DWORDs
-  .while xcx != 0
+  .while ecx != 0
     sub xsp, sizeof(VARIANT)
-    lea xdi, [xsp + @WordSize]                          ;xdi -> Variant payload
+    lea xdi, [xsp].VARIANT.bVal                         ;xdi -> Variant payload
     lodsd
     mov [xsp].VARIANT.vt, ax
     xchg xdx, xsi
@@ -95,6 +95,7 @@ endif
     mov DispParams.rgdispidNamedArgs, xax
     mov DispParams.cNamedArgs, 1
   .else
+    m2z DispParams.rgdispidNamedArgs
     m2z DispParams.cNamedArgs
   .endif
 
@@ -166,8 +167,8 @@ CallDispatch proc pIDispatch:POINTER, dDispID:DWORD, wDispType:WORD, dArgNum:DWO
     mov DispParams.rgdispidNamedArgs, xax
     mov DispParams.cNamedArgs, 1
   .else
-    m2z DispParams.cNamedArgs
     m2z DispParams.rgdispidNamedArgs
+    m2z DispParams.cNamedArgs
   .endif
 
   ;Call the Dispatch.Invoke method    LOCALE_SYSTEM_DEFAULT = 800h

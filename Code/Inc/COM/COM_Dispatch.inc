@@ -24,7 +24,7 @@ CallDispatch proto :POINTER, :DWORD, :WORD, :DWORD, :POINTER, :POINTER
 ; Arguments:  Arg1: Instance Pointer.
 ;             Arg2: Interface Name.
 ;             Arg3: Method Name.
-;             Arg4: Destrination variable.
+;             Arg4: Destination variable.
 ;             Arg5: (optional) Local Identifier.
 ; Usage:      GetMethodDispatchID pIDemo16, IDemo16, "Increment", dDispatchID
 
@@ -33,22 +33,22 @@ GetMethodDispatchID macro InterfacePointer:req, InterfaceName:req, MethodName:re
 
   ifb <LCID>
     invoke GetUserDefaultLCID
-    lea xcx, DstVar                                     ;;use rcx as address of destination variable
+    lea xcx, DstVar                                     ;; Use rcx as address of destination variable
     $$ArgDest textequ <xcx>
-    $$ArgLCID textequ <eax>                             ;;use eax as LCID value
+    $$ArgLCID textequ <eax>                             ;; Use eax as LCID value
   else
     ifidni <LCID>, <ecx>
-      lea xax, DstVar                                   ;;use rax as address of destination variable
+      lea xax, DstVar                                   ;; Use rax as address of destination variable
       $$ArgDest textequ <xax>
-      $$ArgLCID textequ <ecx>                           ;;use ecx as LCID value
-    else                                                ;;ecx was not used here => use it!
-      lea xcx, DstVar                                   ;;use rcx as address of destination variable
+      $$ArgLCID textequ <ecx>                           ;; Use ecx as LCID value
+    else                                                ;; ecx was not used here => use it!
+      lea xcx, DstVar                                   ;; Use rcx as address of destination variable
       $$ArgDest textequ <xcx>
-      $$ArgLCID textequ <LCID>                          ;;use LCID as specified in the param. list
+      $$ArgLCID textequ <LCID>                          ;; Use LCID as specified in the param. list
     endif
   endif
   .const
-    OfsMtdName  POINTER  $OfsCStrW(MethodName)          ;;Allocate method name and store its offset
+    OfsMtdName  POINTER  $OfsCStrW(MethodName)          ;; Allocate method name and store its offset
   .code
   ICall InterfacePointer::InterfaceName.GetIDsOfNames, offset IID_NULL, addr OfsMtdName, 1, \
                                                        $$ArgLCID, $$ArgDest
@@ -65,25 +65,29 @@ endm
 ;             Arg6: Method argument types.
 ; Return:     Nothing
 
-DEFINE_COM_MTD_DSP macro IName, MName:req, DispID:req, MtdType:req, RetType, Args:vararg
+DEFINE_COM_MTD_DSP macro IName:req, MName:req, DispID:req, MtdType:req, RetType, Args:vararg
   $$ArgTypes textequ <>
   $$Index = 0
   for $$Parm, <Args>
-    $$Index = $$Index + 1                               ;;Increment argument count
+    $$Index = $$Index + 1                               ;; Increment argument count
     $$ArgTypes CatStr $$ArgTypes, %$$Parm, <,>
   endm
   if $$Index gt 0
-    $$ArgTypes SubStr $$ArgTypes, 1, @SizeStr(%$$ArgTypes) - 1  ;;Remove last comma
+    $$ArgTypes SubStr $$ArgTypes, 1, @SizeStr(%$$ArgTypes) - 1  ;; Remove last comma
   endif
 
   ifnb <RetType>
     $$ReturnType textequ %RetType
   else
-    $$ReturnType textequ <-1>                           ;;Set Flag if no return value is required
+    $$ReturnType textequ <-1>                           ;; Set Flag if no return value is required
   endif
 
   DISPATCH_INFO_&IName&_&MName& CatStr <DispID>, <,>, %DISPATCH_&MtdType&, <,>, %$$Index
-  DISPATCH_TYPE_&IName&_&MName& CatStr $$ReturnType, <,>, $$ArgTypes
+  if $$Index gt 0
+    DISPATCH_TYPE_&IName&_&MName& CatStr $$ReturnType, <,>, $$ArgTypes
+  else
+    DISPATCH_TYPE_&IName&_&MName& textequ $$ReturnType
+  endif
 endm
 
 ; --------------------------------------------------------------------------------------------------

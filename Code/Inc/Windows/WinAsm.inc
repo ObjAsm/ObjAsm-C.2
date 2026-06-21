@@ -112,34 +112,34 @@ ifndef _INC_WINASM
   endif
 
   void                      equ   <>
-  TRUE                      equ   1                     ;Compatible with Windows_XX.inc
+  TRUE                      equ   1                     ; Compatible with Windows_XX.inc
   FALSE                     equ   0
   NULL                      equ   0
 
-  _WIN32_WINNT_NT4          equ   0400h                 ;Windows NT 4.0
-  _WIN32_WINNT_WIN2K        equ   0500h                 ;Windows 2000
-  _WIN32_WINNT_WINXP        equ   0501h                 ;Windows Server 2003, Windows XP
-  _WIN32_WINNT_WS03         equ   0502h                 ;Windows Server 2003 with SP1, Windows XP with SP2
-  _WIN32_WINNT_WIN6         equ   0600h                 ;Windows Vista
-  _WIN32_WINNT_VISTA        equ   0600h                 ;Windows Vista
-  _WIN32_WINNT_WS08         equ   0600h                 ;Windows Server 2008
-  _WIN32_WINNT_LONGHORN     equ   0600h                 ;Windows Vista
-  _WIN32_WINNT_WIN7         equ   0601h                 ;Windows 7
-  _WIN32_WINNT_WIN8         equ   0602h                 ;Windows 8
-  _WIN32_WINNT_WINBLUE      equ   0603h                 ;Windows 8.1
-  _WIN32_WINNT_WINTHRESHOLD equ   0A00h                 ;Windows 10
-  _WIN32_WINNT_WIN10        equ   0A00h                 ;Windows 10
+  _WIN32_WINNT_NT4          equ   0400h                 ; Windows NT 4.0
+  _WIN32_WINNT_WIN2K        equ   0500h                 ; Windows 2000
+  _WIN32_WINNT_WINXP        equ   0501h                 ; Windows Server 2003, Windows XP
+  _WIN32_WINNT_WS03         equ   0502h                 ; Windows Server 2003 with SP1, Windows XP with SP2
+  _WIN32_WINNT_WIN6         equ   0600h                 ; Windows Vista
+  _WIN32_WINNT_VISTA        equ   0600h                 ; Windows Vista
+  _WIN32_WINNT_WS08         equ   0600h                 ; Windows Server 2008
+  _WIN32_WINNT_LONGHORN     equ   0600h                 ; Windows Vista
+  _WIN32_WINNT_WIN7         equ   0601h                 ; Windows 7
+  _WIN32_WINNT_WIN8         equ   0602h                 ; Windows 8
+  _WIN32_WINNT_WINBLUE      equ   0603h                 ; Windows 8.1
+  _WIN32_WINNT_WINTHRESHOLD equ   0A00h                 ; Windows 10
+  _WIN32_WINNT_WIN10        equ   0A00h                 ; Windows 10
 
-  _WIN32_IE_IE100           equ   0A00h                 ;Internet Explorer 10.0
-  _WIN32_IE_IE90            equ   0900h                 ;Internet Explorer 9.0
-  _WIN32_IE_IE80            equ   0800h                 ;Internet Explorer 8.0
-  _WIN32_IE_IE70            equ   0700h                 ;Internet Explorer 7.0
-  _WIN32_IE_IE60SP2         equ   0603h                 ;Internet Explorer 6.0 SP2
-  _WIN32_IE_IE60SP1         equ   0601h                 ;Internet Explorer 6.0 SP1
-  _WIN32_IE_IE60            equ   0600h                 ;Internet Explorer 6.0
-  _WIN32_IE_IE55            equ   0550h                 ;Internet Explorer 5.5
-  _WIN32_IE_IE501           equ   0501h                 ;Internet Explorer 5.01
-  _WIN32_IE_IE50            equ   0500h                 ;Internet Explorer 5.0, 5.0a, 5.0b
+  _WIN32_IE_IE100           equ   0A00h                 ; Internet Explorer 10.0
+  _WIN32_IE_IE90            equ   0900h                 ; Internet Explorer 9.0
+  _WIN32_IE_IE80            equ   0800h                 ; Internet Explorer 8.0
+  _WIN32_IE_IE70            equ   0700h                 ; Internet Explorer 7.0
+  _WIN32_IE_IE60SP2         equ   0603h                 ; Internet Explorer 6.0 SP2
+  _WIN32_IE_IE60SP1         equ   0601h                 ; Internet Explorer 6.0 SP1
+  _WIN32_IE_IE60            equ   0600h                 ; Internet Explorer 6.0
+  _WIN32_IE_IE55            equ   0550h                 ; Internet Explorer 5.5
+  _WIN32_IE_IE501           equ   0501h                 ; Internet Explorer 5.01
+  _WIN32_IE_IE50            equ   0500h                 ; Internet Explorer 5.0, 5.0a, 5.0b
 
   ;WIN32_LEAN_AND_MEAN       equ   1
   WINVER                    equ   _WIN32_WINNT_WIN10
@@ -147,12 +147,12 @@ ifndef _INC_WINASM
 
   _WIN32_IE                 equ   _WIN32_IE_IE100
   _M_HYBRID                 equ   0
-  _WIN32_FUSION             equ   100h                  ;This causes activation context structs and APIs to be included.
-  _INTEGRAL_MAX_BITS        equ   64                    ;Defined as the integer literal value 64, the maximum size (in bits) for a non-vector integral type. This macro is always defined.
+  _WIN32_FUSION             equ   100h                  ; This causes activation context structs and APIs to be included.
+  _INTEGRAL_MAX_BITS        equ   64                    ; Defined as the integer literal value 64, the maximum size (in bits) for a non-vector integral type. This macro is always defined.
   _WINSOCK_DEPRECATED_NO_WARNINGS equ <>
 
   ISOLATION_AWARE_ENABLED   equ   0
-  OEMRESOURCE               equ   1                     ;Various resource system IDC_... , used by CommCtrl.inc
+  OEMRESOURCE               equ   1                     ; Various resource system IDC_... , used by CommCtrl.inc
 
   NTDDI_WIN2K               equ   05000000h
   NTDDI_WIN2KSP1            equ   05000100h
@@ -194,15 +194,15 @@ ifndef _INC_WINASM
 
   NTDDI_LONGHORN            equ   NTDDI_VISTA
 
-  _NT_TARGET_VERSION_WIN10_RS4 equ <_WIN32_WINNT_WIN10> ;Compared with _WIN32_WINNT, missing
+  _NT_TARGET_VERSION_WIN10_RS4 equ <_WIN32_WINNT_WIN10> ; Compared with _WIN32_WINNT, missing
 
-  _WIN32_WINNT_WIN10_TH1    equ   0A000000h             ;Threshold 1, Windows 10 version 1507
-  _WIN32_WINNT_WIN10_TH2    equ   0A000001h             ;Threshold 2, Windows 10 version 1511 "November Update"
-  _WIN32_WINNT_WIN10_RS1    equ   0A000002h             ;Redstone 1,  Windows 10 version 1607 "Anniversary Update"
-  _WIN32_WINNT_WIN10_RS2    equ   0A000003h             ;Redstone 2,  Windows 10 version 1703 "Creators Update"
-  _WIN32_WINNT_WIN10_RS3    equ   0A000004h             ;Redstone 3,  Windows 10 version 1709 "Fall Creators Update"
-  _WIN32_WINNT_WIN10_RS4    equ   0A000005h             ;Redstone 4,  Windows 10 version 1803 "April 2018 Update"
-  _WIN32_WINNT_WIN10_RS5    equ   0A000006h             ;Redstone 5,  Windows 10 version 1809 "October 2018 Update"
+  _WIN32_WINNT_WIN10_TH1    equ   0A000000h             ; Threshold 1, Windows 10 version 1507
+  _WIN32_WINNT_WIN10_TH2    equ   0A000001h             ; Threshold 2, Windows 10 version 1511 "November Update"
+  _WIN32_WINNT_WIN10_RS1    equ   0A000002h             ; Redstone 1,  Windows 10 version 1607 "Anniversary Update"
+  _WIN32_WINNT_WIN10_RS2    equ   0A000003h             ; Redstone 2,  Windows 10 version 1703 "Creators Update"
+  _WIN32_WINNT_WIN10_RS3    equ   0A000004h             ; Redstone 3,  Windows 10 version 1709 "Fall Creators Update"
+  _WIN32_WINNT_WIN10_RS4    equ   0A000005h             ; Redstone 4,  Windows 10 version 1803 "April 2018 Update"
+  _WIN32_WINNT_WIN10_RS5    equ   0A000006h             ; Redstone 5,  Windows 10 version 1809 "October 2018 Update"
 
   NTDDI_WIN10_RS1           equ   _WIN32_WINNT_WIN10_RS1
   NTDDI_WIN10_RS2           equ   _WIN32_WINNT_WIN10_RS2
@@ -211,12 +211,12 @@ ifndef _INC_WINASM
   NTDDI_WIN10_RS5           equ   _WIN32_WINNT_WIN10_RS5
   NTDDI_VERSION             equ   NTDDI_WIN10_RS5
 
-  _MSC_VER                  equ   1900                  ;Major & minor number of C compiler's version number
+  _MSC_VER                  equ   1900                  ; Major & minor number of C compiler's version number
   _MSC_FULL_VER             equ   190024210
-  __STDC__                  equ   0                     ;1 only when compiled as std C, otherwise 0.
-  _FORCENAMELESSUNION       equ   -1                    ;required for VARIANT definition
+  __STDC__                  equ   0                     ; 1 only when compiled as std C, otherwise 0.
+  _FORCENAMELESSUNION       equ   -1                    ; required for VARIANT definition
 
-  WINAPI_PARTITION_PHONE_RESTRICTED   equ   -1          ;Missing
+  WINAPI_PARTITION_PHONE_RESTRICTED   equ   -1          ; Missing
 
   ;Some basic type definitions
   POINTER               typedef     ptr
@@ -236,8 +236,8 @@ ifndef _INC_WINASM
   ifndef Defined
     Defined macro x
       ifdef x
-        exitm <-1>                                      ;-1 to be able to use the 'NOT' operator.
-      else                                              ;Not(-1) = 0 (FALSE)
+        exitm <-1>                                      ; -1 to be able to use the 'NOT' operator.
+      else                                              ; Not(-1) = 0 (FALSE)
         exitm <0>
       endif
     endm
@@ -247,8 +247,8 @@ ifndef _INC_WINASM
     @align equ <>
   endif
 
-  ifndef _WIN64                                         ;"type(near)" returns in 16-bit 0FF02h,
-    if type(near) eq 0ff08h   ;64-bit enabled?          ;in 32-bit 0FF04h and in 64-bit 0FF08h.
+  ifndef _WIN64                                         ; "type(near)" returns in 16-bit 0FF02h,
+    if type(near) eq 0ff08h   ;64-bit enabled?          ; in 32-bit 0FF04h and in 64-bit 0FF08h.
       _WIN64 equ 1
     endif
   endif
@@ -278,7 +278,7 @@ ifndef _INC_WINASM
 
   ifndef _WIN32_WINNT
     ifndef WINVER
-      _WIN32_WINNT    equ 400h        ;Windows NT 4.0 - minimum
+      _WIN32_WINNT    equ 400h        ; Windows NT 4.0 - minimum
     else
       _WIN32_WINNT    equ WINVER
     endif
@@ -286,7 +286,7 @@ ifndef _INC_WINASM
 
   ifndef _WIN32_WINDOWS
     ifndef WINVER
-      _WIN32_WINDOWS  equ 400h        ;Windows NT 4.0 - minimum
+      _WIN32_WINDOWS  equ 400h        ; Windows NT 4.0 - minimum
     else
       _WIN32_WINDOWS  equ WINVER
     endif
@@ -309,12 +309,12 @@ ifndef _INC_WINASM
         ??CallConv equ <&CallConv>
       endif
 
-      %ifidn <ApiQual>, <DllImport>                     ;;Call [IAT], a bit faster
+      %ifidn <ApiQual>, <DllImport>                     ;; Call [IAT], a bit faster
         TYPE_&ProcName typedef proto ??CallConv Params
         externdef __imp_&ProcName: ptr TYPE_&ProcName
         ProcName&NameSuffix equ <__imp_&ProcName>
       else
-        ProcName&NameSuffix proto ??CallConv Params     ;;Call thunk (jmp [IAT])
+        ProcName&NameSuffix proto ??CallConv Params     ;; Call thunk (jmp [IAT])
       endif
     endm
 
@@ -322,7 +322,7 @@ ifndef _INC_WINASM
     WIN_STD_CALL_CONV equ <stdcall>
     @DefProto macro ApiQual, ProcName, CallConv, NameSuffix, Params, DecorSuffix
 
-      %ifidn <ApiQual>, <DllImport>                     ;;Call [IAT], a bit faster
+      %ifidn <ApiQual>, <DllImport>                     ;; Call [IAT], a bit faster
         TYPE_&ProcName typedef proto CallConv Params
         ifnb <DecorSuffix>
           externdef CallConv _imp__&ProcName&@&DecorSuffix: ptr TYPE_&ProcName
@@ -332,7 +332,7 @@ ifndef _INC_WINASM
           ProcName&NameSuffix equ <_imp__&ProcName>
         endif
       else
-        ProcName&NameSuffix proto CallConv Params       ;;Call thunk (jmp [IAT])
+        ProcName&NameSuffix proto CallConv Params       ;; Call thunk (jmp [IAT])
       endif
     endm
   endif
@@ -422,15 +422,15 @@ ifndef _INC_WINASM
   ;            Arg2: Method arguments (with or without colons & pSelf (or This) is passed explicitly).
 
   STD_METHOD macro MtdName:req, Args:vararg
-    @CatStr(%??Interface, <_>, MtdName, <_Args>) textequ <&Args>
+    @CatStr(%??Interface, <_>, <MtdName>, <_Args>) textequ <&Args>
     if TARGET_BITNESS eq 32
-      %@CatStr(%??Interface, <_>, MtdName) proto stdcall, Args      ;;First argument is pSelf
+      %@CatStr(%??Interface, <_>, MtdName) proto stdcall, Args      ;; First argument is pSelf
       %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto stdcall, Args
     else
-      %@CatStr(%??Interface, <_>, MtdName) proto fastcall, Args     ;;First argument is pSelf
+      %@CatStr(%??Interface, <_>, MtdName) proto fastcall, Args     ;; First argument is pSelf
       %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto fastcall, Args
     endif
-    @CatStr(<_>, MtdName) POINTER ?                     ;;Make an entry in the structure
+    @CatStr(<_>, <MtdName>) POINTER ?                   ;; Make an entry in the interface structure
   endm
 
   ; --------------------------------------------------------------------------------------------------
@@ -444,20 +444,22 @@ ifndef _INC_WINASM
 
   DECLARE_INTERFACE_IID_ macro IName:req, AName:=<>, sIID
     ifnb <sIID>
-      sIID_&IName textequ <sIID>                        ;;Create symbolic IID
+      sIID_&IName textequ <sIID>                        ;; Create symbolic IID
     endif
 
     ??InterfaceName equ <IName>
     ??Interface CatStr <IName>, <Vtbl>
 
     ??Interface struct
-      AName&Vtbl {}
+      ifnb <AName>
+        AName&Vtbl {}
+      endif
   endm
 
   ; --------------------------------------------------------------------------------------------------
 
   END_DECLARE_INTERFACE_IID_ macro
-    ;;Terminate structure definition
+    ;; Terminate structure definition
     ??Interface ends
   endm
 

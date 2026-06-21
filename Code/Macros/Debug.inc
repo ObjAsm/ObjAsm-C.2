@@ -2234,7 +2234,7 @@ endm
 ;
 ;      %ifdef ??DbgTraceMtdCount
 ;        %ifidn <$$sz1>, <WndProc>
-;          ;;WndProc can't be traced due to pSelf is set after the prologue!
+;          ;;WndProc cannot be traced due to pSelf is set after the prologue!
 ;          %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!"  >, ??TestObject, <.>, <!">)), \
 ;                               DbgColorObject, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
 ;          %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!">, %$$sz1, <: !">)), \
@@ -2293,7 +2293,7 @@ endm
 ;
 ;      %ifdef ??DbgTraceMtdCount
 ;        %ifidn <$$sz1>, <WndProc>
-;          ;;WndProc can't be traced due to pSelf is set after the prologue!
+;          ;;WndProc cannot be traced due to pSelf is set after the prologue!
 ;        %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!"  >, ??TestObject, <.>, <!">)), \
 ;                             DbgColorObject, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
 ;        %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!">, %$$sz1, <: !">)), \
@@ -2328,7 +2328,7 @@ endm
 ;
 ;      %ifdef ??DbgTraceMtdCount
 ;        %ifidn <$$sz1>, <WndProc>
-;          ;;WndProc can't be traced due to pSelf is stablished after the prologue!
+;          ;;WndProc cannot be traced due to pSelf is stablished after the prologue!
 ;          %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!"  >, ??TestObject, <.>, <!">)), \
 ;                              DbgColorObject, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
 ;          %invoke DbgOutTextA, $OfsCStrA(@CatStr(<!">, %$$sz1, <: !">)), \

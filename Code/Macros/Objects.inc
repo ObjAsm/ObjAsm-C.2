@@ -42,35 +42,35 @@
 ;  |    Table        ??EVENT_ENTRY #3                        ...          ...
 ;  |                 ...                                     ...          ...
 ;  |
-;  |  Object structures:  (64-bit offsets)
+;  |  Object structures:  (32-bit offsets)(64-bit offsets)
 ;  |  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  |  Object Template (TPL)
-;  |    (+00h) POINTER to the Dual Method Table (DMT) ---------
-;  |    (+08h) Variables and dynamic methods                   |
-;  |          ...                                              |
-;  |  Dual Method Table (DMT)                                  |  Offset
-;  |    (-20h) Virtual method 3     (...)                      |    -
-;  |    (-18h) Virtual method 2     (...)                      |    |
-;  |    (-10h) Virtual method 1     (Done destructor)          |    |  Virtual Method Table (VMT)
-;  '--- (-08h) POINTER to Event Translation Table (ETT)        |    |
-; ENTRY (+00h) Interface method 1   (QueryInterface method) <--'    0 Dual Method Table (DMT)
-;       (+08h) Interface method 2   (AddRef method)                 |
-;       (+10h) Interface method 3   (Release method)                |  Interface Method Table (IMT)
-;              ...                                                  |      (= Vtbl - Microsoft)
-;                                                                   +
+;  |    (+00h)(+00h) POINTER to the Dual Method Table (DMT) ------
+;  |    (+04h)(+08h) Variables and dynamic methods (DYN struct)   |
+;  |          ...                                                 |
+;  |  Dual Method Table (DMT)                                     | Offset
+;  |    (+14h)(-20h) Virtual method 3   (...)                     |   -
+;  |    (+10h)(-18h) Virtual method 2   (...)                     |   |
+;  |    (+08h)(-10h) Virtual method 1   (Done destructor)         |   | Virtual Method Table (VMT)
+;  '--- (+04h)(-08h) POINTER to Event Translation Table (ETT)     |   |
+; ENTRY (+00h)(+00h) Interface method 1 (QueryInterface method) <-'   0 Dual Method Table (DMT)
+;       (+04h)(+08h) Interface method 2 (AddRef method)               |
+;       (+08h)(+10h) Interface method 3 (Release method)              | Interface Method Table (IMT)
+;            ...                                                      |    (= Vtbl - Microsoft)
+;                                                                     +
 ;
 ; Object Instance: (copy of Object Template = TPL)
 ; ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;     (+00h) POINTER to object Dual Method Table (-> DMT)
-;     (+08h) Variables and dynamic methods (DYN)
+;     (+08h) Variables and dynamic methods (DYN struct)
 ;            ...
 
 
 ??EVENT_ENTRY struc 1
-  dID       DWORD   ?                                   ;Event ID, like WM_COMMAND
-  wFlags    WORD    ?                                   ;DISPATCH_METHOD, DISPATCH_PROPERTYGET, etc.
-  wType     WORD    ?                                   ;??MTDTYPE_STATIC, ??MTDTYPE_VIRTUAL, etc.
-  pHandler  POINTER ?                                   ;-> handler method, -> DMT, -> DYN
+  dID       DWORD   ?                                   ; Event ID, like WM_COMMAND
+  wFlags    WORD    ?                                   ; DISPATCH_METHOD, DISPATCH_PROPERTYGET, etc.
+  wType     WORD    ?                                   ; ??MTDTYPE_STATIC, ??MTDTYPE_VIRTUAL, etc.
+  pHandler  POINTER ?                                   ; -> handler method, -> DMT, -> DYN
 ??EVENT_ENTRY ends
 P??EventEntry typedef ptr ??EVENT_ENTRY
 
@@ -81,33 +81,33 @@ OBJECT_LOCK ends
 POBJECT_LOCK typedef ptr OBJECT_LOCK
 
 ;Global object namespace
-OBJASM_NAMESPACE        textequ <OA>                    ;Default namespace
-??ObjPfxSep             textequ <_>                     ;Cosmetic separator
-??ObjPfx                CatStr OBJASM_NAMESPACE, ??ObjPfxSep ;Object prefix to avoid name conflicts
-??MtdPfx                textequ <_>                     ;Method prefix to avoid name conflicts
+OBJASM_NAMESPACE        textequ <OA>                    ; Default namespace
+??ObjPfxSep             textequ <_>                     ; Cosmetic separator
+??ObjPfx                CatStr OBJASM_NAMESPACE, ??ObjPfxSep ; Object prefix to avoid name conflicts
+??MtdPfx                textequ <_>                     ; Method prefix to avoid name conflicts
 ??ObjPfxOfs             = @SizeStr(%??ObjPfx) + 1
 ??MtdPfxOfs             = @SizeStr(%??MtdPfx) + 1
 
 ;Global definitions
-??1stOMD                = NULL                          ;-> 1st structure in the obj. metadata chain
-??ObjectCount           = 0
-??StartupMtdCount       = 0
-??ShutdownMtdCount      = 0
-??ObjRedefIndex         = 2                             ;Modify method names when there is a duplication
-
+??1stOMD                = NULL                          ; -> 1st structure in the obj. metadata chain
+??ObjectCount           = 0                             ; Total object count
+??StartupMtdCount       = 0                             ; Total number of "Startup" methods
+??ShutdownMtdCount      = 0                             ; Total number of "Shutdown" methods
+??ObjRedefIndex         = 2                             ; Used to resolve duplicate method names
+                                                        ;   Counter increases monotonically
 if TARGET_BITNESS eq 32
-  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFh>                ;Can be redefined to an error procedure
-  ??OBSOLETE_ERROR_PROC equ <0DEADBEEFh>                ;Can be redefined to an error procedure
+  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFh>                ; Redefinable error handler
+  ??OBSOLETE_ERROR_PROC equ <0DEADBEEFh>                ; Redefinable error handler
 else
-  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFFFFFFFFFh>        ;Can be redefined to an error procedure
-  ??OBSOLETE_ERROR_PROC equ <0BADC0FFEE0DDF00Dh>        ;Can be redefined to an error procedure
+  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFFFFFFFFFh>        ; Redefinable error handler
+  ??OBSOLETE_ERROR_PROC equ <0BADC0FFEE0DDF00Dh>        ; Redefinable error handler
 endif
 ??RegisterCasted        textequ <>
 
 ??OBJERR_UNDEFINED      equ -1
-??OBJERR_NONE           equ 0                           ;Flags != ??OBJERR_NONE stops compilation
-??OBJERR_SYNTAX         equ 1                           ;  of object related macros like
-??OBJERR_UNK_ANCESTOR   equ 2                           ;  New, OCall, Override, etc.
+??OBJERR_NONE           equ 0                           ; Flags != ??OBJERR_NONE stops compilation
+??OBJERR_SYNTAX         equ 1                           ;   of object related macros like
+??OBJERR_UNK_ANCESTOR   equ 2                           ;   New, OCall, Override, etc.
 ??OBJERR_VAR_OVERRIDE   equ 3
 ??OBJERR_MTD_OVERRIDE   equ 4
 ??OBJERR_TYPE_ID        equ 5
@@ -146,7 +146,7 @@ endm
 $ObjInst macro Expression:req
   PreParseExpr Expression
   if $ParseObjExpr(Expression) eq FALSE
-    @Err <$ObjInst Error: syntax error in Expression>
+    @Err <$ObjInst Error: syntax error in !'Expression!'>
     exitm <>
   else
     exitm @CatStr(<??>, %??ObjExpr, <_Init {}>)        ;; Referenced structure
@@ -167,12 +167,12 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $Obj
 ; Purpose:    Return the mangled object name.
-; Arguments:  Arg1: Object Expression    [Namespace:]ObjectName.
+; Arguments:  Arg1: Object Expression  [Namespace:]ObjectName.
 
 $Obj macro ObjExpr:req
   PreParseExpr ObjExpr
   if $ParseObjExpr(ObjExpr) eq FALSE
-    @Err <$Obj Error: syntax error in ObjExpr>
+    @Err <$Obj Error: syntax error in !'ObjExpr!'>
     exitm <>
   else
     %exitm <??ObjExpr>
@@ -182,12 +182,12 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjPtr
 ; Purpose:    Return the mangled object pointer name.
-; Arguments:  Arg1: Object Expression: [Namespace:]ObjectName.
+; Arguments:  Arg1: Object Expression  [Namespace:]ObjectName.
 
 $ObjPtr macro ObjExpr:req
   PreParseExpr ObjExpr
   if $ParseObjExpr(ObjExpr) eq FALSE
-    @Err <$ObjPtr Error: syntax error in ObjExpr>
+    @Err <$ObjPtr Error: syntax error in !'ObjExpr!'>
     exitm <>
   else
     exitm @CatStr(<POB_>, %??ObjExpr)
@@ -197,12 +197,12 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjTmpl
 ; Purpose:    Return the mangled object template name.
-; Arguments:  Arg1: Object Expression: [Namespace:]ObjectName.
+; Arguments:  Arg1: Object Expression  [Namespace:]ObjectName.
 
 $ObjTmpl macro ObjExpr:req
   PreParseExpr ObjExpr
   if $ParseObjExpr(ObjExpr) eq FALSE
-    @Err <$ObjTmpl Error: syntax error in ObjExpr>
+    @Err <$ObjTmpl Error: syntax error in !'ObjExpr!'>
     exitm <>
   else
     exitm @CatStr(<TPL_>, %??ObjExpr)
@@ -212,12 +212,12 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      ExterndefMethod
 ; Purpose:    Declares an external defined method.
-; Arguments:  Arg1: Method Expression: ObjectName.MethodName.
+; Arguments:  Arg1: Method Expression  ObjectName.MethodName.
 
 ExterndefMethod macro MtdExpr:req
   PreParseExpr MtdExpr
   if $ParseMtdExpr(MtdExpr) eq FALSE
-    @Err <ExterndefMethod Error: syntax error in MtdExpr>
+    @Err <ExterndefMethod Error: syntax error in !'MtdExpr!'>
   else
     externdef @CatStr(%??ObjExpr, %??MtdExpr, <:proc>)
   endif
@@ -241,7 +241,7 @@ BuildObjInherPath macro MglObjName:req, MglAncName:=<>
       $$Inher CatStr <MglAncName>, <_Inherit>
       %exitm <BuildObjInherPath(MglObjName, %$$Inher)>  ;; Use recursion
     else
-      @Err <BuildObjInherPath Error: undefined ancestor MglAncName>
+      @Err <BuildObjInherPath Error: unkown ancestor !'MglAncName!'>
       exitm <FALSE>                                     ;; Error
     endif
   else
@@ -260,7 +260,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   PreParseExpr ObjExpr
   if $ParseObjExpr(ObjExpr) eq FALSE
     %??ObjName&_Error = ??OBJERR_SYNTAX
-    @Err <Object Error: invalid syntax in ObjExpr>
+    @Err <Object Error: invalid syntax in !'ObjExpr!'>
     exitm
   endif
 
@@ -269,7 +269,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   %ifdef ??ObjExpr
     %??ObjName&_Error = ??OBJERR_REDEFINITION
     ??ObjRedefIndex = ??ObjRedefIndex + 1
-    @Err <Object Error: redefinition of ??ObjExpr>      ;; Alert about a second declaration
+    @Err <Object Error: redefinition of !'??ObjExpr!'>  ;; Alert about a second declaration
     exitm
   endif
 
@@ -279,7 +279,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
     PreParseExpr AncExpr
     if $ParseObjExpr(AncExpr) eq FALSE
       %??ObjName&_Error = ??OBJERR_SYNTAX
-      @Err <Object Error: invalid syntax in AncExpr>
+      @Err <Object Error: invalid syntax in !'AncExpr!'>
       exitm
     endif
     ??AncName textequ ??ObjExpr
@@ -292,7 +292,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   repeat ??ObjectCount
     if @CatStr(<OBJECTID_>, %$$Count) eq ObjTypeID
       %??ObjName&_Error = ??OBJERR_TYPE_ID
-      @Err <Object Error: type ID duplication ObjTypeID>    ;; Don't stop compilation here
+      @Err <Object Error: type ID duplication !'ObjTypeID!'>  ;; Don't stop compilation here
       exitm
     endif
     $$Count = $$Count + 1
@@ -438,9 +438,9 @@ Private macro
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:     PrivateEnd
-; Purpose:   Methods that follows this directive are defined with public scope.
-; Arguments: None.
+; Macro:      PrivateEnd
+; Purpose:    Methods that follows this directive are defined with public scope.
+; Arguments:  None.
 
 PrivateEnd macro
   ??MethodAccess = ??MTDACCESS_PUBLIC
@@ -463,7 +463,7 @@ InterfaceAbstract macro MtdName:req, Args:vararg
     ;; Set a mark. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_IfcMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_INTERFACE
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_INTERFACE
   endif
 endm
 
@@ -481,11 +481,11 @@ InterfaceMethod macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_IfcMtdCount + 1
     %&??ObjName&_IfcMtdCount = $$Index
-    @CatStr(%??ObjName, <_IfcMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_IfcMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     @CatStr(%??ObjName, <_IfcMethodProc_>, %$$Index) textequ \
-           @CatStr(<offset(>, %??ObjName, %??MtdPfx, MtdName, <)>)
+           @CatStr(<offset(>, %??ObjName, %??MtdPfx, <MtdName>, <)>)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_INTERFACE
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_INTERFACE
   endif
 endm
 
@@ -501,12 +501,12 @@ VirtualAbstract macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_VtlMtdCount + 1
     %&??ObjName&_VtlMtdCount = $$Index
-    @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
 
     ;; Set a mark. If you prefer, you can set it to an error handler procedure address.
     %@CatStr(%??ObjName, <_VtlMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_VIRTUAL
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_VIRTUAL
   endif
 endm
 
@@ -524,11 +524,11 @@ VirtualMethod macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_VtlMtdCount + 1
     %&??ObjName&_VtlMtdCount = $$Index
-    @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     @CatStr(%??ObjName, <_VtlMethodProc_>, %$$Index) textequ \
-           @CatStr(<offset(>, %??ObjName, %??MtdPfx, MtdName, <)>)
+           @CatStr(<offset(>, %??ObjName, %??MtdPfx, <MtdName>, <)>)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_VIRTUAL
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_VIRTUAL
   endif
 endm
 
@@ -544,12 +544,12 @@ DynamicAbstract macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_DynMtdCount + 1
     %&??ObjName&_DynMtdCount = $$Index
-    @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
 
     ;; Set a marker. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_DynMtdProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_DYNAMIC
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_DYNAMIC
   endif
 endm
 
@@ -567,11 +567,11 @@ DynamicMethod macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_DynMtdCount + 1
     %&??ObjName&_DynMtdCount = $$Index
-    @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     @CatStr(%??ObjName, <_DynMtdProc_>, %$$Index) textequ \
-           @CatStr(<offset(>, %??ObjName, %??MtdPfx, MtdName, <)>)
+           @CatStr(<offset(>, %??ObjName, %??MtdPfx, <MtdName>, <)>)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_DYNAMIC
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_DYNAMIC
   endif
 endm
 
@@ -590,9 +590,9 @@ StaticMethod macro MtdName:req, Args:vararg
     ;; Check if this StaticMethod already exists
     $$OName textequ <??ObjName>
     while TRUE
-      %ifdef @CatStr(%$$OName, %??MtdPfx, MtdName)
+      %ifdef @CatStr(%$$OName, %??MtdPfx, <MtdName>)
         %??ObjName&_Error = ??OBJERR_MTD_OVERRIDE
-        %@Err <@CatStr(<StaticMethod Error: >, ??ObjName, <.>, MtdName, < already defined in >, $$OName)>
+        %@Err <@CatStr(<StaticMethod Error: !'>, ??ObjName, <.>, MtdName, <!' already defined in !'>, $$OName, <!'>)>
         exitm
       else
         $$Ancestor textequ <@CatStr(%$$OName, <_Inherit>)>
@@ -607,9 +607,9 @@ StaticMethod macro MtdName:req, Args:vararg
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_StcMtdCount + 1
     %&??ObjName&_StcMtdCount = $$Index
-    @CatStr(%??ObjName, <_StcMethod_Name_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_StcMethod_Name_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_STATIC
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_STATIC
 
     if MAKETEMPL ne FALSE
       ifidn <MtdName>, <Startup>
@@ -627,19 +627,23 @@ endm
 ; Macro:      InlineMethod
 ; Purpose:    Define a method that is common to each instance of the object.
 ;             The implementation of the method must be placed in the code segment like:
-;               Method <ObjectName>.<MethodName>, uses..., Argument1:...
-;             pSelf is the instance POINTER passed to the method to access instance data.
-; Arguments:  Arg1: Method name.
-;             Arg2: List of argument types.
+;               $Method(MyObject.MyMethod) macro pSelf, Argument1, ..., ArgumentN
+;                 SetObject xcx, MyObject, pSelf
+;                 ...
+;                 ReleaseObject
+;               endm 
+; Arguments:  Arg1: Method object and name.
+;             Arg2: -> Object instance (pSelf).
+;             Arg3: List of arguments.
 
 InlineMethod macro MtdName:req, Args:vararg
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
     ;; Check if this InlineMethod exists
     $$OName textequ <??ObjName>
     while TRUE
-      %ifdef @CatStr(%$$OName, $$MtdPfx, MtdName)
+      %ifdef @CatStr(%$$OName, %??MtdPfx, <MtdName>)
         %@CatStr(??ObjName, <_Error>) = ??OBJERR_MTD_OVERRIDE
-        %@Err <@CatStr(<InlineMethod Error: >, ??ObjName, <.>, MtdName, < already defined in >, $$OName)>
+        %@Err <@CatStr(<InlineMethod Error: !'>, ??ObjName, <.>, MtdName, <!' already defined in !'>, $$OName, <!'>)>
         exitm
       else
         $$Ancestor textequ <@CatStr(%$$OName, <_Inherit>)>
@@ -653,9 +657,9 @@ InlineMethod macro MtdName:req, Args:vararg
 
     %$$Index = &??ObjName&_IlnMtdCount + 1
     %&??ObjName&_IlnMtdCount = $$Index
-    @CatStr(%??ObjName, <_IlnMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_IlnMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_INLINE
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MTDTYPE_INLINE
   endif
 endm
 
@@ -667,20 +671,23 @@ endm
 
 RedefineMethod macro MtdName:req, Args:vararg
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
-    GetMtdType %??ObjName, @CatStr(%??MtdPfx, MtdName)
-    @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MtdType
+    GetMtdType %??ObjName, @CatStr(%??MtdPfx, <MtdName>)
+    @CatStr(%??ObjName, %??MtdPfx, <MtdName>, <_MtdType>) = ??MtdType
 
-    if ??MtdType eq ??MTDTYPE_INLINE
+    if ??MtdType eq ??MTDTYPE_UNKNOWN
+      %@Err <@CatStr(<RedefineMethod Error: unknown method !'>, ??ObjName, <.>, <MtdName>, <!'>)>
+
+    elseif ??MtdType eq ??MTDTYPE_INLINE
       %$$Index = &??ObjName&_IlnMtdCount + 1
       %&??ObjName&_IlnMtdCount = $$Index
-      @CatStr(%??ObjName, <_IlnMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+      @CatStr(%??ObjName, <_IlnMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
 
     else
       %PrototypeMethod ??ObjName, MtdName, Args
       if ??MtdType eq ??MTDTYPE_STATIC
         %$$Index = &??ObjName&_StcMtdCount + 1
         %&??ObjName&_StcMtdCount = $$Index
-        @CatStr(%??ObjName, <_StcMethod_Name_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+        @CatStr(%??ObjName, <_StcMethod_Name_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
         if MAKETEMPL ne FALSE
           ifidn <MtdName>, <Startup>
             %@CatStr(<StartupObjName_>, %??StartupMtdCount) textequ <??ObjName>
@@ -694,9 +701,9 @@ RedefineMethod macro MtdName:req, Args:vararg
       else
         %$$Index = &??ObjName&_OMCount + 1
         %&??ObjName&_OMCount = $$Index
-        @CatStr(%??ObjName, <_OvrMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+        @CatStr(%??ObjName, <_OvrMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
         @CatStr(%??ObjName, <_OvrMtdProc_>, %$$Index) textequ \
-               @CatStr(<offset(>, %??ObjName, %??MtdPfx, MtdName, <)>)
+               @CatStr(<offset(>, %??ObjName, %??MtdPfx, <MtdName>, <)>)
       endif
     endif
   endif
@@ -712,7 +719,7 @@ ObsoleteMethod macro MtdName:req
     PrototypeMethod %??ObjName, MtdName, <>
     %$$Index = &??ObjName&_OMCount + 1
     %&??ObjName&_OMCount = $$Index
-    @CatStr(%??ObjName, <_OvrMtdName_>, %$$Index) textequ <%??MtdPfx&MtdName>
+    @CatStr(%??ObjName, <_OvrMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     @CatStr(%??ObjName, <_OvrMtdProc_>, %$$Index) textequ <??OBSOLETE_ERROR_PROC>
   endif
 endm
@@ -746,8 +753,11 @@ endm
 
 Event macro MtdName:req, EventIDs:vararg
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
-    GetMtdType %??ObjName, @CatStr(%??MtdPfx, MtdName)
-    if ??MtdType eq ??MTDTYPE_INLINE
+    GetMtdType %??ObjName, @CatStr(%??MtdPfx, <MtdName>)
+    if ??MtdType eq ??MTDTYPE_UNKNOWN
+      %@Err <@CatStr(<Event Error: unknown method !'>, ??ObjName, <.>, MtdName, <!'>)>
+      exitm
+    elseif ??MtdType eq ??MTDTYPE_INLINE
       @Err <Event Error: inline methods are not allowed as event handlers>
       exitm
     endif
@@ -767,7 +777,7 @@ IDispEvent macro MtdName:req, DispID:req, Flags:=<DISPATCH_METHOD>
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
     %$$Index = &??ObjName&_EvCount + 1
     %&??ObjName&_EvCount = $$Index
-    @CatStr(%??ObjName, <_EvProc_>,  %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
+    @CatStr(%??ObjName, <_EvProc_>,  %$$Index) textequ @CatStr(%??MtdPfx, <MtdName>)
     @CatStr(%??ObjName, <_EvIDs_>,   %$$Index) textequ <DispID>
     @CatStr(%??ObjName, <_EvFlags_>, %$$Index) textequ <Flags>
   endif
@@ -1043,8 +1053,8 @@ CreateInterfaceMethodTable macro MglObjName:req, Init:=<TRUE>
         $$sz4 CatStr <OvrMtd_Name_>, %$$TCount
         ifidn $$sz1, $$sz4
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <ObsoleteErrorProc>            ;; Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;; Erase the name of the IMT
+          ifidn <%$$sz3>, <??OBSOLETE_ERROR_PROC>       ;; Erase but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the name from the IMT
           endif
           ??RMCount = ??RMCount + 1
         endif
@@ -1066,23 +1076,27 @@ endm
 ; Note:       This VMT is in reverse order to make place for the IMT!
 
 CreateVirtualMethodTable macro MglObjName:req, Init:=<TRUE>
-  %for $$TestObject, <@CatStr(MglObjName, <_InherRevPath>)>;; Use reverse list
+  ;; Search the matching object in the inheritance path
+  %for $$TestObject, <@CatStr(MglObjName, <_InherRevPath>)>       ;; Use reverse list
     $$ACount = @CatStr($$TestObject, <_VtlMtdCount>)
+    ;; Search the method
     repeat @CatStr($$TestObject, <_VtlMtdCount>)
-      $$sz1 CatStr <$$TestObject>, <_VtlMethodName_>, %$$ACount
-      $$sz3 CatStr <$$TestObject>, <_VtlMethodProc_>, %$$ACount
+      $$sz1 CatStr <$$TestObject>, <_VtlMethodName_>, %$$ACount   ;; Name
+      $$sz3 CatStr <$$TestObject>, <_VtlMethodProc_>, %$$ACount   ;; Proc
       $$TCount = 0
       repeat ??OMCount
         $$TCount = $$TCount + 1
         $$sz4 CatStr <OvrMtd_Name_>, %$$TCount
         ifidn $$sz1, $$sz4
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <ObsoleteErrorProc>            ;; Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;; Erase the name of the VMT
+          ifidn <%$$sz3>, <??OBSOLETE_ERROR_PROC>       ;; Erase but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the method name from the VMT
           endif
           ??RMCount = ??RMCount + 1
         endif
       endm
+
+      ;; Create the VMT entry
       ifidn <Init>, <TRUE>
         $$sz1 POINTER $$sz3
       else
@@ -1179,7 +1193,7 @@ CreateTemplate macro MglObjName:req
 
   ;; Checks if the logical structure has the same size as the template structure
   if sizeof(@CatStr(MglObjName)) ne sizeof(@CatStr(<TPL_>, MglObjName))
-    @Err <CreateTemplate Error: object structure error in MglObjName>
+    @Err <CreateTemplate Error: object structure error in !'MglObjName!'>
     ??&MglObjName&_Error = ??OBJERR_TEMPLATE
   endif
 
@@ -1205,8 +1219,8 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
         $$TCount = $$TCount + 1
         %ifidn <$$sz1>, <@CatStr(<OvrMtd_Name_>, %$$TCount)>
           $$sz3 CatStr <OvrMtd_Proc_>, %$$TCount
-          ifidn <$$sz3>, <??OBSOLETE_ERROR_PROC>        ;; Erase it but don't remove the placeholder!
-            $$sz1 textequ <>                            ;; Erase the name of the template
+          ifidn <%$$sz3>, <??OBSOLETE_ERROR_PROC>       ;; Erase but don't remove the placeholder!
+            $$sz1 textequ <>                            ;; Erase the name from the template
           endif
           ??RMCount = ??RMCount + 1
         endif
@@ -1228,7 +1242,7 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
       $$TCount = 0
       repeat ??OVCount
         $$TCount = $$TCount + 1
-          %ifidn <$$sz1>, <@CatStr(<OvrVarName_>, %$$TCount)>
+        %ifidn <$$sz1>, <@CatStr(<OvrVarName_>, %$$TCount)>
           $$sz3 CatStr <OvrVarInit_>, %$$TCount
           ??RVCount = ??RVCount + 1
         endif
@@ -1379,10 +1393,10 @@ endm
 ; Macro:      $MethodAddr
 ; Purpose:    Return a method address.
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
-; Notes:      - this macro uses the eax/rax register, except for static methods.
-;             - if the expression contains an instance POINTER, then the returned address is
+; Notes:      - This macro uses the eax/rax register, except for static methods.
+;             - If the expression contains an instance POINTER, then the returned address is
 ;               relative to this particular instance, otherwise to the object template.
-;             - can be used inside nested into OCall/ACall/etc. macros.
+;             - Can be used inside nested into OCall/ACall/etc. macros.
 ;             - Possible syntax combinations:
 ;               - Ins::Nsp:Obj.Mtd
 ;               - Ins::Obj.Mtd
@@ -1393,7 +1407,7 @@ endm
 $MethodAddr macro Expression:req
   PreParseExpr Expression
   if $ParseMtdExpr(Expression) eq FALSE
-    @Err <$MethodAddr Error: invalid syntax in Expression>
+    @Err <$MethodAddr Error: invalid syntax in !'Expression!'>
     exitm <NULL>
   else
     %ifdef ??ObjExpr
@@ -1466,14 +1480,14 @@ $MethodAddr macro Expression:req
         endif
 
       elseif ??MtdType eq ??MTDTYPE_INLINE
-        @Err <$MethodAddr Error: inline method has no address Expression>
+        @Err <$MethodAddr Error: inline method has no address !'Expression!'>
         exitm <NULL>
       else
-        @Err <$MethodAddr Error: undefined method Expression>
+        @Err <$MethodAddr Error: unknown method !'Expression!'>
         exitm <NULL>
       endif
     else
-      @Err <$MethodAddr Error: undefined object Expression>
+      @Err <$MethodAddr Error: unknown object !'Expression!'>
       exitm <NULL>
     endif
   endif
@@ -1488,9 +1502,13 @@ endm
 ;                   stack is used to hold the object.
 ;                   "Object" is a required expression, that identifies the object type to
 ;                   instantiate.
+;             Arg2: (optional) Explicit allocation size in bytes, used only when "Instance" is
+;                   omitted (i.e. when memory is allocated via MemAlloc).
+;                   If omitted, defaults to sizeof(Object), which this macro computes into
+;                   $$DynamicTemplateSize before MemAlloc is called.
 ; Return:     rax -> created object instance.
 ;             Possible syntax combinations:
-;               - Preallocated memory
+;               - Preallocated memory (Arg2 ignored)
 ;                 - Ins::Nsp:Obj
 ;                 - Ins::Obj
 ;               - With memory allocation
@@ -1502,11 +1520,11 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
 
   ;; Get ??MtdExpr
   if ??Pos3 ne 0
-    @Err <New Error: method Expression not allowed>
+    @Err <New Error: method !'Expression!' not allowed>
     exitm
   endif
 
-  ;; Get ??ObjExpr
+  ;; Get ??ObjExpr (Object)
   if ??Pos1 ne 0
     if ??Pos2 ne 0
       ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
@@ -1525,7 +1543,7 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
     endif
   endif
 
-  ;; Get ??InsExpr
+  ;; Get ??InsExpr (Instance)
   if ??Pos1 ne 0
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   endif
@@ -1540,6 +1558,10 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
         MemAlloc MemSize
         if TARGET_BITNESS eq 64
           add rsp, 20h
+        endif
+        if MemSize lt $$DynamicTemplateSize
+          @Err <New Error: requested memory size is less than the size required for the object instance>
+          exitm
         endif
       else
         %if type(??InsExpr) eq @WordSize
@@ -1556,11 +1578,12 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
           endif
         endif
       endif
+      
       ;Use all volatile registers except xax, which is used as return register
       s2s ??ObjExpr ptr [xax], @CatStr(<TPL_>, %??ObjExpr), xmm7, xmm6, xmm5, xmm4, xmm3, xmm2, xmm1, xmm0, xcx, xdx
     endif
   else
-    @Err <New Error: undefined object Expression>
+    @Err <New Error: unknown object !'Expression!'>
   endif
 endm                                                    ;; xax -> allocated object instance
 
@@ -1647,7 +1670,7 @@ Kill macro Expression:req, Args:vararg
     endif
   else
     if ??Pos2 ne 0
-      @Err <Kill Error: undefined instance Expression>
+      @Err <Kill Error: unknown instance !'Expression!'>
       exitm
     else
       ifnb ??ObjectContext
@@ -1663,7 +1686,7 @@ Kill macro Expression:req, Args:vararg
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
   else
     if ??Pos2 ne 0
-      @Err <Kill Error: undefined instance Expression>
+      @Err <Kill Error: unknown instance !'Expression!'>
       exitm
     else
       if ??Pos3 ne 0
@@ -1706,7 +1729,7 @@ SetObject macro Register:req, ObjName:=<>, pInstance
     else
       PreParseExpr ObjName
       if $ParseObjExpr(ObjName) eq FALSE
-        @Err <SetObject Error: syntax error in ObjName>
+        @Err <SetObject Error: syntax error in !'ObjName!'>
       else
         $$OName textequ <??ObjExpr>
       endif
@@ -1776,7 +1799,7 @@ SetOwner macro RegName:req, ObjName:req, pInstance:=<pSelf>
     assume RegName:ptr $Obj(ObjName)
 
   else
-    @Err <SetOwner Error: argument must be a register>
+    @Err <SetOwner Error: first argument must be a register>
   endif
 endm
 
@@ -1816,7 +1839,7 @@ endm
 Override macro DstExpression:req, SrcExpression:req
   PreParseExpr SrcExpression
   if $ParseMtdExpr(SrcExpression) eq FALSE
-    @Err <Override Error: invalid syntax in SrcExpression>
+    @Err <Override Error: invalid syntax in !'SrcExpression!'>
   else
     if ??Pos3 ne 0
       $$OffsetText textequ @CatStr(<offset(>, %??ObjExpr, %??MtdExpr, <)>)
@@ -1826,7 +1849,7 @@ Override macro DstExpression:req, SrcExpression:req
 
     PreParseExpr DstExpression
     if $ParseCallExpr(DstExpression) eq FALSE
-      @Err <Override Error: invalid syntax in DstExpression>
+      @Err <Override Error: invalid syntax in !'DstExpression!'>
     else
       %ifdef ??ObjExpr
         if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
@@ -1895,15 +1918,15 @@ Override macro DstExpression:req, SrcExpression:req
               mov (??ObjExpr ptr [xdx]).??MtdExpr, xcx
             endif
           elseif ??MtdType eq ??MTDTYPE_STATIC or ??MtdType eq ??MTDTYPE_INLINE
-            @Err <Override Error: invalid method type DstExpression>
+            @Err <Override Error: invalid method type in !'DstExpression!'>
             exitm
           else
-            @Err <Override Error: unknown method DstExpression>
+            @Err <Override Error: unknown method in !'DstExpression!'>
             exitm
           endif
         endif
       else
-       @Err <Override Error: unknown object DstExpression>
+       @Err <Override Error: unknown object in !'DstExpression!'>
        exitm
       endif
     endif
@@ -2435,7 +2458,6 @@ ExitMethod macro Expression
       else
         ifidn <Expression>, <0>
           xor eax, eax
-          echo 1111111111111
         elseifidni <Expression>, <xax>                  ;; Skip all these possibilities
         elseifidni <Expression>, <rax>
         elseifidni <Expression>, <eax>
@@ -2445,7 +2467,6 @@ ExitMethod macro Expression
           mov xax, Expression
         endif
         jmp @@EOM
-        echo ******************
       endif
     endif
   endif
@@ -2463,7 +2484,7 @@ Embed macro InsName:req, ObjExpr:req
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE
     PreParseExpr ObjExpr
     if $ParseObjExpr(ObjExpr) eq FALSE
-      @Err <Embed Error: invaid syntax in ObjExpr>
+      @Err <Embed Error: invaid syntax in !'ObjExpr!'>
     else
       %$$Index = &??ObjName&_VCount + 1
       %&??ObjName&_VCount = $$Index
@@ -2523,7 +2544,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
           endif
         endif
         if $$ErrFlag ne FALSE
-          %echo @CatStr (<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
+          %echo @CatStr (<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
           @Err <$PushMethodArgs32 Error: EAX register already in use.>
           exitm
         else
@@ -2588,7 +2609,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
       else
         ifidn @SubStr($$Arg, 1, 1), </>                 ;; Don't push this argument
           if $$ArgPushed                                ;; Check if we have yet pushed something
-            @Err <$PushMethodArgs32 Error: can't use "/" escape before a pushed argument.>
+            @Err <$PushMethodArgs32 Error: cannot use !'/!' escape before a pushed argument.>
             $$ErrFlag = TRUE
             exitm <0>
           endif
@@ -2641,15 +2662,15 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                 endif
               else
                 @Err <$PushMethodArgs32 Error: register &$$Arg not recognized.>
-               $$ErrFlag = TRUE
+                $$ErrFlag = TRUE
                 exitm
               endif
             else
               if (opattr $$Arg) and OAT_IMMEDIATE       ;; Immediate expression
                 $$ArgSize = type($$Arg)
                 if $$ArgSize eq 8                       ;; In case that the argument is a QWORD
-                  push DWORD ptr ($$Arg and 0FFFFFFFFh)
-                  push DWORD ptr ($$Arg shr 32)
+                  push DWORD ptr ($$Arg and 0FFFFFFFFh) ;; low DWORD pushed first
+                  push DWORD ptr ($$Arg shr 32)         ;; high DWORD pushed second
                   $$StackCorrection = $$StackCorrection + 2*@WordSize
                 else
                   push DWORD ptr $$Arg
@@ -2660,8 +2681,8 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                 $$ArgSize = type($$Arg)
                 ??Count = (($$ArgSize + 3)/4)*4
                 if ??Count eq 0
-                  %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
-                  @Err <$PushMethodArgs32 Error: undefined symbol ($$Arg)>
+                  %echo @CatStr(<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
+                  @Err <$PushMethodArgs32 Error: unknown symbol ($$Arg)>
                 else
                   repeat ($$ArgSize + 3)/4
                     ??Count = ??Count - 4
@@ -2683,23 +2704,23 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
     exitm <0>
   else
     if ArgCount ge 0
-;      echo ==============================
-;      %echo Argument Count  = $ToStr(%ArgCount)
-;      %echo Parameter Count = $ToStr(%??ParamCount)
-;      echo ==============================
+;;      echo ==============================
+;;      %echo Argument Count  = $ToStr(%ArgCount)
+;;      %echo Parameter Count = $ToStr(%??ParamCount)
+;;      echo ==============================
 
       if ??ParamCount gt ArgCount
-        %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
+        %echo @CatStr(<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
         @Err <$PushMethodArgs32 Error: too many arguments or argument type mismatch.>
       elseif ??ParamCount lt ArgCount
-        %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
+        %echo @CatStr(<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
         @Err <$PushMethodArgs32 Error: too few arguments or argument type mismatch.>
       endif
       exitm <0>                                         ;; Regular call => stack balance by callee
     else
-      if ??ParamCount lt (-1-ArgCount)                  ;; vararg
+      if ??ParamCount lt (-1 - ArgCount)                ;; vararg
         @Err <$PushMethodArgs32 Error: too few arguments or argument type mismatch.>
-        %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
+        %echo @CatStr(<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
         exitm <0>
       else
         %exitm <$$StackCorrection>                      ;; Return number of bytes to remove
@@ -2801,7 +2822,8 @@ endm
 ;             Arg3: Mangled object name.
 ;             Arg4: Mangled method name.
 ;             Arg5: Arguments.
-; Notes:      If a method has VARARGs, the number of arguments is passed in eax.
+; Notes:      If a method has VARARGs arguments, the "total" number of arguments is passed to the
+;             method in eax.
 
 MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:vararg
   $$IName textequ <InsName>
@@ -2811,22 +2833,22 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
       $$Result = $IsPrivateMethod(MglObjName, MglMtdName)
       if $$Result eq 1
         %ifdifi <??ObjectContext>, <MglObjName>         ;; Check scope
-          @Err <MethodInvoke Error: private method can't be called from within current context>
+          @Err <MethodInvoke Error: private method cannot be called from within current context>
           exitm
         endif
       elseif $$Result eq 2
-        @Err <@CatStr(<MethodInvoke Error: undefined method >, %MglObjName, <.>, %MglMtdName)>
+        @Err <@CatStr(<MethodInvoke Error: undefined method !'>, MglObjName, MglMtdName, <!' cannot be invoked>)>
         exitm
       endif
 
       if $IsObsoleteMethod(MglObjName, MglMtdName)      ;; Obsolete method
-        %@Err <@CatStr(<MethodInvoke Error: obsolete method >, MglObjName, <.>, MglMtdName)>
+        %@Err <@CatStr(<MethodInvoke Error: obsolete method !'>, MglObjName, MglMtdName, <!' cannot be invoked>)>
         exitm
 
       else
         GetMtdType MglObjName, MglMtdName               ;; Updates ??MtdType & ??ImpObj
         if ??MtdType eq ??MTDTYPE_UNKNOWN
-          %@Err <@CatStr(<MethodInvoke Error: unknown method >, MglObjName, <.>, MglMtdName)>
+          %@Err <@CatStr(<MethodInvoke Error: unknown method !'>, MglObjName, MglMtdName, <!' cannot be invoked>)>
           exitm
 
         else
@@ -2867,7 +2889,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
                 SetVarargPassedParams <Args>
                 call @CatStr(%??ImpObj, MglMtdName)
                 if $$StackCorr gt 0
-                  add esp, $$StackCorr                  ;; Correct the stack in case of vararg
+                  add esp, $$StackCorr                  ;; Correct the stack in case of VARARG
                 endif
               else
                 if type(InsName) ne @WordSize
@@ -2972,7 +2994,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
       endif
     endif
   else
-    @Err <MethodInvoke Error: unknown object: MglObjName>
+    @Err <MethodInvoke Error: unknown !'MglObjName!' object>
   endif
 endm
 
@@ -3024,7 +3046,7 @@ endm
 ; Return:     TRUE if the parsing was successful, otherwise FALSE.
 ;             ??InsExpr, ??ObjExpr, ??MtdExpr. (??ObjExpr and ??MtdExpr are mangled).
 ; Notes:      The challenge from this macro is to avoid symbol expansion. E.g. GetObject is the name
-;             of a well known api. When we use it as the name of a method, it will get expanded to
+;             of a well known API. When we use it as the name of a method, it will get expanded to
 ;             __imp_GetObjectA, Which causes problems when parsing the input expression.
 ;             Possible syntax combinations:
 ;               - Ins::Nsp:Obj.Mtd
@@ -3059,7 +3081,7 @@ $ParseMtdExpr macro Expression:req
       if ??Pos3 ne 0
         ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2, ??Pos3 - ??Pos1 - 2)
       else
-        @Err <ParseMtdExpr Error: invalid syntax in Expression>
+        @Err <ParseMtdExpr Error: invalid syntax in !'Expression!'>
         exitm <FALSE>
       endif
     endif
@@ -3070,7 +3092,7 @@ $ParseMtdExpr macro Expression:req
                          ??ObjPfxSep, \
                          @SubStr(<Expression>, ??Pos2 + 1, ??Pos3 - ??Pos2 - 1)
       else
-        @Err <ParseMtdExpr Error: invalid syntax in Expression>
+        @Err <ParseMtdExpr Error: invalid syntax in !'Expression!'>
         exitm <FALSE>
       endif
     else
@@ -3272,7 +3294,7 @@ endm
 OCall macro Expression:req, Args:vararg
   PreParseExpr Expression
   if $ParseCallExpr(Expression) eq FALSE
-    @Err <OCall Error: invalid syntax in Expression>
+    @Err <OCall Error: invalid syntax in !'Expression!'>
   else
     %MethodInvoke FALSE, ??InsExpr, ??ObjExpr, ??MtdExpr, Args
   endif
@@ -3292,7 +3314,7 @@ endm
 ACall macro Expression:req, Args:vararg
   PreParseExpr Expression
   if $ParseCallExpr(Expression) eq FALSE
-    .err <ACall - invalid syntax: Expression>
+    @Err <ACall Error: invalid syntax in !'Expression!'>
   else
     $$AName CatStr ??ObjExpr, <_Inherit>
     %MethodInvoke TRUE, ??InsExpr, $$AName, ??MtdExpr, Args
@@ -3313,7 +3335,7 @@ endm
 TCall macro Expression:req, Args:vararg
   PreParseExpr Expression
   if $ParseCallExpr(Expression) eq FALSE
-    .err <TCall - invalid syntax: Expression>
+    @Err <TCall Error: invalid syntax in !'Expression!'>
   else
     %MethodInvoke TRUE, ??InsExpr, ??ObjExpr, ??MtdExpr, Args
   endif
@@ -3333,11 +3355,12 @@ endm
 DCall macro Expression:req, Args:vararg
   PreParseExpr Expression
   if $ParseCallExpr(Expression) eq FALSE
-    .err <DCall - invalid syntax: Expression>
+    @Err <DCall Error: invalid syntax in !'Expression!'>
   else
     %GetMtdType ??ObjExpr, ??MtdExpr                    ;; Returns ??MtdType & ??ImpObj
     if ??MtdType eq ??MTDTYPE_UNKNOWN
-      .err <DCall - unknown method: Expression>
+      @Err <DCall Error: unknown method !'Expression!'>
+      exitm
 
     elseif ??MtdType eq ??MTDTYPE_INLINE
       ;; Save context assume values
@@ -3391,6 +3414,7 @@ endm
 ; Macro:      $GetParamCount
 ; Purpose:    Helper macro counts parameters in Args list.
 ; Arguments:  Arg1: Method parameter list.
+; Return:     Parameter count.
 
 $GetParamCount macro Args:vararg
   $$Sum = 0
@@ -3401,15 +3425,16 @@ $GetParamCount macro Args:vararg
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:     $GetImpIfc
-; Purpose:   Get the implementing interface name.
-; Arguments: Arg1: Interface name.
-;            Arg2: Method name.
+; Macro:      $GetImpIfc
+; Purpose:    Get the implementing interface name.
+; Arguments:  Arg1: Interface name.
+;             Arg2: Method name.
+; Return:     The implementig interface name or nothing.
 
 $GetImpIfc macro IName:req, MName:req
   ??sz1 textequ <&IName&&MName&>
-  %ifdef ??sz1                                          ;; Check for this symbol
-    exitm <IName>                                       ;;   (=> prototype from STD_METHOD)
+  %ifdef ??sz1                                          ;; Check for this symbol 
+    exitm <IName>                                       ;; => prototype from COM_MTD_STD/COM_MTD_DSP
   else
     ??Inher CatStr <IName>, <_Inherit>
     %ifdef ??Inher
@@ -3421,16 +3446,16 @@ $GetImpIfc macro IName:req, MName:req
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:     ICall / $ICall
-; Purpose:   Interface method call.
-; Arguments: Arg1: InstancePointer::InterfaceName.MethodName.
-;            Arg2: Method arguments.
+; Macro:      ICall / $ICall
+; Purpose:    Interface method call.
+; Arguments:  Arg1: InstancePointer::InterfaceName.MethodName.
+;             Arg2: Method arguments.
 
 ICall macro Expression:req, Args:vararg
   PreParseExpr Expression
 
   if ??Pos1 le 1 or ??Pos2 ne 0 or ??Pos3 le 4
-    .err <ICall - syntax error: Expression>
+    @Err <ICall Error: syntax error in !'Expression!'>
   else
     ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
     ??IfcExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos3 - ??Pos1 - 2)
@@ -3478,24 +3503,24 @@ ICall macro Expression:req, Args:vararg
         push $$IName
         mov edx, [$$IName]                              ;; Make indirection
         call (??ImpIfc ptr [edx]).??MtdExpr
-;        if $$StackCorr ne 0
-;          add esp, $$StackCorr                          ;; Correct the stack !!!!!!!!!!!!!!!!!!!!!!
-;        endif
+        if $$StackCorr gt 0
+          add esp, $$StackCorr                          ;; Correct the stack if necessary
+        endif
       else
         $$ProcType CatStr <TYPE_>, ??ImpIfc, ??MtdExpr
         GetInstance64 ??InsExpr
         ifb <Args>
-          %invoke $$ProcType ptr [0], rcx
+          %invoke $$ProcType ptr [0], rcx               ;; Generate code for an invokation
         else
-          %invoke $$ProcType ptr [0], rcx, Args
+          %invoke $$ProcType ptr [0], rcx, Args         ;; Generate code for an invokation with Args
         endif
 
         org $ - 7                                       ;; Discard call instruction [FF142500000000]
         mov r11, [rcx]                                  ;; Make indirection
-        call (??ImpIfc ptr [r11]).??MtdExpr
+        call (??ImpIfc ptr [r11]).??MtdExpr             ;; Call the Interface method
       endif
     else
-      %.err <ICall - undefined !i!nterface method ??IfcExpr.&??MtdExpr>
+      %@Err <ICall Error: unknown !i!nterface or method implementation in !'Expression!'>
       exitm
     endif
   endif
@@ -3549,13 +3574,13 @@ LockObjectAccess macro ObjInst:req
   mov ecx, eax
 
   @@1:
-  .if ObjInst.ObjLock.dOwnerTheadID == 0                ;; No lock?
+  .if ObjInst.ObjLock.dOwnerThreadID == 0               ;; No lock?
     xor eax, eax
-    lock cmpxchg ObjInst.ObjLock.dOwnerTheadID, ecx
+    lock cmpxchg ObjInst.ObjLock.dOwnerThreadID, ecx
     jnz @@1
     inc ObjInst.ObjLock.dLockCount
   .else
-    .if ecx == ObjInst.ObjLock.dOwnerTheadID            ;; Continue thread execution
+    .if ecx == ObjInst.ObjLock.dOwnerThreadID           ;; Continue thread execution
       inc ObjInst.ObjLock.dLockCount                    ;; Increment LockCount
     .else
       invoke Sleep, 0                                   ;; A value of zero causes the thread to
@@ -3570,7 +3595,7 @@ endm
 UnlockObjectAccess macro ObjInst:req
   dec ObjInst.ObjLock.dLockCount
   .if ZERO?
-    lock and ObjInst.ObjLock.dOwnerTheadID, 0
+    lock and ObjInst.ObjLock.dOwnerThreadID, 0
   .endif
 endm
 
@@ -3582,7 +3607,7 @@ endm
 ;  xor eax, eax
 ;
 ;  @@0:
-;  cmpxchg ObjInst.ObjLock.dOwnerTheadID, ecx            ;; Implicit lock prefix
+;  cmpxchg ObjInst.ObjLock.dOwnerThreadID, ecx           ;; Implicit lock prefix
 ;  ht                                                    ;; Override default
 ;  jz @@1
 ;  _Pause_                                               ;; Wait a bit
@@ -3593,7 +3618,7 @@ endm
 ;
 ;UnlockObjectAccess macro ObjInst:req
 ;    dec ObjInst.ObjLock.dLockCount                      ;; Decrement dLockCount
-;    cmovz ObjInst.ObjLock.dOwnerTheadID, 0              ;; If zero => reset ThreadID
+;    cmovz ObjInst.ObjLock.dOwnerThreadID, 0             ;; If zero => reset ThreadID
 ;endm
 ;
 ;; --------------------------------------------------------------------------------------------------

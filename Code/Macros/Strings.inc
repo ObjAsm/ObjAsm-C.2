@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of zero terminated string handling macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
-;             Version C.1.1 August 2022
+;             Version C.1.1, August 2022
 ;               - $PCG_RndChr and $PCG_RndStr added.
 ; ==================================================================================================
 

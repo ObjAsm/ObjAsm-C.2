@@ -1,18 +1,21 @@
 ; ==================================================================================================
 ; Title:      ResGuard.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    Detection of resource leakages using ObjAsm ResGuardxx.dll.
-; Notes:      http://www.microsoft.com/msj/0498/hood0498.aspx
-;             Version C.1.0, August 2023
+; Version:    C.1.1
+; Purpose:    Detection of OS resource leaks using ObjAsm ResGuardxx.dll.
+; Notes:      Version C.1.0, August 2023
 ;               - Initial release.
-; Links:      https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
+;             Version C.1.1, June 2026
+;               - Code refactored for maintainability.
+;               - Fixed registration detour gaps
+;               - Added GDI+, token, SCM, atom, and crypto context.
+; Links:      http://www.microsoft.com/msj/0498/hood0498.aspx
+;             https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
 ;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk
 ;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64
 ;             https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
 ; ==================================================================================================
 
-;Todo: add GDI+ procs
 
 _IMAGEHLP_SOURCE_ equ 0
 SYM_NAME_LENGTH   equ 255
@@ -39,7 +42,7 @@ if TARGET_BITNESS eq 32
 
   SYMBOL struct
     IMAGEHLP_SYMBOL   {}
-    CHRA              SYM_NAME_LENGTH dup(?)            ;Only ANSI names
+    CHRA              SYM_NAME_LENGTH dup(?)            ; Only ANSI names
   SYMBOL ends
 
   SymGetSymFromAddrX textequ <SymGetSymFromAddr>
@@ -48,7 +51,7 @@ else
 
   SYMBOL struct
     IMAGEHLP_SYMBOL64 {}
-    CHRA              SYM_NAME_LENGTH dup(?)            ;Only ANSI names
+    CHRA              SYM_NAME_LENGTH dup(?)            ; Only ANSI names
   SYMBOL ends
 
   SymGetSymFromAddrX textequ <SymGetSymFromAddr64>
@@ -59,7 +62,7 @@ CALLER_INFO struct
   xInstrAddr  XWORD   ?
 CALLER_INFO ends
 
-CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated into another
+CDF_AGGREGATED  equ   BIT00                             ; Set if it is aggregated into another
 
 ; --------------------------------------------------------------------------------------------------
 ; Object:     CallData
@@ -67,14 +70,14 @@ CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated
 ;             identification like a HANDLE, ID, etc.
 
 Object CallData,, Primer
-  VirtualMethod   Show,       XWORD, XWORD              ;Callback method
+  VirtualMethod   Show,       XWORD, XWORD              ; Callback method
 
   DefineVariable  dFlags,     DWORD,        0
-  DefineVariable  dReps,      DWORD,        0           ;After Aggregate, it holds the repetitions
-  DefineVariable  xData1,     XWORD,        0           ;Primary data
-  DefineVariable  xData2,     XWORD,        0           ;Auxiliary data
+  DefineVariable  dReps,      DWORD,        0           ; After Aggregate, it holds the repetitions
+  DefineVariable  xData1,     XWORD,        0           ; Primary data
+  DefineVariable  xData2,     XWORD,        0           ; Auxiliary data
   DefineVariable  cProcName,  CHRA,         SYM_NAME_LENGTH dup(0)
-  DefineVariable  dCount,     DWORD,        0           ;Number if filled CALLER_INFO structures
+  DefineVariable  dCount,     DWORD,        0           ; Number if filled CALLER_INFO structures
   DefineVariable  CallStack,  CALLER_INFO,  CALLER_MAX_DEEP dup({0, 0})
 ObjectEnd
 
@@ -90,17 +93,17 @@ Object RTC_Collection,, Collection
   RedefineMethod  Insert,     $ObjPtr(CallData)
   VirtualMethod   Remove,     XWORD, XWORD
 
-  DefineVariable  dMaxCount,  DWORD,    0               ;Maximal count to check the system load
-  DefineVariable  dTotCount,  DWORD,    0               ;Cummulated number of calls
+  DefineVariable  dMaxCount,  DWORD,    0               ; Maximal count to check the system load
+  DefineVariable  dTotCount,  DWORD,    0               ; Cummulated number of calls
 ObjectEnd
 
-.data                                                   ;Non exported data
+.data                                                   ; Non exported data
   hProcess          HANDLE    0
   xAppRefAddr       XWORD     0
-  HookColl          $ObjInst(Collection)                ;Collection of IAT_Hook objects
-  RcrcColl          $ObjInst(Collection)                ;Collection of RTC_Collection objects
-  FailColl          $ObjInst(RTC_Collection)            ;Failed API calls
-  LogiColl          $ObjInst(RTC_Collection)            ;API calls where a logic error was detected
+  HookColl          $ObjInst(Collection)                ; Collection of IAT_Hook objects
+  RcrcColl          $ObjInst(Collection)                ; Collection of RTC_Collection objects
+  FailColl          $ObjInst(RTC_Collection)            ; Failed API calls
+  LogiColl          $ObjInst(RTC_Collection)            ; API calls where a logic error was detected
   dResGuardEnabled  DWORD     FALSE
 
 .code
@@ -123,9 +126,10 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
   SetObject xsi
   ;Show a bullet
   .ifBitClr [xsi].dFlags, CDF_AGGREGATED
+    ; Draw a bullet
     invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
-
+    ; Draw the API procedure name
     invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
 
@@ -140,9 +144,9 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
                         DBG_EFFECT_NORMAL, offset wWndCaption
 
     xor ebx, ebx
-    lea xdi, [xsi].CallStack                            ;xdi -> CallData.CallStack
+    lea xdi, [xsi].CallStack                             ;xdi -> CallData.CallStack
     .while ebx != [xsi].$Obj(CallData).dCount
-      ;Show an arrow
+      ;Draw an arrow surrounded by spaces
       invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \
                           DBG_EFFECT_NORMAL, offset wWndCaption
       mov Symbol.MaxNameLength, SYM_NAME_LENGTH
@@ -156,8 +160,8 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
                               DBG_EFFECT_NORMAL, offset wWndCaption
         .endif
       .endif
-      FillStringA cBuffer, < (>
-      lea xcx, [cBuffer + 2]
+      FillStringA cBuffer, <(>
+      lea xcx, [cBuffer + ??StrLen]
       invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
       invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
       invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
@@ -197,17 +201,17 @@ Method RTC_Collection.Aggregate, uses xbx xdi xsi
   .while edx != [xsi].dCount
     mov dOuterIndex, edx
     lea edi, [edx + 1]
-    mov xbx, $OCall(xsi.ItemAt, edx)                    ;xbx -> CallData
+    mov xbx, $OCall(xsi.ItemAt, edx)                    ; xbx -> CallData
     .ifBitClr [xbx].$Obj(CallData).dFlags, CDF_AGGREGATED
       .while edi != [xsi].dCount
         mov dInnerIndex, edi
-        mov xdi, $OCall(xsi.ItemAt, edi)                ;xdi -> CallData
+        mov xdi, $OCall(xsi.ItemAt, edi)                ; xdi -> CallData
         .ifBitClr [xdi].$Obj(CallData).dFlags, CDF_AGGREGATED
           lea xcx, [xbx].$Obj(CallData).cProcName
           lea xdx, [xdi].$Obj(CallData).cProcName
-          invoke StrCompA, xcx, xdx                     ;Check the API name
+          invoke StrCompA, xcx, xdx                     ; Check the API name
           .if eax == 0
-            mov ecx, [xbx].$Obj(CallData).dCount        ;Check the call data
+            mov ecx, [xbx].$Obj(CallData).dCount        ; Check the call data
             .if ecx == [xdi].$Obj(CallData).dCount
               mov eax, sizeof(CALLER_INFO)
               mul ecx
@@ -216,7 +220,7 @@ Method RTC_Collection.Aggregate, uses xbx xdi xsi
               invoke MemComp, xcx, xdx, eax
               .if eax == 0
                 BitSet [xdi].$Obj(CallData).dFlags, CDF_AGGREGATED
-                inc [xbx].$Obj(CallData).dReps          ;Increment dReps count
+                inc [xbx].$Obj(CallData).dReps          ; Increment dReps count
               .endif
             .endif
           .endif
@@ -232,7 +236,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     RTC_Collection.Deaggregate
-; Purpose:    Reset marks and CallData.Reps.
+; Purpose:    Reset CDF_AGGREGATED flag and CallData.Reps.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -242,7 +246,7 @@ Method RTC_Collection.Deaggregate, uses xsi
   mov xax, [xsi].pItems
   .while edx != [xsi].dCount
     mov xcx, [xax]
-    mov [xcx].$Obj(CallData).dFlags, 0
+    BitClr [xcx].$Obj(CallData).dFlags, CDF_AGGREGATED
     mov [xcx].$Obj(CallData).dReps, 0
     add xax, sizeof(POINTER)
     inc edx
@@ -297,31 +301,31 @@ Method RTC_Collection.Remove, uses xsi, xData1:XWORD, xData2:XWORD
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      InvokeOriginalAPI
-; Purpose:    Invoke the original API (before hooking), regarless of the target bittness.
+; Macro:      InvokeOriginalCall
+; Purpose:    Invoke the original call (before hooking), regardless of the target bitness.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-InvokeOriginalAPI macro ApiName, ArgCount
+InvokeOriginalCall macro ProcName, ArgCount
   ;At this point, all args are stored on the stack. In 64-bit mode, this was done by the compiler
   if TARGET_BITNESS eq 32
     Cnt = ArgCount
-    repeat ArgCount                                     ;;Push all arguments creating a new call stack
+    repeat ArgCount                                     ;; Push all arguments creating a new call stack
       @CatStr(<push Arg>, %Cnt)
       Cnt = Cnt - 1
     endm
   else
     if ArgCount gt 4
       Cnt = ArgCount
-      repeat ArgCount - 4                               ;;Push higher arguments creating a new call stack
+      repeat ArgCount - 4                               ;; Push higher arguments creating a new call stack
         m2m XWORD ptr [rsp + (Cnt - 1)*sizeof(XWORD)], @CatStr(<Arg>, %Cnt), xax
         Cnt = Cnt - 1
       endm
     endif
   ;;rcx, rdx, r8 & r9 were not changed; Stack reservation (20h) remains unchanged
   endif
-  mov xax, pHook&ApiName&
-  call [xax].$Obj(IAT_Hook).pEntry                      ;;Call original API
+  mov xax, pHook_&ProcName&
+  call [xax].$Obj(IAT_Hook).pEntry                      ;; Invoke original call
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -351,7 +355,7 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      AnalyseStack
-; Purpose:    Analize the stack starting from the current context.
+; Purpose:    Creates a CallData instance and analizes the stack starting from the current context.
 ; Arguments:  None.
 ; Return:     xbx -> CallData object.
 ; Note:       uses xbx xdi
@@ -364,31 +368,31 @@ AnalyseStack macro
 
   invoke MemZero, addr Stack, sizeof STACK
 
-  invoke RtlCaptureContext, addr Context                ;;Capture current CPU context in Context
-  ;;Context.Xbp_ = [xbp]                                Since RtlCaptureContext does change xbp,
-  ;;Context.Xsp_ = lea [xbp + 4/8]                      the returned values correspond to the
-  ;;Context.Xip_ = [xbp + 4/8] (ret address)            calling procedure
+  invoke RtlCaptureContext, addr Context                ;; Capture current CPU context in Context
+  ;; Context.Xbp_ = [xbp]                               Since RtlCaptureContext does change xbp,
+  ;; Context.Xsp_ = lea [xbp + 4/8]                     the returned values correspond to the
+  ;; Context.Xip_ = [xbp + 4/8] (ret address)           calling procedure
 
   mov Stack.AddrPC.Mode,     AddrModeFlat
   mov Stack.AddrFrame.Mode,  AddrModeFlat
   mov Stack.AddrStack.Mode,  AddrModeFlat
   mov Stack.AddrReturn.Mode, AddrModeFlat
 
-  lea xdi, [xbx].$Obj(CallData).CallStack               ;;xdi -> CallData first CallStack
+  lea xdi, [xbx].$Obj(CallData).CallStack               ;; xdi -> CallData first CallStack
 
   if TARGET_BITNESS eq 32
     .repeat
       WalkTheStack
       .break .if eax == 0
       m2m [edi].CALLER_INFO.xRetAddr, Context.Eip_, edx
-      m2m Context.Eip_, Stack.AddrReturn.Offset_, ecx   ;;Temp storage for next iteration
+      m2m Context.Eip_, Stack.AddrReturn.Offset_, ecx   ;; Temp storage for next iteration
       m2m [edi].CALLER_INFO.xInstrAddr, Stack.AddrPC.Offset_, edx
       inc [ebx].$Obj(CallData).dCount
       add edi, sizeof CALLER_INFO
-      mov eax, Stack.AddrFrame.Offset_                  ;;Use the frame pointer
+      mov eax, Stack.AddrFrame.Offset_                  ;; Use the frame pointer
     .until eax == xAppRefAddr || [ebx].$Obj(CallData).dCount == CALLER_MAX_DEEP
   else
-    WalkTheStack                                        ;;Get first frame of the detour proc
+    WalkTheStack                                        ;; Get first frame of the detour proc
     .if eax != 0
       .repeat
         m2m [rdi].CALLER_INFO.xRetAddr, Stack.AddrReturn.Offset_, rdx
@@ -397,7 +401,7 @@ AnalyseStack macro
         m2m [rdi].CALLER_INFO.xInstrAddr, Stack.AddrPC.Offset_, rdx
         inc [rbx].$Obj(CallData).dCount
         add rdi, sizeof CALLER_INFO
-        mov rax, Stack.AddrStack.Offset_                ;;Use the stack pointer
+        mov rax, Stack.AddrStack.Offset_                ;; Use the stack pointer
       .until rax == xAppRefAddr || [rbx].$Obj(CallData).dCount == CALLER_MAX_DEEP
     .endif
   endif
@@ -405,67 +409,89 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      DefineHook
-; Purpose:    Define the Hook pointer and do some administration stuff.
-; Arguments:  Arg1: API name.
-;             Arg2: (optional) RTCD_Coll pointer.
+; Purpose:    Allocate the hook POINTER and do some administration stuff.
+; Arguments:  Arg1: API procedure name.
+;             Arg2: Resource type name, used to group calls related to the same OS resource type.
 ; Return:     Nothing.
 
-DefineHook macro ApiName:req, pRTC_Coll
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  ifnb <pRTC_Coll>
-    externdef pRTC_Coll:$ObjPtr(RTC_Collection)         ;;The RTC_Collection will be definend later
+DefineHook macro ProcName:req, ResTypeName
+  HookCount = HookCount + 1                             ;; Keep track of the hook count
+  ifnb <ResTypeName>
+    externdef pRTCC_&ResTypeName&:$ObjPtr(RTC_Collection) ;; The RTC_Collection will be definend later
   endif
   .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  pHook_&ProcName&  $ObjPtr(IAT_Hook)   NULL            ;; Create a place to store the POINTER
   .code
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourCreate
-; Purpose:    Create a standard detour procedure to intercept allocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: ID = x:
+; Macro:      AddToResTypeHookList
+; Purpose:    Adds an API definition (DllName and ProcName) to the ResTypeHookList.
+; Arguments:  Arg1: ResType name.
+;             Arg2: DLL full name.
+;             Arg3: API procedure name.
+; Return:     Nothing.
+
+AddToResTypeHookList macro ResTypeName:req, DllName:req, ProcName:req
+  ifndef &ResTypeName&HookList
+    &ResTypeName&HookList CatStr <&DllName&_&ProcName&>
+  else
+    &ResTypeName&HookList CatStr &ResTypeName&HookList, <,>, <&DllName&_&ProcName&>
+  endif
+endm
+
+; --------------------------------------------------------------------------------------------------
+; Macro:      DetourAcquire
+; Purpose:    Creates a detour procedure to intercept calls that acquire an OS resource.
+; Arguments:  Arg1: DLL full name.
+;             Arg2: API procedure name.
+;             Arg3: Procedure argument count.
+;             Arg4: ID = x:     (This is the returned value used to identify the OS resource)
 ;                     x > 0 : Argument x
-;                     x = 0 : API result (return value)
-;                     x < 0 : [Argument -x]
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer.
-;             Arg6: (optional) Remove argument index. This is meant for APIs like HeapRealloc,
+;                     x = 0 : Call result (return value)
+;                     x < 0 : [Argument -x] (dereference)
+;             Arg5: Procedure success condition.
+;             Arg6: Resource type name, used to group calls related to the same OS resource type.
+;             Arg7: (optional) Remove argument index. This is meant for procedures like HeapRealloc,
 ;                   where the previous HANDLE/POINTER must be removed first.
-;             Arg7: (optional) Condition to bypass registering the successful API call. This is
-;                   meant for APIs like LoadCursorA/W with Arg1 = 0, where the resource must not
+;             Arg8: (optional) Condition to bypass registering the successful call. This is
+;                   meant for procs like LoadCursorA/W with Arg1 = 0, where the resource must not
 ;                   be released.
 ; Return:     Nothing.
 
-DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
-                   pRTC_Coll:req, RemoveArgIndex, PassCond
+DetourAcquire macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
+                   ResTypeName:req, RemoveArgIndex, PassCond
   local ArgStr, Cnt, @@Exit
 
-  DefineHook ApiName, pRTC_Coll
+  ifidn <ProcName>, <CreatePen>
+    int 3
+  endif
 
-  ArgStr textequ <>                                     ;;Prepare argument list
+  AddToResTypeHookList ResTypeName, DllName, ProcName
+  DefineHook ProcName, ResTypeName                      ;; Prepare hook storage
+
+  ArgStr textequ <>                                     ;; Prepare argument list
   Cnt = 0
   repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi ArgStr            ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, ArgCount
+    InvokeOriginalCall ProcName, ArgCount
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
       AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
   elseif CallIdentifier eq 0
-      mov xcx, xApiResult
+      mov xcx, xCallResult
   else
       mov xax, @CatStr(<Arg>, %(-CallIdentifier))
       .if xax != NULL
@@ -486,7 +512,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
         .else
   endif
   ifnb <RemoveArgIndex>
-          @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
+          @CatStr(<OCall >, pRTCC_&ResTypeName, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
           .if eax == 0
             lea xax, LogiColl
             mov [xbx].$Obj(CallData).pOwner, xax
@@ -494,8 +520,8 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
             jmp @@Exit
           .endif
   endif
-          OCall pRTC_Coll::RTC_Collection.Insert, xbx
-          mov xax, pRTC_Coll
+          OCall pRTCC_&ResTypeName::RTC_Collection.Insert, xbx
+          mov xax, pRTCC_&ResTypeName
           mov [xbx].$Obj(CallData).pOwner, xax
   ifnb <PassCond>
         .endif
@@ -508,30 +534,34 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
       .endif
   endif
 @@Exit:
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
+  Detour_&ProcName& endp
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourDestroy
-; Purpose:    Create a standard detour procedure to intercept deallocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: ID = x:
+; Macro:      DetourRelease
+; Purpose:    Creates a detour procedure to intercept a call that releases an OS resource.
+; Arguments:  Arg1: DLL full name.
+;             Arg2: API procedure name.
+;             Arg3: Procedure argument count.
+;             Arg4: ID = x:     (This is the returned value used to identify the OS resource)
 ;                     x > 0 : Argument x
-;                     x = 0 : [xsp]
-;                     x < 0 : [Argument -x]
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
+;                     x = 0 : Call result (return value)
+;                     x < 0 : [Argument -x] (dereference)
+;             Arg5: Procedure success condition.
+;             Arg6: Resource type name, used to group calls related to the same OS resource type.
+;             Arg7: (optional) List of additional Resource type names where the OS resource
+;                   could have been acquired.
 ; Return:     Nothing.
 
-DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
-                    pRTC_Coll_List:vararg
+DetourRelease macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
+                    ResTypeName:req, ResTypeNameList:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
-  DefineHook ApiName
+  AddToResTypeHookList ResTypeName, DllName, ProcName
+  DefineHook ProcName
 
   ArgStr textequ <>
   Cnt = 0
@@ -540,21 +570,21 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi ArgStr            ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, ArgCount
+    InvokeOriginalCall ProcName, ArgCount
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
       AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
   elseif CallIdentifier eq 0
-      mov xcx, xApiResult
+      mov xcx, xCallResult
   else
       mov xax, @CatStr(<Arg>, %(-CallIdentifier))
       .if xax != NULL
@@ -569,10 +599,13 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
   ifnb <SuccessCond>
       .if SuccessCond
   endif
-        for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
-          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
+        @CatStr(<OCall pRTCC_>, <ResTypeName>, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
+        test eax, eax
+        jnz @@Exit                                      ;; Exit if found
+        for ResTypeName, <ResTypeNameList>              ;; Search in all additional RTC_Collections
+          @CatStr(<OCall pRTCC_>, <ResTypeName>, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
           test eax, eax
-          jnz @@Exit                                  ;;Exit if found
+          jnz @@Exit                                    ;; Exit if found
         endm
         lea xax, LogiColl
         mov [xbx].$Obj(CallData).pOwner, xax
@@ -587,52 +620,56 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
       OCall xax::RTC_Collection.Insert, xbx
   endif
 @@Exit:
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
+  Detour_&ProcName& endp
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourCreateNamed
-; Purpose:    Create a standard detour procedure to intercept allocation named APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: ID = x:
+; Macro:      DetourAcquireNamed
+; Purpose:    Creates a detour procedure to intercept calls that acquire an OS resource by using
+;             an identifier string.
+; Arguments:  Arg1: DLL full name.
+;             Arg2: API procedure name.
+;             Arg3: Procedure argument count.
+;             Arg4: ID = x:     (This is the returned value used to identify the OS resource)
 ;                     x > 0 : Argument x
-;                     x = 0 : API result (return value)
-;                     x < 0 : [Argument -x]
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer.
+;                     x = 0 : Call result (return value)
+;                     x < 0 : [Argument -x] (dereference)
+;             Arg5: Procedure success condition.
+;             Arg6: Resource type name, used to group calls related to the same OS resource type.
 ; Return:     Nothing.
 
-DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, pRTC_Coll:req
+DetourAcquireNamed macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req, \
+                        SuccessCond:req, ResTypeName:req
   local ArgStr, Cnt
 
-  DefineHook ApiName, pRTC_Coll
+  AddToResTypeHookList ResTypeName, DllName, ProcName
+  DefineHook ProcName, ResTypeName
 
-  ArgStr textequ <>                                     ;;Prepare argument list
+  ArgStr textequ <>                                     ;; Prepare argument list
   Cnt = 0
   repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi ArgStr            ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, ArgCount
+    InvokeOriginalCall ProcName, ArgCount
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
       AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
   elseif CallIdentifier eq 0
-      mov xcx, xApiResult
+      mov xcx, xCallResult
   else
       mov xax, @CatStr(<Arg>, %(-CallIdentifier))
       .if xax != NULL
@@ -645,11 +682,11 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
       mov [xbx].$Obj(CallData).xData2, 0
 
       .if SuccessCond
-        ;In case that this named API was called previously, we remove this call data
-        OCall pRTC_Coll::RTC_Collection.Remove, [xbx].$Obj(CallData).xData1, [xbx].$Obj(CallData).xData2
+        ;In case that this named proc was called previously, we remove this call data
+        OCall pRTCC_&ResTypeName&::RTC_Collection.Remove, [xbx].$Obj(CallData).xData1, [xbx].$Obj(CallData).xData2
 
-        OCall pRTC_Coll::RTC_Collection.Insert, xbx
-        mov xax, pRTC_Coll
+        OCall pRTCC_&ResTypeName&::RTC_Collection.Insert, xbx
+        mov xax, pRTCC_&ResTypeName&
         mov [xbx].$Obj(CallData).pOwner, xax
       .else
         lea xax, FailColl
@@ -657,52 +694,55 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
         OCall xax::RTC_Collection.Insert, xbx
       .endif
 
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
+  Detour_&ProcName& endp
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourCreateCounted
-; Purpose:    Create a counted detour procedure to intercept allocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: Counter name.
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer.
+; Macro:      DetourAcquireCounted
+; Purpose:    Creates a detour procedure to intercept calls that cummulate.
+; Arguments:  Arg1: DLL full name.
+;             Arg2: API procedure name.
+;             Arg3: Procedure argument count.
+;             Arg4: Counter name (created separately).
+;             Arg5: Procedure success condition.
+;             Arg6: Resource type name, used to group calls related to the same OS resource type.
 ; Return:     Nothing.
 
-DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll:req
+DetourAcquireCounted macro DllName:req, ProcName:req, ArgCount:req, CounterName:req, \
+                          SuccessCond:req, ResTypeName:req
   local ArgStr, Cnt
 
-  DefineHook ApiName, pRTC_Coll
+  AddToResTypeHookList ResTypeName, DllName, ProcName
+  DefineHook ProcName, ResTypeName
 
-  ArgStr textequ <>                                     ;;Prepare argument list
+  ArgStr textequ <>                                     ;; Prepare argument list
   Cnt = 0
   repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi ArgStr            ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, ArgCount
+    InvokeOriginalCall ProcName, ArgCount
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
       AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
 
       .if SuccessCond
         inc CounterName
         m2m [xbx].$Obj(CallData).xData1, CounterName, xax
         mov [xbx].$Obj(CallData).xData2, 0
-        OCall pRTC_Coll::RTC_Collection.Insert, xbx
-        mov xax, pRTC_Coll
+        OCall pRTCC_&ResTypeName&::RTC_Collection.Insert, xbx
+        mov xax, pRTCC_&ResTypeName&
         mov [xbx].$Obj(CallData).pOwner, xax
       .else
         mov [xbx].$Obj(CallData).xData1, -1
@@ -711,26 +751,31 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
         OCall xax::RTC_Collection.Insert, xbx
       .endif
 
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
+  Detour_&ProcName& endp
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourDestroyCounted
+; Macro:      DetourReleaseCounted
 ; Purpose:    Create a counted detour procedure to intercept deallocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: Counter name.
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
+; Arguments:  Arg1: DLL full name.
+;             Arg2: API procedure name.
+;             Arg3: Procedure argument count.
+;             Arg4: Counter name.
+;             Arg5: Procedure success condition.
+;             Arg6: Resource type name, used to group calls related to the same OS resource type.
+;             Arg7: (optional) List of additional Resource type names where the OS resource
+;                   could have been acquired.
 ; Return:     Nothing.
 
-DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll_List:vararg
+DetourReleaseCounted macro DllName:req, ProcName:req, ArgCount:req, CounterName:req, \
+                           SuccessCond:req, ResTypeName:req, ResTypeNameList:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
-  DefineHook ApiName
+  AddToResTypeHookList ResTypeName, DllName, ProcName
+  DefineHook ProcName
 
   ArgStr textequ <>
   Cnt = 0
@@ -739,28 +784,31 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi ArgStr            ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, ArgCount
+    InvokeOriginalCall ProcName, ArgCount
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
       AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
       m2m [xbx].$Obj(CallData).xData1, CounterName, xcx
       mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
       .if SuccessCond
   endif
-        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
-          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+        @CatStr(<OCall pRTCC_>, <ResTypeName>, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+        test eax, eax
+        jnz @@Exit                                      ;; Exit if found
+        for ResTypeName, <ResTypeNameList>              ;; Search in all additional RTC_Collections
+          @CatStr(<OCall pRTCC_>, <ResTypeName>, <::RTC_Collection.Remove, >, CounterName, <, 0>)
           .if eax != FALSE
             dec CounterName
-            jmp @@Exit                                  ;;Exit if found
+            jmp @@Exit                                  ;; Exit if found
           .endif
         endm
         lea xax, LogiColl
@@ -774,272 +822,233 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
       OCall xax::RTC_Collection.Insert, xbx
   endif
 @@Exit:
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
-endm
-
-; --------------------------------------------------------------------------------------------------
-; Macro:      NewHook
-; Purpose:    Create a new hook.
-; Arguments:  Arg1: API procedure name.
-;             Arg2: API library name.
-; Return:     Nothing.
-
-NewHook macro ProcName:req, LibName:req
-% New IAT_Hook
-  mov pHook&ProcName&, xax                              ;;Save the IAT_Hook in this var
-  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&LibName&.dll"), $OfsCStrA("&ProcName&"), \
-                            offset Dtr&ProcName&, FALSE
-  mov xax, pHook&ProcName&
-  .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
-    Destroy xax
-  .else
-    OCall HookColl::Collection.Insert, xax              ;;and in a dedicated HookColl collection
-  .endif
-endm
-
-; --------------------------------------------------------------------------------------------------
-; Macro:      NewRTCC
-; Purpose:    Create a new RTC_Collection.
-; Arguments:  Arg1: Resource type name.
-;             Arg2: Initial collection size.
-; Return:     Nothing.
-
-NewRTCC macro ResTypeName:req, ColSize:req
-  .data
-  pRTCC_&ResTypeName&  $ObjPtr(RTC_Collection)  NULL
-
-  .code
-  New RTC_Collection
-  mov pRTCC_&ResTypeName&, xax
-  OCall RcrcColl::Collection.Insert, xax
-  OCall xax::RTC_Collection.Init, offset RcrcColl, %ColSize, %ColSize, COL_MAX_CAPACITY
+  Detour_&ProcName& endp
 endm
 
 ; ==================================================================================================
 
-DetourCreate CreateJobObjectA, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
-DetourCreate CreateJobObjectW, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
+DetourAcquire Kernel32.dll, CreateJobObjectA, 2, 0, <xCallResult !!= NULL>, Job
+DetourAcquire Kernel32.dll, CreateJobObjectW, 2, 0, <xCallResult !!= NULL>, Job
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateTransactionA, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
-DetourCreate CreateTransactionW, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
+DetourAcquire KtmW32, CreateTransactionA, 7, 0, <xCallResult !!= NULL>, Transaction
+DetourAcquire KtmW32, CreateTransactionW, 7, 0, <xCallResult !!= NULL>, Transaction
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreatePrivateNamespaceA, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
-DetourCreate CreatePrivateNamespaceW, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
-DetourDestroy ClosePrivateNamespace, 3, 3, <xApiResult !!= FALSE>, pRTCC_PrivateNamespace
+DetourAcquire Kernel32.dll, CreatePrivateNamespaceA, 3, 0, <xCallResult !!= NULL>, PrivateNamespace
+DetourAcquire Kernel32.dll, CreatePrivateNamespaceW, 3, 0, <xCallResult !!= NULL>, PrivateNamespace
+DetourRelease Kernel32.dll, ClosePrivateNamespace, 3, 3, <xCallResult !!= FALSE>, PrivateNamespace
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate HeapAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock
-DetourCreate HeapReAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock, 3
-DetourDestroy HeapFree, 3, 3, <xApiResult !!= FALSE>, pRTCC_HeapMemBlock
+DetourAcquire Kernel32.dll, HeapAlloc, 3, 0, <xCallResult !!= NULL>, HeapMemBlock
+DetourAcquire Kernel32.dll, HeapReAlloc, 4, 0, <xCallResult !!= NULL>, HeapMemBlock, 3
+DetourRelease Kernel32.dll, HeapFree, 3, 3, <xCallResult !!= FALSE>, HeapMemBlock
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate GlobalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock
-DetourCreate GlobalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock, 1
-DetourDestroy GlobalFree, 1, 1, <xApiResult == NULL>, pRTCC_GlobalMemBlock
+DetourAcquire Kernel32.dll, GlobalAlloc, 2, 0, <xCallResult !!= NULL>, GlobalMemBlock
+DetourAcquire Kernel32.dll, GlobalReAlloc, 3, 0, <xCallResult !!= NULL>, GlobalMemBlock, 1
+DetourRelease Kernel32.dll, GlobalFree, 1, 1, <xCallResult == NULL>, GlobalMemBlock
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate LocalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock
-DetourCreate LocalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock, 1
-DetourDestroy LocalFree, 1, 1, <xApiResult == NULL>, pRTCC_LocalMemBlock
+DetourAcquire Kernel32.dll, LocalAlloc, 2, 0, <xCallResult !!= NULL>, LocalMemBlock
+DetourAcquire Kernel32.dll, LocalReAlloc, 3, 0, <xCallResult !!= NULL>, LocalMemBlock, 1
+DetourRelease Kernel32.dll, LocalFree, 1, 1, <xCallResult == NULL>, LocalMemBlock
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CoTaskMemAlloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock
-DetourCreate CoTaskMemRealloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock, 1
-DetourDestroy CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
+DetourAcquire Ole32.dll, CoTaskMemAlloc, 1, 0, <xCallResult !!= NULL>, CoTaskMemBlock
+DetourAcquire Ole32.dll, CoTaskMemRealloc, 1, 0, <xCallResult !!= NULL>, CoTaskMemBlock, 1
+DetourRelease Ole32.dll, CoTaskMemFree, 1, 1, <>, CoTaskMemBlock
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate VirtualAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_VirtualMemBlock
-DetourDestroy VirtualFree, 3, 1, <xApiResult !!= FALSE>, pRTCC_VirtualMemBlock
+DetourAcquire Kernel32.dll, VirtualAlloc, 4, 0, <xCallResult !!= NULL>, VirtualMemBlock
+DetourRelease Kernel32.dll, VirtualFree, 3, 1, <xCallResult !!= FALSE>, VirtualMemBlock
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate SysAllocString, 1, 0, <xApiResult !!= NULL>, pRTCC_SysString
-DetourCreate SysAllocStringLen, 2, 0, <xApiResult !!= NULL>, pRTCC_SysString
-DetourCreate SysAllocStringByteLen, 2, 0, <xApiResult !!= NULL>, pRTCC_SysString
-DetourCreate SysReAllocString, 2, 0, <xApiResult !!= FALSE>, pRTCC_SysString
-DetourCreate SysReAllocStringLen, 3, 0, <xApiResult !!= FALSE>, pRTCC_SysString
-DetourDestroy SysFreeString, 1, 1, <xApiResult !!= FALSE>, pRTCC_SysString
+DetourAcquire OleAut32.dll, SysAllocString, 1, 0, <xCallResult !!= NULL>, SysString
+DetourAcquire OleAut32.dll, SysAllocStringLen, 2, 0, <xCallResult !!= NULL>, SysString
+DetourAcquire OleAut32.dll, SysAllocStringByteLen, 2, 0, <xCallResult !!= NULL>, SysString
+DetourAcquire OleAut32.dll, SysReAllocString, 2, 0, <xCallResult !!= FALSE>, SysString
+DetourAcquire OleAut32.dll, SysReAllocStringLen, 3, 0, <xCallResult !!= FALSE>, SysString
+DetourRelease OleAut32.dll, SysFreeString, 1, 1, <xCallResult !!= FALSE>, SysString
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate BeginPaint, 2, 2, <xApiResult !!= NULL>, pRTCC_PaintStruct
-DetourDestroy EndPaint, 2, 2, <xApiResult !!= FALSE>, pRTCC_PaintStruct
+DetourAcquire User32.dll, BeginPaint, 2, 2, <xCallResult !!= NULL>, PaintStruct
+DetourRelease User32.dll, EndPaint, 2, 2, <xCallResult !!= FALSE>, PaintStruct
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreatePen, 3, 0, <xApiResult !!= NULL>, pRTCC_Pen
-DetourCreate CreatePenIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Pen
-DetourCreate ExtCreatePen, 5, 0, <xApiResult !!= NULL>, pRTCC_Pen
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateSolidBrush, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
-DetourCreate CreateDIBPatternBrush, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
-DetourCreate CreateDIBPatternBrushPt, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
-DetourCreate CreateHatchBrush, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
-DetourCreate CreatePatternBrush, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
-DetourCreate CreateBrushIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateBitmap, 5, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate CreateBitmapIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate CreateCompatibleBitmap, 3, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate CreateDIBitmap, 6, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate CreateDIBSection, 6, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate CreateDiscardableBitmap, 3, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate LoadBitmapA, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate LoadBitmapW, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
-DetourCreate GdipCreateHBITMAPFromBitmap, 3, -2, <xApiResult == 0>, pRTCC_Bitmap
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateEllipticRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreateEllipticRgnIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreatePenDataRegion, 2, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreatePolygonRgn, 3, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreatePolyPolygonRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreateRectRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreateRectRgnIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate CreateRoundRectRgn, 6, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourCreate ExtCreateRegion, 3, 0, <xApiResult !!= NULL>, pRTCC_Region
-DetourDestroy SetWindowRgn, 3, 2, <xApiResult !!= FALSE>, pRTCC_Region  ;This region is destroyed by the window!
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CopyImage, 5, 0, <xApiResult !!= NULL>, pRTCC_Image
-DetourCreate LoadImageA, 6, 0, <xApiResult !!= NULL>, pRTCC_Image
-DetourCreate LoadImageW, 6, 0, <xApiResult !!= NULL>, pRTCC_Image
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateFontA, 14, 0, <xApiResult !!= NULL>, pRTCC_Font
-DetourCreate CreateFontW, 14, 0, <xApiResult !!= NULL>, pRTCC_Font
-DetourCreate CreateFontIndirectA, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
-DetourCreate CreateFontIndirectW, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
-DetourCreate CreateFontIndirectExA, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
-DetourCreate CreateFontIndirectExW, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreatePalette, 1, 0, <xApiResult !!= NULL>, pRTCC_Palette
-DetourCreate CreateHalftonePalette, 1, 0, <xApiResult !!= NULL>, pRTCC_Palette
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateColorSpaceA, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
-DetourCreate CreateColorSpaceW, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
+DetourAcquire Gdi32.dll, CreatePen, 3, 0, <xCallResult !!= NULL>, Pen
+DetourAcquire Gdi32.dll, CreatePenIndirect, 1, 0, <xCallResult !!= NULL>, Pen
+DetourAcquire Gdi32.dll, ExtCreatePen, 5, 0, <xCallResult !!= NULL>, Pen
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate GetStockObject, 1, 0, <xApiResult !!= NULL>, pRTCC_StockObject
+DetourAcquire Gdi32.dll, CreateSolidBrush, 1, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire Gdi32.dll, CreateDIBPatternBrush, 2, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire Gdi32.dll, CreateDIBPatternBrushPt, 2, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire Gdi32.dll, CreateHatchBrush, 2, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire Gdi32.dll, CreatePatternBrush, 1, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire Gdi32.dll, CreateBrushIndirect, 1, 0, <xCallResult !!= NULL>, Brush
+DetourAcquire User32.dll, CreateSysColorBrush, 1, 0, <xCallResult !!= NULL>, Brush
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateDCA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateDCW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateCompatibleDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateICA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateICW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourDestroy DeleteDC, 1, 1, <xApiResult !!= FALSE>, pRTCC_DeviceContext
-
-; ------------------------------------------------------------------------------
-
-DetourDestroy DeleteObject, 1, 1, <xApiResult !!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
-                                                pRTCC_Region, pRTCC_Font, pRTCC_Palette, \
-                                                pRTCC_ColorSpace, pRTCC_Image, pRTCC_StockObject, \
-                                                pRTCC_DeviceContext
+DetourAcquire Gdi32.dll, CreateBitmap, 5, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire Gdi32.dll, CreateBitmapIndirect, 1, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire Gdi32.dll, CreateCompatibleBitmap, 3, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire Gdi32.dll, CreateDIBitmap, 6, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire Gdi32.dll, CreateDIBSection, 6, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire Gdi32.dll, CreateDiscardableBitmap, 3, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire User32.dll, LoadBitmapA, 2, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire User32.dll, LoadBitmapW, 2, 0, <xCallResult !!= NULL>, Bitmap
+DetourAcquire GdiPlus.dll, GdipCreateHBITMAPFromBitmap, 3, -2, <xCallResult == 0>, Bitmap
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateCursor, 7, 0, <xApiResult !!= NULL>, pRTCC_Cursor
-DetourCreate CopyCursor, 1, 1, <>, pRTCC_Cursor
-DetourCreate LoadCursorA, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == NULL>
-DetourCreate LoadCursorW, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == NULL>
-DetourCreate LoadCursorFromFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
-DetourCreate LoadCursorFromFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
+DetourAcquire Gdi32.dll, CreateEllipticRgn, 4, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreateEllipticRgnIndirect, 1, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreatePenDataRegion, 2, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreatePolygonRgn, 3, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreatePolyPolygonRgn, 4, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreateRectRgn, 4, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreateRectRgnIndirect, 1, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, CreateRoundRectRgn, 6, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, ExtCreateRegion, 3, 0, <xCallResult !!= NULL>, Region
+DetourAcquire Gdi32.dll, PathToRegion, 1, 0, <xCallResult !!= NULL>, Region
+DetourRelease Gdi32.dll, SetWindowRgn, 3, 2, <xCallResult !!= FALSE>, Region  ;; This region is destroyed by the window!
 
-DetourDestroy SetSystemCursor, 2, 1, <xApiResult !!= FALSE>, pRTCC_Cursor       ;;Destroys src Cursor
+; --------------------------------------------------------------------------------------------------
 
-externdef pRTCC_Icon:$ObjPtr(RTC_Collection)
-;DestroyCursor and DestroyIcon use the same API
-DetourDestroy DestroyCursor, 1, 1, <xApiResult !!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
+DetourAcquire User32.dll, CopyImage, 5, 0, <xCallResult !!= NULL>, Image
+DetourAcquire User32.dll, LoadImageA, 6, 0, <xCallResult !!= NULL>, Image
+DetourAcquire User32.dll, LoadImageW, 6, 0, <xCallResult !!= NULL>, Image
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CopyIcon, 1, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate CreateIcon, 7, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate CreateIconIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate CreateIconFromResource, 4, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate CreateIconFromResourceEx, 7, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate DuplicateIcon, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractIconExA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractIconExW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractAssociatedIconA, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate ExtractAssociatedIconW, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate LoadIconMetric, 4, -4, <xApiResult == S_OK>, pRTCC_Icon
-DetourCreate LoadIconWithScaleDown, 5, -5, <xApiResult == S_OK>, pRTCC_Icon
-DetourCreate ImageList_GetIcon, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
-DetourCreate GdipCreateHICONFromBitmap, 2, -2, <xApiResult == 0>, pRTCC_Icon
+DetourAcquire Gdi32.dll, CreateFontA, 14, 0, <xCallResult !!= NULL>, Font
+DetourAcquire Gdi32.dll, CreateFontW, 14, 0, <xCallResult !!= NULL>, Font
+DetourAcquire Gdi32.dll, CreateFontIndirectA, 1, 0, <xCallResult !!= NULL>, Font
+DetourAcquire Gdi32.dll, CreateFontIndirectW, 1, 0, <xCallResult !!= NULL>, Font
+DetourAcquire Gdi32.dll, CreateFontIndirectExA, 1, 0, <xCallResult !!= NULL>, Font
+DetourAcquire Gdi32.dll, CreateFontIndirectExW, 1, 0, <xCallResult !!= NULL>, Font
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      DetourPrivateExtractIconsX
-; Purpose:    Create a standard detour procedure to intercept allocation APIs.
-; Arguments:  Arg1: API name.
+
+DetourAcquire Gdi32.dll, CreatePalette, 1, 0, <xCallResult !!= NULL>, Palette
+DetourAcquire Gdi32.dll, CreateHalftonePalette, 1, 0, <xCallResult !!= NULL>, Palette
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Gdi32.dll, CreateColorSpaceA, 1, 0, <xCallResult !!= NULL>, ColorSpace
+DetourAcquire Gdi32.dll, CreateColorSpaceW, 1, 0, <xCallResult !!= NULL>, ColorSpace
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Gdi32.dll, GetStockObject, 1, 0, <xCallResult !!= NULL>, StockObject
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Gdi32.dll, CreateDCA, 4, 0, <xCallResult !!= NULL>, DeviceContext
+DetourAcquire Gdi32.dll, CreateDCW, 4, 0, <xCallResult !!= NULL>, DeviceContext
+DetourAcquire Gdi32.dll, CreateCompatibleDC, 1, 0, <xCallResult !!= NULL>, DeviceContext
+DetourAcquire Gdi32.dll, CreateICA, 4, 0, <xCallResult !!= NULL>, DeviceContext
+DetourAcquire Gdi32.dll, CreateICW, 4, 0, <xCallResult !!= NULL>, DeviceContext
+DetourRelease Gdi32.dll, DeleteDC, 1, 1, <xCallResult !!= FALSE>, DeviceContext
+
+; --------------------------------------------------------------------------------------------------
+
+DetourRelease Gdi32.dll, DeleteObject, 1, 1, <xCallResult !!= FALSE>, Pen, Brush, Bitmap, \
+              Region, Font, Palette, ColorSpace, Image, StockObject, DeviceContext
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire User32.dll, CreateCursor, 7, 0, <xCallResult !!= NULL>, Cursor
+DetourAcquire User32.dll, CopyCursor, 1, 1, <>, Cursor
+DetourAcquire User32.dll, LoadCursorA, 2, 0, <xCallResult !!= NULL>, Cursor,, <Arg1 == NULL>
+DetourAcquire User32.dll, LoadCursorW, 2, 0, <xCallResult !!= NULL>, Cursor,, <Arg1 == NULL>
+DetourAcquire User32.dll, LoadCursorFromFileA, 1, 0, <xCallResult !!= NULL>, Cursor
+DetourAcquire User32.dll, LoadCursorFromFileW, 1, 0, <xCallResult !!= NULL>, Cursor
+DetourRelease User32.dll, SetSystemCursor, 2, 1, <xCallResult !!= FALSE>, Cursor  ;; Destroys src Cursor
+
+externdef pRTCC_Icon:$ObjPtr(RTC_Collection)            ; DestroyCursor and DestroyIcon use the same API
+DetourRelease User32.dll, DestroyCursor, 1, 1, <xCallResult !!= FALSE>, Cursor, Icon, Image
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Gdi32.dll, CopyIcon, 1, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Gdi32.dll, CreateIcon, 7, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Gdi32.dll, CreateIconIndirect, 1, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Gdi32.dll, CreateIconFromResource, 4, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Gdi32.dll, CreateIconFromResourceEx, 7, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Gdi32.dll, DuplicateIcon, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractIconA, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractIconW, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractIconExA, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractIconExW, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractAssociatedIconA, 3, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Shell32, ExtractAssociatedIconW, 3, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire User32.dll, LoadIconA, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire User32.dll, LoadIconW, 2, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire Comctl32, LoadIconMetric, 4, -4, <xCallResult == S_OK>, Icon
+DetourAcquire Comctl32, LoadIconWithScaleDown, 5, -5, <xCallResult == S_OK>, Icon
+DetourAcquire Comctl32, ImageList_GetIcon, 3, 0, <xCallResult !!= NULL>, Icon
+DetourAcquire GdiPlus.dll, GdipCreateHICONFromBitmap, 2, -2, <xCallResult == 0>, Icon
+
+; --------------------------------------------------------------------------------------------------
+; Macro:      DetourAcquirePrivateExtractIconsX
+; Purpose:    Creates a detour procedure to intercept calls that acquire an an array of icons.
+; Arguments:  Arg1: API procedure name.
 ; Return:     Nothing.
 
-DetourPrivateExtractIconsX macro ApiName:req
+DetourAcquirePrivateExtractIconsX macro DllName:req, ProcName:req
   local ArgStr, Cnt
 
-  DefineHook ApiName, pRTCC_Icon
+  AddToResTypeHookList Icon, DllName, ProcName
+  DefineHook ProcName, Icon
 
-  ArgStr textequ <>                                     ;;Prepare argument list
+  ArgStr textequ <>                                     ;; Prepare argument list
   Cnt = 0
   repeat 8
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi xsi ArgStr             ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
+  Detour_&ProcName& proc uses xbx xdi xsi ArgStr        ;; Procedure declaration
+    local xCallResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
-    InvokeOriginalAPI ApiName, 8
+    InvokeOriginalCall ProcName, 8
 
     .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
+      mov xCallResult, xax
 
-      .if xApiResult == 0
+      .if xCallResult == 0
         Destroy xbx
       .else
-        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+        FillStringA [xbx].$Obj(CallData).cProcName, <ProcName>
         AnalyseStack
-        .if xApiResult == 0xFFFFFFFF                    ;;File is not found
+        .if xCallResult == 0xFFFFFFFF                   ;; File is not found
           lea xax, FailColl
           mov [xbx].$Obj(CallData).pOwner, xax
           OCall xax::RTC_Collection.Insert, xbx
         .else
           xor esi, esi
-          .while xsi < xApiResult
+          .while xsi < xCallResult
             MemAlloc sizeof($Obj(CallData))
             s2s $Obj(CallData) ptr [xax], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xcx, xdx
-            mov xdx, Arg5                               ;;phicon
+            mov xdx, Arg5                               ;; phicon
             m2m [xax].$Obj(CallData).xData1, [xdx + xsi*sizeof(HANDLE)], xcx
             mov [xax].$Obj(CallData).xData2, 0
             mov [xax].$Obj(CallData).pOwner, xcx
@@ -1049,127 +1058,128 @@ DetourPrivateExtractIconsX macro ApiName:req
           Destroy xbx
         .endif
       .endif
-      mov xax, xApiResult                               ;;Restore API return value
+      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
-  Dtr&ApiName& endp
+  Detour_&ProcName& endp
 endm
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourPrivateExtractIconsX PrivateExtractIconsA
-DetourPrivateExtractIconsX PrivateExtractIconsW
+DetourAcquirePrivateExtractIconsX User32.dll, PrivateExtractIconsA
+DetourAcquirePrivateExtractIconsX User32.dll, PrivateExtractIconsW
 
-;DestroyCursor and DestroyIcon use the same API
-DetourDestroy DestroyIcon, 1, 1, <xApiResult !!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
-
-; --------------------------------------------------------------------------------------------------
-
-DetourCreate CreateMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourCreate CreatePopupMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourCreate LoadMenuA, 2, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourCreate LoadMenuW, 2, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourCreate LoadMenuIndirectA, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourCreate LoadMenuIndirectW, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
-DetourDestroy DestroyMenu, 1, 1, <xApiResult !!= FALSE>, pRTCC_Menu
+; DestroyCursor and DestroyIcon use the same API
+DetourRelease User32.dll, DestroyIcon, 1, 1, <xCallResult !!= FALSE>, Icon, Cursor, Image
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CloseMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate CopyMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate CopyMetaFileW, 2, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate CreateMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate CreateMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate GetMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourCreate GetMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
-DetourDestroy DeleteMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_MetaFile
+DetourAcquire User32.dll, CreateMenu, 0, 0, <xCallResult !!= NULL>, Menu
+DetourAcquire User32.dll, CreatePopupMenu, 0, 0, <xCallResult !!= NULL>, Menu
+DetourAcquire User32.dll, LoadMenuA, 2, 0, <xCallResult !!= NULL>, Menu
+DetourAcquire User32.dll, LoadMenuW, 2, 0, <xCallResult !!= NULL>, Menu
+DetourAcquire User32.dll, LoadMenuIndirectA, 1, 0, <xCallResult !!= NULL>, Menu
+DetourAcquire User32.dll, LoadMenuIndirectW, 1, 0, <xCallResult !!= NULL>, Menu
+DetourRelease User32.dll, DestroyMenu, 1, 1, <xCallResult !!= FALSE>, Menu
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CloseEnhMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate CopyEnhMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate CopyEnhMetaFileW, 2, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate CreateEnhMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate CreateEnhMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate GetEnhMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourCreate GetEnhMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
-DetourDestroy DeleteEnhMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_EnhMetaFile
+DetourAcquire Gdi32.dll, CloseMetaFile, 1, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, CopyMetaFileA, 2, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, CopyMetaFileW, 2, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, CreateMetaFileA, 1, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, CreateMetaFileW, 1, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, GetMetaFileA, 1, 0, <xCallResult !!= NULL>, MetaFile
+DetourAcquire Gdi32.dll, GetMetaFileW, 1, 0, <xCallResult !!= NULL>, MetaFile
+DetourRelease Gdi32.dll, DeleteMetaFile, 1, 1, <xCallResult !!= FALSE>, MetaFile
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateAcceleratorTableA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourCreate CreateAcceleratorTableW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourCreate CopyAcceleratorTableA, 3, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourCreate CopyAcceleratorTableW, 3, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourCreate LoadAcceleratorsA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourCreate LoadAcceleratorsW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
-DetourDestroy DestroyAcceleratorTable, 1, 1, <xApiResult !!= FALSE>, pRTCC_AccTable
+DetourAcquire Gdi32.dll, CloseEnhMetaFile, 1, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, CopyEnhMetaFileA, 2, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, CopyEnhMetaFileW, 2, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, CreateEnhMetaFileA, 1, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, CreateEnhMetaFileW, 1, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, GetEnhMetaFileA, 1, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourAcquire Gdi32.dll, GetEnhMetaFileW, 1, 0, <xCallResult !!= NULL>, EnhMetaFile
+DetourRelease Gdi32.dll, DeleteEnhMetaFile, 1, 1, <xCallResult !!= FALSE>, EnhMetaFile
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateDesktopA, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
-DetourCreate CreateDesktopW, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
-DetourCreate CreateDesktopExA, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
-DetourCreate CreateDesktopExW, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
-DetourDestroy CloseDesktop, 1, 1, <xApiResult !!= FALSE>, pRTCC_Desktop
+DetourAcquire User32.dll, CreateAcceleratorTableA, 2, 0, <xCallResult !!= NULL>, AccTable
+DetourAcquire User32.dll, CreateAcceleratorTableW, 2, 0, <xCallResult !!= NULL>, AccTable
+DetourAcquire User32.dll, CopyAcceleratorTableA, 3, 0, <xCallResult !!= NULL>, AccTable
+DetourAcquire User32.dll, CopyAcceleratorTableW, 3, 0, <xCallResult !!= NULL>, AccTable
+DetourAcquire User32.dll, LoadAcceleratorsA, 2, 0, <xCallResult !!= NULL>, AccTable
+DetourAcquire User32.dll, LoadAcceleratorsW, 2, 0, <xCallResult !!= NULL>, AccTable
+DetourRelease User32.dll, DestroyAcceleratorTable, 1, 1, <xCallResult !!= FALSE>, AccTable
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateWindowStationA, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
-DetourCreate CreateWindowStationW, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
-DetourCreate OpenWindowStationA, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
-DetourCreate OpenWindowStationW, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
-DetourDestroy CloseWindowStation, 1, 1, <xApiResult !!= FALSE>, pRTCC_WindowStation
+DetourAcquire User32.dll, CreateDesktopA, 6, 0, <xCallResult !!= NULL>, Desktop
+DetourAcquire User32.dll, CreateDesktopW, 6, 0, <xCallResult !!= NULL>, Desktop
+DetourAcquire User32.dll, CreateDesktopExA, 8, 0, <xCallResult !!= NULL>, Desktop
+DetourAcquire User32.dll, CreateDesktopExW, 8, 0, <xCallResult !!= NULL>, Desktop
+DetourRelease User32.dll, CloseDesktop, 1, 1, <xCallResult !!= FALSE>, Desktop
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateFileA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
-DetourCreate CreateFileW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
-DetourCreate CreateFileTransactedA, 10, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
-DetourCreate CreateFileTransactedW, 10, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourAcquire User32.dll, CreateWindowStationA, 4, 0, <xCallResult !!= NULL>, WindowStation
+DetourAcquire User32.dll, CreateWindowStationW, 4, 0, <xCallResult !!= NULL>, WindowStation
+DetourAcquire User32.dll, OpenWindowStationA, 3, 0, <xCallResult !!= NULL>, WindowStation
+DetourAcquire User32.dll, OpenWindowStationW, 3, 0, <xCallResult !!= NULL>, WindowStation
+DetourRelease User32.dll, CloseWindowStation, 1, 1, <xCallResult !!= FALSE>, WindowStation
 
-; ------------------------------------------------------------------------------
+; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateEventA, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
-DetourCreate CreateEventW, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
-DetourCreateNamed CreateEventExA, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
-DetourCreateNamed CreateEventExW, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
-DetourCreate OpenEventA, 3, 0, <xApiResult !!= NULL>, pRTCC_Event
-DetourCreate OpenEventW, 3, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourAcquire Kernel32.dll, CreateFileA, 7, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, File
+DetourAcquire Kernel32.dll, CreateFileW, 7, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, File
+DetourAcquire Kernel32.dll, CreateFileTransactedA, 10, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, File
+DetourAcquire Kernel32.dll, CreateFileTransactedW, 10, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, File
 
-; ------------------------------------------------------------------------------
+; --------------------------------------------------------------------------------------------------
 
-DetourCreateNamed CreateFileMappingA, 6, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
-DetourCreateNamed CreateFileMappingW, 6, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
-DetourCreateNamed CreateFileMappingNumaA, 7, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
-DetourCreateNamed CreateFileMappingNumaW, 7, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
+DetourAcquire Kernel32.dll, CreateEventA, 4, 0, <xCallResult !!= NULL>, Event
+DetourAcquire Kernel32.dll, CreateEventW, 4, 0, <xCallResult !!= NULL>, Event
+DetourAcquireNamed Kernel32.dll, CreateEventExA, 4, 0, <xCallResult !!= NULL>, Event
+DetourAcquireNamed Kernel32.dll, CreateEventExW, 4, 0, <xCallResult !!= NULL>, Event
+DetourAcquire Kernel32.dll, OpenEventA, 3, 0, <xCallResult !!= NULL>, Event
+DetourAcquire Kernel32.dll, OpenEventW, 3, 0, <xCallResult !!= NULL>, Event
 
-; ------------------------------------------------------------------------------
+; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateMutexA, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
-DetourCreate CreateMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
-DetourCreate OpenMutexA, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
-DetourCreate OpenMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
+DetourAcquireNamed Kernel32.dll, CreateFileMappingA, 6, 0, <xCallResult !!= NULL>, FileMapping
+DetourAcquireNamed Kernel32.dll, CreateFileMappingW, 6, 0, <xCallResult !!= NULL>, FileMapping
+DetourAcquireNamed Kernel32.dll, CreateFileMappingNumaA, 7, 0, <xCallResult !!= NULL>, FileMapping
+DetourAcquireNamed Kernel32.dll, CreateFileMappingNumaW, 7, 0, <xCallResult !!= NULL>, FileMapping
 
-; ------------------------------------------------------------------------------
+; --------------------------------------------------------------------------------------------------
 
-DefineHook CreatePipe, pRTCC_Pipe
+DetourAcquire Kernel32.dll, CreateMutexA, 3, 0, <xCallResult !!= NULL>, Mutex
+DetourAcquire Kernel32.dll, CreateMutexW, 3, 0, <xCallResult !!= NULL>, Mutex
+DetourAcquire Kernel32.dll, OpenMutexA, 3, 0, <xCallResult !!= NULL>, Mutex
+DetourAcquire Kernel32.dll, OpenMutexW, 3, 0, <xCallResult !!= NULL>, Mutex
 
-;This detour proc handles the Read and Write HANDLEs
-DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
-  local xApiResult:XWORD, hThread:HANDLE
+; --------------------------------------------------------------------------------------------------
+
+AddToResTypeHookList Pipe, Kernel32.dll, CreatePipe
+DefineHook CreatePipe, Pipe
+
+; This detour proc handles the Read and Write HANDLEs
+Detour_CreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
+  local xCallResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
 
-  InvokeOriginalAPI CreatePipe, 4
+  InvokeOriginalCall CreatePipe, 4
 
   .if dResGuardEnabled != FALSE
-    mov xApiResult, xax
+    mov xCallResult, xax
 
     AnalyseStack
     FillStringA [xbx].$Obj(CallData).cProcName, <CreatePipe>
 
-    .if xApiResult != 0
-      mov xcx, Arg1                                     ;-> hReadPipe
+    .if xCallResult != 0
+      mov xcx, Arg1                                     ; -> hReadPipe
       .if xcx != NULL
         m2m [xbx].$Obj(CallData).xData1, [xcx], xdx
         mov [xbx].$Obj(CallData).xData2, 0
@@ -1178,10 +1188,10 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::Collection.Insert, xbx
         .if Arg2 != NULL
-          ;Clone existing CallData
+          ; Clone existing CallData
           mov xdi, $MemAlloc(sizeof $Obj(CallData))
           s2s $Obj(CallData) ptr [xdi], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xax, xcx
-          mov xcx, Arg2                                 ;-> hWritePipe
+          mov xcx, Arg2                                 ; -> hWritePipe
           m2m [xdi].$Obj(CallData).xData1, [xcx], xdx
           mov [xdi].$Obj(CallData).xData2, 0
           mov xax, pRTCC_Pipe
@@ -1197,83 +1207,133 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 
-    mov xax, xApiResult                                 ;Restore API return value
+    mov xax, xCallResult                                ; Restore call return value
   .endif
   ret
-DtrCreatePipe endp
+Detour_CreatePipe endp
 
-DetourCreateNamed CreateNamedPipeA, 8, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
-DetourCreateNamed CreateNamedPipeW, 8, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateProcessA, 10, -10, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate CreateProcessW, 10, -10, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate CreateProcessAsUserA, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate CreateProcessAsUserW, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate CreateProcessWithLogonA, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate CreateProcessWithLogonW, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
-DetourCreate OpenProcess, 3, 0, <xApiResult !!= NULL>, pRTCC_Process
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateThread, 6, 0, <xApiResult !!= NULL>, pRTCC_Thread
-DetourCreate CreateRemoteThread, 3, 0, <xApiResult !!= NULL>, pRTCC_Thread
-
-; ------------------------------------------------------------------------------
-
-DetourCreate CreateSemaphoreA, 4, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-DetourCreate CreateSemaphoreW, 4, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-DetourCreate CreateSemaphoreExA, 6, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-DetourCreate CreateSemaphoreExW, 6, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-DetourCreate OpenSemaphoreA, 3, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-DetourCreate OpenSemaphoreW, 3, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
-
-; ------------------------------------------------------------------------------
-
-DetourCreate DuplicateHandle, 7, -4, <xApiResult !!= 0>, pRTCC_DuplicateHandle
-
-; ------------------------------------------------------------------------------
-
-DetourDestroy CloseHandle, 1, 1, <xApiResult !!= FALSE>, \
-                 pRTCC_File, pRTCC_FileMapping, pRTCC_Event, \
-                 pRTCC_Mutex, pRTCC_Semaphore, \
-                 pRTCC_Pipe, \
-                 pRTCC_Thread, pRTCC_Process, pRTCC_Job, \
-                 pRTCC_DuplicateHandle
+DetourAcquireNamed Kernel32.dll, CreateNamedPipeA, 8, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, Pipe
+DetourAcquireNamed Kernel32.dll, CreateNamedPipeW, 8, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, Pipe
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreateNamed CreateWaitableTimerA, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
-DetourCreateNamed CreateWaitableTimerW, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
-DetourCreateNamed CreateWaitableTimerExA, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
-DetourCreateNamed CreateWaitableTimerExW, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
+DetourAcquire Kernel32.dll, CreateProcessA, 10, -10, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, CreateProcessW, 10, -10, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, CreateProcessAsUserA, 11, -11, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, CreateProcessAsUserW, 11, -11, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, CreateProcessWithLogonA, 11, -11, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, CreateProcessWithLogonW, 11, -11, <xCallResult !!= FALSE>, Process
+DetourAcquire Kernel32.dll, OpenProcess, 3, 0, <xCallResult !!= NULL>, Process
 
-DefineHook SetTimer, pRTCC_Timer
+; --------------------------------------------------------------------------------------------------
 
-DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
-  local xApiResult:XWORD, hThread:HANDLE
+DetourAcquire Kernel32.dll, CreateThread, 6, 0, <xCallResult !!= NULL>, Thread
+DetourAcquire Kernel32.dll, CreateRemoteThread, 3, 0, <xCallResult !!= NULL>, Thread
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Kernel32.dll, CreateSemaphoreA, 4, 0, <xCallResult !!= NULL>, Semaphore
+DetourAcquire Kernel32.dll, CreateSemaphoreW, 4, 0, <xCallResult !!= NULL>, Semaphore
+DetourAcquire Kernel32.dll, CreateSemaphoreExA, 6, 0, <xCallResult !!= NULL>, Semaphore
+DetourAcquire Kernel32.dll, CreateSemaphoreExW, 6, 0, <xCallResult !!= NULL>, Semaphore
+DetourAcquire Kernel32.dll, OpenSemaphoreA, 3, 0, <xCallResult !!= NULL>, Semaphore
+DetourAcquire Kernel32.dll, OpenSemaphoreW, 3, 0, <xCallResult !!= NULL>, Semaphore
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Kernel32.dll, DuplicateHandle, 7, -4, <xCallResult !!= 0>, DuplicateHandle
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Advapi32.dll, OpenProcessToken, 3, -3, <xCallResult !!= FALSE>, Token
+DetourAcquire Advapi32.dll, OpenThreadToken, 4, -4, <xCallResult !!= FALSE>, Token
+DetourAcquire Advapi32.dll, DuplicateTokenEx, 6, -6, <xCallResult !!= FALSE>, Token
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquireNamed Kernel32.dll, GlobalAddAtomA, 1, 0, <xCallResult !!= 0>, Atom
+DetourAcquireNamed Kernel32.dll, GlobalAddAtomW, 1, 0, <xCallResult !!= 0>, Atom
+
+AddToResTypeHookList Atom, Kernel32.dll, GlobalDeleteAtom
+DefineHook GlobalDeleteAtom, Atom
+
+Detour_GlobalDeleteAtom proc uses xbx xdi Arg1:XWORD
+  local xCallResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
 
-  InvokeOriginalAPI SetTimer, 4
+  invoke SetLastError, ERROR_SUCCESS        ;; Prime per MSDN: must precede the call
+  InvokeOriginalCall GlobalDeleteAtom, 1
 
   .if dResGuardEnabled != FALSE
-    mov xApiResult, xax
+    mov xCallResult, xax
+
+    invoke GetLastError
+    .if eax == ERROR_SUCCESS
+      OCall pRTCC_Atom::RTC_Collection.Remove, Arg1, 0
+      test eax, eax
+      jnz @@Exit                            ;; Exit if found
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <GlobalDeleteAtom>
+      m2m [xbx].$Obj(CallData).xData1, Arg1, xdx
+      mov [xbx].$Obj(CallData).xData2, 0
+      lea xax, LogiColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
+    .else
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <GlobalDeleteAtom>
+      m2m [xbx].$Obj(CallData).xData1, Arg1, xdx
+      mov [xbx].$Obj(CallData).xData2, 0
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
+    .endif
+
+@@Exit:
+    mov xax, xCallResult
+  .endif
+  ret
+Detour_GlobalDeleteAtom endp
+
+; --------------------------------------------------------------------------------------------------
+
+DetourRelease Kernel32.dll, CloseHandle, 1, 1, <xCallResult !!= FALSE>, \
+              File, FileMapping, Event, Mutex, Semaphore, Pipe, Thread, Process, Job, \
+              DuplicateHandle, Token
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquireNamed Kernel32.dll, CreateWaitableTimerA, 3, 0, <xCallResult !!= NULL>, Timer
+DetourAcquireNamed Kernel32.dll, CreateWaitableTimerW, 3, 0, <xCallResult !!= NULL>, Timer
+DetourAcquireNamed Kernel32.dll, CreateWaitableTimerExA, 4, 0, <xCallResult !!= NULL>, Timer
+DetourAcquireNamed Kernel32.dll, CreateWaitableTimerExW, 4, 0, <xCallResult !!= NULL>, Timer
+
+AddToResTypeHookList Timer, User32.dll, SetTimer
+DefineHook SetTimer, Timer
+
+Detour_SetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
+  local xCallResult:XWORD, hThread:HANDLE
+  local Context:CONTEXT, Stack:STACK
+
+  InvokeOriginalCall SetTimer, 4
+
+  .if dResGuardEnabled != FALSE
+    mov xCallResult, xax
 
     AnalyseStack
     FillStringA [xbx].$Obj(CallData).cProcName, <SetTimer>
 
-    .if xApiResult != 0
-      ;Check if we replace a Window Timer
+    .if xCallResult != 0
+      ; Check if we replace a Window Timer
       OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
 
-      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ;Store hWnd
-      .if xax == FALSE                                  ;=> new Timer
-        mov xcx, Arg2                                   ;uIDEvent
+      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ; Store hWnd
+      .if xax == FALSE                                  ; => new Timer
+        mov xcx, Arg2                                   ; uIDEvent
       .else
-        mov xcx, xApiResult                             ;New Timer ID
+        mov xcx, xCallResult                            ; New Timer ID
       .endif
-      m2m [xbx].$Obj(CallData).xData1, xcx              ;uIDEvent
+      m2m [xbx].$Obj(CallData).xData1, xcx              ; uIDEvent
 
       mov xax, pRTCC_Timer
       mov [xbx].$Obj(CallData).pOwner, xax
@@ -1285,168 +1345,354 @@ DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 
-    mov xax, xApiResult                                 ;Restore API return value
+    mov xax, xCallResult                                ; Restore call return value
   .endif
   ret
-DtrSetTimer endp
+Detour_SetTimer endp
 
-DefineHook KillTimer, pRTCC_Timer
+AddToResTypeHookList Timer, User32.dll, KillTimer
+DefineHook KillTimer, Timer
 
-DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
-  local xApiResult:XWORD, hThread:HANDLE
+Detour_KillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
+  local xCallResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
 
-  InvokeOriginalAPI KillTimer, 2
+  InvokeOriginalCall KillTimer, 2
 
   .if dResGuardEnabled != FALSE
-    mov xApiResult, xax
+    mov xCallResult, xax
 
     .if xax != 0
       OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
       test eax, eax
-      jnz @@Exit                                        ;Exit if found
-      invoke DbgOutText, $OfsCStr("DtrKillTimer failed removing call data"),
+      jnz @@Exit                                        ; Exit if found
+      invoke DbgOutText, $OfsCStr("Detour_KillTimer failed removing call data"),
                          DbgColorError, DbgColorBackground, \
                          DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     .else
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <KillTimer>
-      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ;Store hWnd
-      m2m [xbx].$Obj(CallData).xData1, Arg2, xdx        ;uIDEvent
+      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ; Store hWnd
+      m2m [xbx].$Obj(CallData).xData1, Arg2, xdx        ; uIDEvent
 
       lea xax, FailColl
       mov [xbx].$Obj(CallData).pOwner, xax
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 @@Exit:
-    mov xax, xApiResult                                 ;Restore API return value
+    mov xax, xCallResult                                ; Restore call return value
   .endif
   ret
-DtrKillTimer endp
+Detour_KillTimer endp
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate GetDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
-DetourCreate GetDCEx, 3, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
-DetourCreate GetWindowDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
-DetourDestroy ReleaseDC, 2, 2, <xApiResult !!= FALSE>, pRTCC_DisplayDeviceContext
+DetourAcquire User32.dll, GetDC, 1, 0, <xCallResult !!= NULL>, DisplayDeviceContext
+DetourAcquire User32.dll, GetDCEx, 3, 0, <xCallResult !!= NULL>, DisplayDeviceContext
+DetourAcquire User32.dll, GetWindowDC, 1, 0, <xCallResult !!= NULL>, DisplayDeviceContext
+DetourRelease User32.dll, ReleaseDC, 2, 2, <xCallResult !!= FALSE>, DisplayDeviceContext
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate GdipGetDC, 2, -2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
-DetourDestroy GdipReleaseDC, 2, 2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
+DetourAcquire GdiPlus.dll, GdipGetDC, 2, -2, <xCallResult !!= 0>, GdipDisplayDeviceContext
+DetourRelease GdiPlus.dll, GdipReleaseDC, 2, 2, <xCallResult !!= 0>, GdipDisplayDeviceContext
 
 ; --------------------------------------------------------------------------------------------------
-DetourCreate LoadKeyboardLayoutA, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
-DetourCreate LoadKeyboardLayoutW, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
-DetourDestroy UnloadKeyboardLayout, 1, 1, <xApiResult !!= FALSE>, pRTCC_KeyboardLayout
-
-; --------------------------------------------------------------------------------------------------
-
-DetourCreate LoadLibraryA, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
-DetourCreate LoadLibraryW, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
-DetourCreate LoadLibraryExA, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
-DetourCreate LoadLibraryExW, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
-DetourDestroy FreeLibrary, 1, 1, <xApiResult !!= FALSE>, pRTCC_Library
+DetourAcquire User32.dll, LoadKeyboardLayoutA, 2, 0, <xCallResult !!= NULL>, KeyboardLayout
+DetourAcquire User32.dll, LoadKeyboardLayoutW, 2, 0, <xCallResult !!= NULL>, KeyboardLayout
+DetourRelease User32.dll, UnloadKeyboardLayout, 1, 1, <xCallResult !!= FALSE>, KeyboardLayout
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate OpenPrinterA, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
-DetourCreate OpenPrinterW, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
-DetourCreate OpenPrinter2A, 4, -2, <xApiResult !!= NULL>, pRTCC_Printer
-DetourCreate OpenPrinter2W, 4, -2, <xApiResult !!= NULL>, pRTCC_Printer
-DetourCreate AddPrinterA, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
-DetourCreate AddPrinterW, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
-DetourDestroy ClosePrinter, 1, 1, <xApiResult !!= FALSE>, pRTCC_Printer
+DetourAcquire Kernel32.dll, LoadLibraryA, 1, 0, <xCallResult !!= NULL>, Library
+DetourAcquire Kernel32.dll, LoadLibraryW, 1, 0, <xCallResult !!= NULL>, Library
+DetourAcquire Kernel32.dll, LoadLibraryExA, 3, 0, <xCallResult !!= NULL>, Library
+DetourAcquire Kernel32.dll, LoadLibraryExW, 3, 0, <xCallResult !!= NULL>, Library
+DetourRelease Kernel32.dll, FreeLibrary, 1, 1, <xCallResult !!= FALSE>, Library
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate RegCreateKeyA, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegCreateKeyW, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegCreateKeyExA, 9, -8, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegCreateKeyExW, 9, -8, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyA, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyW, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyExA, 5, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyExW, 5, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyTransactedA, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourCreate RegOpenKeyTransactedW, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
-DetourDestroy RegCloseKey, 1, 1, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourAcquire Winspool.drv, OpenPrinterA, 3, -2, <xCallResult !!= NULL>, Printer
+DetourAcquire Winspool.drv, OpenPrinterW, 3, -2, <xCallResult !!= NULL>, Printer
+DetourAcquire Winspool.drv, OpenPrinter2A, 4, -2, <xCallResult !!= NULL>, Printer
+DetourAcquire Winspool.drv, OpenPrinter2W, 4, -2, <xCallResult !!= NULL>, Printer
+DetourAcquire Winspool.drv, AddPrinterA, 3, 0, <xCallResult !!= NULL>, Printer
+DetourAcquire Winspool.drv, AddPrinterW, 3, 0, <xCallResult !!= NULL>, Printer
+DetourRelease Spoolss.dll, ClosePrinter, 1, 1, <xCallResult !!= FALSE>, Printer
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate BeginUpdateResourceA, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
-DetourCreate BeginUpdateResourceW, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
-DetourDestroy EndUpdateResourceA, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
-DetourDestroy EndUpdateResourceW, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
+DetourAcquire Advapi32.dll, RegCreateKeyA, 3, -3, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegCreateKeyW, 3, -3, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegCreateKeyExA, 9, -8, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegCreateKeyExW, 9, -8, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyA, 3, -3, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyW, 3, -3, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyExA, 5, -5, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyExW, 5, -5, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyTransactedA, 7, -5, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegOpenKeyTransactedW, 7, -5, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegCreateKeyTransactedA, 9, -8, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourAcquire Advapi32.dll, RegCreateKeyTransactedW, 9, -8, <xCallResult == ERROR_SUCCESS>, RegKey
+DetourRelease Advapi32.dll, RegCloseKey, 1, 1, <xCallResult == ERROR_SUCCESS>, RegKey
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate CreateMailslotA, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
-DetourCreate CreateMailslotW, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+DetourAcquire Kernel32.dll, BeginUpdateResourceA, 2, 0, <xCallResult !!= NULL>, UpdateResource
+DetourAcquire Kernel32.dll, BeginUpdateResourceW, 2, 0, <xCallResult !!= NULL>, UpdateResource
+DetourRelease Kernel32.dll, EndUpdateResourceA, 2, 1, <xCallResult !!= FALSE>, UpdateResource
+DetourRelease Kernel32.dll, EndUpdateResourceW, 2, 1, <xCallResult !!= FALSE>, UpdateResource
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate FindFirstFileA, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileW, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileExA, 6, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileExW, 6, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileNameA, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileNameW, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileTransactedA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourCreate FindFirstFileTransactedW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
-DetourDestroy FindClose, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
+DetourAcquire Kernel32.dll, CreateMailslotA, 4, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, Mailslot
+DetourAcquire Kernel32.dll, CreateMailslotW, 4, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, Mailslot
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate FindFirstChangeNotificationA, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
-DetourCreate FindFirstChangeNotificationW, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
-DetourDestroy FindCloseChangeNotification, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileA, 2, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileW, 2, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileExA, 6, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileExW, 6, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileNameA, 4, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileNameW, 4, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileTransactedA, 7, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourAcquire Kernel32.dll, FindFirstFileTransactedW, 7, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstFile
+DetourRelease Kernel32.dll, FindClose, 1, 1, <xCallResult !!= FALSE>, FindFirstFile
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate OpenEventLogA, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
-DetourCreate OpenEventLogW, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
-DetourDestroy CloseEventLog, 1, 1, <xApiResult !!= FALSE>, pRTCC_EventLog
+DetourAcquire Kernel32.dll, FindFirstChangeNotificationA, 3, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstChangeNotif
+DetourAcquire Kernel32.dll, FindFirstChangeNotificationW, 3, 0, <xCallResult !!= INVALID_HANDLE_VALUE>, FindFirstChangeNotif
+DetourRelease Kernel32.dll, FindCloseChangeNotification, 1, 1, <xCallResult !!= FALSE>, FindFirstFile
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourCreate InitializeCriticalSection, 1, 1, <>, pRTCC_CriticalSection
-DetourCreate InitializeCriticalSectionAndSpinCount, 2, 1, <>, pRTCC_CriticalSection
-DetourDestroy DeleteCriticalSection, 1, 1, <>, pRTCC_CriticalSection
+DetourAcquire Advapi32.dll, OpenEventLogA, 2, 0, <xCallResult !!= NULL>, EventLog
+DetourAcquire Advapi32.dll, OpenEventLogW, 2, 0, <xCallResult !!= NULL>, EventLog
+DetourRelease Advapi32.dll, CloseEventLog, 1, 1, <xCallResult !!= FALSE>, EventLog
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Kernel32.dll, InitializeCriticalSection, 1, 1, <>, CriticalSection
+DetourAcquire Kernel32.dll, InitializeCriticalSectionAndSpinCount, 2, 1, <>, CriticalSection
+DetourRelease Kernel32.dll, DeleteCriticalSection, 1, 1, <>, CriticalSection
 
 ; --------------------------------------------------------------------------------------------------
 .data
 OleInitializeCount  DWORD  0
 
 .code
-DetourCreateCounted OleInitialize, 1, OleInitializeCount, <xApiResult == S_OK>, pRTCC_OleInitialization
-DetourDestroyCounted OleUninitialize, 0, OleInitializeCount, <>, pRTCC_OleInitialization
+DetourAcquireCounted Ole32.dll, OleInitialize, 1, OleInitializeCount, <xCallResult == S_OK>, OleInitialization
+DetourReleaseCounted Ole32.dll, OleUninitialize, 0, OleInitializeCount, <>, OleInitialization
 
 ; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Advapi32.dll, OpenSCManagerA, 3, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourAcquire Advapi32.dll, OpenSCManagerW, 3, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourAcquire Advapi32.dll, OpenServiceA, 3, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourAcquire Advapi32.dll, OpenServiceW, 3, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourAcquire Advapi32.dll, CreateServiceA, 13, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourAcquire Advapi32.dll, CreateServiceW, 13, 0, <xCallResult !!= NULL>, ServiceHandle
+DetourRelease Advapi32.dll, CloseServiceHandle, 1, 1, <xCallResult !!= FALSE>, ServiceHandle
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire Advapi32.dll, CryptAcquireContextA, 5, -1, <xCallResult !!= FALSE>, CryptContext
+DetourAcquire Advapi32.dll, CryptAcquireContextW, 5, -1, <xCallResult !!= FALSE>, CryptContext
+DetourRelease Advapi32.dll, CryptReleaseContext, 2, 1, <xCallResult !!= FALSE>, CryptContext
+
+; --------------------------------------------------------------------------------------------------
+
 .data
 CoInitializeCount  DWORD  0
 
 .code
-DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization
-DetourCreateCounted CoInitializeEx, 2, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization
-DetourDestroyCounted CoUninitialize, 0, CoInitializeCount, <>, pRTCC_CoInitialization
+DetourAcquireCounted Ole32.dll, CoInitialize, 1, CoInitializeCount, <xCallResult == S_OK>, CoInitialization
+DetourAcquireCounted Ole32.dll, CoInitializeEx, 2, CoInitializeCount, <xCallResult == S_OK>, CoInitialization
+DetourReleaseCounted Ole32.dll, CoUninitialize, 0, CoInitializeCount, <>, CoInitialization
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateFromHDC, 2, -2, <xCallResult == 0>, GdipGraphics
+DetourAcquire GdiPlus.dll, GdipCreateFromHDC2, 3, -3, <xCallResult == 0>, GdipGraphics
+DetourAcquire GdiPlus.dll, GdipCreateFromHWND, 2, -2, <xCallResult == 0>, GdipGraphics
+DetourAcquire GdiPlus.dll, GdipCreateFromHWNDICM, 2, -2, <xCallResult == 0>, GdipGraphics
+DetourAcquire GdiPlus.dll, GdipGetImageGraphicsContext, 2, -2, <xCallResult == 0>, GdipGraphics
+DetourRelease GdiPlus.dll, GdipDeleteGraphics, 1, 1, <xCallResult == 0>, GdipGraphics
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateMetafileFromFile, 2, -2, <xCallResult == 0>, GdipMetafile
+DetourAcquire GdiPlus.dll, GdipCreateMetafileFromStream, 2, -2, <xCallResult == 0>, GdipMetafile
+DetourAcquire GdiPlus.dll, GdipCreateMetafileFromEmf, 3, -3, <xCallResult == 0>, GdipMetafile
+DetourAcquire GdiPlus.dll, GdipCreateMetafileFromWmf, 4, -4, <xCallResult == 0>, GdipMetafile
+DetourAcquire GdiPlus.dll, GdipRecordMetafile, 7, -7, <xCallResult == 0>, GdipMetafile
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipLoadImageFromFile, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipLoadImageFromFileICM, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipLoadImageFromStream, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipLoadImageFromStreamICM, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromFile, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromFileICM, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromStream, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromStreamICM, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromScan0, 6, -6, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromGdiDib, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromHBITMAP, 3, -3, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromHICON, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromResource, 3, -3, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCloneImage, 2, -2, <xCallResult == 0>, GdipImage
+DetourAcquire GdiPlus.dll, GdipCreateBitmapFromDirectDrawSurface, 2, -2, <xCallResult == 0>, GdipImage
+DetourRelease GdiPlus.dll, GdipDisposeImage, 1, 1, <xCallResult == 0>, GdipImage, GdipMetafile
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreatePen1, 3, -3, <xCallResult == 0>, GdipPen
+DetourAcquire GdiPlus.dll, GdipCreatePen2, 3, -3, <xCallResult == 0>, GdipPen
+DetourAcquire GdiPlus.dll, GdipClonePen, 2, -2, <xCallResult == 0>, GdipPen
+DetourRelease GdiPlus.dll, GdipDeletePen, 1, 1, <xCallResult == 0>, GdipPen
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateSolidFill, 2, -2, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateHatchBrush, 3, -3, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateTexture, 4, -4, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateTexture2, 6, -6, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateTextureIA, 6, -6, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateLineBrush, 5, -5, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreateLineBrushFromRect, 5, -5, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreatePathGradient, 4, -4, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCreatePathGradientFromPath, 2, -2, <xCallResult == 0>, GdipBrush
+DetourAcquire GdiPlus.dll, GdipCloneBrush, 2, -2, <xCallResult == 0>, GdipBrush
+DetourRelease GdiPlus.dll, GdipDeleteBrush, 1, 1, <xCallResult == 0>, GdipBrush
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateFont, 4, -4, <xCallResult == 0>, GdipFont
+DetourAcquire GdiPlus.dll, GdipCreateFontFromDC, 2, -2, <xCallResult == 0>, GdipFont
+DetourAcquire GdiPlus.dll, GdipCreateFontFromLogfontA, 3, -3, <xCallResult == 0>, GdipFont
+DetourAcquire GdiPlus.dll, GdipCreateFontFromLogfontW, 3, -3, <xCallResult == 0>, GdipFont
+DetourRelease GdiPlus.dll, GdipDeleteFont, 1, 1, <xCallResult == 0>, GdipFont
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateFontFamilyFromName, 3, -3, <xCallResult == 0>, GdipFontFamily
+DetourAcquire GdiPlus.dll, GdipCloneFontFamily, 2, -2, <xCallResult == 0>, GdipFontFamily
+DetourRelease GdiPlus.dll, GdipDeleteFontFamily, 1, 1, <xCallResult == 0>, GdipFontFamily
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipNewPrivateFontCollection, 1, -1, <xCallResult == 0>, GdipFontCollection
+DetourRelease GdiPlus.dll, GdipDeletePrivateFontCollection, 1, 1, <xCallResult == 0>, GdipFontCollection
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateStringFormat, 2, -2, <xCallResult == 0>, GdipStringFormat
+DetourAcquire GdiPlus.dll, GdipStringFormatGetGenericDefault, 1, -1, <xCallResult == 0>, GdipStringFormat
+DetourAcquire GdiPlus.dll, GdipStringFormatGetGenericTypographic, 1, -1, <xCallResult == 0>, GdipStringFormat
+DetourAcquire GdiPlus.dll, GdipCloneStringFormat, 2, -2, <xCallResult == 0>, GdipStringFormat
+DetourRelease GdiPlus.dll, GdipDeleteStringFormat, 1, 1, <xCallResult == 0>, GdipStringFormat
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreatePath, 2, -2, <xCallResult == 0>, GdipPath
+DetourAcquire GdiPlus.dll, GdipCreatePath2, 4, -4, <xCallResult == 0>, GdipPath
+DetourAcquire GdiPlus.dll, GdipClonePath, 2, -2, <xCallResult == 0>, GdipPath
+DetourRelease GdiPlus.dll, GdipDeletePath, 1, 1, <xCallResult == 0>, GdipPath
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateRegion, 1, -1, <xCallResult == 0>, GdipRegion
+DetourAcquire GdiPlus.dll, GdipCreateRegionRect, 2, -2, <xCallResult == 0>, GdipRegion
+DetourAcquire GdiPlus.dll, GdipCreateRegionPath, 2, -2, <xCallResult == 0>, GdipRegion
+DetourAcquire GdiPlus.dll, GdipCreateRegionRgnData, 3, -3, <xCallResult == 0>, GdipRegion
+DetourAcquire GdiPlus.dll, GdipCreateRegionHrgn, 2, -2, <xCallResult == 0>, GdipRegion
+DetourAcquire GdiPlus.dll, GdipCloneRegion, 2, -2, <xCallResult == 0>, GdipRegion
+DetourRelease GdiPlus.dll, GdipDeleteRegion, 1, 1, <xCallResult == 0>, GdipRegion
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateMatrix, 1, -1, <xCallResult == 0>, GdipMatrix
+DetourAcquire GdiPlus.dll, GdipCreateMatrix2, 7, -7, <xCallResult == 0>, GdipMatrix
+DetourAcquire GdiPlus.dll, GdipCreateMatrix3, 3, -3, <xCallResult == 0>, GdipMatrix
+DetourAcquire GdiPlus.dll, GdipCloneMatrix, 2, -2, <xCallResult == 0>, GdipMatrix
+DetourRelease GdiPlus.dll, GdipDeleteMatrix, 1, 1, <xCallResult == 0>, GdipMatrix
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateCachedBitmap, 3, -3, <xCallResult == 0>, GdipCachedBitmap
+DetourRelease GdiPlus.dll, GdipDeleteCachedBitmap, 1, 1, <xCallResult == 0>, GdipCachedBitmap
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateImageAttributes, 1, -1, <xCallResult == 0>, GdipImageAttributes
+DetourAcquire GdiPlus.dll, GdipCloneImageAttributes, 2, -2, <xCallResult == 0>, GdipImageAttributes
+DetourRelease GdiPlus.dll, GdipDisposeImageAttributes, 1, 1, <xCallResult == 0>, GdipImageAttributes
+
+; --------------------------------------------------------------------------------------------------
+
+DetourAcquire GdiPlus.dll, GdipCreateAdjustableArrowCap, 5, -5, <xCallResult == 0>, GdipCustomLineCap
+DetourAcquire GdiPlus.dll, GdipCreateCustomLineCap, 5, -5, <xCallResult == 0>, GdipCustomLineCap
+DetourAcquire GdiPlus.dll, GdipCloneCustomLineCap, 2, -2, <xCallResult == 0>, GdipCustomLineCap
+DetourRelease GdiPlus.dll, GdipDeleteCustomLineCap, 1, 1, <xCallResult == 0>, GdipCustomLineCap
+
+; --------------------------------------------------------------------------------------------------
+
+.data
+GdiplusInitializeCount  DWORD  0
+
+.code
+DetourAcquireCounted GdiPlus.dll, GdiplusStartup, 3, GdiplusInitializeCount, <xCallResult == 0>, GdipInitialization
+DetourReleaseCounted GdiPlus.dll, GdiplusShutdown, 1, GdiplusInitializeCount, <>, GdipInitialization
+
 
 ; ==================================================================================================
 
+CreateHooks macro ResTypeName, CollectionInitialSize
+  local ApiDef, ProcName, DllName, ColonPos
+
+  .data
+  pRTCC_&ResTypeName&  $ObjPtr(RTC_Collection)  NULL
+
+  .code
+  New RTC_Collection
+  mov pRTCC_&ResTypeName&, xax
+  OCall RcrcColl::Collection.Insert, xax
+  OCall xax::RTC_Collection.Init, offset RcrcColl, CollectionInitialSize, CollectionInitialSize, COL_MAX_CAPACITY
+
+  %for ApiDef, <&ResTypeName&HookList>                  ;; Search in all listed RTC_Collections
+    New IAT_Hook
+    ColonPos InStr 1, <ApiDef>, <_>
+    mov @CatStr(<pHook>, @SubStr(<ApiDef>, ColonPos)), xax  ;; Save the IAT_Hook in this var
+    OCall xax::IAT_Hook.Init, offset HookColl, \
+                              $OfsCStrA(@CatStr(<!">, @SubStr(<ApiDef>, 1, @SizeStr(<ApiDef>) - ColonPos), <!">)), \
+                              $OfsCStrA(@CatStr(<!">, @SubStr(<ApiDef>, ColonPos + 1), <!">)), \
+                              offset @CatStr(<Detour>, @SubStr(<ApiDef>, ColonPos)), FALSE
+    mov xax, @CatStr(<pHook>, @SubStr(<ApiDef>, ColonPos))
+    .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
+      Destroy xax
+    .else
+      OCall HookColl::Collection.Insert, xax            ;; and in a dedicated HookColl collection
+    .endif
+  endm
+endm
+
 ; --------------------------------------------------------------------------------------------------
 ; Procedure: DllDone
-; Purpose:   RegGuard finalization and freeing of allocated resorces.
+; Purpose:   ResGuard finalization and freeing of allocated resources.
 ;            It restores the original APIs.
 ; Arguments: None.
 ; Return:    Nothing.
 
 DllDone proc
   m2z dResGuardEnabled
-  OCall HookColl::Collection.Done                       ;Destroy all IAT_Hooks and restore IAT
-  OCall RcrcColl::Collection.Done                       ;Destroy all leaked CallData objects in RTC_Collections
-  OCall FailColl::RTC_Collection.Done                   ;Destroy all failed CallData objects
-  OCall LogiColl::RTC_Collection.Done                   ;Destroy all failed CallData objects
+  OCall HookColl::Collection.Done                       ; Destroy all IAT_Hooks and restore IAT
+  OCall RcrcColl::Collection.Done                       ; Destroy all leaked CallData objects in RTC_Collections
+  OCall FailColl::RTC_Collection.Done                   ; Destroy all failed CallData objects
+  OCall LogiColl::RTC_Collection.Done                   ; Destroy all failed CallData objects
   ret
 DllDone endp
 
@@ -1468,365 +1714,78 @@ DllInit proc
   OCall FailColl::RTC_Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
   OCall LogiColl::RTC_Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
 
-  NewRTCC PaintStruct, 10
-  NewHook BeginPaint, User32
-  NewHook EndPaint, User32
-
-  NewRTCC Pen, 10
-  NewHook CreatePen, GDI32
-  NewHook CreatePenIndirect, GDI32
-  NewHook ExtCreatePen, GDI32
-
-  NewRTCC Brush, 10
-  NewHook CreateSolidBrush, GDI32
-  NewHook CreateDIBPatternBrush, GDI32
-  NewHook CreateDIBPatternBrushPt, GDI32
-  NewHook CreateHatchBrush, GDI32
-  NewHook CreatePatternBrush, GDI32
-  NewHook CreateBrushIndirect, GDI32
-
-  NewRTCC Bitmap, 10
-  NewHook CreateBitmap, GDI32
-  NewHook CreateBitmapIndirect, GDI32
-  NewHook CreateCompatibleBitmap, GDI32
-  NewHook CreateDIBitmap, GDI32
-  NewHook CreateDIBSection, GDI32
-  NewHook CreateDiscardableBitmap, GDI32
-  NewHook LoadBitmapA, User32
-  NewHook LoadBitmapW, User32
-  NewHook GdipCreateHBITMAPFromBitmap, Gdiplus
-
-  NewRTCC Image, 10
-  NewHook LoadImageA, User32
-  NewHook LoadImageW, User32
-  NewHook CopyImage, User32
-
-  NewRTCC Region, 10
-  NewHook CreateEllipticRgn, GDI32
-  NewHook CreateEllipticRgnIndirect, GDI32
-  NewHook CreatePenDataRegion, GDI32
-  NewHook CreatePolygonRgn, GDI32
-  NewHook CreatePolyPolygonRgn, GDI32
-  NewHook CreateRectRgn, GDI32
-  NewHook CreateRectRgnIndirect, GDI32
-  NewHook CreateRoundRectRgn, GDI32
-  NewHook ExtCreateRegion, GDI32
-  NewHook SetWindowRgn, User32
-
-  NewRTCC Font, 10
-  NewHook CreateFontA, GDI32
-  NewHook CreateFontW, GDI32
-  NewHook CreateFontIndirectA, GDI32
-  NewHook CreateFontIndirectW, GDI32
-  NewHook CreateFontIndirectExA, GDI32
-  NewHook CreateFontIndirectExW, GDI32
-
-  NewRTCC Palette, 10
-  NewHook CreatePalette, GDI32
-  NewHook CreateHalftonePalette, GDI32
-
-  NewRTCC ColorSpace, 10
-  NewHook CreateColorSpaceA, GDI32
-  NewHook CreateColorSpaceW, GDI32
-
-  NewHook DeleteObject, GDI32
-
-  NewRTCC Cursor, 10
-  NewHook CreateCursor, User32
-  NewHook CopyCursor, User32
-  NewHook LoadCursorA, User32
-  NewHook LoadCursorW, User32
-  NewHook LoadCursorFromFileA, User32
-  NewHook LoadCursorFromFileW, User32
-  NewHook SetSystemCursor, User32
-  NewHook DestroyCursor, User32                 ;DestroyIcon and DestroyCursor use the same API!
-
-  NewRTCC Icon, 10
-  NewHook CopyIcon, User32
-  NewHook CreateIcon, User32
-  NewHook CreateIconIndirect, User32
-  NewHook CreateIconFromResource, User32
-  NewHook CreateIconFromResourceEx, User32
-  NewHook DuplicateIcon, User32
-  NewHook ExtractIconA, Shell32
-  NewHook ExtractIconW, Shell32
-  NewHook ExtractIconExA, Shell32
-  NewHook ExtractIconExW, Shell32
-  NewHook ExtractAssociatedIconA, Shell32
-  NewHook ExtractAssociatedIconW, Shell32
-  NewHook LoadIconA, User32
-  NewHook LoadIconW, User32
-  NewHook GdipCreateHICONFromBitmap, Gdiplus
-  NewHook PrivateExtractIconsA, User32
-  NewHook PrivateExtractIconsW, User32
-  NewHook LoadIconMetric, Comctl32
-  NewHook LoadIconWithScaleDown, Comctl32
-  NewHook ImageList_GetIcon, Comctl32
-  NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
-
-  NewRTCC Menu, 10
-  NewHook CreateMenu, User32
-  NewHook CreatePopupMenu, User32
-  NewHook LoadMenuA, User32
-  NewHook LoadMenuW, User32
-  NewHook LoadMenuIndirectA, User32
-  NewHook LoadMenuIndirectW, User32
-;  NewHook DeleteMenu, User32                    ;Destroys submenus!
-  NewHook DestroyMenu, User32
-
-  NewRTCC Timer, 10
-  NewHook SetTimer, User32
-  NewHook CreateWaitableTimerA, User32
-  NewHook CreateWaitableTimerW, User32
-  NewHook CreateWaitableTimerExA, User32
-  NewHook CreateWaitableTimerExW, User32
-  NewHook KillTimer, User32
-
-  NewRTCC MetaFile, 10
-  NewHook CloseMetaFile, GDI32
-  NewHook CopyMetaFileA, GDI32
-  NewHook CopyMetaFileW, GDI32
-  NewHook CreateMetaFileA, GDI32
-  NewHook CreateMetaFileW, GDI32
-  NewHook GetMetaFileA, GDI32
-  NewHook GetMetaFileW, GDI32
-  NewHook DeleteMetaFile, GDI32
-
-  NewRTCC EnhMetaFile, 10
-  NewHook CloseEnhMetaFile, GDI32
-  NewHook CopyEnhMetaFileA, GDI32
-  NewHook CopyEnhMetaFileW, GDI32
-  NewHook CreateEnhMetaFileA, GDI32
-  NewHook CreateEnhMetaFileW, GDI32
-  NewHook GetEnhMetaFileA, GDI32
-  NewHook GetEnhMetaFileW, GDI32
-  NewHook DeleteEnhMetaFile, GDI32
-
-  NewRTCC DeviceContext, 10
-  NewHook CreateDCA, GDI32
-  NewHook CreateDCW, GDI32
-  NewHook CreateCompatibleDC, GDI32
-  NewHook CreateICA, GDI32
-  NewHook CreateICW, GDI32
-  NewHook DeleteDC, GDI32
-
-  NewRTCC DisplayDeviceContext, 10
-  NewHook GetDC, User32
-  NewHook GetDCEx, User32
-  NewHook GetWindowDC, User32
-  NewHook ReleaseDC, User32
-
-  NewRTCC GdipDisplayDeviceContext, 10
-  NewHook GdipGetDC, Gdiplus
-  NewHook GdipReleaseDC, Gdiplus
-
-  NewRTCC StockObject, 10
-  NewHook GetStockObject, User32      ;It is not necessary (but it is not harmful) to delete stock objects by calling DeleteObject.
-
-  NewRTCC AccTable, 10
-  NewHook CreateAcceleratorTableA, User32
-  NewHook CreateAcceleratorTableW, User32
-  NewHook CopyAcceleratorTableA, User32
-  NewHook CopyAcceleratorTableW, User32
-  NewHook LoadAcceleratorsA, User32
-  NewHook LoadAcceleratorsW, User32
-  NewHook DestroyAcceleratorTable, User32
-
-  NewRTCC KeyboardLayout, 10
-  NewHook LoadKeyboardLayoutA, User32
-  NewHook LoadKeyboardLayoutW, User32
-  NewHook UnloadKeyboardLayout, User32
-
-  NewRTCC Desktop, 10
-  NewHook CreateDesktopA, User32
-  NewHook CreateDesktopW, User32
-  NewHook CreateDesktopExA, User32
-  NewHook CreateDesktopExW, User32
-  NewHook CloseDesktop, User32
-
-  NewRTCC Library, 10
-  NewHook LoadLibraryA, Kernel32
-  NewHook LoadLibraryW, Kernel32
-  NewHook LoadLibraryExA, Kernel32
-  NewHook LoadLibraryExW, Kernel32
-  NewHook FreeLibrary, Kernel32
-
-  NewRTCC WindowStation, 10
-  NewHook CreateWindowStationA, User32
-  NewHook CreateWindowStationW, User32
-  NewHook OpenWindowStationA, User32
-  NewHook OpenWindowStationW, User32
-  NewHook CloseWindowStation, User32
-
-  NewRTCC File, 10
-  NewHook CreateFileA, Kernel32
-  NewHook CreateFileW, Kernel32
-  NewHook CreateFileTransactedA, Kernel32
-  NewHook CreateFileTransactedW, Kernel32
-
-  NewRTCC Event, 10
-  NewHook CreateEventA, Kernel32
-  NewHook CreateEventW, Kernel32
-  NewHook CreateEventExA, Kernel32
-  NewHook CreateEventExW, Kernel32
-  NewHook OpenEventA, Kernel32
-  NewHook OpenEventW, Kernel32
-
-  NewRTCC FileMapping, 10
-  NewHook CreateFileMappingA, Kernel32
-  NewHook CreateFileMappingW, Kernel32
-  NewHook CreateFileMappingNumaA, Kernel32
-  NewHook CreateFileMappingNumaW, Kernel32
-
-  NewRTCC Mutex, 10
-  NewHook CreateMutexA, Kernel32
-  NewHook CreateMutexW, Kernel32
-  NewHook OpenMutexA, Kernel32
-  NewHook OpenMutexW, Kernel32
-
-  NewRTCC Pipe, 10
-  NewHook CreatePipe, Kernel32
-  NewHook CreateNamedPipeA, Kernel32
-  NewHook CreateNamedPipeW, Kernel32
-
-  NewRTCC Process, 10
-  NewHook CreateProcessA, Kernel32
-  NewHook CreateProcessW, Kernel32
-  NewHook CreateProcessAsUserA, Kernel32
-  NewHook CreateProcessAsUserW, Kernel32
-  NewHook CreateProcessWithLogonA, Kernel32
-  NewHook CreateProcessWithLogonW, Kernel32
-  NewHook OpenProcess, Kernel32
-
-  NewRTCC Thread, 10
-  NewHook CreateThread, Kernel32
-  NewHook CreateRemoteThread, Kernel32
-
-  NewRTCC Semaphore, 10
-  NewHook CreateSemaphoreA, Kernel32
-  NewHook CreateSemaphoreW, Kernel32
-  NewHook CreateSemaphoreExA, Kernel32
-  NewHook CreateSemaphoreExW, Kernel32
-  NewHook OpenSemaphoreA, Kernel32
-  NewHook OpenSemaphoreW, Kernel32
-
-  NewHook CloseHandle, Kernel32
-
-  NewRTCC Printer, 10
-  NewHook OpenPrinterA, WinSpool
-  NewHook OpenPrinterW, WinSpool
-  NewHook OpenPrinter2A, WinSpool
-  NewHook OpenPrinter2W, WinSpool
-  NewHook AddPrinterA, WinSpool
-  NewHook AddPrinterW, WinSpool
-  NewHook ClosePrinter, WinSpool
-
-  NewRTCC RegKey, 10
-  NewHook RegCreateKeyA, AdvApi32
-  NewHook RegCreateKeyW, AdvApi32
-  NewHook RegCreateKeyExA, AdvApi32
-  NewHook RegCreateKeyExW, AdvApi32
-  NewHook RegOpenKeyA, AdvApi32
-  NewHook RegOpenKeyW, AdvApi32
-  NewHook RegOpenKeyExA, AdvApi32
-  NewHook RegOpenKeyExW, AdvApi32
-  NewHook RegOpenKeyTransactedA, AdvApi32
-  NewHook RegOpenKeyTransactedW, AdvApi32
-  NewHook RegCloseKey, AdvApi32
-
-  NewRTCC UpdateResource, 10
-  NewHook BeginUpdateResourceA, Kernel32
-  NewHook BeginUpdateResourceW, Kernel32
-  NewHook EndUpdateResourceA, Kernel32
-  NewHook EndUpdateResourceW, Kernel32
-
-  NewRTCC Mailslot, 10
-  NewHook CreateMailslotA, Kernel32
-  NewHook CreateMailslotW, Kernel32
-
-  NewRTCC FindFirstFile, 10
-  NewHook FindFirstFileA, Kernel32
-  NewHook FindFirstFileW, Kernel32
-  NewHook FindFirstFileExA, Kernel32
-  NewHook FindFirstFileExW, Kernel32
-  NewHook FindFirstFileNameA, Kernel32
-  NewHook FindFirstFileNameW, Kernel32
-  NewHook FindFirstFileTransactedA, Kernel32
-  NewHook FindFirstFileTransactedW, Kernel32
-  NewHook FindClose, Kernel32
-
-  NewRTCC FindFirstChangeNotif, 10
-  NewHook FindFirstChangeNotificationA, Kernel32
-  NewHook FindFirstChangeNotificationW, Kernel32
-  NewHook FindCloseChangeNotification, Kernel32
-
-  NewRTCC EventLog, 10
-  NewHook OpenEventLogA, Kernel32
-  NewHook OpenEventLogW, Kernel32
-  NewHook CloseEventLog, Kernel32
-
-  NewRTCC CriticalSection, 10
-  NewHook InitializeCriticalSection, Kernel32
-  NewHook InitializeCriticalSectionAndSpinCount, Kernel32
-  NewHook DeleteCriticalSection, Kernel32
-
-  NewRTCC OleInitialization, 10
-  NewHook OleInitialize, Ole32
-  NewHook OleUninitialize, Ole32
-
-  NewRTCC CoInitialization, 10
-  NewHook CoInitialize, Ole32
-  NewHook CoInitializeEx, Ole32
-  NewHook CoUninitialize, Ole32
-
-  NewRTCC SysString, 10
-  NewHook SysAllocString, OleAuto
-  NewHook SysAllocStringLen, OleAuto
-  NewHook SysAllocStringByteLen, OleAuto
-  NewHook SysReAllocString, OleAuto
-  NewHook SysReAllocStringLen, OleAuto
-  NewHook SysFreeString, OleAuto
-
-  NewRTCC CoTaskMemBlock, 100
-  NewHook CoTaskMemAlloc, Ole32
-  NewHook CoTaskMemRealloc, Ole32
-  NewHook CoTaskMemFree, Ole32
-
-  NewRTCC VirtualMemBlock, 100
-  NewHook VirtualAlloc, Kernel32
-  NewHook VirtualFree, Kernel32
-
-  NewRTCC LocalMemBlock, 100
-  NewHook LocalAlloc, Kernel32
-  NewHook LocalFree, Kernel32
-  NewHook LocalReAlloc, Kernel32
-
-  NewRTCC GlobalMemBlock, 100
-  NewHook GlobalAlloc, Kernel32
-  NewHook GlobalFree, Kernel32
-  NewHook GlobalReAlloc, Kernel32
-
-  NewRTCC HeapMemBlock, 100
-  NewHook HeapAlloc, Kernel32
-  NewHook HeapFree, Kernel32
-  NewHook HeapReAlloc, Kernel32
-
-  NewRTCC PrivateNamespace, 2
-  NewHook CreatePrivateNamespaceA, Kernel32
-  NewHook CreatePrivateNamespaceW, Kernel32
-
-  NewRTCC Job, 2
-  NewHook CreateJobObjectA, Kernel32
-  NewHook CreateJobObjectW, Kernel32
-
-  NewRTCC Transaction, 2
-  NewHook CreateTransactionA, KtmW32
-  NewHook CreateTransactionW, KtmW32
-
-  NewRTCC DuplicateHandle, 2
-  NewHook DuplicateHandle, Kernel32
-  ;https://learn.microsoft.com/en-us/windows/win32/sync/object-names
-
+  CreateHooks PaintStruct, 10
+  CreateHooks Pen, 10
+  CreateHooks Brush, 10
+  CreateHooks Bitmap, 10
+  CreateHooks Image, 10
+  CreateHooks Region, 10
+  CreateHooks Font, 10
+  CreateHooks Palette, 10
+  CreateHooks ColorSpace, 10
+  CreateHooks Cursor, 10
+  CreateHooks Icon, 10
+  CreateHooks Menu, 10
+  CreateHooks Timer, 10
+  CreateHooks MetaFile, 10
+  CreateHooks EnhMetaFile, 10
+  CreateHooks DeviceContext, 10
+  CreateHooks DisplayDeviceContext, 10
+  CreateHooks GdipDisplayDeviceContext, 10
+  CreateHooks StockObject, 10      ; It is not necessary (but it is not harmful) to delete stock objects by calling DeleteObject.
+  CreateHooks AccTable, 10
+  CreateHooks KeyboardLayout, 10
+  CreateHooks Desktop, 10
+  CreateHooks Library, 10
+  CreateHooks WindowStation, 10
+  CreateHooks File, 10
+  CreateHooks Event, 10
+  CreateHooks FileMapping, 10
+  CreateHooks Mutex, 10
+  CreateHooks Pipe, 10
+  CreateHooks Process, 10
+  CreateHooks Thread, 10
+  CreateHooks Semaphore, 10
+  CreateHooks Printer, 10
+  CreateHooks RegKey, 10
+  CreateHooks UpdateResource, 10
+  CreateHooks Mailslot, 10
+  CreateHooks FindFirstFile, 10
+  CreateHooks FindFirstChangeNotif, 10
+  CreateHooks EventLog, 10
+  CreateHooks CriticalSection, 10
+  CreateHooks OleInitialization, 10
+  CreateHooks CoInitialization, 10
+  CreateHooks SysString, 10
+  CreateHooks CoTaskMemBlock, 100
+  CreateHooks VirtualMemBlock, 100
+  CreateHooks LocalMemBlock, 100
+  CreateHooks GlobalMemBlock, 100
+  CreateHooks HeapMemBlock, 100
+  CreateHooks PrivateNamespace, 2
+  CreateHooks Job, 2
+  CreateHooks Transaction, 2
+  CreateHooks DuplicateHandle, 2
+  CreateHooks ServiceHandle, 2
+  CreateHooks Token, 2
+  CreateHooks Atom, 2
+  CreateHooks CryptContext, 2
+  CreateHooks GdipGraphics, 8
+  CreateHooks GdipImage, 8
+  CreateHooks GdipPen, 2
+  CreateHooks GdipBrush, 2
+  CreateHooks GdipFont, 4
+  CreateHooks GdipFontFamily, 2
+  CreateHooks GdipFontCollection, 2
+  CreateHooks GdipStringFormat, 2
+  CreateHooks GdipPath, 2
+  CreateHooks GdipRegion, 2
+  CreateHooks GdipMatrix, 2
+  CreateHooks GdipCachedBitmap, 2
+  CreateHooks GdipImageAttributes, 2
+  CreateHooks GdipCustomLineCap, 2
+  CreateHooks GdipMetafile, 2
+  CreateHooks GdipInitialization, 2
   ret
 DllInit endp
 
@@ -1841,7 +1800,7 @@ ResGuardInit proc
     mov xAppRefAddr, ebp
   else
     mov xAppRefAddr, rsp
-    add xAppRefAddr, 2*sizeof(POINTER)                 ;Discard ret addr and frame
+    add xAppRefAddr, 2*sizeof(POINTER)                 ; Discard ret addr and frame
   endif
   ret
 ResGuardInit endp
@@ -1854,11 +1813,11 @@ ResGuardInit endp
 ;            xbx -> Output ANSI buffer.
 ; Return:    Nothing.
 
-ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
+ShowCollectionData macro CollectionName:req, ResTypeCaption:req
   local szLeakCaption
 
   CStr szLeakCaption, ResTypeCaption, ": current = %li, maximum = %li, total = %li"
-  mov xdi, pRTC_Collection
+  mov xdi, @CatStr(<pRTCC_>, <CollectionName>)
   .if ([xdi].$Obj(RTC_Collection).dCount > 0)
     invoke wsprintf, xbx, offset szLeakCaption, [xdi].$Obj(RTC_Collection).dCount, \
                      [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
@@ -1893,56 +1852,75 @@ ResGuardShow proc uses xbx xdi
 
     ; -----------------------------------------------------------------------------------
     ; Note: don't show data for StockObject!
-    ShowCollectionData pRTCC_VirtualMemBlock,         "Virtual Mem-Blocks"
-    ShowCollectionData pRTCC_GlobalMemBlock,          "Global Mem-Blocks"
-    ShowCollectionData pRTCC_LocalMemBlock,           "Local Mem-Blocks"
-    ShowCollectionData pRTCC_HeapMemBlock,            "Heap Mem-Blocks"
-    ShowCollectionData pRTCC_CoTaskMemBlock,          "CoTaskMem-Blocks"
+    ShowCollectionData VirtualMemBlock,         "Virtual Mem-Blocks"
+    ShowCollectionData GlobalMemBlock,          "Global Mem-Blocks"
+    ShowCollectionData LocalMemBlock,           "Local Mem-Blocks"
+    ShowCollectionData HeapMemBlock,            "Heap Mem-Blocks"
+    ShowCollectionData CoTaskMemBlock,          "CoTaskMem-Blocks"
+    ShowCollectionData AccTable,                "Accelerator Tables"
+    ShowCollectionData Bitmap,                  "Bitmaps"
+    ShowCollectionData Brush,                   "Brushes"
+    ShowCollectionData FindFirstChangeNotif,    "FindFirst Change Notification"
+    ShowCollectionData ColorSpace,              "Color Spaces"
+    ShowCollectionData CriticalSection,         "Critical Sections"
+    ShowCollectionData Cursor,                  "Cursors"
+    ShowCollectionData Desktop,                 "Desktops"
+    ShowCollectionData DeviceContext,           "Device Contexts"
+    ShowCollectionData DisplayDeviceContext,    "Display DCs"
+    ShowCollectionData GdipDisplayDeviceContext,"GDI+ Display DCs"
+    ShowCollectionData EnhMetaFile,             "EnhMetaFiles"
+    ShowCollectionData Event,                   "Events"
+    ShowCollectionData EventLog,                "Event Logs"
+    ShowCollectionData File,                    "Files"
+    ShowCollectionData FileMapping,             "File Mappings"
+    ShowCollectionData UpdateResource,          "File Resources"
+    ShowCollectionData FindFirstFile,           "Find First File"
+    ShowCollectionData Font,                    "Fonts"
+    ShowCollectionData Icon,                    "Icons"
+    ShowCollectionData Image,                   "Images"
+    ShowCollectionData KeyboardLayout,          "Keyboard Layouts"
+    ShowCollectionData Library,                 "Libraries"
+    ShowCollectionData Mailslot,                "Mail Slots"
+    ShowCollectionData Menu,                    "Menus"
+    ShowCollectionData MetaFile,                "MetaFiles"
+    ShowCollectionData Mutex,                   "Mutexes"
+    ShowCollectionData Palette,                 "Palettes"
+    ShowCollectionData PaintStruct,             "Paint Structures"
+    ShowCollectionData Pen,                     "Pens"
+    ShowCollectionData Printer,                 "Printers"
+    ShowCollectionData PrivateNamespace,        "Private Namespaces"
+    ShowCollectionData Process,                 "Processes"
+    ShowCollectionData Region,                  "Regions"
+    ShowCollectionData RegKey,                  "Registry Keys"
+    ShowCollectionData Semaphore,               "Semaphores"
+    ShowCollectionData SysString,               "System BStrings"
+    ShowCollectionData Thread,                  "Threads"
+    ShowCollectionData Timer,                   "Timers"
+    ShowCollectionData Transaction,             "Transactions"
+    ShowCollectionData WindowStation,           "Window Stations"
+    ShowCollectionData OleInitialization,       "OLE library initialization"
+    ShowCollectionData CoInitialization,        "COM library initialization"
+    ShowCollectionData ServiceHandle,           "Service Control Manager"
+    ShowCollectionData Token,                   "Token"
+    ShowCollectionData Atom,                    "Atom"
+    ShowCollectionData CryptContext,            "Cryptgraphy"
+    ShowCollectionData GdipGraphics,            "GDI+ Graphics"
+    ShowCollectionData GdipImage,               "GDI+ Images"
+    ShowCollectionData GdipPen,                 "GDI+ Pens"
+    ShowCollectionData GdipBrush,               "GDI+ Brushs"
+    ShowCollectionData GdipFont,                "GDI+ Fonts"
+    ShowCollectionData GdipFontFamily,          "GDI+ FontFamilies"
+    ShowCollectionData GdipFontCollection,      "GDI+ FontCollections"
+    ShowCollectionData GdipStringFormat,        "GDI+ StringFormats"
+    ShowCollectionData GdipPath,                "GDI+ Paths"
+    ShowCollectionData GdipRegion,              "GDI+ Regions"
+    ShowCollectionData GdipMatrix,              "GDI+ Matrices"
+    ShowCollectionData GdipCachedBitmap,        "GDI+ CachedBitmaps"
+    ShowCollectionData GdipImageAttributes,     "GDI+ ImageAttributes"
+    ShowCollectionData GdipCustomLineCap,       "GDI+ CustomLineCaps"
+    ShowCollectionData GdipMetafile,            "GDI+ Metafiles"
+    ShowCollectionData GdipInitialization,      "GDI+ Initialization"
 
-    ShowCollectionData pRTCC_AccTable,                "Accelerator Tables"
-    ShowCollectionData pRTCC_Bitmap,                  "Bitmaps"
-    ShowCollectionData pRTCC_Brush,                   "Brushes"
-    ShowCollectionData pRTCC_FindFirstChangeNotif,    "FindFirst Change Notification"
-    ShowCollectionData pRTCC_ColorSpace,              "Color Spaces"
-    ShowCollectionData pRTCC_CriticalSection,         "Critical Sections"
-    ShowCollectionData pRTCC_Cursor,                  "Cursors"
-    ShowCollectionData pRTCC_Desktop,                 "Desktops"
-    ShowCollectionData pRTCC_DeviceContext,           "Device Contexts"
-    ShowCollectionData pRTCC_DisplayDeviceContext,    "Display DCs"
-    ShowCollectionData pRTCC_GdipDisplayDeviceContext,"GDI+ Display DCs"
-    ShowCollectionData pRTCC_EnhMetaFile,             "EnhMetaFiles"
-    ShowCollectionData pRTCC_Event,                   "Events"
-    ShowCollectionData pRTCC_EventLog,                "Event Logs"
-    ShowCollectionData pRTCC_File,                    "Files"
-    ShowCollectionData pRTCC_FileMapping,             "File Mappings"
-    ShowCollectionData pRTCC_UpdateResource,          "File Resources"
-    ShowCollectionData pRTCC_FindFirstFile,           "Find First File"
-    ShowCollectionData pRTCC_Font,                    "Fonts"
-    ShowCollectionData pRTCC_Icon,                    "Icons"
-    ShowCollectionData pRTCC_Image,                   "Images"
-    ShowCollectionData pRTCC_KeyboardLayout,          "Keyboard Layouts"
-    ShowCollectionData pRTCC_Library,                 "Libraries"
-    ShowCollectionData pRTCC_Mailslot,                "Mail Slots"
-    ShowCollectionData pRTCC_Menu,                    "Menus"
-    ShowCollectionData pRTCC_MetaFile,                "MetaFiles"
-    ShowCollectionData pRTCC_Mutex,                   "Mutexes"
-    ShowCollectionData pRTCC_Palette,                 "Palettes"
-    ShowCollectionData pRTCC_PaintStruct,             "Paint Structures"
-    ShowCollectionData pRTCC_Pen,                     "Pens"
-    ShowCollectionData pRTCC_Printer,                 "Printers"
-    ShowCollectionData pRTCC_PrivateNamespace,        "Private Namespaces"
-    ShowCollectionData pRTCC_Process,                 "Processes"
-    ShowCollectionData pRTCC_Region,                  "Regions"
-    ShowCollectionData pRTCC_RegKey,                  "Registry Keys"
-    ShowCollectionData pRTCC_Semaphore,               "Semaphores"
-    ShowCollectionData pRTCC_SysString,               "System BStrings"
-    ShowCollectionData pRTCC_Thread,                  "Threads"
-    ShowCollectionData pRTCC_Timer,                   "Timers"
-    ShowCollectionData pRTCC_Transaction,             "Transactions"
-    ShowCollectionData pRTCC_WindowStation,           "Window Stations"
-
-    ShowCollectionData pRTCC_OleInitialization,       "OLE library initialization"
-    ShowCollectionData pRTCC_CoInitialization,        "COM library initialization"
     ; -----------------------------------------------------------------------------------
   .endif
 

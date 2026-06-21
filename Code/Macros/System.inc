@@ -4598,9 +4598,12 @@ endm
 ; Purpose:    Compile-time error generation.
 ; Arguments:  Arg1: Message
 ; Return:     Nothing.
+; Note:       Forces a syntax error to suppress redundant subsequent error messages.
 
 @Err macro Text:=<>
-% .err Text
+  echo Text
+  .err <.>forced error - see line(s) above              ;;The dot triggers a syntax error
+  end                    
 endm
 
 ; --------------------------------------------------------------------------------------------------

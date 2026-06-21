@@ -25,7 +25,7 @@
 ; Purpose:    Define or place an ANSI string in the CONST, _DATA, or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
 ;             Arg2: Quoted string text.
-; Returns:    Nothing / Reference to the string.
+; Return:     Nothing / Reference to the string.
 ; --------------------------------------------------------------------------------------------------
 
 StringA macro StrName, QuotedText:vararg
@@ -140,7 +140,7 @@ endm
 ; Macro:      $Ofs(C|T|D|J)StrA
 ; Purpose:    Place an ANSI string in the CONST, SEG_TEXT, _DATA, or _TEXT segment.
 ; Arguments:  Arg1: Quoted string text.
-; Returns:    String offset.
+; Return:     String offset.
 ; --------------------------------------------------------------------------------------------------
 
 $OfsCStrA macro QuotedText:vararg

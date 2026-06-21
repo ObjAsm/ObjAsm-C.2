@@ -16,24 +16,24 @@
 OLE_COLOR   typedef  DWORD
 
 COM_SERVER_INFO struc
-  pNextServerInfo   POINTER    ?          ;-> next COM_SERVER_INFO structure
-  pTemplate         POINTER    ?          ;-> Object template, ie.: offset @MyContainer
-  pTypeLibGUID      REFGUID    ?          ;-> TypeLib GUID
-  wMajorVersion     WORD       ?          ;Major version
-  wMinorVersion     WORD       ?          ;Minor version
-  pProgID           PSTRING    ?          ;-> Program ID string, ie.: "MyComServer"
-  pDescription      PSTRING    ?          ;-> Server description string, ie.: "ObjAsm COM Server"
-  pVerbMap          POINTER    ?          ;-> supported Verbs
-  dFlags            DWORD      ?          ;-> Flags while Register
+  pNextServerInfo   POINTER    ?          ; -> next COM_SERVER_INFO structure
+  pTemplate         POINTER    ?          ; -> Object template, ie.: offset @MyContainer
+  pTypeLibGUID      REFGUID    ?          ; -> TypeLib GUID
+  wMajorVersion     WORD       ?          ; Major version
+  wMinorVersion     WORD       ?          ; Minor version
+  pProgID           PSTRING    ?          ; -> Program ID string, ie.: "MyComServer"
+  pDescription      PSTRING    ?          ; -> Server description string, ie.: "ObjAsm COM Server"
+  pVerbMap          POINTER    ?          ; -> supported Verbs
+  dFlags            DWORD      ?          ; -> Flags while Register
 COM_SERVER_INFO ends
 PCOM_SERVER_INFO typedef ptr COM_SERVER_INFO
 
 TYPELIB_INFO struc
-  pNextTypeLibInfo  POINTER    ?          ;-> next TYPELIB_INFO structure
-  dResID            DWORD      ?          ;Ressource ID
-  pTypeLibGUID      REFGUID    ?          ;-> TypeLib GUID
-  wMajorVersion     WORD       ?          ;Major version
-  wMinorVersion     WORD       ?          ;Minor version
+  pNextTypeLibInfo  POINTER    ?          ; -> next TYPELIB_INFO structure
+  dResID            DWORD      ?          ; Ressource ID
+  pTypeLibGUID      REFGUID    ?          ; -> TypeLib GUID
+  wMajorVersion     WORD       ?          ; Major version
+  wMinorVersion     WORD       ?          ; Minor version
 TYPELIB_INFO ends
 PTYPELIB_INFO typedef ptr TYPELIB_INFO
 
@@ -126,11 +126,11 @@ CatNameItem struc
 CatNameItem ends
 LPCATNAMEITEM typedef ptr CatNameItem
 
-VERBDATA struc                  ;Wrapper of OLEVERB structure
+VERBDATA struc                  ; Wrapper of OLEVERB structure
   dCommand      DWORD     ?
   pVerb         POINTER   ?
-  dMenuFlags    DWORD     ?     ;See AppendMenu flags
-  dVerbFlags    DWORD     ?     ;OLEVERBATTRIB_NEVERDIRTIES, OLEVERBATTRIB_ONCONTAINERMENU
+  dMenuFlags    DWORD     ?     ; See AppendMenu flags
+  dVerbFlags    DWORD     ?     ; OLEVERBATTRIB_NEVERDIRTIES, OLEVERBATTRIB_ONCONTAINERMENU
 VERBDATA ends
 LPVERBDATA typedef ptr VERBDATA
 
@@ -140,6 +140,9 @@ LPDISPPARAMS typedef ptr DISPPARAMS
 ; Macro:     SUCCEEDED
 ; Purpose:   Check if HRESULT indicates succeed condition.
 ; Arguments: Arg1: 32-bit register.
+; Example:   .if SUCCEEDED
+;              ...
+;            .endif
 
 SUCCEEDED macro Arg
   ifnb <Arg>
@@ -149,9 +152,12 @@ SUCCEEDED macro Arg
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:     SUCCEEDED
+; Macro:     FAILED
 ; Purpose:   Check if HRESULT indicates failed condition.
 ; Arguments: Arg1: 32-bit register.
+; Example:   .if FAILED
+;              ...
+;            .endif
 
 FAILED macro Arg
   ifnb <Arg>
@@ -214,7 +220,7 @@ endm
 ;            Arg3: Code.
 
 MAKE_HRESULT macro Sev, Fac, Code
-  exitm <(Sev shl 31) or (Fac shl 16) or (Code)>
+  exitm <((Sev) shl 31) or ((Fac) shl 16) or (Code)>
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -241,22 +247,21 @@ endm
 
 COM_INTERFACE_BEG macro IfcName:req, AncName:=<>, sIID
   ifnb <sIID>
-    sIID_&IfcName textequ <sIID>                        ;;Create symbolic IID
+    sIID_&IfcName textequ <sIID>                        ;; Create symbolic IID
   endif
 
-  ??InterfaceName equ <IfcName>
-  ??Interface CatStr <IfcName>, <Vtbl>
+  ??Interface CatStr <IfcName>, <Vtbl>                  ;; Interface struc is suffixed with "Vtbl"
 
   ??Interface struct
-
   ifnb <AncName>
     $$sz1 CatStr <AncName>, <Vtbl>
-    %$$sz1 {}                                           ;;Include ancestor methods
+    %$$sz1 {}                                           ;; Include ancestor methods
   else
     $$sz1 textequ <>
   endif
 
-  @CatStr(%??Interface, <_Inherit>) textequ $$sz1       ;;Remember the interface ancestor
+;  ??InterfaceName equ <IfcName>                         ;; Declaration used by other COM macros
+;  @CatStr(%??Interface, <_Inherit>) textequ $$sz1       ;; Remember the interface ancestor
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -277,17 +282,17 @@ endm
 
 COM_MTD_STD macro MtdName:req, Args:vararg
   COM_MTD_DSP MtdName, Args
-  @CatStr(<_>, MtdName) POINTER ?                     ;;Make an entry in the structure
+  @CatStr(<_>, MtdName) POINTER ?                     ;; Make an entry in the structure
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     COM_MTD_DSP
 ; Purpose:   Define a dispatchable method. It has no enty in the VMT.
 ; Arguments: Arg1: Method name.
-;            Arg2: Method arguments (with or without colons & pSelf (or This) is passed implicity).
+;            Arg2: Method arguments (with or without colons, pSelf (or This) is passed implicity).
 
 COM_MTD_DSP macro MtdName:req, Args:vararg
-  ;Accept arguments with and without double point. Build new list = $$ArgList
+  ;; Accept arguments with and without colon => build from Args a new list called $$ArgList
   $$ArgList textequ <>
   for $$Arg:req, <Args>
     ifidn @SubStr($$Arg, 1, 1), <:>
@@ -305,26 +310,29 @@ COM_MTD_DSP macro MtdName:req, Args:vararg
     endif
   endm
 
+  ;; Build the argument string, required for ICall
   %ifb <$$ArgList>
-    @CatStr(%??Interface, <_>, MtdName, <_Args>) catStr <:ptr>
+    @CatStr(%??Interface, <_>, <MtdName>, <_Args>) catStr <:ptr>
   else
-    @CatStr(%??Interface, <_>, MtdName, <_Args>) catStr <:ptr,>, $$ArgList
+    @CatStr(%??Interface, <_>, <MtdName>, <_Args>) catStr <:ptr,>, $$ArgList
   endif
+
+  ;; Prototype the inferface procedure
   if TARGET_BITNESS eq 32
     %ifb <$$ArgList>
-      %@CatStr(%??Interface, <_>, MtdName) proto stdcall, :ptr
-      %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto stdcall, :ptr
+      %@CatStr(%??Interface, <_>, <MtdName>) proto stdcall, :ptr
+      %@CatStr(<TYPE_>, %??Interface, <_>, <MtdName>) typedef proto stdcall, :ptr
     else
       %@CatStr(%??Interface, <_>, MtdName) proto stdcall, :ptr, $$ArgList
-      %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto stdcall, :ptr, $$ArgList
+      %@CatStr(<TYPE_>, %??Interface, <_>, <MtdName>) typedef proto stdcall, :ptr, $$ArgList
     endif
   else
-    ifb <Args>
+    %ifb <$$ArgList>
       %@CatStr(%??Interface, <_>, MtdName) proto fastcall, :ptr
-      %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto fastcall, :ptr
+      %@CatStr(<TYPE_>, %??Interface, <_>, <MtdName>) typedef proto fastcall, :ptr
     else
       %@CatStr(%??Interface, <_>, MtdName) proto fastcall, :ptr, $$ArgList
-      %@CatStr(<TYPE_>, %??Interface, <_>, MtdName) typedef proto fastcall, :ptr, $$ArgList
+      %@CatStr(<TYPE_>, %??Interface, <_>, <MtdName>) typedef proto fastcall, :ptr, $$ArgList
     endif
   endif
 endm
@@ -347,46 +355,75 @@ endm
 ; Return:    GUID record.
 
 MGUID macro GUIDStr:req
-  if @SizeStr(GUIDStr) eq 36
-    $$GUID01 SubStr <GUIDStr>, 1, 8
-    $$GUID01 CatStr <0>, $$GUID01, <h>
-
-    $$GUID02 SubStr <GUIDStr>, 10, 4
-    $$GUID02 CatStr <0>, $$GUID02, <h>
-
-    $$GUID03 SubStr <GUIDStr>, 15, 4
-    $$GUID03 CatStr <0>, $$GUID03, <h>
-
-    $$GUID04 SubStr <GUIDStr>, 20, 2
-    $$GUID04 CatStr <0>, $$GUID04, <h>
-
-    $$GUID05 SubStr <GUIDStr>, 22, 2
-    $$GUID05 CatStr <0>, $$GUID05, <h>
-
-    $$GUID06 SubStr <GUIDStr>, 25, 2
-    $$GUID06 CatStr <0>, $$GUID06, <h>
-
-    $$GUID07 SubStr <GUIDStr>, 27, 2
-    $$GUID07 CatStr <0>, $$GUID07, <h>
-
-    $$GUID08 SubStr <GUIDStr>, 29, 2
-    $$GUID08 CatStr <0>, $$GUID08, <h>
-
-    $$GUID09 SubStr <GUIDStr>, 31, 2
-    $$GUID09 CatStr <0>, $$GUID09, <h>
-
-    $$GUID10 SubStr <GUIDStr>, 33, 2
-    $$GUID10 CatStr <0>, $$GUID10, <h>
-
-    $$GUID11 SubStr <GUIDStr>, 35, 2
-    $$GUID11 CatStr <0>, $$GUID11, <h>
-  else
-    .err <MGUID incorrect input string>
+  ;; Validate total length
+  if @SizeStr(GUIDStr) ne 36
+    .err <MGUID Error: GUID string must be exactly 36 characters>
+    exitm <>
   endif
+
+  ;; Validate dash positions (1-based)
+  ;;   Position  9 separates Data1 from Data2
+  ;;   Position 14 separates Data2 from Data3
+  ;;   Position 19 separates Data3 from Data4 high byte pair
+  ;;   Position 24 separates Data4 high from Data4 low bytes
+  $$dash1 SubStr <GUIDStr>,  9, 1
+  $$dash2 SubStr <GUIDStr>, 14, 1
+  $$dash3 SubStr <GUIDStr>, 19, 1
+  $$dash4 SubStr <GUIDStr>, 24, 1
+
+  ifnidn $$dash1, <->
+    .err <MGUID Error: missing dash at position 9>
+    exitm <>
+  endif
+  ifnidn $$dash2, <->
+    .err <MGUID Error: missing dash at position 14>
+    exitm <>
+  endif
+  ifnidn $$dash3, <->
+    .err <MGUID Error: missing dash at position 19>
+    exitm <>
+  endif
+  ifnidn $$dash4, <->
+    .err <MGUID Error: missing dash at position 24>
+    exitm <>
+  endif
+
+  ;; Extract and format each GUID field
+  $$GUID01 SubStr <GUIDStr>,  1, 8
+  $$GUID01 CatStr <0>, $$GUID01, <h>      ;; Data1: DWORD  (8 hex digits)
+
+  $$GUID02 SubStr <GUIDStr>, 10, 4
+  $$GUID02 CatStr <0>, $$GUID02, <h>      ;; Data2: WORD   (4 hex digits)
+
+  $$GUID03 SubStr <GUIDStr>, 15, 4
+  $$GUID03 CatStr <0>, $$GUID03, <h>      ;; Data3: WORD   (4 hex digits)
+
+  $$GUID04 SubStr <GUIDStr>, 20, 2
+  $$GUID04 CatStr <0>, $$GUID04, <h>      ;; Data4[0]
+
+  $$GUID05 SubStr <GUIDStr>, 22, 2
+  $$GUID05 CatStr <0>, $$GUID05, <h>      ;; Data4[1]
+
+  $$GUID06 SubStr <GUIDStr>, 25, 2
+  $$GUID06 CatStr <0>, $$GUID06, <h>      ;; Data4[2]
+
+  $$GUID07 SubStr <GUIDStr>, 27, 2
+  $$GUID07 CatStr <0>, $$GUID07, <h>      ;; Data4[3]
+
+  $$GUID08 SubStr <GUIDStr>, 29, 2
+  $$GUID08 CatStr <0>, $$GUID08, <h>      ;; Data4[4]
+
+  $$GUID09 SubStr <GUIDStr>, 31, 2
+  $$GUID09 CatStr <0>, $$GUID09, <h>      ;; Data4[5]
+
+  $$GUID10 SubStr <GUIDStr>, 33, 2
+  $$GUID10 CatStr <0>, $$GUID10, <h>      ;; Data4[6]
+
+  $$GUID11 SubStr <GUIDStr>, 35, 2
+  $$GUID11 CatStr <0>, $$GUID11, <h>      ;; Data4[7]
 
   exitm <{$$GUID01, $$GUID02, $$GUID03, {$$GUID04, $$GUID05, $$GUID06, $$GUID07, $$GUID08, $$GUID09, $$GUID10, $$GUID11}}>
 endm
-
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     DefGUID
 ; Purpose:   Define a symbol with a formated GUID string.
@@ -394,24 +431,20 @@ endm
 ;            Arg2: GUID string. Definition: sIID_IXXX textequ <12345678-1234-1234-1234-1234567890AB>
 
 DefGUID macro GUIDSymbol:req, GUIDStr:req
-  if @SizeStr(GUIDStr) eq 36
-    externdef GUIDSymbol:GUID                           ;;Export this symbol
-    GUIDSymbol GUID MGUID(GUIDStr)
-  else
-    .err <DefGUID incorrect input string>
-  endif
+  externdef GUIDSymbol:GUID                           ;; Export this symbol
+  GUIDSymbol GUID MGUID(GUIDStr)
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:     TypeMissing
-; Purpose:   Set a varint to the missing state. Frequently used for optional parameters.
-; Arguments: Arg1: Varint variables.
+; Purpose:   Set a variant to the missing state. Frequently used for optional parameters.
+; Arguments: Arg1: Variant variables.
 
 TypeMissing macro Variants:vararg
-    local Variant
+  local Variant
 
-    for Variant, <Variants>
-      mov Variant.vt, VT_ERROR
-      mov Variant.scode, DISP_E_PARAMNOTFOUND
-    endm
+  for Variant, <Variants>
+    mov Variant.vt, VT_ERROR
+    mov Variant.scode, DISP_E_PARAMNOTFOUND
+  endm
 endm

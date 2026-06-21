@@ -8,7 +8,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szAppClassName, "OAC_WebCamApp"                    ;Creates szAppClassName string in .const
+CStr szAppClassName, "OAC_WebCamApp"                    ; Creates szAppClassName string in .const
 
 ERROR_BASE = BIT29 + 1000
 AddErrMsg WEBCAM_NO_DEVICE_FOUND, "No WebCam found"
@@ -17,19 +17,19 @@ TARGET_SIZE_X   equ   320
 TARGET_SIZE_Y   equ   240
 
 
-Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
-  RedefineMethod    Init                                ;Init method redefinition
+Object Application, ApplicationID, SdiApp               ; Single Document Interface App.
+  RedefineMethod    Init                                ; Init method redefinition
   StaticMethod      Startup
 
   VirtualEvent      OnCommand,  WM_COMMAND
   VirtualEvent      OnCreate,   WM_CREATE
   VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
-  VirtualEvent      OnPaint,    WM_PAINT
+;  VirtualEvent      OnPaint,    WM_PAINT
 
   DefineVariable    hWebCamWnd,     HWND,   0
   DefineVariable    dCaptureIndex,  DWORD,  0
 
-ObjectEnd                                               ;Ends object definition
+ObjectEnd                                               ; Ends object definition
 
 
 .code
@@ -61,8 +61,8 @@ Method Application.Init, uses xsi
 
   invoke SetClientSize, [xsi].hWnd, TARGET_SIZE_X, TARGET_SIZE_Y
 
-  invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
-  invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
+  invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ; Show the window
+  invoke UpdateWindow, [xsi].hWnd                       ; Update if necessary
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -83,43 +83,48 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_WEBCAM_CONNECT
-    ;Disconnect the webcam
+    ; Connect the webcam
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DRIVER_CONNECT, [xsi].dCaptureIndex, 0
+    .if eax != FALSE
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_SCALE, TRUE, 0
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEW, TRUE, 0
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEWRATE, 66, 0
+    .endif
 
   .elseif ax == IDM_WEBCAM_DISCONNECT
-    ;Disconnect the webcam
+    ; Disconnect the webcam
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DRIVER_DISCONNECT, 0, 0
 
   .elseif ax == IDM_WEBCAM_CAPTURE_BMP
-    ;Copy the current webcam frame to a DIB file named "CapturedImage.bmp".
+    ; Copy the current webcam frame to a DIB file named "CapturedImage.bmp".
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_FILE_SAVEDIB, 0, $OfsCStr("CapturedImage.bmp")
 
   .elseif ax == IDM_WEBCAM_CAPTURE_AVI
-    ;Tell our capture window what AVI filename we want our stream saved as.
+    ; Tell our capture window what AVI filename we want our stream saved as.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_FILE_SET_CAPTURE_FILE, 0, $OfsCStr("WebCamVideo.avi")
-    ;Retrieve the current settings of the streaming webcam capture parameters.
+    ; Retrieve the current settings of the streaming webcam capture parameters.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_GET_SEQUENCE_SETUP, sizeof CaptureParms, addr CaptureParms
-    ;Setting fCaptureAudio to FALSE turns audio off and makes a smaller file.
-    ;But I wanted to save audio as well as video so I set fCaptureAudio to TRUE.
+    ; Setting fCaptureAudio to FALSE turns audio off and makes a smaller file.
+    ; But I wanted to save audio as well as video so I set fCaptureAudio to TRUE.
     mov CaptureParms.fCaptureAudio, TRUE
-    ;Set fLimitEnabled to TRUE then place 10 into wTimeLimit for a 10 second recording.
-    ;If you panic and decide you want to abort recording press your keyboard [Esc] key.
+    ; Set fLimitEnabled to TRUE then place 10 into wTimeLimit for a 10 second recording.
+    ; If you panic and decide you want to abort recording press your keyboard [Esc] key.
     mov CaptureParms.fLimitEnabled, TRUE
     mov CaptureParms.wTimeLimit, 10
-    ;Set the modified webcam capture parameters we will use for our streaming capture.
+    ; Set the modified webcam capture parameters we will use for our streaming capture.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_SEQUENCE_SETUP, sizeof CaptureParms, addr CaptureParms
-    ;Begin streaming our video and audio capture to the pre-set AVI filename.
+    ; Begin streaming our video and audio capture to the pre-set AVI filename.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SEQUENCE, 0, 0
 
   .elseif ax == IDM_WEBCAM_DLG_FORMAT
-    ;Open up the webcam video format settings dialog.
+    ; Open up the webcam video format settings dialog.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DRIVER_GET_CAPS, sizeof CapDrvCaps, addr CapDrvCaps
     .if CapDrvCaps.fHasDlgVideoFormat
       invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DLG_VIDEOFORMAT, 0, 0
     .endif
 
   .elseif ax == IDM_WEBCAM_DLG_SOURCE
-    ;Open up the webcam video source settings dialog.
+    ; Open up the webcam video source settings dialog.
     invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DRIVER_GET_CAPS, sizeof CapDrvCaps, ADDR CapDrvCaps
     .if CapDrvCaps.fHasDlgVideoSource != FALSE
       invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_DLG_VIDEOSOURCE, 0, 0
@@ -153,7 +158,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   invoke capCreateCaptureWindow, $OfsCStr("WebCamOut"), WS_VISIBLE or WS_CHILD or WS_BORDER,
@@ -166,13 +171,12 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
       OCall xsi.ErrorReport, NULL, WEBCAM_NO_DEVICE_FOUND
       invoke MessageBox, [xsi].hWnd, $OfsCStr("No WebCam found"), \
                          $OfsCStr("Error"), MB_ICONEXCLAMATION or MB_OK
-      .else
-        invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_SCALE, TRUE, 0
-        invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEW, TRUE, 0
-        invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEWRATE, 10, 0
-      .endif
+    .else
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_SCALE, TRUE, 0
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEW, TRUE, 0
+      invoke SendMessage, [xsi].hWebCamWnd, WM_CAP_SET_PREVIEWRATE, 66, 0
     .endif
-
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -196,25 +200,25 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; --------------------------------------------------------------------------------------------------
-; Method:     Application.OnPaint
-; Purpose:    Event procedure for WM_PAINT message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
-; Return:     eax = Zero if handled.
-
-Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
-
-  SetObject xsi
-  mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)
-
-  invoke GetClientRect, [xsi].hWnd, addr Rct
-  invoke DrawEdge, hDC, addr Rct, EDGE_SUNKEN, BF_RECT
-
-  invoke EndPaint, [xsi].hWnd, addr PS
-  mov eax, TRUE
-MethodEnd
+;; --------------------------------------------------------------------------------------------------
+;; Method:     Application.OnPaint
+;; Purpose:    Event procedure for WM_PAINT message.
+;; Arguments:  Arg1: First message parameter.
+;;             Arg2: Second message parameter.
+;; Return:     eax = Zero if handled.
+;
+;Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+;  local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
+;
+;  SetObject xsi
+;  mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)
+;
+;  invoke GetClientRect, [xsi].hWnd, addr Rct
+;  invoke DrawEdge, hDC, addr Rct, EDGE_SUNKEN, BF_RECT
+;
+;  invoke EndPaint, [xsi].hWnd, addr PS
+;  mov eax, TRUE
+;MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
