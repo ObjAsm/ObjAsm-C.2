@@ -179,6 +179,11 @@ Method Application.Done, uses xsi
   invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hPrevMemBmp)
   invoke DeleteDC, [xsi].hMemDC
 
+  invoke CloseHandle, [xsi].hEventWorkInit1
+  invoke CloseHandle, [xsi].hEventWorkInit2
+  invoke CloseHandle, [xsi].hEventWorkDone1
+  invoke CloseHandle, [xsi].hEventWorkDone2
+
   Destroy [xsi].pIconImageList
   Destroy [xsi].pStatusbar
   Destroy [xsi].pXMenu

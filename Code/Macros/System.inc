@@ -746,7 +746,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
   $$LstRegGP textequ <>
   $$RegCntGP = 0
   for $$Reg, <RegList>
-    $$Pos1 Instr 1, <$$Reg>, <mm>
+    $$Pos1 Instr 2, <$$Reg>, <mm>
     if $$Pos1 ne 0
       $$LstRegMM CatStr $$LstRegMM, <,>, <$$Reg>
       $$RegCntMM = $$RegCntMM + 1
@@ -757,10 +757,10 @@ s2s macro Dst:req, Src:req, RegList:vararg
   endm
 
   if @SizeStr(%$$LstRegMM) ne 0
-    $$LstRegMM SubStr $$LstRegMM, 2
+    $$LstRegMM SubStr $$LstRegMM, 2       ;; Strip away the first comma
   endif
   if @SizeStr(%$$LstRegGP) ne 0
-    $$LstRegGP SubStr $$LstRegGP, 2
+    $$LstRegGP SubStr $$LstRegGP, 2       ;; Strip away the first comma
   endif
 
   ;; Start copying
@@ -768,7 +768,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
   $$DstStrucSize = type(Dst)
 
   ;; *************************************************************************************************
-  $$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
+  ;; $$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
   ;; *************************************************************************************************
 
   if $$SrcStrucSize eq $$DstStrucSize
@@ -3934,7 +3934,7 @@ endm
 $SubRegMM macro Reg:req, RegSize:req
   $$RegMM textequ $Upper(Reg)
   if @InStr(1, <%$$RegMM>, <MM>) eq 0
-    .err <$SubRegMM - invalid register.>
+    .err <$SubRegMM Error - invalid register.>
     exitm <>
   else
     if RegSize eq 16
@@ -3944,7 +3944,7 @@ $SubRegMM macro Reg:req, RegSize:req
     elseif RegSize eq 64
       %exitm <@CatStr(<Z>, @SubStr(<%$$RegMM>, 2))>
     else
-      .err <$SubRegMM - invalid register size.>
+      .err <$SubRegMM Error - invalid register size.>
       exitm <>
     endif
   endif

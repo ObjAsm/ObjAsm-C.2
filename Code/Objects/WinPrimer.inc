@@ -6,7 +6,7 @@
 ; Notes:      Version C.1.0, October 2017
 ;               - Initial release.
 ;             Version C.1.1, February 2021
-;               - Done method added. Call DestroyWindow at life end of descendents.
+;               - Done method added. Call DestroyWindow at life end of descendents. See Note.
 ;             Version C.1.2
 ;               - WM_GETOBJECTINSTANCE changed to BFFFh to avoid conflicts with OS control messages.
 ; ==================================================================================================
@@ -45,6 +45,9 @@ if IMPLEMENT
 ; Purpose:    Destroy the window.
 ; Arguments:  None
 ; Return:     Nothing.
+; Note:       Processing WM_CLOSE like
+;               invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
+;             Calls DestroyWindow internally.
 
 Method WinPrimer.Done, uses xsi
   SetObject xsi

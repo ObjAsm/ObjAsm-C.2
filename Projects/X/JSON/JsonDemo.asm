@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND);, ResGuard)
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -31,6 +31,7 @@ start proc
 
   DbgClearAll
   ResGuard_Start
+  ResGuard_Version
 
   OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Run
@@ -38,7 +39,6 @@ start proc
 
   ResGuard_Show
   ResGuard_Stop
-
   SysDone
   invoke ExitProcess, 0
 start endp

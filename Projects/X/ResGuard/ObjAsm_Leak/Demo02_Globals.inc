@@ -12,10 +12,10 @@ include Demo02_Shared.inc
 
 CStr szIcoName,   "ICON_APP"
 %CStr szAppTitle, "&APP_TITLE"
-%CStr szAboutText,"&ABOUT_TEXT", 13, 10, \
-                  "Version &VER_PRODUCTVERSION_STR", 13, 10, \
-                  "Designed with ObjAsm", 13, 10, \
-                  "© &COPYRIGHT", 13, 10, 13, 10, \ 
+%CStr szAboutText,"&ABOUT_TEXT", CRLF, \
+                  "Version &VER_PRODUCTVERSION_STR", CRLF, \
+                  "Designed with ObjAsm", CRLF, \
+                  "© &COPYRIGHT", CRLF, CRLF, \ 
                   @CatStr(<!">, %BUILD_DATE_STR, \
                           <  -  Build: >, %BUILD_NUMBER, <->, %ASSEMBLER, <->, \
                           %TARGET_MODE_STR, <->, %TARGET_BITNESS, <!">)

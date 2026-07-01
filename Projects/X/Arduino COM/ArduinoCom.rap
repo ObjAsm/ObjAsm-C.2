@@ -156,7 +156,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=29
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -191,8 +191,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,568
-1=0,0,0,0,2124
+2=0,0,0,0,2355
+1=0,0,0,0,1192
 6=0,0,1456,414,587
 4=0,0,0,0,225
 31=0,0,1213,691,11371
@@ -221,9 +221,9 @@ ProductVer4Range=0
 27=0,0,0,0,1242
 28=0,0,0,0
 29=0,0,0,0,10419
-30=0,0,0,0,0
+30=0,0,0,0,3126
 32=0,0,0,0,0
-33=0,0,0,0,1494
+33=0,0,0,0,4591
 36=0,0,0,0,0
 35=0,0,0,0,7581
 37=0,0,0,0,130
@@ -245,16 +245,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="MySdiAppID"
-2="ArduinoApp"
-3="IDC_TEXT_ABOUT"
-4="OnCommand"
-5="GetComPortNames"
-6="DialogComPortSelection"
-7="echo"
-8="$PushMethodArgs"
-9="MethodInvoke m"
-10="MethodInvoke"
+1="LoadAccelerators"
+2="CloseHandle"
+3="SetupDiGetDeviceRegistryProperty"
+4="SetupDiOpenDevRegKey"
+5="hDeviceKey"
+6="RegCloseKey"
+7="pNames"
+8="GetComPortNames"
+9="DialogComPortSelection"
+10="MySdiAppID"
 [Collapse]
 1=
 2=
@@ -287,7 +287,7 @@ ProductVer4Range=0
 42=,
 39=,
 31=,
-30=
+30=16
 23=
 14=
 152=
@@ -369,9 +369,9 @@ ProductVer4Range=0
 32=
 37=
 [AutoLoad]
-AutoLoad=1,2,16,14
+AutoLoad=1,2,14,21,4,33,30
 [PTimer]
-PTimer=1205054950
+PTimer=1251019715
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

@@ -1,15 +1,14 @@
 ; ==================================================================================================
 ; Title:      ResGuard.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    Detection of resource leakages using ObjAsm ResGuard.dll.
-; Notes:      Version C.1.0, August 2023
-;               - Initial release.
+; Version:    See ResGuard.asm
+; Purpose:    Detection of OS resource leaks using ObjAsm ResGuardxx.dll.
 ; ==================================================================================================
 
 
-ResGuardInit  proto
-ResGuardStart proto
-ResGuardStop  proto
-ResGuardShow  proto
+ResGuardInit    proto
+ResGuardStart   proto
+ResGuardStop    proto
+ResGuardShow    proto
+ResGuardVersion proto
 

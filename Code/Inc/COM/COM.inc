@@ -371,19 +371,19 @@ MGUID macro GUIDStr:req
   $$dash3 SubStr <GUIDStr>, 19, 1
   $$dash4 SubStr <GUIDStr>, 24, 1
 
-  ifnidn $$dash1, <->
+  ifdif $$dash1, <->
     .err <MGUID Error: missing dash at position 9>
     exitm <>
   endif
-  ifnidn $$dash2, <->
+  ifdif $$dash2, <->
     .err <MGUID Error: missing dash at position 14>
     exitm <>
   endif
-  ifnidn $$dash3, <->
+  ifdif $$dash3, <->
     .err <MGUID Error: missing dash at position 19>
     exitm <>
   endif
-  ifnidn $$dash4, <->
+  ifdif $$dash4, <->
     .err <MGUID Error: missing dash at position 24>
     exitm <>
   endif

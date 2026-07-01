@@ -3,4 +3,4 @@ EXPORTS
 	ResGuardStart   @2
 	ResGuardStop    @3
 	ResGuardShow    @4
-
+	ResGuardVersion @5

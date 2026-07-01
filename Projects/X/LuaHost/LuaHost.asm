@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND)
+SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND, RESGUARD)
 
 DEFINE LUA_DLL_IMPORT
 
@@ -43,9 +43,9 @@ include LuaHost_Main.inc
 start proc uses xbx
   SysInit
 
-  ResGuard_Start
-
   DbgClearAll
+  ResGuard_Start
+  ResGuard_Version
 
   invoke InitCommonControls
   mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))

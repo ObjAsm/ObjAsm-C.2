@@ -234,7 +234,6 @@ Method HttpServer.ReceiveRequests, uses xsi
                                   $OfsCStrA("OK"), $OfsCStrA("Hey, you hit the server.", 10, 13)
 
         .elseif [xcx].HTTP_REQUEST_V1.Verb == HttpVerbPOST
-          int 3
           OCall xsi.SendPostResponse, pRequest
 
         .else

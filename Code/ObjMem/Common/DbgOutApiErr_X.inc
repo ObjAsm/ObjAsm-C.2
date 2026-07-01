@@ -23,7 +23,7 @@ DbgOutApiErr proc dErrorCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, pDest:PO
   local pBuffer:POINTER, cHexBuffer[16]:CHRA
 
   invoke FormatMessageA, FORMAT_MESSAGE_ALLOCATE_BUFFER or FORMAT_MESSAGE_FROM_SYSTEM, \
-                         0, dErrorCode, 0, addr pBuffer, 0, 0
+                         0, dErrorCode, 0, addr pBuffer, 0, NULL
   .if eax != 0
     add xax, pBuffer
     m2z CHRA ptr [xax - 2*sizeof(CHRA)]                 ;Remove the CRLF ending characters.

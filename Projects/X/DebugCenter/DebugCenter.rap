@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=31
+MilestoneOnDateDate=29
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -245,16 +245,16 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,73358
+2=0,0,806,424,45209
 3=0,0,2127,589,2283
-1=0,0,694,487,2730
+1=0,0,694,487,2760
 4=0,0,706,573,10606
 1001=0,0,0,0,460
 5=0,0,0,0,14270
 6=0,0,601,582,16838
 7=0,0,0,0,20739
 8=0,0,0,0,10569
-11=0,0,706,600,660
+11=0,0,706,600,14833
 10=0,0,0,0,4693
 9=0,0,0,0,2776
 12=0,0,848,586,2109
@@ -277,7 +277,7 @@ ProductVer4Range=0
 47=0,0,0,0,330
 35=0,0,0,0,919
 37=0,0,0,0,91943
-40=0,0,0,0,484
+40=0,0,0,0,9469
 29=0,0,0,0,878
 34=0,0,0,0,6651
 33=0,0,0,0
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="DbgMdiChildTxt.Init"
-2="SETFONT"
-3="[xsi].hFont"
-4="DBG_FONT_TEXT"
-5="index"
-6="IImgCtx"
-7="sIID_IImgCtx"
-8="SYSTRAYMENU"
-9="XMenu.ChangeLanguage"
-10="ChangeLanguage"
+1="Dbg"
+2="int 3"
+3="DbgMdiChildTxt.Init"
+4="SETFONT"
+5="[xsi].hFont"
+6="DBG_FONT_TEXT"
+7="index"
+8="IImgCtx"
+9="sIID_IImgCtx"
+10="SYSTRAYMENU"
 "
 [Collapse]
 7=,,
@@ -349,7 +349,7 @@ ProductVer4Range=0
 12=
 1=
 19=
-2=,,1244504048,214534208,6159
+2=,,8176,214534144,6159
 5=2130706431,207618048,1072758824,20376
 4=
 11=
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2,5,13,25
+AutoLoad=1,2,5,13
 [PTimer]
-PTimer=897780385
+PTimer=898683463
 [RADebugBP]
 5=
 2=

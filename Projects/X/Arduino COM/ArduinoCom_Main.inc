@@ -133,8 +133,10 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_DISCONNECT
-    invoke CloseHandle, [xsi].hComPort
-    mov [xsi].hComPort, INVALID_HANDLE_VALUE
+    .if [xsi].hComPort != INVALID_HANDLE_VALUE
+      invoke CloseHandle, [xsi].hComPort
+      mov [xsi].hComPort, INVALID_HANDLE_VALUE
+    .endif
     xor eax, eax
 
   .elseif ax == IDM_TRANSMIT

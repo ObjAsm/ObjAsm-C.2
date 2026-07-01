@@ -112,5 +112,6 @@ FreeComPortNames proc uses xbx xdi pComPortInfo:PCOMPORT_INFO
       sub ebx, sizeof COMPORT_INFO
     .endw
   .endif
+  MemFree pComPortInfo
   ret
 FreeComPortNames endp

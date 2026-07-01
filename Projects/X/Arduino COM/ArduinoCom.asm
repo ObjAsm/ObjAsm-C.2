@@ -10,8 +10,8 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN32, WIDE_STRING, DEBUG(WND)            ;Load OOP files and OS related objects
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ; Include & initialize standard modules
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD) ; Load OOP files and OS related objects
 
 % include &IncPath&Windows\winioctl.inc
 
@@ -39,20 +39,24 @@ MakeObjects Window, Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
 MakeObjects .\DialogComPortSelection
 
-include ArduinoCom_Globals.inc                          ;Application globals
-include ArduinoCom_Main.inc                             ;Application object
+include ArduinoCom_Globals.inc                          ; Application globals
+include ArduinoCom_Main.inc                             ; Application object
 
 .code
-start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+start proc                                              ; Program entry point
+  SysInit                                               ; Runtime initialization of OOP model
   DbgClearAll
+  ResGuard_Version
+  ResGuard_Start
 
-  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
-  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
-  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ; Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ; Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  ResGuard_Show
+  ResGuard_Stop
+  SysDone                                               ; Runtime finalization of the OOP model
+  invoke ExitProcess, 0                                 ; Exit program returning 0 to the OS
 start endp
 
 end

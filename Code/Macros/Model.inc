@@ -82,7 +82,7 @@
 ; 14. Communal paths and other basic definitions are defined in a file called OA_Setup64.inc
 ; 15. Including objects is done using the MakeObjects or LoadObjects macro. The first builds
 ;     the object source while the second loads the precompiled library file. Descendant objects
-;     must be loaded in inheritance order. If no path is prepended to the object name, 
+;     must be loaded in inheritance order. If no path is prepended to the object name,
 ;     the ObjPath communal directory is assumed.
 ; 16. An object may have virtual methods, invoked using the VMT and the OCall macro.
 ;     Interface methods use the IMT and may use ICall or OCall for their invocation.
@@ -172,7 +172,7 @@ CPU_FEATURE_LAHF_SAHF     equ  00800000h
 ;             UEFI32/UEFI64.
 ;             String type: ANSI_STRING or WIDE_STRING
 ;             Debug switches : INFO, TRACE, RESGUARD, STKGUARD
-;             CPU switches: MMX, SSE, SSE2, etc. 
+;             CPU switches: MMX, SSE, SSE2, etc.
 ;             Source identification: "..." (also used as LOG file name)
 ;             SUFFIX: any text used as file suffix.
 ; Return:     Nothing.

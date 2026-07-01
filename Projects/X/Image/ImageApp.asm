@@ -8,10 +8,10 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ; Include & initialize standard modules
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD) ; Load OOP files and OS related objects
 
-% include &COMPath&COM.inc                              ;COM basic support
+% include &COMPath&COM.inc                              ; COM basic support
 % include &IncPath&Windows\ShellApi.inc
 % include &IncPath&Windows\IImgCtx.inc
 
@@ -27,22 +27,26 @@ MakeObjects Button, Hyperlink
 MakeObjects Dialog, DialogModal, DialogAbout, Image
 MakeObjects WinApp, SdiApp
 
-include ImageApp_Globals.inc                            ;Application globals
-include ImageApp_Main.inc                               ;Application object
+include ImageApp_Globals.inc                            ; Application globals
+include ImageApp_Main.inc                               ; Application object
 
 
-start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+start proc                                              ; Program entry point
+  SysInit                                               ; Runtime initialization of OOP model
   DbgClearAll
+  ResGuard_Version
+  ResGuard_Start
 
   invoke CoInitialize, 0
-  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
-  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
-  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ; Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ; Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
   invoke CoUninitialize
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  ResGuard_Show
+  ResGuard_Stop
+  SysDone                                               ; Runtime finalization of the OOP model
+  invoke ExitProcess, 0                                 ; Exit program returning 0 to the OS
 start endp
 
 end

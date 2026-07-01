@@ -64,6 +64,7 @@ Debug=1
 53=..\..\..\Code\Objects\DialogAbout.inc
 54=ThreadHelper.inc
 55=..\..\..\Code\Objects\StopWatch.inc
+56=..\..\..\Code\Objects\MaskedImageList.inc
 
 [MakeFiles]
 0=Api3DEng.rap
@@ -156,6 +157,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 53=6
 54=1
 55=6
+56=6
 
 [VerInf]
 FV=1.0.0.0
@@ -186,7 +188,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=14
+MilestoneOnDateDate=29
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -221,9 +223,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1914,602,190
+2=0,0,1914,602,9236
 3=0,0,0,0,229
-1=453,0,453,706,1491
+1=453,0,453,706,486
 4=0,0,0,0,467
 1001=0,0,0,0,460
 5=0,0,0,0,46714
@@ -242,7 +244,7 @@ ProductVer4Range=0
 18=0,0,0,0,14512
 19=0,0,0,0,7313
 20=0,0,0,0,9760
-21=0,0,0,0,3137
+21=0,0,0,0,12342
 22=0,0,0,0,89046
 23=0,0,0,0,1608
 24=0,0,0,0,8531
@@ -277,6 +279,7 @@ ProductVer4Range=0
 54=0,0,0,0,6933
 28=0,0,0,0,3270
 55=0,0,0,0,1505
+56=0,0,0,0,5646
 
 [BookMark]
 0=
@@ -291,16 +294,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="StrSize"
-2="pVectron"
-3="üVectron"
-4="CreateGeoSphere"
-5="CreateBox"
-6="COLORREF"
-7="TIMER_INTERVAL"
-8="SceneAnimate"
-9="Api3DEngApp"
-10="hEventEnd"
+1="pIconImageList"
+2="ImageList_Create"
+3="hEventWorkInit1"
+4="CreateEvent"
+5="StrSize"
+6="pVectron"
+7="üVectron"
+8="CreateGeoSphere"
+9="CreateBox"
+10="COLORREF"
 [Collapse]
 2=,
 1=
@@ -357,10 +360,11 @@ ProductVer4Range=0
 54=
 28=
 55=
+56=
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,2,41,44,10
+AutoLoad=1,2,41,44
 [RADebugBP]
 2=
 50=
@@ -403,6 +407,6 @@ AutoLoad=1,2,41,44,10
 20=
 15=
 [PTimer]
-PTimer=2334439314
+PTimer=2336395548
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

@@ -1,10 +1,8 @@
 ; ==================================================================================================
 ; Title:      ResGuard.rc
 ; Author:     G. Friedrich
-; Version:    C.1.0
-; Purpose:    ObjAsm resource file.
-; Notes:      Version C.1.0, August 2023
-;               - First release.
+; Version:    See ResGuard.asm
+; Purpose:    Detection of OS resource leaks using ObjAsm ResGuardxx.dll.
 ; ==================================================================================================
 
 

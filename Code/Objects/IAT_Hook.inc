@@ -77,70 +77,83 @@ Method IAT_Hook.Init, uses xbx xdi xsi, pOwner:POINTER, pModuleNameA:PSTRINGA, p
   SetObject xsi
 
   ; Resolve the real target address
-  invoke GetProcAddress, $invoke(GetModuleHandleA, pModuleNameA), pProcNameA
-  .if xax
-    mov pApiProc, xax
-    mov hModuleInstance, $invoke(GetModuleHandle, NULL) ; Base of the calling (host) module
-                                                        ; RVAs below are relative to it
-    invoke ImageDirectoryEntryToData, hModuleInstance, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, addr dSize
-                                                        ; -> first IMAGE_IMPORT_DESCRIPTOR
-    .if eax != NULL
-      mov xbx, xax
-      .while [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_        ; Iterate import descriptors (one per DLL)
-                                                        ; Name_ == 0 marks the end
-        mov eax, [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_
-        add xax, hModuleInstance                        ; xax -> ANSI module name!
-        invoke StrICompA, pModuleNameA, xax
-        .if eax == 0                                    ; Matched the requested module name
-                                                        ; -> scan its IAT
-          mov edi, [xbx].IMAGE_IMPORT_DESCRIPTOR.FirstThunk
-          add xdi, hModuleInstance
-          mov xax, pApiProc
-          .while [xdi].IMAGE_THUNK_DATA.u1.Function     ; Walk thunks until the NULL terminator
-            .if xax == [xdi].IMAGE_THUNK_DATA.u1.Function ; Thunk's resolved Function ptr matches
-                                                        ;   the proc we're hooking
-              jmp @@Found
-            .endif
-            add xdi, sizeof IMAGE_THUNK_DATA
-          .endw
-        .endif
-        add xbx, sizeof IMAGE_IMPORT_DESCRIPTOR
-      .endw
-    .endif
-
-    .if dReportFailure                                  ; Fell through both loops without
-                                                        ; finding the IAT slot
-      OCall xsi.ErrorReport, NULL, IHK_PROCNOTFOUND
+  invoke GetModuleHandleA, pModuleNameA
+  .if xax == 0
+    .if dReportFailure
+      OCall xsi.ErrorReport, NULL, IHK_MODULENOTFOUND
     .else
-      mov [xsi].dErrorCode, IHK_PROCNOTFOUND
+      mov [xsi].dErrorCode, IHK_MODULENOTFOUND
     .endif
     ExitMethod
-
-@@Found:
-    invoke VirtualQuery, xdi, addr MBI, sizeof MBI      ; xdi -> the IAT slot to patch
-                                                        ; query its page for protection info
-    .if eax
-      invoke VirtualProtect, MBI.BaseAddress, MBI.RegionSize, PAGE_READWRITE, addr MBI.Protect
-                                                        ; IAT page is normally read-only
-      .if eax
-        mov [xsi].pImgThunkData, xdi                    ; Remember slot location for Done
-                                                        ;   to restore later
-        lea xax, [xdi].IMAGE_THUNK_DATA.u1.Function
-        m2m [xsi].pEntry, [xax], xdx                    ; Save original Function ptr
-        m2m [xax], pNewProc, xcx                        ; Install the hook (overwrite IAT slot)
-        invoke VirtualProtect, MBI.BaseAddress, MBI.RegionSize, MBI.Protect, addr dPrvProtect
-                                                        ; Reinstate original protection
-        ExitMethod
-      .endif
-    .endif
-    OCall xsi.ErrorReport, NULL, IHK_MEMWRITEERROR      ; Couldn't make the IAT page writable
-  .else                                                 ; GetProcAddress failed
+  .endif
+  invoke GetProcAddress, xax, pProcNameA
+  .if xax == 0 
     .if dReportFailure
       OCall xsi.ErrorReport, NULL, IHK_PROCNOTFOUND
     .else
       mov [xsi].dErrorCode, IHK_PROCNOTFOUND
     .endif
+;    DbgStrA pProcNameA, "GetProcAddress failed"
+    ExitMethod
   .endif
+  
+  mov pApiProc, xax
+  mov hModuleInstance, $invoke(GetModuleHandle, NULL)   ; Base of the calling (host) module
+                                                        ; RVAs below are relative to it
+  invoke ImageDirectoryEntryToData, hModuleInstance, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, addr dSize
+                                                        ; -> first IMAGE_IMPORT_DESCRIPTOR
+  .if eax != NULL
+    mov xbx, xax
+    .while [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_          ; Iterate import descriptors (one per DLL)
+                                                        ; Name_ == 0 marks the end
+      mov eax, [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_
+      add xax, hModuleInstance                          ; xax -> ANSI module name!
+      invoke StrICompA, pModuleNameA, xax
+      .if eax == 0                                      ; Matched the requested module name
+                                                        ; -> scan its IAT
+        mov edi, [xbx].IMAGE_IMPORT_DESCRIPTOR.FirstThunk
+        add xdi, hModuleInstance
+        mov xax, [xdi].IMAGE_THUNK_DATA.u1.Function
+        .while xax != NULL                              ; Walk thunks until the NULL terminator
+          .if xax == pApiProc                           ; Thunk's resolved Function ptr matches
+                                                        ;   the proc we're hooking
+            jmp @@Found
+          .endif
+          add xdi, sizeof IMAGE_THUNK_DATA
+          mov xax, [xdi].IMAGE_THUNK_DATA.u1.Function
+        .endw
+        .break                                          ; Exit if not found in the specified module
+      .endif
+      add xbx, sizeof IMAGE_IMPORT_DESCRIPTOR
+    .endw
+  .endif
+
+  ; Fell through both loops without finding the IAT slot
+  .if dReportFailure
+    OCall xsi.ErrorReport, NULL, IHK_PROCNOTFOUND
+  .else
+    mov [xsi].dErrorCode, IHK_PROCNOTFOUND
+  .endif
+  ExitMethod
+
+@@Found:
+  ; xdi -> the IAT slot to patch query its page for protection info
+  invoke VirtualQuery, xdi, addr MBI, sizeof MBI
+  .if eax != 0
+    invoke VirtualProtect, MBI.BaseAddress, MBI.RegionSize, PAGE_READWRITE, addr MBI.Protect
+                                                        ; IAT page is normally read-only
+    .if eax != 0
+      mov [xsi].pImgThunkData, xdi                      ; Remember slot location for Done method
+                                                        ;   to restore later
+      lea xax, [xdi].IMAGE_THUNK_DATA.u1.Function
+      m2m [xsi].pEntry, [xax], xdx                      ; Save original Function ptr
+      m2m [xax], pNewProc, xcx                          ; Install the hook (overwrite IAT slot)
+      invoke VirtualProtect, MBI.BaseAddress, MBI.RegionSize, MBI.Protect, addr dPrvProtect
+                                                        ; Reinstate original protection
+      ExitMethod
+    .endif
+  .endif
+  OCall xsi.ErrorReport, NULL, IHK_MEMWRITEERROR        ; Couldn't make the IAT page writable
 
 MethodEnd
 

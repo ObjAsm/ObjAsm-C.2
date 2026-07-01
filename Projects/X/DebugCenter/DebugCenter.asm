@@ -47,7 +47,7 @@ WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude Wi
 INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO, RESGUARD)  ;Load OOP files and OS related objects
 
 % include &MacPath&fMath.inc
 % include &MacPath&DlgTmpl.inc                          ;Load dialog tempate support
@@ -106,11 +106,15 @@ include DebugCenter_Main.inc                            ;Include DebugCenter mai
 start proc uses xbx                                     ;Program entry point
   mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
   SysInit                                               ;Runtime initialization of OOP model
+  ResGuard_Start
+  ResGuard_Version
 
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
   OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
 
+  ResGuard_Show
+  ResGuard_Stop
   SysDone                                               ;Runtime finalization of the OOP model
   invoke FreeLibrary, xbx                               ;Unload RichEdit library
 

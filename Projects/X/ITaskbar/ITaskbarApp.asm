@@ -8,26 +8,26 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ; Include & initialize standard modules
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD) ; Load OOP files and OS related objects
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
 % includelib &LibPath&Windows\Ole32.lib
 
-% include &COMPath&COM.inc                              ;COM basic support
+% include &COMPath&COM.inc                              ; COM basic support
 % include &IncPath&Windows\shObjIDL.inc
 
-;Load or build the following objects
+; Load or build the following objects
 MakeObjects Primer, Stream, WinPrimer
 MakeObjects Window, Button, Hyperlink, Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
 
-include ITaskbarApp_Globals.inc                         ;Application globals
-include ITaskbarApp_Main.inc                            ;Application object
+include ITaskbarApp_Globals.inc                         ; Application globals
+include ITaskbarApp_Main.inc                            ; Application object
 
 
-.const                                                  ;GUID global constants
+.const                                                  ; GUID global constants
 DefGUID IID_ITaskbarList4, <c43dc798-95d1-4bea-9030-bb99e2983a1a>
 DefGUID CLSID_TaskbarList, <56fdf344-fd6d-11d0-958a-006097c9a090>
 
@@ -38,7 +38,7 @@ ThumbButtonArray THUMBBUTTON 4 dup(<>)
 TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
   local pTBL:POINTER, hIcon:HICON, wBuffer[256]:CHRW
 
-  ;ThumbButtons setup
+  ; ThumbButtons setup
   lea xbx, ThumbButtonArray
   invoke LoadIcon, hInstance, $OfsCStr("ICON_RED_DOT")
   mov [xbx].THUMBBUTTON.dwMask, THB_ICON or THB_TOOLTIP or THB_FLAGS
@@ -71,27 +71,27 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
   FillStringW [xbx].THUMBBUTTON.szTip, <Blue action>
   mov [xbx].THUMBBUTTON.dwFlags, THBF_ENABLED
 
-  ;Initialize COM library
+  ; Initialize COM library
   invoke CoInitializeEx, NULL, COINIT_APARTMENTTHREADED
   invoke CoCreateInstance, offset CLSID_TaskbarList, NULL,
                            CLSCTX_INPROC_SERVER, offset IID_ITaskbarList4, addr pTBL
-  .if SUCCEEDED(eax)                                    ;If creation was successful
-    ;Initialize and setup
+  .if SUCCEEDED(eax)                                    ; If creation was successful
+    ; Initialize and setup
     ICall pTBL::ITaskbarList4.HrInit
     ICall pTBL::ITaskbarList4.AddTab, hWnd
     ICall pTBL::ITaskbarList4.ActivateTab, hWnd
 
-    ;Add a customized Thumbnail Tooltip
+    ; Add a customized Thumbnail Tooltip
     lea xdi, wBuffer
     invoke GetCurrentProcessId
     FillStringW wBuffer, <ITaskbarApp - ProcessID: >
     invoke udword2decW, addr [wBuffer + ??StrSize - 2], eax
     ICall pTBL::ITaskbarList4.SetThumbnailTooltip, hWnd, addr wBuffer
 
-    ;Add the 4 Thumbbar buttons
+    ; Add the 4 Thumbbar buttons
     ICall pTBL::ITaskbarList4.ThumbBarAddButtons, hWnd, 4, offset ThumbButtonArray
 
-    ;Control the progress animation
+    ; Control the progress animation
     .for(xbx = 0: ebx != 50: ebx ++)
       lea eax, [2*ebx]
       ICall pTBL::ITaskbarList4.SetProgressValue, hWnd, eax, 100
@@ -100,7 +100,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
     ICall pTBL::ITaskbarList4.SetProgressState, hWnd, TBPF_NOPROGRESS
     invoke Sleep, 200
 
-    ;Control the red dot animation in the lower right corner of the Taskbar Tab
+    ; Control the red dot animation in the lower right corner of the Taskbar Tab
     invoke LoadIcon, hInstance, $OfsCStr("ICON_RED_DOT_SM_LR")
     mov hIcon, xax
     .for(xbx = 0: ebx != 5: ebx ++)
@@ -124,25 +124,38 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
     ICall pTBL::ITaskbarList4.Release
 
   .endif
+  lea xbx, ThumbButtonArray
+  invoke DestroyIcon, [xbx].THUMBBUTTON.hIcon
+  add xbx, sizeof(THUMBBUTTON)
+  invoke DestroyIcon, [xbx].THUMBBUTTON.hIcon
+  add xbx, sizeof(THUMBBUTTON)
+  invoke DestroyIcon, [xbx].THUMBBUTTON.hIcon
+  add xbx, sizeof(THUMBBUTTON)
+  invoke DestroyIcon, [xbx].THUMBBUTTON.hIcon
+
   invoke CoUninitialize
   ret
 TaskBarAnimation endp
 
 
-start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+start proc                                              ; Program entry point
+  SysInit                                               ; Runtime initialization of OOP model
+  ResGuard_Version
+  ResGuard_Start
 
-  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Init         ; Initialize application
 
   ;Start Taskbar animation in a new thread,
   ;otherwise the GUI will freeze in the meantime.
   invoke CreateThread, NULL, 0, addr TaskBarAnimation, $ObjTmpl(Application).hWnd, 0, NULL
 
-  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
-  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Run          ; Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  ResGuard_Show
+  ResGuard_Stop
+  SysDone                                               ; Runtime finalization of the OOP model
+  invoke ExitProcess, 0                                 ; Exit program returning 0 to the OS
 start endp
 
 end

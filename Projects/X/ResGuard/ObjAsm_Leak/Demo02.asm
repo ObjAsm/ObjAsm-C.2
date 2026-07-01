@@ -8,8 +8,8 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, RESGUARD)  ;Load OOP files and OS related objects
+% include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ; Include & initialize standard modules
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, RESGUARD)  ; Load OOP files and OS related objects
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -19,24 +19,34 @@ MakeObjects Primer, Stream, WinPrimer
 MakeObjects Window, Button, Hyperlink, Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
 
-include Demo02_Globals.inc                              ;Application globals
-include Demo02_Main.inc                                 ;Application object
+include Demo02_Globals.inc                              ; Application globals
+include Demo02_Main.inc                                 ; Application object
 
 .code
-start proc                                              ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+start proc                                              ; Program entry point
+  SysInit                                               ; Runtime initialization of OOP model
 
-  ResGuard_Start                                        ;Activates ResGuard system
+  ResGuard_Start                                        ; Activates ResGuard system
+  ResGuard_Version                                      ; Shows the current ResGuard version
 
   invoke P0, 123
-  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
-  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
-  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
-  ResGuard_Show                                         ;Shows ResGuard results
+  OCall $ObjTmpl(Application)::Application.Init         ; Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ; Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
+
+  MemAlloc 1024
+  mov xbx, xax
+  MemReAlloc xbx, 2024
+  mov xbx, xax
+  MemReAlloc xbx, 2024
+  mov xbx, xax
+  MemFree xbx
+
+  ResGuard_Show                                         ; Shows ResGuard results
   ResGuard_Stop
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  SysDone                                               ; Runtime finalization of the OOP model
+  invoke ExitProcess, 0                                 ; Exit program returning 0 to the OS
 start endp
 
 end

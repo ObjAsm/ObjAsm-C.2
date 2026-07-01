@@ -2770,6 +2770,23 @@ ResGuard_Stop macro
 endm
 
 ; --------------------------------------------------------------------------------------------------
+; Macro:      ResGuard_Version
+; Purpose:    Shows the current ResGuard version.
+; Arguments:  None.
+
+ResGuard_Version macro
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      if RESGUARD_LOADED ne FALSE
+        DbgSaveContext
+        invoke ResGuardVersion
+        DbgLoadContext
+      endif
+    endif
+  endif
+endm
+
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgComponent
 ; Purpose:    Outputs Componet information on the debug device.
 ; Arguments:  Arg1: GUID.

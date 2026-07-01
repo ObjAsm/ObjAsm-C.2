@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND);, ResGuard)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD)
 
 % include &MacPath&fMath.inc
 % include &MacPath&DlgTmpl.inc
@@ -43,6 +43,7 @@ start proc
 
   DbgClearAll
   ResGuard_Start
+  Resguard_Version
   fSetPrecision REAL4
   OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Run
