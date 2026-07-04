@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrSizeA.asm
+; Title:      StrSizeA_AVX.asm
 ; Author:     G. Friedrich
 ; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
@@ -13,10 +13,10 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  StrSizeA
+; Procedure:  StrSizeA_AVX
 ; Purpose:    Determine the size of an ANSI string including the zero terminating character (ZTC).
 ; Arguments:  Arg1: -> ANSI string.
-; Return:     eax = Size of the string in BYTEs including the zero terminating character.
+; Return:     eax = String size in BYTEs including the zero terminating character.
 
 .const
 align sizeof(QWORD)
@@ -32,7 +32,7 @@ OR_MASKS_A  DQ 0000000000000000h   ; 0 misaligned bytes  - mask nothing
 .code
 OPTION PROC:NONE
 align ALIGN_CODE
-StrSizeA proc pStringA:POINTER
+StrSizeA_AVX proc pStringA:POINTER
   mov rdx, rcx                                          ; rdx -> StringA
   mov r10, rcx                                          ; r10 -> StringA
   and rdx, 0FFFFFFFFFFFFFFF8h                           ; Align rdx down to QWORD boundary
@@ -77,7 +77,7 @@ endm
   lea rax, [rdx + r8 + 1]                               ; One past null terminator (BYTE address + 1)
   sub rax, rcx                                          ; Size in BYTEs including null terminator
   ret
-StrSizeA endp
+StrSizeA_AVX endp
 OPTION PROC:DEFAULT
 
 

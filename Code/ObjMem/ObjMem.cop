@@ -24,6 +24,10 @@ else
   TARGET_SUFFIX CatStr <64>, TARGET_STR_AFFIX
 endif
 
+% include &IncPath&ObjAsm\CPU_Features.inc
+TARGET_CPU_SIMD_FEATURES  = CPU_FEATURE_SIMD_NONE
+TARGET_CPU_FEATURES       = CPU_FEATURE_FPU
+
 ??ObjectContext textequ <>
 ??MethodContext textequ <>
 ??CodeContext textequ <>

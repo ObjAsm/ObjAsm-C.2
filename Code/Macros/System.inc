@@ -740,7 +740,7 @@ s2sCpy macro Get, Put, RegSelector, RegType, UsedRegSize, DstStruc, SrcStruc, Re
 endm
 
 s2s macro Dst:req, Src:req, RegList:vararg
-  ;; Build register lists
+  ;; Build GP and MM register lis
   $$LstRegMM textequ <>
   $$RegCntMM = 0
   $$LstRegGP textequ <>

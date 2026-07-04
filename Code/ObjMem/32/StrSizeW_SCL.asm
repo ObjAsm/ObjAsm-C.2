@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrSizeW.asm
+; Title:      StrSizeW_SCL.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
@@ -13,10 +13,10 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  StrSizeW
+; Procedure:  StrSizeW_SCL (scalar)
 ; Purpose:    Determine the size of a WIDE string including the zero terminating character (ZTC).
 ; Arguments:  Arg1: -> Wide string.
-; Return:     eax = Size of the string in BYTEs.
+; Return:     eax = String size in BYTEs including the zero terminating character.
 
 .const
 align 4
@@ -28,7 +28,7 @@ OR_MASKS_W  DD 000000000h                               ; Misalign 0: DWORD-alig
 .code
 OPTION PROC:NONE
 align ALIGN_CODE
-StrSizeW proc pStringW:POINTER
+StrSizeW_SCL proc pStringW:POINTER
   mov eax, [esp + 4]                                    ; eax -> StringW
   mov ecx, eax                                          ; ecx -> StringW
   and ecx, 3                                            ; BYTE misalignment 0..3 from DWORD boundary
@@ -69,7 +69,7 @@ endm
   lea eax, [eax + ecx + 1]                              ; End address + 2
   sub eax, edx                                          ; eax = BYTE count including ZTC
   ret 4
-StrSizeW endp
+StrSizeW_SCL endp
 OPTION PROC:DEFAULT
 
 

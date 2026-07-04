@@ -43,7 +43,7 @@ start proc
 
   DbgClearAll
   ResGuard_Start
-  Resguard_Version
+  ResGuard_Version
   fSetPrecision REAL4
   OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Run

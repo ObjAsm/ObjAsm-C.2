@@ -2723,8 +2723,8 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
         %echo @CatStr(<$PushMethodArgs32 Error: line >, %@Line, < of >, @FileCur)
         exitm <0>
       else
-        %exitm <$$StackCorrection>                      ;; Return number of bytes to remove
-      endif                                             ;;  from stack by the caller
+        %exitm <$$StackCorrection>                      ;; Number of bytes to remove from stack
+      endif
     endif
   endif
 endm
@@ -3463,37 +3463,24 @@ ICall macro Expression:req, Args:vararg
 
     ??ImpIfc textequ $GetImpIfc(@CatStr(%??IfcExpr, <Vtbl>), %??MtdExpr)     ;; <Interface>Vtbl
     ifnb ??ImpIfc
-      %ifdef @CatStr(%??ImpIfc, %??MtdExpr, <_ArgCount>)
+      %ifndef @CatStr(%??ImpIfc, %??MtdExpr, <_ArgCount>)
+        ;; Calculate $$ArgCount here only once!
+        $$sz1 textequ <>
+        $$ArgCount = 0
+        ifnb <Args>
+          %for $$Arg:req, <@CatStr(%??ImpIfc, %??MtdExpr, <_Args>)>  ;; This declaration includes the interface ptr
+            $$ArgCount = $$ArgCount + 1
+          endm
+        else
+          $$ArgCount = 1
+        endif
+        @CatStr(%??IfcExpr, <Vtbl>, %??MtdExpr, <_ArgCount>) = $$ArgCount
+      else
         ;; If it was previously calculated, then use that result.
         $$ArgCount = @CatStr(%??ImpIfc, %??MtdExpr, <_ArgCount>)
         ifdif <??ImpIfc>, @CatStr(%??IfcExpr, <Vtbl>)
           @CatStr(%??IfcExpr, <Vtbl>, %??MtdExpr, <_ArgCount>) = $$ArgCount
         endif
-      else
-        ;; Calculate $$ArgCount here to reduce the nesting level!
-        $$sz1 textequ <>
-        $$ArgCount = 0
-        ifnb <Args>
-          %for $$Arg:req, <@CatStr(%??ImpIfc, %??MtdExpr, <_Args>)>
-            %ifidn <@SubStr(<$$Arg>, 1, 1)>, <:>        ;; Strip ':' to provide OA32 compatibility
-              $$Strip SubStr <$$Arg>, 2
-            else
-              $$Strip textequ <$$Arg>
-            endif
-
-            $$Size1 SizeStr $$Strip
-            %if $$Size1 ge 4
-              $$Size1 = 4
-              $$Size2 = 4
-            else
-              $$Size2 = 3
-            endif
-
-            $$ArgCount = $$ArgCount + 1
-            $$sz1 CatStr $$sz1, <,:>, $$Strip
-          endm
-        endif
-        @CatStr(%??IfcExpr, <Vtbl>, %??MtdExpr, <_ArgCount>) = $$ArgCount
       endif
       $$DeclaredParamCount = $$ArgCount                 ;; Does include the instance pointer
 
@@ -3503,9 +3490,6 @@ ICall macro Expression:req, Args:vararg
         push $$IName
         mov edx, [$$IName]                              ;; Make indirection
         call (??ImpIfc ptr [edx]).??MtdExpr
-        if $$StackCorr gt 0
-          add esp, $$StackCorr                          ;; Correct the stack if necessary
-        endif
       else
         $$ProcType CatStr <TYPE_>, ??ImpIfc, ??MtdExpr
         GetInstance64 ??InsExpr

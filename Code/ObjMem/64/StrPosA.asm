@@ -21,7 +21,7 @@
 align ALIGN_CODE
 StrPosA proc uses rbx rdi rsi pString1A:POINTER, pString2A:POINTER
   mov rdi, rcx                                          ;rdi -> String1A
-  mov r10, rdx                                          ;rsi -> String2A
+  mov rsi, rdx                                          ;rsi -> String2A
   
   invoke StrLengthA, rdx                                ;pString2A -> searched string
   test rax, rax
@@ -35,8 +35,7 @@ StrPosA proc uses rbx rdi rsi pString1A:POINTER, pString2A:POINTER
   jb @@2
 
 @@1:
-  mov rsi, r10                                          ;rsi -> pString2A
-  lodsb
+  lodsb                                                 ;rsi -> pString2A
   repne scasb                                           ;Search for first character
   jne @@2                                               ;Not found => Exit
   mov r8, rdi

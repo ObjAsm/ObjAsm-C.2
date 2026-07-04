@@ -28,7 +28,7 @@
 
 .const
 align 16
-SSE2_PREMASK:
+SSE2_PREMASK label xmmword
   cnt = 0
   repeat 16                           ; one row per possible misalignment value 0..15
     if cnt gt 0
@@ -44,7 +44,7 @@ SSE2_PREMASK:
 ; Procedure:  StrSizeA_SSE2
 ; Purpose:    Determine the size of an ANSI string including the zero terminating character (ZTC).
 ; Arguments:  Arg1: -> ANSI string.
-; Return:     eax = Size of the string in BYTEs including the zero terminating character.
+; Return:     eax = String size in BYTEs including the zero terminating character.
 
 .code
 OPTION PROC:NONE
@@ -126,3 +126,5 @@ align ALIGN_CODE
 
 StrSizeA_SSE2 endp
 OPTION PROC:DEFAULT
+
+end

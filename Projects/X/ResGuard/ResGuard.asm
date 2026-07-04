@@ -335,18 +335,6 @@ CreateProcNameStringA macro ProcName:req
 endm
 
 ; --------------------------------------------------------------------------------------------------
-; Macro:      SetCallDataProcName
-; Purpose:    Sets a pointer to the ProcName string from the CONST section in the currently
-;             xbx pointed CallData.
-; Arguments:  Arg1: ProcName.
-; Return:     Nothing.
-
-SetCallDataProcName macro ProcName:req
-  lea xax, &ProcName&StrA
-  mov [xbx].$Obj(CallData).pProcName, xax
-endm
-
-; --------------------------------------------------------------------------------------------------
 ; Macro:      InvokeOriginalCall
 ; Purpose:    Invoke the original call (before hooking), regardless of the target bitness.
 ; Arguments:  None.
@@ -402,11 +390,13 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      AnalyseStack
 ; Purpose:    Creates a CallData instance and analyzes the stack starting from the current context.
-; Arguments:  None.
+;             Additionally it sets the CallData.pProcName pointer to the ProcName string from the
+;             CONST section created using CreateProcNameStringA. 
+; Arguments:  Arg1: ProcName.
 ; Return:     xbx -> CallData object.
 ; Note:       uses xbx xdi
 
-AnalyseStack macro
+AnalyseStack macro ProcName:req
   mov xbx, $New(CallData)
   OCall xbx::CallData.Init, NULL
 
@@ -451,6 +441,8 @@ AnalyseStack macro
       .until rax == xAppRefAddr || [rbx].$Obj(CallData).dCount == CALLER_MAX_DEEP
     .endif
   endif
+  lea xax, &ProcName&StrA
+  mov [xbx].$Obj(CallData).pProcName, xax
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -536,8 +528,7 @@ DetourAcquire macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req,
         jmp @@Exit
       .endif
   endif
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName ProcName
+      AnalyseStack ProcName                             ;; xbx -> CallData object
 
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
@@ -552,7 +543,7 @@ DetourAcquire macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req,
       .endif
   endif
       mov [xbx].$Obj(CallData).xData1, xcx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
       .if SuccessCond
@@ -625,8 +616,8 @@ DetourRelease macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req,
     .if dResGuardEnabled != FALSE
       mov xCallResult, xax
 
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName ProcName
+      AnalyseStack ProcName                             ;; xbx -> CallData object
+
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
   elseif CallIdentifier eq 0
@@ -640,7 +631,7 @@ DetourRelease macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier:req,
       .endif
   endif
       mov [xbx].$Obj(CallData).xData1, xcx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
       .if SuccessCond
@@ -711,8 +702,8 @@ DetourAcquireNamed macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier
     .if dResGuardEnabled != FALSE
       mov xCallResult, xax
 
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName ProcName
+      AnalyseStack ProcName                             ;; xbx -> CallData object
+
   if CallIdentifier gt 0
       mov xcx, Arg&CallIdentifier&
   elseif CallIdentifier eq 0
@@ -726,7 +717,7 @@ DetourAcquireNamed macro DllName:req, ProcName:req, ArgCount:req, CallIdentifier
       .endif
   endif
       mov [xbx].$Obj(CallData).xData1, xcx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
 
       .if SuccessCond
         ;In case that this named proc was called previously, we remove this call data
@@ -782,13 +773,12 @@ DetourAcquireCounted macro DllName:req, ProcName:req, ArgCount:req, CounterName:
     .if dResGuardEnabled != FALSE
       mov xCallResult, xax
 
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName ProcName
+      AnalyseStack ProcName                             ;; xbx -> CallData object
 
       .if SuccessCond
         inc CounterName
         m2m [xbx].$Obj(CallData).xData1, CounterName, xax
-        mov [xbx].$Obj(CallData).xData2, 0
+;        mov [xbx].$Obj(CallData).xData2, 0
         OCall pRTCC_&ResTypeName&::RTC_Collection.Insert, xbx
         mov xax, pRTCC_&ResTypeName&
         mov [xbx].$Obj(CallData).pOwner, xax
@@ -842,10 +832,10 @@ DetourReleaseCounted macro DllName:req, ProcName:req, ArgCount:req, CounterName:
     .if dResGuardEnabled != FALSE
       mov xCallResult, xax
 
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName ProcName
+      AnalyseStack ProcName                             ;; xbx -> CallData object
+
       m2m [xbx].$Obj(CallData).xData1, CounterName, xcx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
       .if SuccessCond
@@ -1095,15 +1085,14 @@ DetourAcquireExtractIconEx macro DllName:req, ProcName:req
       mov xCallResult, xax
 
       .if xCallResult == 0xFFFFFFFF                     ;; File not found
-        AnalyseStack                                    ;; xbx -> CallData object
-        SetCallDataProcName ProcName
+        AnalyseStack ProcName                           ;; xbx -> CallData object
+
         lea xax, FailErrColl
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::RTC_Collection.Insert, xbx
 
       .elseif xCallResult != 0                          ;; xCallResult icons were extracted
-        AnalyseStack                                    ;; xbx -> base CallData (carries the stack trace)
-        SetCallDataProcName ProcName
+        AnalyseStack ProcName                           ;; xbx -> base CallData (carries the stack trace)
         mov dGotAny, FALSE
 
         xor edi, edi                                    ;; xdi = array index
@@ -1115,7 +1104,7 @@ DetourAcquireExtractIconEx macro DllName:req, ProcName:req
             .if xcx != NULL
               .if dGotAny == FALSE
                 mov [xbx].$Obj(CallData).xData1, xcx
-                mov [xbx].$Obj(CallData).xData2, 0
+;                mov [xbx].$Obj(CallData).xData2, 0
                 mov xax, pRTCC_Icon
                 mov [xbx].$Obj(CallData).pOwner, xax
                 OCall xax::RTC_Collection.Insert, xbx
@@ -1140,7 +1129,7 @@ DetourAcquireExtractIconEx macro DllName:req, ProcName:req
             .if xcx != NULL
               .if dGotAny == FALSE
                 mov [xbx].$Obj(CallData).xData1, xcx
-                mov [xbx].$Obj(CallData).xData2, 0
+;                mov [xbx].$Obj(CallData).xData2, 0
                 mov xax, pRTCC_Icon
                 mov [xbx].$Obj(CallData).pOwner, xax
                 OCall xax::RTC_Collection.Insert, xbx
@@ -1218,13 +1207,12 @@ DetourAcquireSHGetFileInfo macro DllName:req, ProcName:req
       mov xax, Arg5
       .if (xax & SHGFI_ICON)                            ;; Only meaningful when an icon was requested
         .if (xCallResult != 0) && (Arg3 != NULL)
-          AnalyseStack                                  ;; xbx -> CallData object
-          SetCallDataProcName ProcName
+          AnalyseStack ProcName                         ;; xbx -> CallData object
           mov xax, Arg3                                 ;; -> SHFILEINFO(A/W); hIcon is the first member
           mov xcx, [xax]                                ;; psfi->hIcon
           .if xcx != NULL
             mov [xbx].$Obj(CallData).xData1, xcx
-            mov [xbx].$Obj(CallData).xData2, 0
+;            mov [xbx].$Obj(CallData).xData2, 0
             mov xax, pRTCC_Icon
             mov [xbx].$Obj(CallData).pOwner, xax
             OCall xax::RTC_Collection.Insert, xbx
@@ -1232,8 +1220,7 @@ DetourAcquireSHGetFileInfo macro DllName:req, ProcName:req
             Destroy xbx                                 ;; SHGFI_ICON was requested but no icon resulted
           .endif
         .else
-          AnalyseStack                                  ;; xbx -> CallData object
-          SetCallDataProcName ProcName
+          AnalyseStack ProcName                         ;; xbx -> CallData object
           lea xax, FailErrColl
           mov [xbx].$Obj(CallData).pOwner, xax
           OCall xax::RTC_Collection.Insert, xbx
@@ -1278,33 +1265,31 @@ DetourAcquirePrivateExtractIconsX macro DllName:req, ProcName:req
     InvokeOriginalCall ProcName, 8
 
     .if dResGuardEnabled != FALSE
-      mov xCallResult, xax
-
-      .if xCallResult == 0
-        Destroy xbx
-      .else
-        SetCallDataProcName ProcName
-        AnalyseStack                                    ;; xbx -> CallData object
+      .if xax != 0
+        mov xCallResult, xax
+        AnalyseStack ProcName                           ;; xbx -> CallData object
         .if xCallResult == 0xFFFFFFFF                   ;; File is not found
           lea xax, FailErrColl
           mov [xbx].$Obj(CallData).pOwner, xax
           OCall xax::RTC_Collection.Insert, xbx
         .else
           xor esi, esi
-          .while xsi < xCallResult
-            MemAlloc sizeof($Obj(CallData))
-            s2s $Obj(CallData) ptr [xax], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xcx, xdx
-            mov xdx, Arg5                               ;; phicon, xdx should never be NULL
-            m2m [xax].$Obj(CallData).xData1, [xdx + xsi*sizeof(HANDLE)], xcx
-            mov [xax].$Obj(CallData).xData2, 0
-            mov [xax].$Obj(CallData).pOwner, xcx
-            OCall pRTCC_Icon::RTC_Collection.Insert, xax
-            inc esi
-          .endw
+          .if Arg5 != NULL 
+            .while xsi < xCallResult
+              MemAlloc sizeof($Obj(CallData))
+              s2s $Obj(CallData) ptr [xax], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xcx, xdx
+              mov xdx, Arg5
+              m2m [xax].$Obj(CallData).xData1, [xdx + xsi*sizeof(HANDLE)], xcx
+              mov [xax].$Obj(CallData).xData2, 0
+              mov [xax].$Obj(CallData).pOwner, xcx
+              OCall pRTCC_Icon::RTC_Collection.Insert, xax
+              inc esi
+            .endw
+          .endif
           Destroy xbx
         .endif
+        mov xax, xCallResult                            ;; Restore call return value
       .endif
-      mov xax, xCallResult                              ;; Restore call return value
     .endif
     ret
   Detour_&ProcName& endp
@@ -1419,7 +1404,7 @@ DetourAcquireNamed Kernel32.dll, OpenFileMappingW, 3, 0, <xCallResult !!= NULL>,
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourAcquire Kernel32.dll, CreateIoCompletionPort, 4, 0, <xCallResult !!= NULL>, IoCompletionPort,, <Arg1 !!= INVALID_HANDLE_VALUE>
+DetourAcquire Kernel32.dll, CreateIoCompletionPort, 4, 0, <xCallResult !!= NULL>, IoCompletionPort,, <Arg2 !!= INVALID_HANDLE_VALUE>
 
 ; --------------------------------------------------------------------------------------------------
 
@@ -1448,14 +1433,13 @@ Detour_CreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWO
   .if dResGuardEnabled != FALSE
     mov xCallResult, xax
 
-    AnalyseStack                                        ; xbx -> CallData object
-    SetCallDataProcName CreatePipe
+    AnalyseStack CreatePipe                             ; xbx -> CallData object
 
     .if xCallResult != 0
       mov xcx, Arg1                                     ; -> hReadPipe
       .if xcx != NULL
         m2m [xbx].$Obj(CallData).xData1, [xcx], xdx
-        mov [xbx].$Obj(CallData).xData2, 0
+;        mov [xbx].$Obj(CallData).xData2, 0
         mov xax, pRTCC_Pipe
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::Collection.Insert, xbx
@@ -1527,12 +1511,11 @@ DetourAcquireCreateProcess macro DllName:req, ProcName:req, ArgCount:req, ProcIn
 
       .if xCallResult != FALSE
         ; ---- Register hProcess ----
-        AnalyseStack                                    ; xbx -> CallData object
-        SetCallDataProcName ProcName
+        AnalyseStack ProcName                           ; xbx -> CallData object
         mov xax, Arg&ProcInfoArgIndex&                  ; -> PROCESS_INFORMATION
         .if xax != NULL
           m2m [xbx].$Obj(CallData).xData1, [xax].PROCESS_INFORMATION.hProcess, xcx
-          mov [xbx].$Obj(CallData).xData2, 0
+;          mov [xbx].$Obj(CallData).xData2, 0
           mov xcx, pRTCC_Process
           mov [xbx].$Obj(CallData).pOwner, xcx
           OCall xcx::RTC_Collection.Insert, xbx
@@ -1552,10 +1535,9 @@ DetourAcquireCreateProcess macro DllName:req, ProcName:req, ArgCount:req, ProcIn
         .endif
       .else
         ; ---- Failed call ----
-        AnalyseStack                                    ; xbx -> CallData object
-        SetCallDataProcName ProcName
+        AnalyseStack ProcName                           ; xbx -> CallData object
         mov [xbx].$Obj(CallData).xData1, 0
-        mov [xbx].$Obj(CallData).xData2, 0
+;        mov [xbx].$Obj(CallData).xData2, 0
         lea xax, FailErrColl
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::RTC_Collection.Insert, xbx
@@ -1633,18 +1615,16 @@ Detour_GlobalDeleteAtom proc uses xbx xdi Arg1:XWORD
       OCall pRTCC_Atom::RTC_Collection.Remove, Arg1, 0
       test eax, eax
       jnz @@Exit                                        ;; Exit if removed
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName GlobalDeleteAtom
+      AnalyseStack GlobalDeleteAtom                     ;; xbx -> CallData object
       m2m [xbx].$Obj(CallData).xData1, Arg1, xdx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
       lea xax, LogiErrColl
       mov [xbx].$Obj(CallData).pOwner, xax
       OCall xax::RTC_Collection.Insert, xbx
     .else
-      AnalyseStack                                      ;; xbx -> CallData object
-      SetCallDataProcName GlobalDeleteAtom
+      AnalyseStack GlobalDeleteAtom                     ;; xbx -> CallData object
       m2m [xbx].$Obj(CallData).xData1, Arg1, xdx
-      mov [xbx].$Obj(CallData).xData2, 0
+;      mov [xbx].$Obj(CallData).xData2, 0
       lea xax, FailErrColl
       mov [xbx].$Obj(CallData).pOwner, xax
       OCall xax::RTC_Collection.Insert, xbx
@@ -1688,8 +1668,7 @@ Detour_SetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   .if dResGuardEnabled != FALSE
     mov xCallResult, xax
 
-    AnalyseStack                                        ; xbx -> CallData object
-    SetCallDataProcName SetTimer
+    AnalyseStack SetTimer                               ; xbx -> CallData object
 
     .if xCallResult != 0
       ; Check if we replace a Window Timer
@@ -1741,8 +1720,8 @@ Detour_KillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
                          DbgColorError, DbgColorBackground, \
                          DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     .else
-      AnalyseStack                                      ; xbx -> CallData object
-    SetCallDataProcName KillTimer
+      AnalyseStack KillTimer                            ; xbx -> CallData object
+
       m2m [xbx].$Obj(CallData).xData1, Arg1, xdx        ; Store hWnd
       m2m [xbx].$Obj(CallData).xData2, Arg2, xdx        ; uIDEvent
 
@@ -2092,7 +2071,7 @@ DetourRelease Winhttp.dll, WinHttpCloseHandle, 1, 1, <xCallResult !!= FALSE>, Wi
 ; --------------------------------------------------------------------------------------------------
 
 DetourAcquire Bcrypt.dll, BCryptOpenAlgorithmProvider, 4, -1, <xCallResult == 0>, BCryptAlgorithm
-DetourRelease Bcrypt.dll, BCryptCloseAlgorithmProvider, 7, -2, <xCallResult == 0>, BCryptAlgorithm
+DetourRelease Bcrypt.dll, BCryptCloseAlgorithmProvider, 2, 1, <xCallResult == 0>, BCryptAlgorithm
 DetourAcquire Bcrypt.dll, BCryptCreateHash, 7, -2, <xCallResult == 0>, BCryptHash
 DetourRelease Bcrypt.dll, BCryptDestroyHash, 1,  1, <xCallResult == 0>, BCryptHash
 DetourAcquire Bcrypt.dll, BCryptGenerateSymmetricKey, 7, -2, <xCallResult == 0>, BCryptKey

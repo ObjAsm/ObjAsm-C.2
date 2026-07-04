@@ -126,44 +126,7 @@ else
   ASSEMBLER CatStr <M>, @Version
 endif
 
-;CPU SIMD Features
-CPU_FEATURE_SIMD_NONE     equ  01                       ; Scalar only
-CPU_FEATURE_SIMD_MMX      equ  02
-CPU_FEATURE_SIMD_SSE      equ  03
-CPU_FEATURE_SIMD_SSE2     equ  04                       ; Baseline for x86-64
-CPU_FEATURE_SIMD_SSE3     equ  05
-CPU_FEATURE_SIMD_SSSE3    equ  06                       ; Supplemental SSE3
-CPU_FEATURE_SIMD_SSE4_1   equ  07
-CPU_FEATURE_SIMD_SSE4_2   equ  08
-CPU_FEATURE_SIMD_AVX      equ  09
-CPU_FEATURE_SIMD_AVX2     equ  10
-CPU_FEATURE_SIMD_AVX512_F equ  11
-
-;CPU Orthogonal Features
-CPU_FEATURE_NONE          equ  00000001h
-CPU_FEATURE_FPU           equ  00000002h                ; Baseline for x86-64
-CPU_FEATURE_AVX512_DQ     equ  00000004h
-CPU_FEATURE_AVX512_IFMA   equ  00000008h
-CPU_FEATURE_AVX512_VBMI   equ  00000010h
-CPU_FEATURE_AVX512_VNNI   equ  00000020h
-CPU_FEATURE_FMA           equ  00000040h
-CPU_FEATURE_BMI1          equ  00000080h
-CPU_FEATURE_BMI2          equ  00000100h
-CPU_FEATURE_POPCNT        equ  00000200h
-CPU_FEATURE_LZCNT         equ  00000400h
-CPU_FEATURE_ABM           equ  00000800h
-CPU_FEATURE_AES           equ  00001000h
-CPU_FEATURE_PCLMULQDQ     equ  00002000h
-CPU_FEATURE_SHA           equ  00004000h
-CPU_FEATURE_VMX           equ  00008000h
-CPU_FEATURE_SVM           equ  00010000h
-CPU_FEATURE_CMPXCHG16B    equ  00020000h
-CPU_FEATURE_CX8           equ  00040000h                ; Baseline for x86-64
-CPU_FEATURE_CLFLUSH       equ  00080000h                ; Baseline for x86-64
-CPU_FEATURE_MONITOR_MWAIT equ  00100000h
-CPU_FEATURE_RDRAND        equ  00200000h
-CPU_FEATURE_RDSEED        equ  00400000h
-CPU_FEATURE_LAHF_SAHF     equ  00800000h
+% include @Environ(OBJASM_PATH)\Code\Inc\ObjAsm\CPU_Features.inc
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      SysSetup

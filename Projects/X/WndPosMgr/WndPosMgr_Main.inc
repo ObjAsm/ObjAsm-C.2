@@ -6,10 +6,10 @@
 
 
 ;WndPosMgr flags
-WPM_TERMINATE   equ   BIT00
-WPM_SHOW_USAGE  equ   BIT01
-WPM_CAPTURE     equ   BIT02
-WPM_DELETE      equ   BIT03
+WPM_TERMINATE   equ   BIT31
+WPM_SHOW_USAGE  equ   BIT30
+WPM_CAPTURE     equ   BIT29
+WPM_DELETE      equ   BIT28
 
 Object Application, ApplicationID, ConsoleApp
   StaticMethod      Apply
@@ -23,7 +23,6 @@ Object Application, ApplicationID, ConsoleApp
 
   DefineVariable    pProfileName,   PSTRING,  NULL
   DefineVariable    pArgList,       POINTER,  NULL
-  DefineVariable    dFlags,         DWORD,    0
   
   Embed   Data,     Json
 ObjectEnd

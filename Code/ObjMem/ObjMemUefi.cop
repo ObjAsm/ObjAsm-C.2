@@ -10,7 +10,7 @@ TARGET_PLATFORM = PLATFORM_UEFI
 % include &MacPath&fMath.inc
 % include &MacPath&Debug.inc
 % include &MacPath&DebugShare.inc
-% include &ObjMemPath&ObjMem.inc         ;Use this file before installation
+% include &IncPath&ObjAsm\ObjMem.inc         ;Use this file before installation
 
 externdef pBootServices:POINTER
 externdef hImage:EFI_HANDLE

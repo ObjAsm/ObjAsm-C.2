@@ -260,8 +260,8 @@ COM_INTERFACE_BEG macro IfcName:req, AncName:=<>, sIID
     $$sz1 textequ <>
   endif
 
-;  ??InterfaceName equ <IfcName>                         ;; Declaration used by other COM macros
-;  @CatStr(%??Interface, <_Inherit>) textequ $$sz1       ;; Remember the interface ancestor
+  ??InterfaceName equ <IfcName>                         ;; Declaration used by other COM macros
+  @CatStr(%??Interface, <_Inherit>) textequ $$sz1       ;; Remember the interface ancestor
 endm
 
 ; --------------------------------------------------------------------------------------------------

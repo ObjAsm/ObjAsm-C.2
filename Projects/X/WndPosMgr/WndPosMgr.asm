@@ -15,6 +15,7 @@
 SysSetup OOP, CON64, WIDE_STRING;, DEBUG(WND)
 
 % include &MacPath&LDLL.inc
+% include &IncPath&Windows\Tlhelp32.inc
 
 MakeObjects Primer, Stream, DiskStream, ConsoleApp
 MakeObjects Json

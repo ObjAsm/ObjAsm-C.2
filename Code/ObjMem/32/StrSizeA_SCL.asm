@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrSizeA.asm
+; Title:      StrSizeA_SCL.asm
 ; Author:     G. Friedrich
 ; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
@@ -13,10 +13,10 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  StrSizeA
+; Procedure:  StrSizeA_SCL (scalar)
 ; Purpose:    Determine the size of an ANSI string including the zero terminating character (ZTC).
 ; Arguments:  Arg1: -> ANSI string.
-; Return:     eax = Size of the string in BYTEs including the zero terminating character.
+; Return:     eax = String size in BYTEs including the zero terminating character.
 
 .const
 align sizeof(DWORD)
@@ -28,7 +28,7 @@ OR_MASKS_A  DD 000000000h
 .code
 OPTION PROC:NONE
 align ALIGN_CODE
-StrSizeA proc pStringA:POINTER
+StrSizeA_SCL proc pStringA:POINTER
   mov eax, [esp + 4]                                    ; eax -> StringA
   mov ecx, eax                                          ; ecx -> StringA
   and ecx, 3                                            ; BYTE misalignment 0..3 from DWORD boundary
@@ -69,7 +69,7 @@ endm
   lea eax, [eax + ecx + 1]                              ; End address + 1
   sub eax, edx                                          ; eax = BYTE count including ZTC
   ret 4
-StrSizeA endp
+StrSizeA_SCL endp
 OPTION PROC:DEFAULT
 
 

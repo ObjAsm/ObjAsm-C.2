@@ -153,7 +153,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,248
+2=0,0,0,0,687
 3=0,0,0,0,21595
 1=0,0,0,0,367
 4=0,0,562,490,28643
@@ -165,13 +165,14 @@ ProductVer4Range=0
 10=0,0,1934,628,997
 11=0,0,1934,628,132
 12=
-16=0,0,0,0,11705
+16=0,0,0,0,368
 15=0,0,977,578,170
 14=
 13=
 18=0,0,0,0,13403
 19=0,0,0,0,19043
 21=0,0,0,0,1413
+20=0,0,0,0,1762
 
 [BookMark]
 0=
@@ -190,16 +191,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="pWndName"
-2="szName"
-3="szH"
-4="szW"
-5="szY"
-6="szX"
-7="pAppName"
-8="pApp"
-9="szProfiles"
-10="DelProperty"
+1="PROCESSENTRY32_"
+2="pWndName"
+3="szName"
+4="szH"
+5="szW"
+6="szY"
+7="szX"
+8="pAppName"
+9="pApp"
+10="szProfiles"
 [Collapse]
 1=
 4=
@@ -220,10 +221,11 @@ ProductVer4Range=0
 18=,
 19=,,,
 21=
+20=,
 [AutoLoad]
-AutoLoad=2,16
+AutoLoad=2,16,20
 [PTimer]
-PTimer=850580700
+PTimer=850999731
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -243,3 +245,4 @@ GroupExpand=1,1,1,0,0,1,1,0
 16=
 21=
 19=
+20=

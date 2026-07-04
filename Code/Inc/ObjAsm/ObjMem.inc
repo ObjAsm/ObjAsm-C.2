@@ -166,31 +166,48 @@ else
 endif
 
 BStrSize proto :POINTER
-StrSizeA proto :POINTER
+StrSizeA_SCL proto :POINTER
 StrSizeA_SSE2 proto :POINTER
 StrSizeA_AVX proto :POINTER
-StrSizeW proto :POINTER
+StrSizeW_SCL proto :POINTER
 StrSizeW_SSE2 proto :POINTER
 StrSizeW_AVX proto :POINTER
+StrSizeA textequ <StrSizeA_SCL>
+StrSizeW textequ <StrSizeW_SCL>
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
-    StrSize textequ <StrSizeA_AVX>
-  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
-    StrSize textequ <StrSizeA_SSE2>
-  else
-    StrSize textequ <StrSizeA>
-  endif
+  StrSize textequ <StrSizeA_SCL>
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
-    StrSize textequ <StrSizeW_AVX>
-  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
-    StrSize textequ <StrSizeW_SSE2>
-  else
-    StrSize textequ <StrSizeW>
-  endif
+  StrSize textequ <StrSizeW_SCL>
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
+
+
+;if TARGET_STR_TYPE eq STR_TYPE_ANSI
+;  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
+;    StrSizeA textequ <StrSizeA_AVX>
+;    StrSize textequ <StrSizeA_AVX>
+;  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
+;    StrSizeA textequ <StrSizeA_SSE2>
+;    StrSize textequ <StrSizeA_SSE2>
+;  else
+;    StrSizeA textequ <StrSizeA_SCL>
+;    StrSize textequ <StrSizeA_SCL>
+;  endif
+;elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+;  if TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_AVX
+;    StrSizeW textequ <StrSizeW_AVX>
+;    StrSize textequ <StrSizeW_AVX>
+;  elseif TARGET_CPU_SIMD_FEATURES ge CPU_FEATURE_SIMD_SSE2
+;    StrSizeW textequ <StrSizeW_SSE2>
+;    StrSize textequ <StrSizeW_SSE2>
+;  else
+;    StrSizeW textequ <StrSizeW_SCL>
+;    StrSize textequ <StrSizeW_SCL>
+;  endif
+;else
+;  echo Warning: incompatible TARGET_STR_TYPE
+;endif
 
 StrCLengthA proto :POINTER, :DWORD
 StrCLengthW proto :POINTER, :DWORD

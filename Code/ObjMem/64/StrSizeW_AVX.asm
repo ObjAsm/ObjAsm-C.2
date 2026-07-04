@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrSizeW.asm
+; Title:      StrSizeW_AVX.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
@@ -13,10 +13,10 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  StrSizeW
+; Procedure:  StrSizeW_AVX
 ; Purpose:    Determine the size of a WIDE string including the ZTC.
 ; Arguments:  Arg1: -> WIDE string.
-; Return:     rax = Size of the string in BYTEs.
+; Return:     eax = String size in BYTEs including the zero terminating character.
 
 .const
 align sizeof(QWORD)
@@ -28,7 +28,7 @@ OR_MASKS_W  DQ 0000000000000000h   ; WCHR offset 0: all 4 WCHARs belong to strin
 .code
 OPTION PROC:NONE
 align ALIGN_CODE
-StrSizeW proc pStringW:POINTER
+StrSizeW_AVX proc pStringW:POINTER
   mov rdx, rcx                                          ; rdx -> StringW
   mov r10, rcx                                          ; r10 -> StringW
   and rdx, 0FFFFFFFFFFFFFFF8h                           ; Align down to QWORD boundary
@@ -73,7 +73,7 @@ endm
   lea rax, [rdx + r8 + 1]                               ; One past null terminator (BYTE address + 1)          
   sub rax, rcx                                          ; Size in BYTEs including null terminator              
   ret
-StrSizeW endp
+StrSizeW_AVX endp
 OPTION PROC:DEFAULT
 
 

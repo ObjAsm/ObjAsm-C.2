@@ -21,7 +21,7 @@
 align ALIGN_CODE
 StrPosW proc uses rbx rdi rsi pString1W:POINTER, pString2W:POINTER
   mov rdi, rcx                                          ;rdi -> String1W
-  mov r10, rdx                                          ;rsi -> String2W
+  mov rsi, rdx                                          ;rsi -> String2W
 
   invoke StrLengthW, rdx                                ;pString2W -> searched string
   test rax, rax
@@ -35,8 +35,7 @@ StrPosW proc uses rbx rdi rsi pString1W:POINTER, pString2W:POINTER
   jb @@2
 
 @@1:
-  mov rsi, r10                                          ;rsi -> pString2W
-  lodsw
+  lodsw                                                 ;rsi -> pString2W
   repne scasw                                           ;Search for first character
   jne @@2                                               ;Not found => Exit
   mov r8, rdi

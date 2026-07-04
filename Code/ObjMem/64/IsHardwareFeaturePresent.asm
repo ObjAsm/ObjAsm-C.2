@@ -27,7 +27,7 @@ OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
-IsHardwareFeaturePresent proc
+IsHardwareFeaturePresent proc bFeature:BYTE
   ; --------------------------------------------------------------------
   ; Step 1: Test CPUID availability (RFLAGS.ID = bit 21)
   ;
