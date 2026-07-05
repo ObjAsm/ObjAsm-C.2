@@ -19,7 +19,7 @@
 ;             Arg2: Dividend unsigned high word.
 ;             Arg3: Divisor unsigned low word.
 ;             Arg4: Divisor unsigned high word.
-; Return:     edx:eax = Unsigned quotient.
+; Return:     edx::eax = Unsigned quotient.
 
 .code
 align ALIGN_CODE
@@ -36,16 +36,16 @@ uqqqDiv proc uses ebx esi dDividendLo:DWORD, dDividendHi:DWORD, \
   xor edx, edx
   div ecx                                               ;eax <= high order bits of quotient
   mov ebx, eax                                          ;Save high bits of quotient
-  mov eax, dDividendLo                                  ;edx:eax <= remainder: lo-word of dividend
+  mov eax, dDividendLo                                  ;edx::eax <= remainder: lo-word of dividend
   div ecx                                               ;eax <= low order bits of quotient
-  mov edx, ebx                                          ;edx:eax <= quotient
+  mov edx, ebx                                          ;edx::eax <= quotient
   jmp short L2                                          ;Set sign, restore stack and return
 
 ; Here we do it the hard way. Remember, eax contains the hi-word of qDivisor
 L1:
-  mov ecx, eax                                          ;ecx:ebx <= divisor
+  mov ecx, eax                                          ;ecx::ebx <= divisor
   mov ebx, dDivisorLo
-  mov edx, dDividendHi                                  ;edx:eax <= dividend
+  mov edx, dDividendHi                                  ;edx::eax <= dividend
   mov eax, dDividendLo
 L3:
   shr ecx, 1                                            ;Shift divisor right one bit
@@ -65,11 +65,11 @@ L3:
   mov ecx, eax
   mov eax, dDivisorLo
   mul esi                                               ;QUOT * lo-word(divisor)
-  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  add edx, ecx                                          ;edx::eax = QUOT * divisor
   jc short L4                                           ;Carry means quotient is off by 1
 
 ; Do long compare here between original dividend and the result of the
-; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
+; multiply in edx::eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
   cmp edx, dDividendHi                                  ;Compare hi words of result and original
   ja short L4                                           ;If result > original, do subtract
@@ -79,10 +79,10 @@ L3:
 L4:
   dec esi                                               ;Subtract 1 from quotient
 L5:
-  xor edx, edx                                          ;edx:eax <= quotient
+  xor edx, edx                                          ;edx::eax <= quotient
   mov eax, esi
 
-; Just the cleanup left to do. edx:eax contains the quotient.
+; Just the cleanup left to do. edx::eax contains the quotient.
 L2:
   ret
 uqqqDiv endp

@@ -12,9 +12,9 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqShl/uqShl
 ; Purpose:    Shift left of a signed/unsigned QWORD (signed and unsigned procs are identical).
-; Arguments:  Arg1: QWORD in edx:eax.
+; Arguments:  Arg1: QWORD in edx::eax.
 ;             Arg2: Shift count in cl.
-; Return:     edx:eax Shifted value.
+; Return:     edx::eax Shifted value.
 
 .code
 align ALIGN_CODE
@@ -34,7 +34,7 @@ ProcName proc
     shl edx, cl
     ret
   .endif
-  ;Return 0 in edx:eax
+  ;Return 0 in edx::eax
   xor eax, eax
   xor edx, edx
   ret

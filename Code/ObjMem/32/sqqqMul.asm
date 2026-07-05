@@ -22,7 +22,7 @@ TypeArg equ <SDWORD>
 ;             Arg2: Multiplicand high signed word.
 ;             Arg3: Multiplier low signed word.
 ;             Arg4: Multiplier high signed word.
-; Return:     edx:eax = Signed product.
+; Return:     edx::eax = Signed product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
 

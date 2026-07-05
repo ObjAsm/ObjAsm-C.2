@@ -19,7 +19,7 @@
 ;             Arg2: Dividend unsigned high word.
 ;             Arg3: Divisor unsigned low word.
 ;             Arg4: Divisor unsigned high word.
-; Return:     edx:eax = Unsigned remainder.
+; Return:     edx::eax = Unsigned remainder.
 
 .code
 align ALIGN_CODE
@@ -35,17 +35,17 @@ uqqqRem proc uses ebx dDividendLo:DWORD, dDividendHi:DWORD, \
   mov eax, dDividendHi                                  ;Load hi-word of dividend
   xor edx, edx
   div ecx                                               ;eax <= high order bits of quotient
-  mov eax, dDividendLo                                  ;edx:eax <= remainder: lo-word of dividend
+  mov eax, dDividendLo                                  ;edx::eax <= remainder: lo-word of dividend
   div ecx                                               ;eax <= low order bits of quotient
-  mov eax, edx                                          ;edx:eax <= remainder
+  mov eax, edx                                          ;edx::eax <= remainder
   xor edx, edx
   jmp short L2                                          ;Complete remainder calculation
 
 ; Here we do it the hard way. Remember, eax contains the hi-word of divisor
 L1:
-  mov ecx, eax                                          ;ecx:ebx <= divisor
+  mov ecx, eax                                          ;ecx::ebx <= divisor
   mov ebx, dDivisorLo
-  mov edx, dDividendHi                                  ;edx:eax <= dividend
+  mov edx, dDividendHi                                  ;edx::eax <= dividend
   mov eax, dDividendLo
 L3:
   shr ecx, 1                                            ;Shift divisor right one bit
@@ -64,11 +64,11 @@ L3:
   mul dDivisorHi                                        ;QUOT * hi-word(divisor)
   xchg ecx, eax                                         ;Put partial product in ecx, get quotient in eax
   mul dDivisorLo
-  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  add edx, ecx                                          ;edx::eax = QUOT * divisor
   jc short L4                                           ;Carry means quotient is off by 1
 
 ; Do long compare here between original dividend and the result of the
-; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
+; multiply in edx::eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
   cmp edx, dDividendHi                                  ;Compare hi words of result and original
   ja short L4                                           ;If result > original, do subtract
@@ -89,7 +89,7 @@ L5:
   neg eax
   sbb edx, 0
 
-; Cleanup and return, edx:eax contains the remainder.
+; Cleanup and return, edx::eax contains the remainder.
 L2:
   ret
 uqqqRem endp

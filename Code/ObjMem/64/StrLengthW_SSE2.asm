@@ -9,6 +9,8 @@
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
+TARGET_CPU_SIMD_FEATURES = TARGET_CPU_SIMD_FEATURES or CPU_FEATURE_SIMD_SSE2
+TARGET_CPU_FEATURES = TARGET_CPU_FEATURES or (CPU_FEATURE_FPU or CPU_FEATURE_CX8 or CPU_FEATURE_CLFLUSH)
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrLengthW_SSE2

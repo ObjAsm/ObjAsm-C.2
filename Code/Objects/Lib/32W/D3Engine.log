@@ -1,0 +1,10 @@
+Building D3Engine object ...
+OOP Support:    ENABLED
+Platform:       WINDOWS
+User Interface: NONE
+Binary Format:  LIB
+Bitness:        32
+String Type:    WIDE (UNICODE)
+Mode:           RELEASE
+D3Engine.asm: ok
+Succeeded building library D3Engine.lib

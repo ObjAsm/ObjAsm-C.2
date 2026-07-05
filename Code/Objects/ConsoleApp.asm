@@ -9,6 +9,7 @@
 
 
 % include Objects.cop
+% include &IncPath&Windows\tlhelp32.inc
 
 ;Add here all files that build the inheritance path and referenced objects
 LoadObjects Primer

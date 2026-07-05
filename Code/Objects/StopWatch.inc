@@ -68,7 +68,7 @@ if IMPLEMENT
 ; Method:     StopWatch.GetTime
 ; Purpose:    Return the elapsed time in the specified resolution as a QWORD.
 ; Arguments:  None.
-; Return:     edx:eax or rax = Accumulated time.
+; Return:     edx::eax or rax = Accumulated time.
 
 Method StopWatch.GetTime
   local qTime:QWORD

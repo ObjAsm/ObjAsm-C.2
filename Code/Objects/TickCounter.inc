@@ -124,7 +124,7 @@ Method TickCounter.Start, uses xbx xsi
     mov [xsi].dStatus, TCR_RUNNING
     sub eax, eax                                      ;eax = 0
     cpuid                                             ;Serialize, writes xbx
-    rdtsc                                             ;Read time stamp counter into edx:eax
+    rdtsc                                             ;Read time stamp counter into edx::eax
     if TARGET_BITNESS eq 32
       mov DWORD ptr [esi].qTicksStart, eax
       mov DWORD ptr [esi + sizeof DWORD].qTicksStart, edx
@@ -152,7 +152,7 @@ Method TickCounter.Stop, uses xbx xsi
   .if [xsi].dStatus == TCR_RUNNING
     sub eax, eax                                      ;eax = 0
     cpuid                                             ;Serialize, writes xbx
-    rdtsc                                             ;Read time stamp counter into edx:eax
+    rdtsc                                             ;Read time stamp counter into edx::eax
     if TARGET_BITNESS eq 32
       sub eax, DWORD ptr [esi].qTicksStart
       sbb edx, DWORD ptr [esi + sizeof DWORD].qTicksStart

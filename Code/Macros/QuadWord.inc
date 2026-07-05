@@ -20,7 +20,7 @@
 ; Purpose:    Transform 2 DoubleWords into a QuadWord.
 ; Arguments:  Arg1: High order DoubleWord.
 ;             Arg2: Low order DoubleWord.
-; Return:     QUADWORD in edx:eax.
+; Return:     QUADWORD in edx::eax.
 
 
 $Quad macro dWrd1:req, dWrd2:req
@@ -30,7 +30,7 @@ $Quad macro dWrd1:req, dWrd2:req
   ifdifi <dWrd2>, <eax>
     mov eax, dWrd2
   endif
-  exitm <edx:eax>
+  exitm <edx::eax>
 endm
 
 ; --------------------------------------------------------------------------------------------------
@@ -40,10 +40,10 @@ endm
 ;             Arg2: Source QUADWORD.
 
 qmov macro qWrd1:req, qWrd2:req
-  ifidni <qWrd1>, <edx:eax>
+  ifidni <qWrd1>, <edx::eax>
     mov eax, (QUADWORD ptr qWrd2).LoDWord
     mov edx, (QUADWORD ptr qWrd2).HiDWord
-  elseifidni <qWrd2>, <edx:eax>
+  elseifidni <qWrd2>, <edx::eax>
     mov (QUADWORD ptr qWrd1).LoDWord, eax
     mov (QUADWORD ptr qWrd1).HiDWord, edx
   else
@@ -59,7 +59,7 @@ endm
 ;             Arg2: Source dWord.
 
 qdmov macro qWrd:req, dWrd:req
-  ifidni <qWrd>, <edx:eax>
+  ifidni <qWrd>, <edx::eax>
     mov eax, (QUADWORD ptr qWrd).LoDWord
     mov edx, 0                                          ;;Don't change flags
   else
@@ -74,26 +74,26 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      qShiftL
-; Purpose:    Shift a edx:eax left cx bits.
-; Arguments:  Arg1: edx:eax = QWORD
+; Purpose:    Shift a edx::eax left cx bits.
+; Arguments:  Arg1: edx::eax = QWORD
 ;             Arg2: cx = bit shift count
 
 qShiftL macro
   local Done
 
   shld edx, eax, cl                                     ;;First apply shift count.
-  shl  eax, cl                                          ;;mod 32 to EDX:EAX
+  shl  eax, cl                                          ;;mod 32 to EDx::eAX
   test cx, 32                                           ;;Need to shift by another 32?
   jz   Done                                             ;;No, done.
-  mov  edx, eax                                         ;;Left shift EDX:EAX
+  mov  edx, eax                                         ;;Left shift EDx::eAX
   xor  eax, eax                                         ;;by 32-bits
   Done:
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:        qneg
-; Purpose:      Negate edx:eax
-; Arguments:    arg1: edx:eax = QWORD
+; Purpose:      Negate edx::eax
+; Arguments:    arg1: edx::eax = QWORD
 
 qneg macro
   not edx
@@ -108,7 +108,7 @@ endm
 ;             Arg2: Source DoubleWord.
 
 qdadd macro qWrd:req, dWrd:req
-  ifidni <qWrd>, <edx:eax>
+  ifidni <qWrd>, <edx::eax>
     add eax, dWrd
     adc edx, 0
   else
@@ -132,10 +132,10 @@ endm
 ;             Arg2: Source QUADWORD.
 
 qqadd macro qWrd1:req, qWrd2:req
-  ifidni <qWrd1>, <edx:eax>
+  ifidni <qWrd1>, <edx::eax>
     add eax, (QUADWORD ptr qWrd2).LoDWord
     adc edx, (QUADWORD ptr qWrd2).HiDWord
-  elseifidni <qWrd2>, <edx:eax>
+  elseifidni <qWrd2>, <edx::eax>
     add (QUADWORD ptr qWrd1).LoDWord, eax
     adc (QUADWORD ptr qWrd1).HiDWord, edx
   else
@@ -157,7 +157,7 @@ endm
 ;             Arg2: Source DoubleWord.
 
 qdsub macro qWrd:req, dWrd:req
-  ifidni <qWrd>, <edx:eax>
+  ifidni <qWrd>, <edx::eax>
     sub eax, dWrd
     sbb edx, 0
   else
@@ -181,10 +181,10 @@ endm
 ;             Arg2: Source QUADWORD.
 
 qqsub macro qWrd1:req, qWrd2:req
-  ifidni <qWrd1>, <edx:eax>
+  ifidni <qWrd1>, <edx::eax>
     sub eax, (QUADWORD ptr qWrd2).LoDWord
     sbb edx, (QUADWORD ptr qWrd2).HiDWord
-  elseifidni <qWrd2>, <edx:eax>
+  elseifidni <qWrd2>, <edx::eax>
     sub (QUADWORD ptr qWrd1).LoDWord, eax
     sbb (QUADWORD ptr qWrd1).HiDWord, edx
   else
@@ -202,7 +202,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      qdmul
 ; Purpose:    Multiply a QUADWORD by a DoubleWord.
-; Arguments:  ecx:edx:eax = edx:eax * ebx.
+; Arguments:  ecx::edx::eax = edx::eax * ebx.
 
 qdmul macro
   push eax
@@ -221,35 +221,35 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      qddiv
 ; Purpose:    Divide a QUADWORD by a DoubleWord. Uses ecx.
-;             Output: edx:eax = quotient of division of dividend by divisor
+;             Output: edx::eax = quotient of division of dividend by divisor
 ;                          ebx = remainder of division of dividend by divisor
-; Arguments:  edx:eax = dividend
+; Arguments:  edx::eax = dividend
 ;                  ebx = divisor
 
 qddiv macro
   .if edx == 0                                          ;;only one division needed?
     div ebx                                             ;;yes, one division sufficient
     mov ebx, edx                                        ;;eax = quotient-lo, ebx = remainder
-    xor edx, edx                                        ;;edx = quot.-hi(quotient in edx:eax)
+    xor edx, edx                                        ;;edx = quot.-hi(quotient in edx::eax)
   .else
     mov ecx, eax                                        ;;save dividend-lo in ecx
     mov eax, edx                                        ;;get dividend-hi
-    xor edx, edx                                        ;;zero extend it into edx:eax
+    xor edx, edx                                        ;;zero extend it into edx::eax
     div ebx                                             ;;quotient-hi in eax
     xchg eax, ecx                                       ;;ecx = quotient-hi, eax =dividend-lo
     div ebx                                             ;;eax = quotient-lo
     mov ebx, edx                                        ;;ebx = remainder
-    mov edx, ecx                                        ;;edx = quot.-hi(quotient in edx:eax)
+    mov edx, ecx                                        ;;edx = quot.-hi(quotient in edx::eax)
   .endif
 endm
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      qqdiv
 ; Purpose:    Divide 2 unsigned QuadWords. Uses edi, esi.
-;             Output:  edx:eax = quotient of division of dividend by divisor
-;                      ecx:ebx = remainder of division of dividend by divisor
-; Arguments:  edx:eax = dividend
-;             ecx:ebx = divisor
+;             Output:  edx::eax = quotient of division of dividend by divisor
+;                      ecx::ebx = remainder of division of dividend by divisor
+; Arguments:  edx::eax = dividend
+;             ecx::ebx = divisor
 
 qqdiv macro
   local @@Exit
@@ -263,7 +263,7 @@ qqdiv macro
   push edx                                              ;;save
   push eax                                              ;; dividend
   mov esi, ebx                                          ;;divisor now in
-  mov edi, ecx                                          ;; edi:ebx and ecx:esi
+  mov edi, ecx                                          ;; edi:ebx and ecx::esi
   shr edx, 1                                            ;;shift both
   rcr eax, 1                                            ;; divisor and
   ror edi, 1                                            ;;  and dividend
@@ -278,7 +278,7 @@ qqdiv macro
   mov ecx, eax                                          ;;save quotient
   imul edi, eax                                         ;;quotient * divisor hi-word (low only)
   mul esi                                               ;;quotient * divisor lo-word
-  add edx, edi                                          ;;edx:eax = quotient * divisor
+  add edx, edi                                          ;;edx::eax = quotient * divisor
   sub ebx, eax                                          ;;dividend-lo - (quot.*divisor)-lo
   mov eax, ecx                                          ;;get quotient
   pop ecx                                               ;;restore dividend hi-word

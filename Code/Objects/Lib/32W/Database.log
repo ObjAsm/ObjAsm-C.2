@@ -1,0 +1,10 @@
+Building Database object ...
+OOP Support:    ENABLED
+Platform:       WINDOWS
+User Interface: NONE
+Binary Format:  LIB
+Bitness:        32
+String Type:    WIDE (UNICODE)
+Mode:           RELEASE
+Database.asm: ok
+Succeeded building library Database.lib

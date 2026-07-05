@@ -20,7 +20,7 @@ ProcName textequ <uoqqMul>
 ;             Arg2: Multiplicand high unsigned word.
 ;             Arg3: Multiplier low unsigned word.
 ;             Arg4: Multiplier high unsigned word.
-; Return:     ebx:ecx:edx:eax = Unsigned product.
+; Return:     ebx::ecx::edx::eax = Unsigned product.
 
 % include &ObjMemPath&Common\uxxxMul_XP.inc
 

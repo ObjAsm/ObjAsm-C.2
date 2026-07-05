@@ -19,8 +19,8 @@
 ;             Arg2: Dividend signed high word.
 ;             Arg3: Divisor signed low word.
 ;             Arg4: Divisor signed high word.
-; Return:     edx:eax = Signend quotient.
-;             ebx:ecx = Signend remainder.
+; Return:     edx::eax = Signend quotient.
+;             ebx::ecx = Signend remainder.
 ; Note:       Don't include ebx in the uses clause.
 
 .code
@@ -70,9 +70,9 @@ L2:
   xor edx, edx
   div ecx                                               ;eax <= high order bits of quotient
   mov ebx, eax                                          ;Save high bits of quotient
-  mov eax, sdDividendLo                                 ;edx:eax <= remainder: lo-word of dividend
+  mov eax, sdDividendLo                                 ;edx::eax <= remainder: lo-word of dividend
   div ecx                                               ;eax <= low order bits of quotient
-  mov esi, eax                                          ;ebx:esi <= quotient
+  mov esi, eax                                          ;ebx::esi <= quotient
 
 ; Now we need to do a multiply so that we can compute the remainder.
   mov eax, ebx                                          ;Set up hi-word of quotient
@@ -80,14 +80,14 @@ L2:
   mov ecx, eax                                          ;Save the result in ecx
   mov eax, esi                                          ;Set up lo-word of quotient
   mul sdDivisorLo                                       ;Lo-word(QUOT) * divisor
-  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  add edx, ecx                                          ;edx::eax = QUOT * divisor
   jmp short L4                                          ;Complete remainder calculation
 
 ; Here we do it the hard way. Remember, eax contains the hi-word of divisor
 L3:
-  mov ebx, eax                                          ;ebx:ecx <= divisor
+  mov ebx, eax                                          ;ebx::ecx <= divisor
   mov ecx, sdDivisorLo
-  mov edx, sdDividendHi                                 ;edx:eax <= dividend
+  mov edx, sdDividendHi                                 ;edx::eax <= dividend
   mov eax, sdDividendLo
 L5:
   shr ebx, 1                                            ;Shift divisor right one bit
@@ -107,11 +107,11 @@ L5:
   mov ecx, eax
   mov eax, sdDivisorLo
   mul esi                                               ;QUOT * lo-word(divisor)
-  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  add edx, ecx                                          ;edx::eax = QUOT * divisor
   jc short L6                                           ;Carry means quotient is off by 1
 
 ; Do long compare here between original dividend and the result of the
-; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
+; multiply in edx::eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
   cmp edx, sdDividendHi                                 ;Compare hi-words of result and original
   ja short L6                                           ;If result > original, do subtract
@@ -123,7 +123,7 @@ L6:
   sub eax, sdDivisorLo                                  ; subtract divisor from result
   sbb edx, sdDivisorHi
 L7:
-  xor ebx, ebx                                          ;ebx:esi <= quotient
+  xor ebx, ebx                                          ;ebx::esi <= quotient
 
 L4:
 ; Calculate remainder by subtracting the result from the original dividend.
@@ -143,14 +143,14 @@ L4:
   sbb edx, 0
 
 L9:
-; Now we need to get the quotient into edx:eax and the remainder into ebx:ecx.
+; Now we need to get the quotient into edx::eax and the remainder into ebx::ecx.
   mov ecx, edx
   mov edx, ebx
   mov ebx, ecx
   mov ecx, eax
   mov eax, esi
 
-; Just the cleanup left to do. edx:eax contains the quotient.
+; Just the cleanup left to do. edx::eax contains the quotient.
 ; Set the sign according to the save value and return.
   dec edi                                               ;Check to see if result is negative
   jnz short L8                                          ;If edi == 0, result should be negative

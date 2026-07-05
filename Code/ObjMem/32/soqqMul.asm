@@ -20,7 +20,7 @@ ProcName textequ <soqqMul>
 ;             Arg2: Multiplicand high signed word.
 ;             Arg3: Multiplier low signed word.
 ;             Arg4: Multiplier high signed word.
-; Return:     ebx:ecx:edx:eax = Signed product.
+; Return:     ebx::ecx::edx::eax = Signed product.
 
 % include &ObjMemPath&Common\sxxxMul_XP.inc
 

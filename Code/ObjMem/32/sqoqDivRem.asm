@@ -22,8 +22,8 @@ ProcName textequ <sqoqDivRem>
 ;             Arg4: Dividend signed high high word.
 ;             Arg5: Divisor signed low word.
 ;             Arg6: Divisor signed high word.
-; Return:     edx:eax = Signed quotient.
-;             ebx:ecx = Signed remainder.
+; Return:     edx::eax = Signed quotient.
+;             ebx::ecx = Signed remainder.
 ;             OF set on division overlow and the content of the registers is undetermined.
 ; Note:       Non-integral results are truncated (chopped) towards 0. 
 ;             The remainder is always less than the divisor in magnitude.

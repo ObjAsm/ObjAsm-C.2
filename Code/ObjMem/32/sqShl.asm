@@ -16,9 +16,9 @@ ProcName textequ <sqShl>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqShl
 ; Purpose:    Shift left of a signed QWORD (signed and unsigned procs are identical).
-; Arguments:  Arg1: QWORD in edx:eax.
+; Arguments:  Arg1: QWORD in edx::eax.
 ;             Arg2: Shift count in cl.
-; Return:     edx:eax Shifted value.
+; Return:     edx::eax Shifted value.
 
 % include &ObjMemPath&Common\qShl_32P.inc
 

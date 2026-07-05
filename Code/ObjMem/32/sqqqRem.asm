@@ -19,7 +19,7 @@
 ;             Arg2: Dividend signed high word.
 ;             Arg3: Divisor signed low word.
 ;             Arg4: Divisor signed high word.
-; Return:     edx:eax = Signend remainder.
+; Return:     edx::eax = Signend remainder.
 
 .code
 align ALIGN_CODE
@@ -62,9 +62,9 @@ L2:
   mov eax, sdDividendHi                                 ;Load hi-word of dividend
   xor edx, edx
   div ecx                                               ;edx <= remainder
-  mov eax, sdDividendLo                                 ;edx:eax <= remainder: lo-word of dividend
+  mov eax, sdDividendLo                                 ;edx::eax <= remainder: lo-word of dividend
   div ecx                                               ;edx <= final remainder
-  mov eax, edx                                          ;edx:eax <= remainder
+  mov eax, edx                                          ;edx::eax <= remainder
   xor edx, edx
   dec edi                                               ;Check result sign flag
   jns short L4                                          ;Negate result & return
@@ -72,9 +72,9 @@ L2:
 
 ; Here we do it the hard way. Remember, eax contains the hi-word of sqDivisor
 L3:
-  mov ebx, eax                                          ;ebx:ecx <= divisor
+  mov ebx, eax                                          ;ebx::ecx <= divisor
   mov ecx, sdDivisorLo
-  mov edx, sdDividendHi                                 ;edx:eax <= dividend
+  mov edx, sdDividendHi                                 ;edx::eax <= dividend
   mov eax, sdDividendLo
 L5:
   shr ebx, 1                                            ;Shift divisor right one bit
@@ -93,11 +93,11 @@ L5:
   mul sdDivisorHi
   xchg ecx, eax                                         ;Save product, get quotient in eax
   mul sdDivisorLo
-  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  add edx, ecx                                          ;edx::eax = QUOT * divisor
   jc short L6                                           ;Carry means quotient is off by 1
 
 ; Do long compare here between original dividend and the result of the
-; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
+; multiply in edx::eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
   cmp edx, sdDividendHi                                 ;Compare hi-words of result and original
   ja short L6                                           ;If result > original, do subtract

@@ -17,7 +17,7 @@
 ;             Arg2: Multiplicand high signed/unsigned word.
 ;             Arg3: Multiplier low signed/unsigned word.
 ;             Arg4: Multiplier high signed/unsigned word.
-; Return:     edx:eax = Signed product.
+; Return:     edx::eax = Signed product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
 
@@ -45,7 +45,7 @@ hard:
   add ebx, eax                                          ;ebx = ((dMultiplicandLo * dMultiplierHi) +
                                                         ;       (dMultiplicandHi * dMultiplierLo))
   mov eax, dMultiplierLo                                ;ecx = dMultiplierLo
-  mul ecx                                               ;So edx:eax = dMultiplicandLo*dMultiplierLo
+  mul ecx                                               ;So edx::eax = dMultiplicandLo*dMultiplierLo
   add edx, ebx                                          ;Now edx has all the lo-word*hi-word stuff
 
   ret

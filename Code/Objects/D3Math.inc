@@ -27,9 +27,13 @@ GetD3VectorFromTable macro Base:req, Index32:req, RegOut:=<xax>
 endm
 
 ; --------------------------------------------------------------------------------------------------
+; Macro:      Rotate
+; Arguments:  X, Y, Z
+; Note:       On entry
+;               xcx -> Vectron
+;               edx = TRUE/FALSE (Use Vectron.Vo)
+  
 Rotate macro X:req, Y:req, Z:req
-  ?mov ecx, pVectron
-  ?mov edx, xUseVo
   lea xax, [xcx + sizeof(D3Vector)]                     ;xax -> Vt
   .if edx == FALSE                                      ;xUseVo
     mov xdx, xax                                        ;xdx -> Vt
@@ -52,6 +56,7 @@ Rotate macro X:req, Y:req, Z:req
   fstp [xax].D3Vector.Z         ;Ycos+Zsin|   cos   |   sin   |         |
   fstp [xax].D3Vector.Y         ;   cos   |   sin   |         |         |
 endm
+
 ; --------------------------------------------------------------------------------------------------
 RotateX proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   Rotate r4X, r4Y, r4Z

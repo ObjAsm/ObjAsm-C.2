@@ -14,9 +14,9 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqShr
 ; Purpose:    Shift right of a SQWORD.
-; Arguments:  Arg1: QWORD in edx:eax.
+; Arguments:  Arg1: QWORD in edx::eax.
 ;             Arg2: Shift count in cl.
-; Return:     edx:eax Shifted value.
+; Return:     edx::eax Shifted value.
 
 .code
 align ALIGN_CODE

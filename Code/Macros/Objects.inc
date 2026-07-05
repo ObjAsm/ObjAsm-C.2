@@ -1559,9 +1559,11 @@ New macro Expression:req, MemSize:=<$$DynamicTemplateSize>
         if TARGET_BITNESS eq 64
           add rsp, 20h
         endif
-        if MemSize lt $$DynamicTemplateSize
-          @Err <New Error: requested memory size is less than the size required for the object instance>
-          exitm
+        if (opattr MemSize) and OAT_IMMEDIATE        ;; Is MemSize an immediate value?
+          if MemSize lt $$DynamicTemplateSize
+            @Err <New Error: requested memory size is less than the size required for the object instance>
+            exitm
+          endif
         endif
       else
         %if type(??InsExpr) eq @WordSize

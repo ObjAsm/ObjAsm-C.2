@@ -55,7 +55,7 @@ else
   .else
     bsr ecx, edx                                        ;Get MSB(edx)
     mov ebx, ecx                                        ;Save ecx
-    invoke uqShl                                        ;Shift left edx:eax
+    invoke uqShl                                        ;Shift left edx::eax
     mov ecx, ebx                                        ;Restore ecx
   .endif
 endif

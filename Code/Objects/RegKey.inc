@@ -377,7 +377,7 @@ MethodEnd
 ; Method:     RegKey.ValueGetQW
 ; Purpose:    Read a QWORD from registry key value.
 ; Arguments:  Arg1: -> Value name string.
-; Return:     rax/edx:eax = Requested QWORD.
+; Return:     rax/edx::eax = Requested QWORD.
 
 Method RegKey.ValueGetQW, uses xsi, pValueName:PSTRING
   local dValueType:DWORD, dValueSize:DWORD, qRetValue:QWORD
