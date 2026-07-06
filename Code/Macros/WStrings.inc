@@ -296,12 +296,12 @@ endm
 
 ; --------------------------------------------------------------------------------------------------
 
-SURROGATE_MASK  equ     1111110000000000y               ;0FC00h
-SURROGATE_HIGH  equ     1101100000000000y               ;0D800h
-SURROGATE_LOW   equ     1101110000000000y               ;0DC00h
+SURROGATE_MASK  equ     1111110000000000y               ; 0FC00h
+SURROGATE_HIGH  equ     1101100000000000y               ; 0D800h
+SURROGATE_LOW   equ     1101110000000000y               ; 0DC00h
 UTF8_BOM        textequ <0EFh,0BBh,0BFh>
-UTF16BE_BOM     textequ <0FEh,0FFh>                     ;Big Endian
-UTF16LE_BOM     textequ <0FFh,0FEh>                     ;Little Endian  (used by Windows in memory)
+UTF16BE_BOM     textequ <0FEh,0FFh>                     ; Big Endian
+UTF16LE_BOM     textequ <0FFh,0FEh>                     ; Little Endian  (used by Windows in memory)
 
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      IsSurrogateHigh

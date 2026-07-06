@@ -1967,5 +1967,14 @@ HnsecsToTime      proto :PDTL_TIME, :PDTL_HNSECS
 HnsecsToDate      proto :PDTL_DATE, :PDTL_HNSECS
 HnsecsToDateTime  proto :PDTL_DATETIME, :PDTL_HNSECS
 
-
+QueryCpuidSupported   proto
+QueryCpuBrandStrA     proto :PSTRINGA
+QueryCpuBrandStrw     proto :PSTRINGW
+QueryCpuVendorStrA    proto :PSTRINGA
+QueryCpuVendorStrW    proto :PSTRINGW
+QueryCpuHypervisorVendorStrA proto :PSTRINGA
+QueryCpuHypervisorVendorStrW proto :PSTRINGW
+QueryCpuFeature       proto :WORD
+QueryCpuStruct        proto :DWORD, :POINTER
+QueryCpuValue         proto :DWORD, :POINTER
 

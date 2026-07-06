@@ -39,10 +39,9 @@ align ALIGN_CODE
 @@2:
   dec ecx
   push ecx
-  invoke StrLengthA, ecx
-  inc eax                                               ;Include ZTC
+  invoke StrSizeA, ecx
   pop ecx
-  invoke MemClone, [esp + 16], ecx, eax
+  invoke MemClone, POINTER ptr [esp + 12], ecx, eax
   ret 8
 StrLTrimA endp
 

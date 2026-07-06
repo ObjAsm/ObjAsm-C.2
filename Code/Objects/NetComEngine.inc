@@ -582,7 +582,7 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
                                        addr dBytesConsumed, \
                                        FALSE, addr dFlags
         mov dOvrResult, eax
-        ;Serialize on a per connection basis
+        ;Serialize on a per-connection basis
         BitSet [xbx].IOJOB.wFlags, IOF_JOB_COMPLETED   ;Set marker
         dec [xdi].$Obj(NetComConnection).dPendingIOJobs
         inc [xdi].$Obj(NetComConnection).dCompletedIOJobs

@@ -12,14 +12,14 @@
 ; ==================================================================================================
 
 
-;DTL_TICKS is a generic time container.
-;It can hold 100ns ticks (hecto-nano-second = HNSECS) or 1ms ticks (MILLIS)
-;HNSECS: 0FFFFFFFFFFFFFFFFh =      1'844'674'407'370 secs =      21'350'398 days =      58'494 years
-;MILLIS: 0FFFFFFFFFFFFFFFFh = 18'446'744'073'709'551 secs = 213'503'982'334 days = 584'942'417 years
+; DTL_TICKS is a generic time container.
+; It can hold 100ns ticks (hecto-nano-second = HNSECS) or 1ms ticks (MILLIS)
+; HNSECS: 0FFFFFFFFFFFFFFFFh =      1'844'674'407'370 secs =      21'350'398 days =      58'494 years
+; MILLIS: 0FFFFFFFFFFFFFFFFh = 18'446'744'073'709'551 secs = 213'503'982'334 days = 584'942'417 years
 
 CAL_DEFAULT equ 0
 
-DTL_TICKS union                         ;The same as FILETIME, the native OS format
+DTL_TICKS union                         ; The same as FILETIME, the native OS format
               QWORD ?
   struct
     dLow      DWORD ?
@@ -38,8 +38,8 @@ DTL_DATE struct
   union
     wCalID    WORD  ?
     struct
-      bCalID  BYTE  ?                 ;Calender ID, mostly CAL_GREGORIAN (1)
-      bEra    BYTE  ?                 ;E.g. Japanese Reiwa era
+      bCalID  BYTE  ?                 ; Calender ID, mostly CAL_GREGORIAN (1)
+      bEra    BYTE  ?                 ; E.g. Japanese Reiwa era
     ends
   ends
   wYear       WORD  ?
@@ -49,10 +49,10 @@ DTL_DATE ends
 PDTL_DATE typedef ptr DTL_DATE
 
 DTL_TIME struct
-  wHour       WORD  ?                 ;"H"our
-  wMinute     WORD  ?                 ;"M"inute
-  wSecond     WORD  ?                 ;"S"econd
-  wMilli      WORD  ?                 ;"T"housandth second
+  wHour       WORD  ?                 ; "H"our
+  wMinute     WORD  ?                 ; "M"inute
+  wSecond     WORD  ?                 ; "S"econd
+  wMilli      WORD  ?                 ; "T"housandth second
 DTL_TIME ends
 PDTL_TIME typedef ptr DTL_TIME
 
@@ -62,7 +62,7 @@ DTL_DATETIME struct
 DTL_DATETIME ends
 PDTL_DATETIME typedef ptr DTL_DATETIME
 
-;Date Formats: YYYY=Year with century, YY=Year short, MM=Month, DD=Day
+; Date Formats: YYYY=Year with century, YY=Year short, MM=Month, DD=Day
 DTF_CHAR macro ByteOffset, Char
   exitm <Char shl (8*ByteOffset)>
 endm
@@ -73,23 +73,23 @@ DF_DATESEP_LOCALE   equ DTF_CHAR(TF_DATESEP_OFFSET, 1)
 DF_DATESEP_DOT      equ DTF_CHAR(TF_DATESEP_OFFSET, '.')
 DF_DATESEP_SLASH    equ DTF_CHAR(TF_DATESEP_OFFSET, '/')
 DF_DATESEP_MINUS    equ DTF_CHAR(TF_DATESEP_OFFSET, '-')
-DF_DDMMYYYY         equ 00        ;Example: 27/03/1974
-DF_DDMMYY           equ 01        ;Example: 27/03/74
-DF_YYYY             equ 02        ;Example: 1974
-DF_YYYYMM           equ 03        ;Example: 1974/03
-DF_YYYYMMDD         equ 04        ;Example: 1974/03/27
-DF_YY               equ 05        ;Example: 74
-DF_YYMM             equ 06        ;Example: 74/03
-DF_YYMMDD           equ 07        ;Example: 07/03/27
-DF_MMDDYYYY         equ 08        ;Example: 03/27/1974  American Date Format
-DF_MMDDYY           equ 09        ;Example: 03/27/74    American Date Format
+DF_DDMMYYYY         equ 00        ; Example: 27/03/1974
+DF_DDMMYY           equ 01        ; Example: 27/03/74
+DF_YYYY             equ 02        ; Example: 1974
+DF_YYYYMM           equ 03        ; Example: 1974/03
+DF_YYYYMMDD         equ 04        ; Example: 1974/03/27
+DF_YY               equ 05        ; Example: 74
+DF_YYMM             equ 06        ; Example: 74/03
+DF_YYMMDD           equ 07        ; Example: 07/03/27
+DF_MMDDYYYY         equ 08        ; Example: 03/27/1974  American Date Format
+DF_MMDDYY           equ 09        ; Example: 03/27/74    American Date Format
 
 DF_EUROPEAN         equ DF_DDMMYYYY or DF_DATESEP_DOT
 DF_AMERICAN         equ DF_MMDDYYYY or DF_DATESEP_SLASH
 DF_JAPANESE         equ DF_YYMMDD or DF_DATESEP_DOT
 DF_ISO              equ DF_YYYYMMDD or DF_DATESEP_DOT
 
-;Date Formats: HH=Hours, MM=Minutes, SS=Seconds, FFF=Milliseconds, PD=Period(AM/PM)
+; Date Formats: HH=Hours, MM=Minutes, SS=Seconds, FFF=Milliseconds, PD=Period(AM/PM)
 TF_TIMESEP_OFFSET   equ 1
 TF_MSECSEP_OFFSET   equ 2
 TF_TIMESEP_NONE     equ DTF_CHAR(TF_TIMESEP_OFFSET, 0)
@@ -101,7 +101,7 @@ TF_MSECSEP_DOT      equ DTF_CHAR(TF_MSECSEP_OFFSET, '.')
 TF_MSECSEP_COMA     equ DTF_CHAR(TF_MSECSEP_OFFSET, ',')
 TF_MSECSEP_COLON    equ DTF_CHAR(TF_MSECSEP_OFFSET, ':')
 TF_HHMMSS           equ 00
-TF_HHMMSS_PD        equ 01         ;PD (period): AM/PM - https://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
+TF_HHMMSS_PD        equ 01         ; PD (period): AM/PM - https://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
 TF_HHMMSSFFF        equ 02
 TF_DDHHMMSS         equ 03
 TF_DDHHMMSSFFF      equ 04

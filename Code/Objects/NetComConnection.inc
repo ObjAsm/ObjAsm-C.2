@@ -464,7 +464,7 @@ Method NetComConnection.OnReceived, uses xbx xdi xsi, pIOJob:PIOJOB
   .else
 ;    DbgText "NetComConnection.OnReceived", addr [xsi].wName
     mov xdx, pIOJob
-    ;We queue a new read for the one we recieve here
+    ;We queue a new read for the one we receive here
     OCall [xbx].$Obj(NetComConnectionPool).pIOJobPool::NetComIOJobPool.NewItem, IOJOB_RECV
     .if xax != NULL
       OCall xsi.DoRcvIOJob, xax                         ;Increments pending IOJobs
@@ -552,7 +552,7 @@ MethodEnd
 ; Return:     eax = Zero if succeeded, otherwise an error code.
 
 Method NetComConnection.QueueAccept, uses xbx xdi xsi, pListener:PLISTENER
-  local dBytesRecieved:DWORD
+  local dBytesReceived:DWORD
 
   SetObject xsi
 ;  DbgText "NetComConnection.QueueAccept", addr [xsi].wName
@@ -580,7 +580,7 @@ Method NetComConnection.QueueAccept, uses xbx xdi xsi, pListener:PLISTENER
   ;without waiting for any data. Local and remote addresses are written into the buffer
   invoke AcceptEx, [xcx].LISTENER.hSocket, [xsi].hSocket, [xdi].IOJOB.WSABuf.buf, 0, \
                    sizeof ACCEPT_DATA.LocalAddr, sizeof ACCEPT_DATA.RemoteAddr, \
-                   addr dBytesRecieved, xdi
+                   addr dBytesReceived, xdi
   .if eax != NO_ERROR                                   ;Did read IO complete synchronously?
     invoke WSAGetLastError                              ;No, check if it is a pending state
     .if eax == ERROR_IO_PENDING
@@ -626,8 +626,6 @@ Method NetComConnection.QueueConnect, uses xbx xdi xsi, pRemoteAddr:PNETCOMADDR,
   local dOption:DWORD
 
   SetObject xsi
-;  DbgText "NetComConnection.QueueConnect", addr [xsi].wName
-
   ;Here we can change the returning port
   mov dOption, 1
   invoke setsockopt, [xsi].hSocket, SOL_SOCKET, SO_REUSEADDR, addr dOption, sizeof dOption

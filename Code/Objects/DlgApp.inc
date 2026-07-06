@@ -17,7 +17,7 @@
 ; Object:     DlgApp
 ; Purpose:    Implement a specialised WinApp object using a dialog as main window.
 
-Object DlgApp, DlgAppID, WinApp                         ;Dialog based Application.
+Object DlgApp, DlgAppID, WinApp                         ; Dialog based Application.
   VirtualMethod     CtlsGet
   VirtualMethod     CtlsSet
 
@@ -145,7 +145,7 @@ Method DlgApp.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
     mov xsi, lParam
     test xsi, xsi
     jz @@EOM
-    mrm [xsi].$Obj(DlgApp).hWnd, pSelf, xcx             ;pSelf = hWnd
+    mrm [xsi].$Obj(DlgApp).hWnd, pSelf, xcx             ; pSelf = hWnd
     invoke SetWindowLongPtr, xcx, DWLP_USER, xsi
   .else
     invoke GetWindowLongPtr, pSelf, DWLP_USER
@@ -153,7 +153,7 @@ Method DlgApp.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
     jz @@EOM
     mov xsi, xax
   .endif
-  DispatchEvent                                         ;xsi -> Object Instance
+  DispatchEvent                                         ; xsi -> Object Instance
 MethodEnd
 
 endif

@@ -10,8 +10,8 @@
 ; ==================================================================================================
 
 
-;This structure describes the members stored in the "Sentinel Doubly Linked List".
-;Each member contains a pointer to the next and previous member.
+; This structure describes the members stored in the "Sentinel Doubly Linked List".
+; Each member contains a pointer to the next and previous member.
 
 
 ;                 SDLL_SENTINEL       (1/2 Sentinel)
@@ -39,13 +39,13 @@
 
 PSDLL_ITEM typedef ptr SDLL_ITEM
 SDLL_ITEM struc
-  pNextItem     PSDLL_ITEM   ?                          ;-> Next item
-  pPrevItem     PSDLL_ITEM   ?                          ;-> Previous item
+  pNextItem     PSDLL_ITEM   ?                          ; -> Next item
+  pPrevItem     PSDLL_ITEM   ?                          ; -> Previous item
 SDLL_ITEM ends
 
 SDLL_SENTINEL struc
-  pFirstItem    PSDLL_ITEM   ?                          ;-> First item
-  pLastItem     PSDLL_ITEM   ?                          ;-> Last item
+  pFirstItem    PSDLL_ITEM   ?                          ; -> First item
+  pLastItem     PSDLL_ITEM   ?                          ; -> Last item
 SDLL_SENTINEL ends
 PSDLL_SENTINEL typedef ptr SDLL_SENTINEL
 

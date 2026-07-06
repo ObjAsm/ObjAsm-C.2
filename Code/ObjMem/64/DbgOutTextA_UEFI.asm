@@ -8,14 +8,14 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemUefi.cop
 
-TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <DbgOutTextA_UEFI>
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextA_UEFI
-; Purpose:    Send an ANSI string to the debug output device.
+; Purpose:    Sends an ANSI string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated ANSI string.
 ;             Arg2: Foreground RGB color value.
 ;             Arg3: Background RGB color value.

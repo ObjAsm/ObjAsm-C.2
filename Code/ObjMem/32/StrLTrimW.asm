@@ -39,10 +39,9 @@ align ALIGN_CODE
 @@2:
   sub ecx, 2
   push ecx
-  invoke StrLengthW, ecx
-  add eax, 2                                            ;Include ZTC
+  invoke StrSizeW, ecx
   pop ecx
-  invoke MemClone, [esp + 16], ecx, eax
+  invoke MemClone, POINTER ptr [esp + 12], ecx, eax
   ret 8
 StrLTrimW endp
 

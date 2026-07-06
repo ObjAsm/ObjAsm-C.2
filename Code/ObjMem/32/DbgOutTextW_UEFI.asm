@@ -15,7 +15,7 @@ ProcName textequ <DbgOutTextW_UEFI>
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextW_UEFI
-; Purpose:    Send a WIDE string to the debug output device.
+; Purpose:    Sends a WIDE string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated WIDE string.
 ;             Arg2: Foreground RGB color value.
 ;             Arg3: Background RGB color value.

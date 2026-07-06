@@ -1392,8 +1392,10 @@ endif
 ;                 [  "<" character
 ;                 ]  ">" character
 ;                 :  "!" character
-;                 ´  "'" character    (better -)
-;                 `  """ character    (better =)
+;                 -  "'" character
+;                 =  """ character
+;                 ´  "'" character    (Legacy)
+;                 `  """ character    (Legacy)
 ;                 \  "\" character
 ;
 ;             - Format specifiers and escape sequences are case sensitive.
@@ -1917,7 +1919,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
             endif
-            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)                               ;Call the macro
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)         ;; Call the macro
             add DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
@@ -1927,7 +1929,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
             endif
-            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)                               ;Call the macro
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)         ;; Call the macro
             lea DstReg, [DstReg + xax - sizeof($$CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
@@ -1945,13 +1947,13 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
             endif
             sub xax, xcx
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
-              .while SDWORD ptr eax > 1               ;; Fill with spaces
+              .while SDWORD ptr eax > 1                 ;; Fill with spaces
                 mov DCHRW ptr [DstReg], SPC shl 16 + SPC
                 add DstReg, sizeof(DCHRW)
                 sub eax, 2
               .endw
             else
-              .while SDWORD ptr eax > 3               ;; Fill with spaces
+              .while SDWORD ptr eax > 3                 ;; Fill with spaces
                 mov QCHRA ptr [DstReg], "    "
                 add DstReg, sizeof(QCHRA)
                 sub eax, 4
@@ -2091,7 +2093,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
           endif
           mov $$CHR ptr [DstReg], '!'
           add DstReg, sizeof($$CHR)
-        elseifidn <$$WF_Character>, <´>
+        elseifidn <$$WF_Character>, <´>                 ;; Legacy
           $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
@@ -2099,7 +2101,23 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
           endif
           mov $$CHR ptr [DstReg], "'"
           add DstReg, sizeof($$CHR)
-        elseifidn <$$WF_Character>, <`>
+        elseifidn <$$WF_Character>, <->
+          $$FillText [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if ??StrLen ne 0
+            add DstReg, ??StrLen*sizeof($$CHR)
+          endif
+          mov $$CHR ptr [DstReg], "'"
+          add DstReg, sizeof($$CHR)
+        elseifidn <$$WF_Character>, <`>                 ;; Legacy
+          $$FillText [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if ??StrLen ne 0
+            add DstReg, ??StrLen*sizeof($$CHR)
+          endif
+          mov $$CHR ptr [DstReg], '"'
+          add DstReg, sizeof($$CHR)
+        elseifidn <$$WF_Character>, <=>
           $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
@@ -2189,17 +2207,17 @@ IsCharTypeA? macro CHARA:req, CharType:req
     ;; DLE  DC1  DC2  DC3  DC4  NAK  SYN  ETB  CAN  BM   SUB  ESC  FS   GS   RS   US
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
     ;; SPC    !    "    #    $    %    &    '    (    )    *    +    ,    -    .    /
-    db 001h,014h,000h,001h,001h,004h,014h,000h,00Ch,00Ch,004h,004h,000h,004h,000h,004h  ;#, $
+    db 001h,014h,000h,001h,001h,004h,014h,000h,00Ch,00Ch,004h,004h,000h,004h,000h,004h  ; #, $
     ;;   0    1    2    3    4    5    6    7    8    9    :    ;    <    =    >    ?
-    db 002h,002h,002h,002h,002h,002h,002h,002h,002h,002h,000h,000h,010h,010h,010h,011h  ;0..9, ?
+    db 002h,002h,002h,002h,002h,002h,002h,002h,002h,002h,000h,000h,010h,010h,010h,011h  ; 0..9, ?
     ;;   @    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O
-    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ;@, A..O
+    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ; @, A..O
     ;;   P    Q    R    S    T    U    V    W    X    Y    Z    [    \    ]    ^    _
-    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,004h,008h,014h,001h  ;P..Z, _
+    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,004h,008h,014h,001h  ; P..Z, _
     ;;   `    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o
-    db 000h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ;a..o
+    db 000h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h  ; a..o
     ;;   p    q    r    s    t    u    v    w    x    y    z    {    |    }    ~
-    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,014h,008h,014h,000h  ;p..z
+    db 001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,001h,008h,014h,008h,014h,000h  ; p..z
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
     db 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h

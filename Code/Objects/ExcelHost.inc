@@ -237,7 +237,7 @@ MethodEnd
 ; Purpose:    Create a bidimentional SafeArray.
 ; Arguments:  Arg1: X-dimension size.
 ;             Arg2: Y-dimension size.
-;             Arg3: -> Variant that will recieve the array info
+;             Arg3: -> Variant that will receive the array info.
 ; Return:     eax = Error code.
 
 Method ExcelHost.CreateArray,, dXlXSize:DWORD, dXlYSize:DWORD, pXlArray:POINTER

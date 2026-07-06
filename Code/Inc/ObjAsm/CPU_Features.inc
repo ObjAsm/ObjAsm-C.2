@@ -1,3 +1,14 @@
+; ==================================================================================================
+; Title:      CPU_Features.inc
+; Author:     G. Friedrich
+; Version:    C.1.0
+; Purpose:    Central definitions file for the ObjAsm CPU features.
+; Notes:      Version C.1.0, June 2026
+;               - Initial release.
+;               - Bitness-neutral and platform-independent code.
+; ==================================================================================================
+
+
 ;CPU SIMD Features
 CPU_FEATURE_SIMD_NONE     equ  01                       ; Scalar only
 CPU_FEATURE_SIMD_MMX      equ  02

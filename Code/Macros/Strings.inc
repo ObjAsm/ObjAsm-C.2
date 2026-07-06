@@ -11,42 +11,42 @@
 
 
 ;Generic character and string type definitions
-CHRA      typedef     BYTE                              ;ANSI character type
-CHRW      typedef     WORD                              ;Wide character type
-CHRU      typedef     DWORD                             ;Unicode 32-bit character type
-DCHRA     typedef     WORD                              ;ANSI double character type
-DCHRW     typedef     DWORD                             ;Wide double character type
-DCHRU     typedef     QWORD                             ;Unicode 32-bit double character type
-QCHRA     typedef     DWORD                             ;ANSI quadruple character type
-QCHRW     typedef     QWORD                             ;Wide quadruple character type
-OCHRA     typedef     QWORD                             ;ANSI octuple character type
-PCHRA     typedef ptr CHRA                              ;ANSI character pointer type
-PCHRW     typedef ptr CHRW                              ;Wide character pointer type
-PCHRU     typedef ptr CHRU                              ;Unicode 32-bit character pointer type
-PDCHRA    typedef ptr DCHRA                             ;ANSI double character pointer type
-PDCHRW    typedef ptr DCHRW                             ;Wide double character pointer type
-PDCHRU    typedef ptr DCHRU                             ;Unicode 32-bit double character pointer type
-PQCHRA    typedef ptr QCHRA                             ;ANSI quadruple pointer type
-PQCHRW    typedef ptr QCHRA                             ;Wide quadruple pointer type
-POCHRA    typedef ptr OCHRA                             ;ANSI octuple pointer type
-PSTRINGA  typedef ptr CHRA                              ;ANSI string pointer type
-PSTRINGW  typedef ptr CHRW                              ;Wide string pointer type
-PSTRINGU  typedef ptr CHRU                              ;Unicode 32-bit string pointer type
+CHRA      typedef     BYTE                              ; ANSI character type
+CHRW      typedef     WORD                              ; Wide character type
+CHRU      typedef     DWORD                             ; Unicode 32-bit character type
+DCHRA     typedef     WORD                              ; ANSI double character type
+DCHRW     typedef     DWORD                             ; Wide double character type
+DCHRU     typedef     QWORD                             ; Unicode 32-bit double character type
+QCHRA     typedef     DWORD                             ; ANSI quadruple character type
+QCHRW     typedef     QWORD                             ; Wide quadruple character type
+OCHRA     typedef     QWORD                             ; ANSI octuple character type
+PCHRA     typedef ptr CHRA                              ; ANSI character pointer type
+PCHRW     typedef ptr CHRW                              ; Wide character pointer type
+PCHRU     typedef ptr CHRU                              ; Unicode 32-bit character pointer type
+PDCHRA    typedef ptr DCHRA                             ; ANSI double character pointer type
+PDCHRW    typedef ptr DCHRW                             ; Wide double character pointer type
+PDCHRU    typedef ptr DCHRU                             ; Unicode 32-bit double character pointer type
+PQCHRA    typedef ptr QCHRA                             ; ANSI quadruple pointer type
+PQCHRW    typedef ptr QCHRA                             ; Wide quadruple pointer type
+POCHRA    typedef ptr OCHRA                             ; ANSI octuple pointer type
+PSTRINGA  typedef ptr CHRA                              ; ANSI string pointer type
+PSTRINGW  typedef ptr CHRW                              ; Wide string pointer type
+PSTRINGU  typedef ptr CHRU                              ; Unicode 32-bit string pointer type
 
 ;Type neutral definitions
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  CHR     typedef     CHRA                              ;Generic character type
-  DCHR    typedef     DCHRA                             ;Generic double character type
-  QCHR    typedef     QCHRA                             ;Generic quadruple character type
+  CHR     typedef     CHRA                              ; Generic character type
+  DCHR    typedef     DCHRA                             ; Generic double character type
+  QCHR    typedef     QCHRA                             ; Generic quadruple character type
 else
-  CHR     typedef     CHRW                              ;Generic character type
-  DCHR    typedef     DCHRW                             ;Generic double character type
-  QCHR    typedef     QCHRW                             ;Generic quadruple character type
+  CHR     typedef     CHRW                              ; Generic character type
+  DCHR    typedef     DCHRW                             ; Generic double character type
+  QCHR    typedef     QCHRW                             ; Generic quadruple character type
 endif
-PCHR      typedef ptr CHR                               ;Generic character POINTER type
-PDCHR     typedef ptr DCHR                              ;Generic double character POINTER type
-PQCHR     typedef ptr QCHR                              ;Generic quadruple character POINTER type
-PSTRING   typedef ptr CHR                               ;Generic string POINTER type
+PCHR      typedef ptr CHR                               ; Generic character POINTER type
+PDCHR     typedef ptr DCHR                              ; Generic double character POINTER type
+PQCHR     typedef ptr QCHR                              ; Generic quadruple character POINTER type
+PSTRING   typedef ptr CHR                               ; Generic string POINTER type
 
 TAB   equ 9
 CR    equ 13
@@ -54,7 +54,7 @@ LF    equ 10
 SPC   equ 32
 CRLF  equ <13,10>
 
-;Now include ANSI and WIDE string support
+; Now include ANSI and WIDE string support
 
 % include &MacPath&WStrings.inc
 % include &MacPath&AStrings.inc
@@ -83,16 +83,16 @@ CRLF  equ <13,10>
 
 $Esc macro Text:req
   $$CES_Text textequ <>
-  $$CES_Backslash = 0                                   ;;Backslash reached
-  $$CES_LeadingQM = 0                                   ;;Leading quotation mark ( "...... )
-  $$CES_SepComma = 0                                    ;;Separating comma ( ...,... )
+  $$CES_Backslash = 0                                   ;; Backslash reached
+  $$CES_LeadingQM = 0                                   ;; Leading quotation mark ( "...... )
+  $$CES_SepComma = 0                                    ;; Separating comma ( ...,... )
   $$CES_Count = 0
 
   forc $$CES_Character, <Text>
     $$CES_Count = $$CES_Count + 1
-    if $$CES_Count eq 1                                 ;;Ignore first character = "
-    elseif $$CES_Count eq @SizeStr(Text)                ;;Ignore $$CES_LastChar character = "
-    else                                                ;;Note: this is to avoid the % operator!
+    if $$CES_Count eq 1                                 ;; Ignore first character = "
+    elseif $$CES_Count eq @SizeStr(Text)                ;; Ignore $$CES_LastChar character = "
+    else                                                ;; Note: this is to avoid the % operator!
       $$CES_LastChar Catstr <$$CES_Character>
       if $$CES_Backslash
         $$CES_Backslash = 0
@@ -105,7 +105,7 @@ $Esc macro Text:req
             $$CES_Text CatStr $$CES_Text, <&$$CES_Character>
           else
             $$CES_Text CatStr $$CES_Text, <">, <&$$CES_Character>  ;;Add ( " )
-            $$CES_LeadingQM = 1                         ;;Set flag
+            $$CES_LeadingQM = 1                         ;; Set flag
           endif
         else
           if $$CES_LeadingQM
@@ -162,7 +162,7 @@ $Esc macro Text:req
             $$CES_Text CatStr $$CES_Text, <&$$CES_Character>
           else
             $$CES_Text CatStr $$CES_Text, <">, <&$$CES_Character>  ;;Add leading ( " )
-            $$CES_LeadingQM = 1                         ;;Set flag
+            $$CES_LeadingQM = 1                         ;; Set flag
           endif
         endif
       endif
@@ -173,7 +173,7 @@ $Esc macro Text:req
     $$CES_Text CatStr $$CES_Text, <">                   ;;"
   endif
 
-  ifidni $$CES_LastChar, <\>                            ;;If $$CES_LastChar char == "\" then add it!
+  ifidni $$CES_LastChar, <\>                            ;; If $$CES_LastChar char == "\" then add it!
     $$CES_Text CatStr $$CES_Text, <,"\">
   endif
 
@@ -195,9 +195,9 @@ $QuotedText macro Text:vararg
   ??CharCount = 0
 
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
-    $$Max = 0FFh          ;;Maximum 1 byte
+    $$Max = 0FFh          ;; Maximum 1 byte
   else
-    $$Max = 0FFFFh        ;;Maximum 2 bytes
+    $$Max = 0FFFFh        ;; Maximum 2 bytes
   endif
 
   ;;Continue regular processing
@@ -268,7 +268,7 @@ String macro StrName, QuotedText:vararg
   endif
 endm
 
-ExtendString macro QuotedText:vararg          ;;Extends a Str definition overcomming the line length limit
+ExtendString macro QuotedText:vararg          ;; Extends a Str definition overcomming the line length limit
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
     ExtendStringW <QuotedText>
   else

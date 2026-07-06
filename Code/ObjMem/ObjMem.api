@@ -755,3 +755,14 @@ xqord2baseW, pDest, qword, base
 udword2baseW, pDest, dword, base
 sdword2baseW, pDest, dword, base
 xdord2baseW, pDest, dword, base
+
+QueryCpuidSupported
+QueryCpuBrandStrA, pBufferA
+QueryCpuBrandStrw, pBufferW
+QueryCpuVendorStrA, pBufferA
+QueryCpuVendorStrW, pBufferW
+QueryCpuHypervisorVendorStrA, pBufferA
+QueryCpuHypervisorVendorStrW, pBufferW
+QueryCpuFeature, wFeatureIndex
+QueryCpuStruct, dStructIndex, pReturnedStruct
+QueryCpuValue, dValueIndex, pReturnedValue

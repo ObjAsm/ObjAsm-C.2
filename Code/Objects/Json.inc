@@ -47,7 +47,7 @@ JSON_TYPE_ROOT      equ -2
 
 INDENTATION_STEP    equ 2
 
-CStr JSON_TRUE,  "true"                   ;Returned strings matching the target string type
+CStr JSON_TRUE,  "true"                   ; Returned strings matching the target string type
 CStr JSON_FALSE, "false"
 CStr JSON_NULL,  "null"
 
@@ -55,11 +55,11 @@ PJSON_PROPERTY typedef ptr JSON_PROPERTY
 JSON_PROPERTY struc
   pParent       PJSON_PROPERTY  ?
   Siblings      LDLL_MEMBER     <>
-  dType         DWORD           ?         ;JSON_TYPE_NULL .. JSON_TYPE_ERROR
+  dType         DWORD           ?         ; JSON_TYPE_NULL .. JSON_TYPE_ERROR
   pName         PSTRING         ?
   union
-    pValue      PSTRING         ?         ;String representation of the value
-    Children    LDLL_CONTROL    <>        ;Reuse this space if no value is assigned to the property
+    pValue      PSTRING         ?         ; String representation of the value
+    Children    LDLL_CONTROL    <>        ; Reuse this space if no value is assigned to the property
   ends
 JSON_PROPERTY ends
 
@@ -88,7 +88,7 @@ JSON_FLAG_USE_CRLF  equ   BIT00
 ;    OCall xbx::Json.Init, xsi
 ;    mov [xbx].$Obj(Json).RootProperty.dType, JSON_TYPE_OBJECT
 ;    mov [xbx].$Obj(Json).dFlags, JSON_FLAG_USE_CRLF
-;    
+;
 ;    ...
 ;
 ;    OCall xbx::Json.Write, addr DskStream
@@ -98,17 +98,17 @@ JSON_FLAG_USE_CRLF  equ   BIT00
 ;
 ;
 ; Sample code when reading an existing JSON:
-;  
+;
 ;    local DskStream:$Obj(DiskStream)
-;  
+;
 ;    New DskStream::DiskStream
 ;    OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_READ, \
 ;                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 ;    mov xbx, $New(Json)
 ;    OCall xbx::Json.Init, xsi
 ;    OCall xbx::Json.Read, addr DskStream
-;  
-;  
+;
+;
 ;    Destroy xbx
 ;    OCall DskStream::DiskStream.Done
 
@@ -158,7 +158,7 @@ JsonEscDecodeGetHex macro
     sub ax, "a" - 10
   .else
     xor eax, eax
-    jmp @@Exit                                          ;Error
+    jmp @@Exit                                          ; Error
   .endif
 endm
 
@@ -176,7 +176,7 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharC
   endif
 
   .while ebx != 0
-    lodsw                                               ;ax = [xsi]; add xsi, 2
+    lodsw                                               ; ax = [xsi]; add xsi, 2
 
     .if ax == 0
       mov [xdi], ax
@@ -210,35 +210,35 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharC
       stosw
       sub ebx, 2
     .elseif ax == 'b'
-      mov CHRW ptr [xdi], 08                            ;Backspace
+      mov CHRW ptr [xdi], 08                            ; Backspace
       add xdi, sizeof(CHRW)
       sub ebx, 2
     .elseif ax == 'f'
-      mov CHRW ptr [xdi], 12                            ;Formfeed
+      mov CHRW ptr [xdi], 12                            ; Formfeed
       add xdi, sizeof(CHRW)
       sub ebx, 2
     .elseif ax == 'n'
       .ifBitSet dOptions, BIT00
-        mov DCHRW ptr [xdi], 10*256*256+13              ;CR + LF (Windows)
+        mov DCHRW ptr [xdi], 10*256*256+13              ; CR + LF (Windows)
         add xdi, 2*sizeof(CHRW)
       .else
-        mov CHRW ptr [xdi], 10                          ;Linefeed
+        mov CHRW ptr [xdi], 10                          ; Linefeed
         add xdi, sizeof(CHRW)
       .endif
       sub ebx, 2
     .elseif ax == 'r'
-      mov CHRW ptr [xdi], 13                            ;Carriage return
+      mov CHRW ptr [xdi], 13                            ; Carriage return
       add xdi, sizeof(CHRW)
       sub ebx, 2
     .elseif ax == 't'
-      mov CHRW ptr [xdi], 09                            ;Horizontal tab
+      mov CHRW ptr [xdi], 09                            ; Horizontal tab
       add xdi, sizeof(CHRW)
       sub ebx, 2
     .elseif ax == 'u'
-      mov ecx, 2                                        ;4 hex digits
+      mov ecx, 2                                        ; 4 hex digits
     .else
       xor eax, eax
-      jmp @@Exit                                        ;Error
+      jmp @@Exit                                        ; Error
     .endif
     .continue
 @@2:
@@ -314,9 +314,9 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRING, pBuffer:PSTRINGW, dCharCo
   .while ebx != 0
     xor eax, eax
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-      lodsw                                             ;ax = [xsi]; add xsi, 2
+      lodsw                                             ; ax = [xsi]; add xsi, 2
     else
-      lodsb                                             ;ax = [xsi]; add xsi, 1
+      lodsb                                             ; ax = [xsi]; add xsi, 1
     endif
 
     .if ax > 127
@@ -423,9 +423,9 @@ JsonEscEncodeSize proc uses xsi pInputStr:PSTRING
 
   .while TRUE
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-      lodsw                                             ;ax = [xsi]; add xsi, 2
+      lodsw                                             ; ax = [xsi]; add xsi, 2
     else
-      lodsb                                             ;ax = [xsi]; add xsi, 1
+      lodsb                                             ; ax = [xsi]; add xsi, 1
     endif
     .if ax < 128
       if TARGET_BITNESS eq 32
@@ -459,7 +459,7 @@ Method Json.AddArray, uses xbx xdi, pParent:PJSON_PROPERTY, pName:PSTRING
     lea xax, [xdi].JSON_PROPERTY.Children
     lea xcx, [xbx].JSON_PROPERTY.Siblings
     LDLL_Append xax, xcx, xdx
-    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ;Array items have no name
+    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ; Array items have no name
       mov [xbx].JSON_PROPERTY.pName, $invoke(StrNew, pName)
     .endif
     mov [xbx].JSON_PROPERTY.dType, JSON_TYPE_ARRAY
@@ -484,7 +484,7 @@ Method Json.AddData, uses xbx xdi,pParent:PJSON_PROPERTY, pName:PSTRING, dType:D
     lea xax, [xdi].JSON_PROPERTY.Children
     lea xcx, [xbx].JSON_PROPERTY.Siblings
     LDLL_Append xax, xcx, xdx
-    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ;Array items have no name
+    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ; Array items have no name
       mov [xbx].JSON_PROPERTY.pName, $invoke(StrNew, pName)
     .endif
     mov eax, dType
@@ -513,7 +513,7 @@ Method Json.AddObject, uses xbx xdi, pParent:PJSON_PROPERTY, pName:PSTRING
     lea xax, [xdi].JSON_PROPERTY.Children
     lea xcx, [xbx].JSON_PROPERTY.Siblings
     LDLL_Append xax, xcx, xdx
-    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ;Array items have no name
+    .if [xdi].JSON_PROPERTY.dType != JSON_TYPE_ARRAY    ; Array items have no name
       mov [xbx].JSON_PROPERTY.pName, $invoke(StrNew, pName)
     .endif
     mov [xbx].JSON_PROPERTY.dType, JSON_TYPE_OBJECT
@@ -560,7 +560,7 @@ Method Json.DelProperty, uses xbx xsi, pProperty:PJSON_PROPERTY
       .while TRUE
         mov xax, [xbx].JSON_PROPERTY.Children.pLastMember
         .break .if xax == NULL
-        lea xdx, [xax - offset JSON_PROPERTY.Siblings]  ;xdx -> JSON_PROPERTY
+        lea xdx, [xax - offset JSON_PROPERTY.Siblings]  ; xdx -> JSON_PROPERTY
         OCall xsi.DelProperty, xdx
       .endw
     .endif
@@ -586,7 +586,7 @@ Method Json.GetArrayItem,, pParent:PJSON_PROPERTY, dIndex:DWORD
     mov xax, [xax].JSON_PROPERTY.Children.pFirstMember
     mov edx, dIndex
     .while xax != NULL
-      lea xcx, [xax - offset JSON_PROPERTY.Siblings]    ;xcx -> JSON_PROPERTY
+      lea xcx, [xax - offset JSON_PROPERTY.Siblings]    ; xcx -> JSON_PROPERTY
       .if edx == 0
         mov xax, xcx
         .break
@@ -607,7 +607,7 @@ Method Json.GetFirstProperty,, pParent:PJSON_PROPERTY
   mov xax, pParent
   .if xax != NULL
     mov xcx, [xax].JSON_PROPERTY.Children.pFirstMember
-    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ; xax -> JSON_PROPERTY
   .endif
 MethodEnd
 
@@ -621,7 +621,7 @@ Method Json.GetLastProperty,, pParent:PJSON_PROPERTY
   mov xax, pParent
   .if xax != NULL
     mov xcx, [xax].JSON_PROPERTY.Children.pLastMember
-    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+    lea xax, [xcx - offset JSON_PROPERTY.Siblings]    ; xax -> JSON_PROPERTY
   .endif
 MethodEnd
 
@@ -636,7 +636,7 @@ Method Json.GetNextProperty,, pProperty:PJSON_PROPERTY
   .if xax != NULL
     mov xax, [xax].JSON_PROPERTY.Siblings.pLinkFwrd
     .if xax != NULL
-      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ; xax -> JSON_PROPERTY
     .endif
   .endif
 MethodEnd
@@ -652,7 +652,7 @@ Method Json.GetPrevProperty,, pProperty:PJSON_PROPERTY
   .if xax != NULL
     mov xax, [xax].JSON_PROPERTY.Siblings.pLinkBack
     .if xax != NULL
-      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+      lea xax, [xax - offset JSON_PROPERTY.Siblings]    ; xax -> JSON_PROPERTY
     .endif
   .endif
 MethodEnd
@@ -669,9 +669,9 @@ Method Json.GetProperty, uses xbx, pParent:PJSON_PROPERTY, pName:PSTRING
   .if xax != NULL
     mov xax, [xax].JSON_PROPERTY.Children.pFirstMember
     .while xax != NULL
-      lea xbx, [xax - offset JSON_PROPERTY.Siblings]    ;xbx -> JSON_PROPERTY
+      lea xbx, [xax - offset JSON_PROPERTY.Siblings]    ; xbx -> JSON_PROPERTY
       invoke StrComp, [xbx].JSON_PROPERTY.pName, pName
-      .if eax == 0                                      ;Found if eax = 0
+      .if eax == 0                                      ; Found if eax = 0
         mov xax, xbx
         .break
       .endif
@@ -703,7 +703,7 @@ JsonGetValue          proto :PJSON_PROPERTY, :DWORD
 JsonSkipBlanks proc
   ANNOTATION prv:xbx xsi
 
-  mov eax, TRUE                                         ;Always return success = TRUE
+  mov eax, TRUE                                         ; Always return success = TRUE
   .while TRUE
     .break .if xsi == xbx
     mov cx, [xsi]
@@ -713,7 +713,7 @@ JsonSkipBlanks proc
   ret
 JsonSkipBlanks endp
 
-JsonGetStringEnd proc                                   ;On entry, xsi -> first char after "
+JsonGetStringEnd proc                                   ; On entry, xsi -> first char after "
   ANNOTATION prv:xbx xsi
   xor eax, eax
   .while TRUE
@@ -721,18 +721,18 @@ JsonGetStringEnd proc                                   ;On entry, xsi -> first 
     mov cx, [xsi]
     add xsi, sizeof(CHRW)
     .if cx == '"'
-      inc eax                                           ;Return success = TRUE
+      inc eax                                           ; Return success = TRUE
       .break
     .endif
   .endw
   ret
 JsonGetStringEnd endp
 
-JsonGetNumberEnd proc                                   ;On entry, xsi -> first char in number
+JsonGetNumberEnd proc                                   ; On entry, xsi -> first char in number
   ANNOTATION prv:xbx xsi
-  xor eax, eax                                          ;Only allow numbers in the right format
-  test xsi, xbx                                         ;[-]([0.(0..9)]|(0..9))([e|E[+|-](0..9)])
-  jz @@Exit                                             ;See https://www.json.org/json-en.html
+  xor eax, eax                                          ; Only allow numbers in the right format
+  test xsi, xbx                                         ; [-]([0.(0..9)]|(0..9))([e|E[+|-](0..9)])
+  jz @@Exit                                             ; See https://www.json.org/json-en.html
   mov cx, [xsi]
   .if cx == "-"
     add xsi, sizeof(CHRW)
@@ -794,7 +794,7 @@ JsonGetNumberEnd proc                                   ;On entry, xsi -> first 
     jz @@Exit
   .endif
 
-  inc eax                                               ;Return success = TRUE
+  inc eax                                               ; Return success = TRUE
 @@Exit:
   ret
 JsonGetNumberEnd endp
@@ -814,12 +814,12 @@ JsonGetArrayContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
 
     .if CHRW ptr [xsi] == "]"
       add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
+      mov eax, TRUE                                     ; Return success = TRUE
       .break
     .endif
 
-    invoke JsonCreateProperty, pParent, NULL            ;Pass xbx & xsi implicitly
-    invoke JsonGetValue, xax, dFlags                  ;Pass xbx & xsi implicitly
+    invoke JsonCreateProperty, pParent, NULL            ; Pass xbx & xsi implicitly
+    invoke JsonGetValue, xax, dFlags                    ; Pass xbx & xsi implicitly
     .break .if eax == FALSE
 
     .if CHRW ptr [xsi] == ","
@@ -829,11 +829,11 @@ JsonGetArrayContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
 
     .if CHRW ptr [xsi] == "]"
       add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
+      mov eax, TRUE                                     ; Return success = TRUE
       .break
     .endif
 
-    xor eax, eax                                        ;Error
+    xor eax, eax                                        ; Error
     .break
   .endw
 ;  DbgLine
@@ -857,11 +857,11 @@ JsonGetObjectContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
     mov ax, [xsi]
     .if ax == "}"
       add xsi, sizeof(CHRW)
-      mov eax, TRUE                                     ;Return success = TRUE
+      mov eax, TRUE                                     ; Return success = TRUE
       ret
     .endif
 
-    .if ax == '"'                                       ;Get the name
+    .if ax == '"'                                       ; Get the name
       add xsi, sizeof(CHRW)
       mov pBegin, xsi
       invoke JsonGetStringEnd
@@ -869,14 +869,14 @@ JsonGetObjectContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
       mov xax, xsi
       sub xax, pBegin
       shr eax, $Log2(CHRW)
-      dec eax                                           ;Go back 1 char
+      dec eax                                           ; Go back 1 char
       if TARGET_STR_TYPE eq STR_TYPE_ANSI
         mov dSize, eax
         mov xdi, $invoke(StrAllocA, eax)
         invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dSize, xdi, dSize, NULL, NULL
-        mov CHRA ptr [xdi + xax], 0                     ;Set the ZTC
+        mov CHRA ptr [xdi + xax], 0                     ; Set the ZTC
       else
-        mov xdi, $invoke(StrCNewW, pBegin, eax)         ;xdi -> Name
+        mov xdi, $invoke(StrCNewW, pBegin, eax)         ; xdi -> Name
       endif
       ;DbgStr xdi
 
@@ -886,8 +886,8 @@ JsonGetObjectContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
         .break
       .endif
       add xsi, sizeof(CHRW)
-      invoke JsonCreateProperty, pParent, xdi           ;Pass xbx & xsi implicitly
-      invoke JsonGetValue, xax, dFlags                ;Pass xbx & xsi implicitly
+      invoke JsonCreateProperty, pParent, xdi           ; Pass xbx & xsi implicitly
+      invoke JsonGetValue, xax, dFlags                  ; Pass xbx & xsi implicitly
       .break .if eax == FALSE
 
       .if CHRW ptr [xsi] == ","
@@ -897,12 +897,12 @@ JsonGetObjectContent proc pParent:PJSON_PROPERTY, dFlags:DWORD
 
       .if CHRW ptr [xsi] == "}"
         add xsi, sizeof(CHRW)
-        mov eax, TRUE                                   ;Return success = TRUE
+        mov eax, TRUE                                   ; Return success = TRUE
         ret
       .endif
 
     .endif
-    xor eax, eax                                        ;Error
+    xor eax, eax                                        ; Error
     .break
   .endw
 ;  DbgLine
@@ -915,16 +915,16 @@ JsonCreateProperty proc pParent:PJSON_PROPERTY, pName:PSTRING
 ;  DbgText "JsonCreateProperty"
 ;  DbgStr pName
 ;  DbgHex pParent
-  
-  MemAlloc sizeof(JSON_PROPERTY), MEM_INIT_ZERO         ;Create a new property
+
+  MemAlloc sizeof(JSON_PROPERTY), MEM_INIT_ZERO         ; Create a new property
   .if xax != NULL
     mrm [xax].JSON_PROPERTY.pParent, pParent, xdx
-    lea xdi, [xdx].JSON_PROPERTY.Children               ;xdi -> PLDLL_CONTROL
-    lea xcx, [xax].JSON_PROPERTY.Siblings               ;xcx -> new LDLL_MEMBER to insert
-    LDLL_Append xdi, xcx, xdx                           ;xdx = aux. register
+    lea xdi, [xdx].JSON_PROPERTY.Children               ; xdi -> PLDLL_CONTROL
+    lea xcx, [xax].JSON_PROPERTY.Siblings               ; xcx -> new LDLL_MEMBER to insert
+    LDLL_Append xdi, xcx, xdx                           ; xdx = aux. register
     m2m [xax].JSON_PROPERTY.pName, pName, xdx
   .else
-    invoke StrDispose, pName                            ;Dispose the string if it can not be managed
+    invoke StrDispose, pName                            ; Dispose the string if it can not be managed
     xor eax, eax
   .endif
 ;  DbgHex xax
@@ -933,7 +933,7 @@ JsonCreateProperty proc pParent:PJSON_PROPERTY, pName:PSTRING
 JsonCreateProperty endp
 
 JsonGetValue proc pProperty:PJSON_PROPERTY, dFlags:DWORD
-  ANNOTATION prv:xbx xdi xsi                            ;xbx -> last byte, xsi -> cur. byte in Buff
+  ANNOTATION prv:xbx xdi xsi                            ; xbx -> last byte, xsi -> cur. byte in Buff
   local pBegin:POINTER, pValue:POINTER, dLen:DWORD
 
 ;  DbgText "JsonGetValue"
@@ -945,26 +945,26 @@ JsonGetValue proc pProperty:PJSON_PROPERTY, dFlags:DWORD
     xor eax, eax
     ret
   .endif
-  
+
   mov ax, [xsi]
   .if ax == '"'
-    add xsi, sizeof(CHRW)                               ;Skip this char
+    add xsi, sizeof(CHRW)                               ; Skip this char
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_STRING
     mov pBegin, xsi
-    invoke JsonGetStringEnd                             ;Pass xbx & xsi implicitly
+    invoke JsonGetStringEnd                             ; Pass xbx & xsi implicitly
     test eax, eax
     jz @@Exit
     mov xax, xsi
     sub xax, pBegin
     shr eax, 1
-    dec eax                                             ;Go back 1 char
+    dec eax                                             ; Go back 1 char
     invoke JsonEscDecode, pBegin, pBegin, eax, dFlags
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
       mov dLen, eax
       mov pValue, $invoke(StrAllocA, eax)
       invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dLen, NULL, NULL
       mov xdx, pValue
-      mov CHRA ptr [xdx + xax], 0                       ;Set the ZTC
+      mov CHRA ptr [xdx + xax], 0                       ; Set the ZTC
       mov [xdi].JSON_PROPERTY.pValue, xdx
     else
       mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
@@ -977,7 +977,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY, dFlags:DWORD
   .if ax == "-" || (ax >= "0" && ax <= "9")
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_NUMBER
     mov pBegin, xsi
-    invoke JsonGetNumberEnd                             ;Pass xbx & xsi implicitly
+    invoke JsonGetNumberEnd                             ; Pass xbx & xsi implicitly
     test eax, eax
     jz @@Exit
     mov xax, xsi
@@ -988,7 +988,7 @@ JsonGetValue proc pProperty:PJSON_PROPERTY, dFlags:DWORD
       mov pValue, $invoke(StrAllocA, eax)
       invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dLen, NULL, NULL
       mov xdx, pValue
-      mov CHRA ptr [xdx + xax], 0                       ;Set the ZTC
+      mov CHRA ptr [xdx + xax], 0                       ; Set the ZTC
       mov [xdi].JSON_PROPERTY.pValue, xdx
     else
       mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
@@ -1072,14 +1072,14 @@ Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
       mov pMemBlockUTF8, xax
       OCall pStream::Stream.BinRead, pMemBlockUTF8, ebx
       .if eax != 0
-        lea ebx, [sizeof(CHRW)*ebx + sizeof(CHRW)]      ;Conservative guess + space for ZTC
-        MemAlloc ebx                                    ;ebx is always >= 2
+        lea ebx, [sizeof(CHRW)*ebx + sizeof(CHRW)]      ; Conservative guess + space for ZTC
+        MemAlloc ebx                                    ; ebx is always >= 2
         .if xax != NULL
           mov pMemBlockWide, xax
-          invoke UTF8ToWide, xax, pMemBlockUTF8, ebx    ;Adds always a ZTC
-          mov xsi, pMemBlockWide                        ;xsi -> first CHRW in Buffer
-          lea xbx, [xsi + xax - sizeof(CHRW)]           ;xbx -> last CHRW in Buffer = ZTC
-          .if CHRW ptr [xsi] == 0FEFFh                  ;Skip the UTF-8 BOM
+          invoke UTF8ToWide, xax, pMemBlockUTF8, ebx    ; Adds always a ZTC
+          mov xsi, pMemBlockWide                        ; xsi -> first CHRW in Buffer
+          lea xbx, [xsi + xax - sizeof(CHRW)]           ; xbx -> last CHRW in Buffer = ZTC
+          .if CHRW ptr [xsi] == 0FEFFh                  ; Skip the UTF-8 BOM
             add xsi, sizeof(DCHRW)
           .endif
 
@@ -1151,11 +1151,11 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       invoke WideToUTF8Size, [xbx].JSON_PROPERTY.pName
       mov xsi, $MemAlloc(eax)
       invoke WideToUTF8, xsi, [xbx].JSON_PROPERTY.pName, -1
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, xsi, eax
       MemFree xsi
     else
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, [xbx].JSON_PROPERTY.pName, eax
     endif
     OCall pStream::Stream.BinWrite, $OfsCStrA('":'), ??StrLength
@@ -1168,16 +1168,16 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
     .else
       ;Write all children recursively
       OCall pStream::Stream.BinWrite, $OfsCStrA("{", 13, 10), ??StrLength
-      add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
+      add DWORD ptr [xdi], INDENTATION_STEP             ; Increment indentation
       .while xsi != NULL
-        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
+        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ; xax -> JSON_PROPERTY
         OCall pSelf::Json.WriteProperty, pStream, xax, xdi
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength
         .endif
       .endw
-      sub DWORD ptr [xdi], INDENTATION_STEP             ;Decrement indentation
+      sub DWORD ptr [xdi], INDENTATION_STEP             ; Decrement indentation
       OCall pStream::Stream.BinWrite, $OfsCStrA(13, 10), ??StrLength
       IndentNow
       OCall pStream::Stream.BinWrite8, "}"
@@ -1189,16 +1189,16 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       OCall pStream::Stream.BinWrite, $OfsCStrA("[]"), ??StrLength
     .else
       OCall pStream::Stream.BinWrite, $OfsCStrA("[", 13, 10), ??StrLength
-      add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
+      add DWORD ptr [xdi], INDENTATION_STEP             ; Increment indentation
       .while xsi != NULL
-        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
+        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ; xax -> JSON_PROPERTY
         OCall pSelf::Json.WriteProperty, pStream, xax, xdi
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength
         .endif
       .endw
-      sub DWORD ptr [xdi], INDENTATION_STEP             ;Decrement indentation
+      sub DWORD ptr [xdi], INDENTATION_STEP             ; Decrement indentation
       OCall pStream::Stream.BinWrite, $OfsCStrA(13, 10), ??StrLength
       IndentNow
       OCall pStream::Stream.BinWrite8, "]"
@@ -1211,20 +1211,20 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       mov edi, eax
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
         add eax, eax
-        lea eax, [2*eax + eax]                          ;Each char can have max 6 escape chars
+        lea eax, [2*eax + eax]                          ; Each char can have max 6 escape chars
       else
         shl eax, 2
-        lea eax, [2*eax + eax]                          ;ANSI => WIDE + each char can have max 6 escape chars
+        lea eax, [2*eax + eax]                          ; ANSI => WIDE + each char can have max 6 escape chars
       endif
-      mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
+      mov pEncBuffer, $MemAlloc(eax)                    ; We use the same Buffer to encode the string
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
-        shr edi, 1                                      ;Chars, incl ZTC
+        shr edi, 1                                      ; Chars, incl ZTC
       endif
       invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
       invoke WideToUTF8Size, pEncBuffer
-      mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
+      mov xsi, $MemAlloc(eax)                           ; We use the same Buffer to encode the string
       invoke WideToUTF8, xsi, pEncBuffer, -1
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, xsi, eax
       MemFree xsi
       MemFree pEncBuffer
@@ -1236,19 +1236,19 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       invoke StrSize, [xbx].JSON_PROPERTY.pValue
       mov edi, eax
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
-        shl eax, 1                                      ;Each char can have max 2 escape chars
+        shl eax, 1                                      ; Each char can have max 2 escape chars
       else
-        shl eax, 2                                      ;ANSI => WIDE + each char can have max 2 escape chars
+        shl eax, 2                                      ; ANSI => WIDE + each char can have max 2 escape chars
       endif
-      mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
+      mov pEncBuffer, $MemAlloc(eax)                    ; We use the same Buffer to encode the string
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
-        shr edi, 1                                      ;Chars, incl ZTC
+        shr edi, 1                                      ; Chars, incl ZTC
       endif
       invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
-      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes
-      mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
+      shl eax, 2                                        ; Each UTF8 char can have max 4 bytes
+      mov xsi, $MemAlloc(eax)                           ; We use the same Buffer to encode the string
       invoke WideToUTF8, xsi, pEncBuffer, -1
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, xsi, eax
       MemFree xsi
       MemFree pEncBuffer
@@ -1257,14 +1257,14 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
   .elseif [xbx].JSON_PROPERTY.dType == JSON_TYPE_NUMBER
     invoke StrSize, [xbx].JSON_PROPERTY.pValue
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-      shl eax, 1                                        ;Each UTF8 char can have at max 4 bytes
+      shl eax, 1                                        ; Each UTF8 char can have at max 4 bytes
       mov xsi, $MemAlloc(eax)
       invoke WideToUTF8, xsi, [xbx].JSON_PROPERTY.pValue, -1
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, xsi, eax
       MemFree xsi
     else
-      dec eax                                           ;Discard ZTC
+      dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, [xbx].JSON_PROPERTY.pValue, eax
     endif
 

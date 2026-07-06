@@ -437,7 +437,7 @@ Object NetComConnection, NetComConnectionID, Primer
   DefineVariable  ChainItem,          SDLL_ITEM,        {NULL, NULL} ;Link to other Connections
   DefineVariable  dPendingIOJobs,     DWORD,            0     ;Pending IO jobs
   DefineVariable  dCompletedIOJobs,   DWORD,            0     ;Completed IO jobs, may overflow!
-  DefineVariable  RcvIOJobChain,      SDLL_SENTINEL,    {NULL, NULL}  ;Recieve IOJob chain
+  DefineVariable  RcvIOJobChain,      SDLL_SENTINEL,    {NULL, NULL}  ;Receive IOJob chain
   DefineVariable  pProtocol,          POINTER,          NULL
   DefineVariable  hSocket,            SOCKET,           INVALID_SOCKET
   DefineVariable  LocalAddr,          NETCOMADDR,       {AF_INETX}  ;IP + Port
@@ -521,7 +521,7 @@ Object NetComProtocol, NetComProtocolID, Primer
   ;Timeout in msecs, 0 means no timeout
   DefineVariable  dTimeoutAcp,        DWORD,      0           ;Accept - not implementd yet
   DefineVariable  dTimeoutCon,        DWORD,      0           ;Connect - not implementd yet
-  DefineVariable  dTimeoutRcv,        DWORD,      0           ;Recieve
+  DefineVariable  dTimeoutRcv,        DWORD,      0           ;Receive
   DefineVariable  dTimeoutSnd,        DWORD,      0           ;Send - not implementd yet
 
   Embed BlackList, NetComAddrCollection                 ;Addr-List that are not allowed to connect
