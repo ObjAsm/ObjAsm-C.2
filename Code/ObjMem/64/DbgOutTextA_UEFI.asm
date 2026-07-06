@@ -8,9 +8,9 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemUefi.cop
 
-TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <DbgOutTextA_UEFI>
 
 ; --------------------------------------------------------------------------------------------------
