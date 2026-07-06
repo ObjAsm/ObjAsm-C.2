@@ -40,9 +40,9 @@ align ALIGN_CODE
   sub ecx, 2
   push ecx
   invoke StrLengthW, ecx
-  add eax, 2                                            ;Include ZTC
+  lea eax, [eax*2 + 2]                                  ; Chars ? Bytes + ZTC (2 bytes)
   pop ecx
-  invoke MemClone, [esp + 16], ecx, eax
+  invoke MemClone, [esp + 12], ecx, eax
   ret 8
 StrLTrimW endp
 

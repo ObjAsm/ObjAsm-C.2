@@ -42,7 +42,7 @@ align ALIGN_CODE
   invoke StrLengthA, ecx
   inc eax                                               ;Include ZTC
   pop ecx
-  invoke MemClone, [esp + 16], ecx, eax
+  invoke MemClone, [esp + 12], ecx, eax
   ret 8
 StrLTrimA endp
 
