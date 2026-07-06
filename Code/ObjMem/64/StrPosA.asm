@@ -21,7 +21,7 @@
 align ALIGN_CODE
 StrPosA proc uses rbx rdi rsi pString1A:POINTER, pString2A:POINTER
   mov rdi, rcx                                          ;rdi -> String1A
-  mov r15, rdx                                          ;rsi -> String2S
+  mov r15, rdx                                          ;rsi -> String2A
 
   invoke StrLengthA, rdx                                ;pString2A -> searched string
   test rax, rax
