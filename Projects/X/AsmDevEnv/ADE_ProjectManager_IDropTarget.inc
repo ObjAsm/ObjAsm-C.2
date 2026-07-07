@@ -304,7 +304,7 @@ Method IDropTarget.Drop, uses xbx xdi xsi, pIDataObject:POINTER, dKeyState:DWORD
               mov xcx, [xax].PROJECTITEM.pDispName
               mov pGroupName, xcx
               lea xdi, cBuffer
-              WriteF xdi, "The file \`¦SU\` is already present in the group \`¦ST\`\:", pFullFileName, pGroupName
+              WriteF xdi, "The file \=¦SU\= is already present in the group \=¦ST\=\:", pFullFileName, pGroupName
               mov xdx, [xsi].pOwner
               mov xdi, [xdx].$Obj(Component).pOwner
               OCall xdi::ProjectManager.GroupsExpandRestore, hItem

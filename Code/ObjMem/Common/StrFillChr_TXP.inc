@@ -15,6 +15,7 @@
 ;             Arg2: Character Count.
 ;             Arg3: Character.
 ; Return:     Nothing.
+; Note:       The procedure sets after dCount chars a ZTC.
 
 .code
 align ALIGN_CODE

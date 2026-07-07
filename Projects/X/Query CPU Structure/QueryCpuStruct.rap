@@ -25,19 +25,19 @@ Debug=0
 14=..\..\..\Code\Macros\ConstDiv.inc
 15=..\..\..\Code\Objects\ConsoleApp.inc
 16=..\..\..\Code\Objects\Stream.inc
-17=..\Query CPU\QCS-Table_PX.inc
-18=..\Query CPU\QCS-Name_PTX.inc
-19=..\Query CPU\QueryCpu.inc
-20=..\Query CPU\QueryCpuStruct_PX.inc
+17=..\..\..\Code\Inc\ObjAsm\QueryCpu.inc
+18=..\..\..\Code\ObjMem\32\QueryCpuStruct.asm
+19=..\..\..\Code\ObjMem\Common\QueryCpuStruct_PX.inc
+20=..\..\..\Code\ObjMem\64\QueryCpuStruct.asm
 21=..\..\..\Code\ObjMem\ObjMem.inc
 22=..\..\..\Code\Inc\ObjAsm\ObjMem.inc
 23=..\..\..\Code\Inc\Windows\Tlhelp32.inc
-24=..\Query CPU\QueryCpuVendorStrA_PX.inc
-25=..\Query CPU\QueryCpuVendorStrW_PX.inc
-26=..\Query CPU\QueryCpuHypervisorVendorStrA_PX.inc
-27=..\Query CPU\QueryCpuHypervisorVendorStrW_PX.inc
-28=..\Query CPU\QueryCpuBrandStrA_PX.inc
-29=..\Query CPU\QueryCpuBrandStrW_PX.inc
+24=..\..\..\Code\ObjMem\Common\QCS-Name_PTX.inc
+25=..\..\..\Code\ObjMem\Common\QCS-Table_PX.inc
+26=
+27=
+28=
+29=
 
 [MakeFiles]
 0=QueryCpuStruct.rap
@@ -100,10 +100,10 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 23=2
 24=1
 25=1
-26=1
-27=1
-28=1
-29=1
+26=
+27=
+28=
+29=
 
 [VerInf]
 FV=1.0.0.0
@@ -134,7 +134,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=6
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -169,7 +169,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,758
+2=0,0,0,0,699
 3=0,0,0,0,19680
 1=0,0,0,0,557
 4=0,0,562,490,7266
@@ -187,17 +187,17 @@ ProductVer4Range=0
 13=
 21=0,0,0,0,73833
 22=0,0,0,0,57474
-20=0,0,0,0,258
-19=0,0,0,0,19934
-18=0,0,0,0,291
-17=0,0,0,0,253
+20=0,0,0,0,0
+19=
+18=0,0,0,0,0
+17=
 23=0,0,0,0,5018
-24=0,0,0,0,531
-25=0,0,0,0,1230
-27=0,0,0,0,145
-29=0,0,0,0,134
-28=0,0,0,0,134
-26=0,0,0,0,440
+24=0,0,0,0,0
+25=0,0,0,0,8687
+27=
+29=
+28=
+26=
 
 [BookMark]
 0=
@@ -259,7 +259,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=2,15
 [PTimer]
-PTimer=1043600258
+PTimer=1044078867
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

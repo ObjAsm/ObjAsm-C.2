@@ -24,7 +24,7 @@ StrRightW proc uses rbx rdi rsi pBuffer:POINTER, pSrcStringW:POINTER, dCharCount
   mov rdi, rcx
   mov rsi, rdx
   mov rbx, r8
-  invoke StrLengthW, rcx                                ;pSrcStringW
+  invoke StrLengthW, rdx                                ;pSrcStringW
   mov rdx, rax
   cmp rax, rbx                                          ;qCharCount
   jbe @F                                                ;unsigned compare!

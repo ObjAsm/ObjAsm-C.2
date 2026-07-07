@@ -36,27 +36,22 @@ MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
   or rax, r9
 
   mov r9d, edx
-  shr rdx, 3
-  jz @@2
-@@1:
+  shr rdx, 2
+  jz @@1
+@@:
   mov [rcx], rax
   add rcx, 8
   dec rdx
-  jnz @@1
-@@2:
-  test r9d, 4
+  jnz @B
+@@1:
+  test r9d, 2
   jz @F
   mov [rcx], eax
   add rcx, 4
 @@:
-  test r9d, 2
-  jz @F
-  mov [rcx], ax
-  add rcx, 2
-@@:
   test r9d, 1
   jz @F
-  mov [rcx], al
+  mov [rcx], ax
 @@:
   ret
 MemFillW endp

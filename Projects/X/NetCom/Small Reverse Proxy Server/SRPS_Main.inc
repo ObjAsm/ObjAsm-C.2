@@ -540,7 +540,7 @@ Method Application.Init, uses xbx xsi
   .if xax == NULL
     DbgApiError
     lea xbx, cBuffer
-    WriteF xbx, "\`¦ST\` failed to start\:", offset szAppTitle ;Prepare error message
+    WriteF xbx, "\=¦ST\= failed to start\:", offset szAppTitle ;Prepare error message
     invoke MessageBox, 0, addr cBuffer, addr cError, MB_OK or MB_ICONERROR or MB_TASKMODAL
     invoke ExitProcess, 1                               ;Exit program with failure
   .else
@@ -551,7 +551,7 @@ Method Application.Init, uses xbx xsi
     OCall $ObjTmpl(NetComSrpsProtocol)::NetComSrpsProtocol.Init, xsi
     .if eax != 0
       lea xbx, cBuffer
-      WriteF xbx, "\`¦ST\` failed to initialize the Reverse Proxy protocol\:", offset szAppTitle
+      WriteF xbx, "\=¦ST\= failed to initialize the Reverse Proxy protocol\:", offset szAppTitle
       invoke MessageBox, 0, addr cBuffer, addr cError, MB_OK or MB_ICONERROR or MB_TASKMODAL
       invoke ExitProcess, 1                               ;Exit program with failure
     .endif

@@ -101,7 +101,7 @@ endif
       ;Print the feature description
       OCall xsi.SetColor, FOREGROUND_INTENSE_CYAN
       lea xdi, cString
-      WriteF xdi, "\`¦ST\`", PSTRING ptr [xbx]
+      WriteF xdi, "\=¦ST\=", PSTRING ptr [xbx]
       OCall xsi.PrintLn, addr cString
 ;    .endif
 
@@ -127,11 +127,16 @@ MethodEnd
 
 start proc
   SysInit
+  DbgClearAll
+  ResGuard_Version
+  ResGuard_Start
 
   OCall $ObjTmpl(Application)::Application.Init, NULL   ; Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ; Execute application
   OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
 
+  ResGuard_Stop
+  ResGuard_Show
   SysDone
 
   invoke ExitProcess, 0

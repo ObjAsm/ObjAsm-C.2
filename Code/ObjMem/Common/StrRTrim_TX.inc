@@ -46,8 +46,8 @@ endif
   .if xcx != xsi
     invoke MemShift, xcx, xsi, eax
   .endif
-if TARGET_BITNESS eq 64
-  shr rax, 1                                            ;Return number of chars.
+if TARGET_STR_TYPE eq STR_TYPE_WIDE
+  shr xax, 1                                            ;Return number of chars.
 endif
 @@:
   ret

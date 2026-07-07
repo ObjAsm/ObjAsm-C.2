@@ -161,6 +161,7 @@ QCS_COUNT = 8
 ; QCS_FIELD_TABLE - flat array of field descriptors
 ; --------------------------------------------------------------------------------------------------
 
+.const
 align sizeof(QCS_FIELD_ENTRY)
 QCS_FIELD_TABLE label QCS_FIELD_ENTRY
 

@@ -27,7 +27,7 @@ align ALIGN_CODE
 MemFillB proc pMem:POINTER, dCount:DWORD, bFillByte:BYTE
   mov al, [esp + 12]                                    ;al = FillByte
   shl eax, 8                                            ;ah = FillByte
-  mov al, [esp + 12]                                    ;al = FillByte
+  mov al, ah
   mov cx, ax
   shl eax, 16
   mov ax, cx
@@ -35,23 +35,23 @@ MemFillB proc pMem:POINTER, dCount:DWORD, bFillByte:BYTE
   mov ecx, [esp + 8]                                    ;ecx = dCount
   mov edx, [esp + 4]                                    ;edx -> Memory block
   shr ecx, 2
-  jz @@2
-@@1:
+  jz @@1
+@@:
   mov [edx], eax
   add edx, 4
   dec ecx
-  jnz @@1
-@@2:
+  jnz @B
+@@1:
   mov ecx, [esp + 8]                                    ;ecx = dCount
   test ecx, 2
-  jz @@3
+  jz @F
   mov [edx], ax
   add edx, 2
-@@3:
+@@:
   test ecx, 1
-  jz @@4
+  jz @F
   mov [edx], al
-@@4:
+@@:
   ret 12
 MemFillB endp
 

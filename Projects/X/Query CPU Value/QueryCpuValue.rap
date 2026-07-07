@@ -171,7 +171,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,4124
+2=0,0,0,0,8242
 3=0,0,0,0,121032
 1=0,0,0,0,555
 4=0,0,562,490,10157
@@ -189,14 +189,14 @@ ProductVer4Range=0
 13=0,0,0,0,23526
 21=0,0,0,0,57475
 22=0,0,0,0,57474
-20=0,0,0,0,7807
-19=
+20=0,0,0,0,7766
+19=0,0,0,0,1313
 18=
-17=
+17=0,0,0,0,5862
 23=0,0,0,0,4784
-24=
+24=0,0,0,0,1398
 30=
-25=
+25=0,0,0,0,0
 26=
 27=
 28=
@@ -219,16 +219,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="xdi"
-2="edi"
-3="pReturnedValue"
-4="??OBSOLETE_ERROR_PROC"
-5="ObsoleteMethod"
-6="GetConsoleMode"
-7="COORD"
-8="elseifidn $$WF_ReplType, <CA>"
-9="ICFP_"
-10="Hyper"
+1="QCV_TABLE"
+2="int 3"
+3="xdi"
+4="edi"
+5="pReturnedValue"
+6="??OBSOLETE_ERROR_PROC"
+7="ObsoleteMethod"
+8="GetConsoleMode"
+9="COORD"
+10="elseifidn $$WF_ReplType, <CA>"
 [Collapse]
 1=
 4=
@@ -254,10 +254,11 @@ ProductVer4Range=0
 17=
 23=
 24=
+25=
 [AutoLoad]
-AutoLoad=2,20
+AutoLoad=2,20,24,25,17,19
 [PTimer]
-PTimer=1075612336
+PTimer=1079276242
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

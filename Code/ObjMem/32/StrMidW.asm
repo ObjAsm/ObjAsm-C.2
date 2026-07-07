@@ -38,12 +38,12 @@ align ALIGN_CODE
   cmp eax, [esp + 16]                                   ;dCharCount
   jae @@2
   sub ecx, [esp + 12]                                   ;dStartChar
+  dec ecx
   mov [esp + 16], ecx                                   ;dCharCount
 @@2:
   mov edx, [esp + 12]                                   ;dStartChar
   shl edx, 1
   add edx, [esp + 8]                                    ;pSrcStringW
-  sub edx, 2
   mov ecx, [esp + 16]
   shl ecx, 1
   invoke MemShift, [esp + 12], edx, ecx

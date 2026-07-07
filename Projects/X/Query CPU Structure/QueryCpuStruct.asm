@@ -18,7 +18,6 @@ MakeObjects Primer, Stream, ConsoleApp
 include QueryCpuStruct_Shared.inc
 
 % include &IncPath&ObjAsm\QueryCpu.inc
-% include &ObjMemPath&Common\QCF-Name_PTX.inc
 % include &ObjMemPath&Common\QCS-Name_PTX.inc
 
 CStr NotAvailable, "Not available" 
@@ -234,11 +233,16 @@ MethodEnd
 .code
 start proc
   SysInit
+  DbgClearAll
+  ResGuard_Version
+  ResGuard_Start
 
   OCall $ObjTmpl(Application)::Application.Init, NULL   ; Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ; Execute application
   OCall $ObjTmpl(Application)::Application.Done         ; Finalize application
 
+  ResGuard_Stop
+  ResGuard_Show
   SysDone
 
   invoke ExitProcess, 0

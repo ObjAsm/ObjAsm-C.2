@@ -16,10 +16,11 @@ ProcName textequ <StrFillChrW>
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrFillChrW
 ; Purpose:    Fill a preallocated String with a character.
-; Arguments:  Arg1: -> String.
-;             Arg2: Character.
-;             Arg3: Character Count.
+; Arguments:  Arg1: -> StringW.
+;             Arg2: Character count.
+;             Arg3: WIDE character.
 ; Return:     Nothing.
+; Note:       The procedure sets after dCount chars a ZTC.
 
 % include &ObjMemPath&Common\StrFillChr_TXP.inc
 

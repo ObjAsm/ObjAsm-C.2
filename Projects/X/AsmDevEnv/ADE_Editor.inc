@@ -924,12 +924,12 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
             jmp @@Exit
           .elseif dFileFormat == EFF_UTF8BOM
             lea xbx, cMessage
-            WriteF xbx, "Wrong or missing UTF-8 BOM in file\n\´¦SU\´ \:", pFullFileName
+            WriteF xbx, "Wrong or missing UTF-8 BOM in file\n\-¦SU\- \:", pFullFileName
             invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
             jmp @@Exit
           .elseif dFileFormat == EFF_UTF16BOM
             lea xbx, cMessage
-            WriteF xbx, "Wrong or missing UTF-16 BOM in file\n\´¦SU\´ \:", pFullFileName
+            WriteF xbx, "Wrong or missing UTF-16 BOM in file\n\-¦SU\- \:", pFullFileName
             invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
             jmp @@Exit
           .endif
@@ -1307,9 +1307,9 @@ Method Editor.Save, uses xdi xsi
     mov hCBTProc, xax
     lea xdi, cText
     .ifBitSet [xsi].dFlags, EDF_NEW_FILE
-      WriteF xdi, "Save \´¦SU\´ changes to a file?", [xsi].pFullFileName
+      WriteF xdi, "Save \-¦SU\- changes to a file?", [xsi].pFullFileName
     .else
-      WriteF xdi, "Save changes to\n\´¦SU\´?", [xsi].pFullFileName
+      WriteF xdi, "Save changes to\n\-¦SU\-?", [xsi].pFullFileName
     .endif
   @@:
     invoke MessageBox, [xsi].hWnd, addr cText, $OfsCStr("Editor"), MB_YESNOCANCEL or MB_ICONQUESTION
@@ -1366,7 +1366,7 @@ Method Editor.SaveAs, uses xbx xsi
       OCall [xax].$Obj(Application).FileTypes::FileTypeCollection.GetFileTypeInfo, pDisplayName
       .if xax == NULL
         lea xbx, cMessage
-        WriteF xbx, "Unknown format for file\n\´¦SU\´ \:\n\nChoose a known file extension.", pDisplayName
+        WriteF xbx, "Unknown format for file\n\-¦SU\- \:\n\nChoose a known file extension.", pDisplayName
         invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
       .else
         m2m [xsi].FileTypeInfo.dFileFormat, [xax].FILETYPEINFO.dFileFormat, ecx

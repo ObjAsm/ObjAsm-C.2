@@ -680,7 +680,7 @@ Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING, dShowCmd:D
         .else
           Kill xdi
           lea xdi, cMessage
-          WriteF xdi, "The file \´¦ST\´ can not be opened.", pFileName
+          WriteF xdi, "The file \-¦ST\- can not be opened.", pFileName
           invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
           xor edi, edi
         .endif
@@ -689,7 +689,7 @@ Method Application.LaunchEditor, uses xbx xdi xsi, pFileName:PSTRING, dShowCmd:D
       jmp @@Exit
     .endif
     lea xdi, cMessage
-    WriteF xdi, "The file type from \´¦ST\´ is unknown.", pFileName
+    WriteF xdi, "The file type from \-¦ST\- is unknown.", pFileName
     invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
     xor ebx, ebx
     xor edi, edi

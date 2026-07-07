@@ -1274,7 +1274,7 @@ SetFileTypeExecAssociation proc uses xbx xdi pExtension:PSTRING, pProgID:PSTRING
       invoke RegCreateKeyEx, HKEY_CLASSES_ROOT, addr cBuffer, 0, NULL, 0, KEY_WRITE, NULL, addr hKey, NULL
       .if eax == ERROR_SUCCESS
         lea xbx, cBuffer
-        WriteF xbx, "\`¦ST\` \`%1\`", pAppPath
+        WriteF xbx, "\=¦ST\= \=%1\=", pAppPath
         lea xax, cBuffer
         sub xbx, xax
         invoke RegSetValueEx, hKey, NULL, 0, REG_SZ, addr cBuffer, ebx

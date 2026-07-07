@@ -38,11 +38,11 @@ align ALIGN_CODE
   cmp eax, [esp + 16]                                   ;dCharCount
   jae @@2
   sub ecx, [esp + 12]                                   ;dStartChar
+  dec ecx
   mov [esp + 16], ecx                                   ;dCharCount
 @@2:
   mov edx, [esp + 12]                                   ;dStartChar
   add edx, [esp + 8]                                    ;pSrcStringA
-  dec edx
   invoke MemShift, [esp + 12], edx, [esp + 16]
   mov eax, [esp + 16]                                   ;Set return value = number of copied chars
   mov edx, [esp + 4]

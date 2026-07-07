@@ -32,24 +32,18 @@ MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
 
   mov ecx, [esp + 8]                                    ;ecx = dCount
   mov edx, [esp + 4]                                    ;edx -> Memory block
-  shr ecx, 2
-  jz @@2
-@@1:
+  shr ecx, 1
+  jz @@1
+@@:
   mov [edx], eax
   add edx, 4
   dec ecx
-  jnz @@1
-@@2:
-  mov ecx, [esp + 8]                                    ;ecx = dCount
-  test ecx, 2
-  jz @@3
+  jnz @B
+@@1:
+  test DWORD ptr [esp + 8], 1
+  jz @F
   mov [edx], ax
-  add edx, 2
-@@3:
-  test ecx, 1
-  jz @@4
-  mov [edx], al
-@@4:
+@@:
   ret 12
 MemFillW endp
 

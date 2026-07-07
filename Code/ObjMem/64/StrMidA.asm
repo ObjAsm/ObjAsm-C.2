@@ -32,6 +32,7 @@ StrMidA proc pBuffer:POINTER, pSrcStringA:POINTER, dStartChar:DWORD, dCharCount:
     sub eax, dStartChar
     .if eax < dCharCount
       sub ecx, dStartChar
+      dec ecx
       mov dCharCount, ecx
     .endif
     mov edx, dStartChar

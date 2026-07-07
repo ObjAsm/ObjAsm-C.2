@@ -641,7 +641,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             .if xax != 0
               lea xbx, cBuffer
               mov xax, Item.lParam
-              WriteF xbx, "Are you sure that you want to delete the \´¦ST\´ group and all of its files?", [xax].PROJECTITEM.pDispName
+              WriteF xbx, "Are you sure that you want to delete the \-¦ST\- group and all of its files?", [xax].PROJECTITEM.pDispName
               invoke MessageBox, [xsi].hWnd, addr cBuffer, $OfsCStr("Warning"), MB_OKCANCEL or MB_ICONWARNING
               .if eax == IDCANCEL
                 xor eax, eax

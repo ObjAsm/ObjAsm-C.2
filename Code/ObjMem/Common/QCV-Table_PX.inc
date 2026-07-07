@@ -147,6 +147,7 @@ endm
 ; QCV_TABLE - value descriptor table
 ; --------------------------------------------------------------------------------------------------
 
+.const
 align sizeof(POINTER)
 QCV_TABLE label QCV_ENTRY
 
