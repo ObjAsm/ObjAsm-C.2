@@ -31,6 +31,7 @@ StrFilterW proc pStringW:POINTER, pFilterW:POINTER
     .break .if ax == 0
     .if (r10w != ax) && (r10w != "?")
       xor eax, eax
+      pop rbx
       ret
     .endif
     add rcx, 2
@@ -47,6 +48,7 @@ StrFilterW proc pStringW:POINTER, pFilterW:POINTER
       .if r10w == 0
         xor eax, eax
         inc eax
+        pop rbx
         ret
       .endif
       mov r8, rcx

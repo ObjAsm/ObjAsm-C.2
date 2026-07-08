@@ -26,9 +26,10 @@ OPTION PROC:NONE
 align ALIGN_CODE
 Mem2HexA proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   ;rcx -> Buffer, rdx -> Mem, r8d = dCount
+  mov r10, offset HexCharTableA
   .while r8d != 0
     movzx eax, BYTE ptr [rdx]
-    movzx eax, DCHRA ptr [HexCharTableA + sizeof(DCHRA)*rax]
+    movzx eax, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
     mov [rcx], ax
     add rcx, sizeof(DCHRA)
     inc rdx

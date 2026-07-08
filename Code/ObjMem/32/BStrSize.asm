@@ -23,7 +23,7 @@ align ALIGN_CODE
 BStrSize proc pBStr:POINTER
   mov ecx, [esp + 4]                                    ;ecx -> BStr
   mov eax, DWORD ptr [ecx - 4]                          ;Get the byte length DWORD
-  add eax, 2 + 4                                        ;Add zero terminating char + leading DWORD
+  add eax, sizeof(DWORD) + sizeof(CHRW)                 ;Add zero terminating char + leading DWORD
   ret 4
 BStrSize endp
 

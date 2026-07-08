@@ -40,7 +40,7 @@ StrCScanW proc pStringW:POINTER, dMaxCount:DWORD, cChar:CHRW
   repne scasw
   mov eax, 0                                            ;Dont't change flags!
   jne @F
-  lea eax, [edi - 1]
+  lea eax, [edi - 2]
 @@:
   pop edi                                               ;Recover edi
 @@Exit:

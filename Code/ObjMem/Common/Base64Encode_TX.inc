@@ -124,7 +124,15 @@ ProcName proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:P
         and edx, 0111111b
         add xsi, 2
         mov ah, [xcx + xdx]
-        stosw
+        if TARGET_STR_TYPE eq STR_TYPE_WIDE
+          movzx edx, ah                                 ;Save char 2
+          movzx eax, al                                 ;Zero-extend char 1 to WORD
+          stosw                                         ;Store WIDE char 1
+          mov eax, edx                                  ;Restore char 2
+          stosw                                         ;Store WIDE char 2
+        else
+          stosw                                         ;Store 2 ANSI chars as WORD
+        endif
         sub ebx, 2
         jz @@Quit
       .endw

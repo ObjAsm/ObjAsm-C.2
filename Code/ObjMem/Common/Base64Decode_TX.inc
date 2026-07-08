@@ -49,7 +49,7 @@ B64GetCharInto macro Reg32:req
   movzx Reg32, CHR ptr [xsi]
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
     cmp Reg32, 255                                      ;Valid alphabet character?
-    jbe @@Error
+    ja @@Error
   endif
   movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]
   cmp Reg32, 255                                        ;Valid alphabet character?
@@ -60,7 +60,7 @@ B64GetChar2Into macro Reg32:req
   movzx Reg32, CHR ptr [xsi]
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
     cmp Reg32, 255                                      ;Valid alphabet character?
-    jbe @@Error
+    ja @@Error
   endif
   .break .if Reg32 == BASE64_PADDING                    ;Padding character?
   movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]

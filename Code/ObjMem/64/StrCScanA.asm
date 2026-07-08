@@ -12,7 +12,7 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCScanA
-; Purpose:    Scan from the beginning of ANSI string for a character with length limitation.
+; Purpose:    Scan from the beginning of an ANSI string for a character with length limitation.
 ; Arguments:  Arg1: -> Source ANSI string.
 ;             Arg2: Maximal character count.
 ;             Arg3: ANSI character to search for.
@@ -21,11 +21,11 @@
 .code
 align ALIGN_CODE
 StrCScanA proc uses rdi pStringA:POINTER, dMaxCount:DWORD, bChar:CHRA
-  mov rdi, rcx
+  mov rdi, rcx                                          ;pStringA
   invoke StrLengthA, rcx                                ;pStringA
   .if eax != 0
     mov rcx, rax                                        ;rcx (counter) = length
-    mov rax, rdx                                        ;rax = dMaxCount
+    mov eax, dMaxCount                                  ;rax = dMaxCount
     cmp rcx, rax
     sbb rdx, rdx
     and rcx, rdx
