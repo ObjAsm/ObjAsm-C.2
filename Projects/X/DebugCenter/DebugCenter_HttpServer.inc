@@ -249,7 +249,7 @@ MethodEnd
 
 Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
   local dResult:DWORD, dBytesSent:DWORD
-  local pEntityBuffer:PSTRING, dEntityBufferSize:DWORD, dBytesRead:DWORD, dTotalBytesRead:DWORD
+  local pEntityBuffer:PSTRING, dBytesRead:DWORD, dTotalBytesRead:DWORD
   local Response:HTTP_RESPONSE_V1, CDS:COPYDATASTRUCT
   local Chuncks:$Obj(Collection)
 
@@ -489,7 +489,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method HttpServer.ReceiveRequests, uses xsi
-  local dResult:DWORD, RequestId:QWORD, dBytesRead:DWORD
+  local RequestId:QWORD, dBytesRead:DWORD
   local pRequest:PHTTP_REQUEST, dRequestSize:DWORD
 
   SetObject xsi

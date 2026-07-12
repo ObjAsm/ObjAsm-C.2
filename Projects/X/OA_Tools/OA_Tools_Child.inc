@@ -81,7 +81,7 @@ Method OAT_Child.AnalyseFile, uses xdi xsi
   New [xsi].LineLengths::DataCollection
   OCall [xsi].LineLengths::DataCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY
   New [xsi].DskStream::DiskStream
-  OCall [xsi].DskStream::DiskStream.Init, xsi, [xsi].pFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, 0
+  OCall [xsi].DskStream::DiskStream.Init, xsi, [xsi].pFileName, GENERIC_READ, -1, NULL, OPEN_EXISTING, 0, 0
 
   .if [xsi].DskStream.dErrorCode == 0
     OCall [xsi].DskStream::DiskStream.GetSize
@@ -320,7 +320,7 @@ Method OAT_Child.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRING, dFla
       OCall xbx::Application.ChangeMnuLanguage, [xbx].$Obj(Application).dLanguage
       OCall xbx::Application.EnableActions, TRUE
       OCall xbx::Application.SetToolMenu
-      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd      ;Redraw the new menu bar
+      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
     .endif
 
     OCall xsi.AnalyseFile                               ;Gather file information
@@ -394,6 +394,19 @@ Method OAT_Child.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov xdx, [xsi].pOwner
   inc [xdx].$Obj(OAT_Client).dChildCount
 
+  xor eax, eax
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     OAT_Child.OnDestroy
+; Purpose:    Event procedure for WM_DESTROY message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method OAT_Child.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke DeleteObject, [xsi].hFont
   xor eax, eax
 MethodEnd
 

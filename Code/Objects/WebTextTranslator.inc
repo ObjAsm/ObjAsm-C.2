@@ -237,6 +237,7 @@ Method WebTextTranslator.Translate, uses xbx xdi xsi, pSrcText:PSTRING, pHint:PS
         mov ebx, RCV_BUFFER_SIZE - 1
         .repeat
           invoke InternetReadFile, hRequest, xdi, ebx, addr dBytesRead
+          ;DbgStrA xdi
           mov ecx, dBytesRead
           .break .if eax == 0 || ecx == 0
           add xdi, xcx

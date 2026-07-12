@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=29
+MilestoneOnDateDate=12
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -288,7 +288,7 @@ ProductVer4Range=0
 38=0,0,0,0,5186
 27=0,0,0,0,6708
 46=0,0,0,0,327
-45=0,0,0,0,17143
+45=0,0,0,0,11711
 41=0,0,0,0,598
 39=0,0,0,0,9043
 36=0,0,0,0,1375
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="Dbg"
-2="int 3"
-3="DbgMdiChildTxt.Init"
-4="SETFONT"
-5="[xsi].hFont"
-6="DBG_FONT_TEXT"
-7="index"
-8="IImgCtx"
-9="sIID_IImgCtx"
-10="SYSTRAYMENU"
+1="OnPaint"
+2="Dbg"
+3="int 3"
+4="DbgMdiChildTxt.Init"
+5="SETFONT"
+6="[xsi].hFont"
+7="DBG_FONT_TEXT"
+8="index"
+9="IImgCtx"
+10="sIID_IImgCtx"
 "
 [Collapse]
 7=,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2,5,13
+AutoLoad=1,2,5,13,45
 [PTimer]
-PTimer=898683463
+PTimer=898955776
 [RADebugBP]
 5=
 2=

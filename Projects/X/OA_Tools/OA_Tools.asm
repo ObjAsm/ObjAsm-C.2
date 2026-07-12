@@ -10,18 +10,18 @@
 ; ==================================================================================================
 
 
-%include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
+%include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ; Include & initialize standard modules
 
-;ANSI_STRING will not work on languages that use UNICODE characters, like chinese or russian.
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
+; ANSI_STRING will not work on languages that use UNICODE characters, like chinese or russian.
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD)
 
 GDIPVER equ 0100h
 
-% include &COMPath&COM.inc                              ;COM basic support
+% include &COMPath&COM.inc                              ; COM basic support
 % include &IncPath&Windows\sGUID.inc
 
-% include &MacPath&Strings.inc                          ;Include wide string support for DlgTmpl
-% include &MacPath&DlgTmpl.inc                          ;Include Dlg Template macros for XMenu
+% include &MacPath&Strings.inc                          ; Include wide string support for DlgTmpl
+% include &MacPath&DlgTmpl.inc                          ; Include Dlg Template macros for XMenu
 % include &MacPath&ConstDiv.inc
 % include &MacPath&QuadWord.inc
 % include &IncPath&Windows\CommCtrl.inc
@@ -68,11 +68,13 @@ MakeObjects WinControl, TabCtrl, Toolbar, Rebar, Statusbar, Tooltip
 MakeObjects RegKey, WinApp, MdiApp
 
 .code
-include OA_Tools_Globals.inc                            ;Include application globals
-include OA_Tools_Main.inc                               ;Include Application object
+include OA_Tools_Globals.inc                            ; Include application globals
+include OA_Tools_Main.inc                               ; Include Application object
 
-start proc uses xbx                                     ;Program entry point
-  SysInit                                               ;Runtime initialization of OOP model
+start proc uses xbx                                     ; Program entry point
+  SysInit                                               ; Runtime initialization of OOP model
+  DbgClearAll
+  ResGuard_Version
   ResGuard_Start
 
   mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
@@ -80,18 +82,18 @@ start proc uses xbx                                     ;Program entry point
   invoke CoInitialize, 0
   invoke InitCommonControls
 
-  OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
-  OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
-  OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
+  OCall $ObjTmpl(Application)::Application.Init         ; Initialize the object data
+  OCall $ObjTmpl(Application)::Application.Run          ; Execute the application
+  OCall $ObjTmpl(Application)::Application.Done         ; Finalize it
 
   invoke CoUninitialize
-  invoke FreeLibrary, xbx                               ;Unload RichEdit library
+  invoke FreeLibrary, xbx                               ; Unload RichEdit library
 
   ResGuard_Show
   ResGuard_Stop
 
-  SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  SysDone                                               ; Runtime finalization of the OOP model
+  invoke ExitProcess, 0                                 ; Exit program returning 0 to the OS
 start endp
 
 end

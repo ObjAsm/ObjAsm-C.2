@@ -29,7 +29,7 @@ SYM_NAME_LENGTH   equ 255     ; Max symbol name length
 CALLER_MAX_DEEP   equ 10      ; Max caller stack chain depth
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL32, SUFFIX, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, DLL64, SUFFIX, WIDE_STRING, DEBUG(WND)
 
 % includelib &LibPath&Windows\DbgHelp.lib
 
@@ -1029,7 +1029,7 @@ DetourRelease Gdi32.dll, DeleteDC, 1, 1, <xCallResult !!= FALSE>, DeviceContext
 
 ; --------------------------------------------------------------------------------------------------
 
-DetourRelease Gdi32.dll, DeleteObject, 1, 1, <xCallResult !!= FALSE>, Pen, Brush, Bitmap, \
+DetourRelease Gdi32.dll, DeleteObject, 1, 1, <xCallResult !!= 0>, Pen, Brush, Bitmap, \
               Region, Font, Palette, ColorSpace, Image, StockObject, DeviceContext
 
 ; --------------------------------------------------------------------------------------------------

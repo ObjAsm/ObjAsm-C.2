@@ -303,23 +303,23 @@ MethodEnd
 ; Note:       Window handle passed in pSelf (hidden parameter).
 
 Method IconButton.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  ;DbgMessage uMsg,, "IconButton"
+;  DbgMessage uMsg,, "IconButton"
   .if uMsg == WM_NCCREATE
     mov xax, lParam
     .if [xax].CREATESTRUCT.lpCreateParams == NULL
-      ;If lpCreateParams is 0, then it is a resource call => Create new object instance
+      ; If lpCreateParams is 0, then it is a resource call => Create new object instance
       mov xsi, $New(IconButton)
       OCall xsi::IconButton.InitRes, pSelf
     .else
-      ;Init call
+      ; Init call
       mov xsi, [xax].CREATESTRUCT.lpCreateParams
       mrm [xsi].$Obj(IconButton).hWnd, pSelf, xax
     .endif
     invoke SetWindowLongPtr, pSelf, GWLP_USERDATA, xsi
     OCall xsi::IconButton.Dispatch, pSelf, uMsg, wParam, lParam
   .else
-    invoke GetWindowLongPtr, pSelf, GWLP_USERDATA       ;if GWLP_USERDATA wasn't set,
-    .if xax == NULL                                     ;GetWindowLongPtr returns NULL
+    invoke GetWindowLongPtr, pSelf, GWLP_USERDATA       ; if GWLP_USERDATA wasn't set,
+    .if xax == NULL                                     ; GetWindowLongPtr returns NULL
       invoke DefWindowProc, pSelf, uMsg, wParam, lParam
     .else
       OCall xax::IconButton.Dispatch, pSelf, uMsg, wParam, lParam

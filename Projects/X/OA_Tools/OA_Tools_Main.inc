@@ -40,18 +40,18 @@ ToolbarWindow DEF_TOOLBAR {IDC_TOOLBAR_WINDOW, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS,
 AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
   DEF_STATUSBAR_PART {220, 100, 3, SBT_NOBORDERS, NULL}
   DEF_STATUSBAR_PART {120,  20, 1, SBT_SUNKEN,    NULL}
-  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ;Spring
+  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ; Spring
   DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN,    NULL}
 
 DEFAULT_WIDTH     equ     250
 DEFAULT_HEIGHT    equ     350
 
 
-OATF_TEST_MX      equ     BIT00                         ;Mixed mode, can be 32-bit or 64-bit mode
-OATF_TEST_32      equ     BIT01                         ;Only BIT00, BIT01 or BIT02 can be set simultaniouly
+OATF_TEST_MX      equ     BIT00                         ; Mixed mode, can be 32-bit or 64-bit mode
+OATF_TEST_32      equ     BIT01                         ; Only BIT00, BIT01 or BIT02 can be set simultaniouly
 OATF_TEST_64      equ     BIT02
 
-OATF_TEST_MTD     equ     BIT03                         ;Only BIT03, BIT04 or BIT05 can be set simultaniouly
+OATF_TEST_MTD     equ     BIT03                         ; Only BIT03, BIT04 or BIT05 can be set simultaniouly
 OATF_TEST_PRC     equ     BIT04
 OATF_TEST_MAC     equ     BIT05
 
@@ -59,7 +59,7 @@ OATF_TEST_ARG     equ     BIT06
 OATF_TEST_LOC     equ     BIT07
 OATF_TEST_REG     equ     BIT08
 
-OATF_TEST_CRLF    equ     BIT09                         ;Only BIT09, BIT10 or BIT11 can be set simultaniouly
+OATF_TEST_CRLF    equ     BIT09                         ; Only BIT09, BIT10 or BIT11 can be set simultaniouly
 OATF_TEST_LF      equ     BIT10
 OATF_TEST_CR      equ     BIT11
 
@@ -86,12 +86,12 @@ ToolData struct
 ToolData ends
 
 OAT_SETUP struc
-  dCloseIfNoFinding DWORD     ?       ;TRUE/FALSE
-  dUseAnnotations   DWORD     ?       ;TRUE/FALSE
-  dTestBitness      DWORD     ?       ;OATF_TEST_XX (x, e, r)
-  dZoomfactor       DWORD     ?       ;Initial value for the OAT_Child
-  dLineTerminator   DWORD     ?       ;CRLF = 0, LF = 1, CR = 2
-  dFontSize         DWORD     ?       ;10
+  dCloseIfNoFinding DWORD     ?       ; TRUE/FALSE
+  dUseAnnotations   DWORD     ?       ; TRUE/FALSE
+  dTestBitness      DWORD     ?       ; OATF_TEST_XX (x, e, r)
+  dZoomfactor       DWORD     ?       ; Initial value for the OAT_Child
+  dLineTerminator   DWORD     ?       ; CRLF = 0, LF = 1, CR = 2
+  dFontSize         DWORD     ?       ; 10
   cFontFaceName     CHR LF_FULLFACESIZE dup(?)
   pExternalEditor   PSTRING   ?
   Color             ColorData {}
@@ -118,7 +118,7 @@ ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ;MDI child window.
+Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ; MDI child window.
   VirtualMethod     AnalyseFile
   VirtualMethod     CheckMtdArg
   VirtualMethod     CheckMtdReg
@@ -135,19 +135,20 @@ Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ;MDI child window.
   VirtualMethod     ClpBrdPaste
   VirtualMethod     ClpBrdSetBtns
   RedefineMethod    Done
-  RedefineMethod    Init,               POINTER, PSTRING, DWORD    ;-> Owner, -> FileName, Flags
+  RedefineMethod    Init,               POINTER, PSTRING, DWORD    ; -> Owner, -> FileName, Flags
   RedefineMethod    OnSize,             WPARAM, LPARAM
   VirtualMethod     Run
   VirtualMethod     SelectAll
   StaticMethod      Startup
-  VirtualMethod     WriteA,             PSTRINGA, COLORREF, DWORD  ;-> ANSI string, Color, Effects
-  VirtualMethod     WriteW,             PSTRINGW, COLORREF, DWORD  ;-> WIDE string, Color, Effects
-  VirtualMethod     WriteLineNumber,    DWORD                      ;Linenumber
-  VirtualMethod     WriteResStr,        DWORD, COLORREF, DWORD     ;Resource ID, Color, Effects
+  VirtualMethod     WriteA,             PSTRINGA, COLORREF, DWORD  ; -> ANSI string, Color, Effects
+  VirtualMethod     WriteW,             PSTRINGW, COLORREF, DWORD  ; -> WIDE string, Color, Effects
+  VirtualMethod     WriteLineNumber,    DWORD                      ; Linenumber
+  VirtualMethod     WriteResStr,        DWORD, COLORREF, DWORD     ; Resource ID, Color, Effects
   VirtualMethod     ZoomIn
   VirtualMethod     ZoomOut
 
   VirtualEvent      OnCreate,           WM_CREATE
+  VirtualEvent      OnDestroy,          WM_DESTROY
   VirtualEvent      OnEraseBkgnd,       WM_ERASEBKGND
   VirtualEvent      OnNotify,           WM_NOTIFY
 
@@ -161,42 +162,42 @@ Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ;MDI child window.
   DefineVariable    Color,              ColorData,  {}
 
   Embed     EdtIptor,         EditIptor
-  Embed     DskStream,        DiskStream                ;-> Source file stream
+  Embed     DskStream,        DiskStream                ; -> Source file stream
   Embed     LineLengths,      DataCollection
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object OAT_Client, OAT_CLIENT_ID, MdiClientWnd          ;MDI client window.
+Object OAT_Client, OAT_CLIENT_ID, MdiClientWnd          ; MDI client window.
   RedefineMethod    Done
-  RedefineMethod    Init,               POINTER         ;-> Owner
+  RedefineMethod    Init,               POINTER         ; -> Owner
 
   VirtualEvent      OnDropFiles,        WM_DROPFILES
   VirtualEvent      OnEraseBkgnd,       WM_ERASEBKGND
   VirtualEvent      OnPaint,            WM_PAINT
 
-  DefineVariable    hBGBrush,           HBRUSH,     0   ;Background brush
+  DefineVariable    hBGBrush,           HBRUSH,     0   ; Background brush
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
 
-Object Application, OAT_APP_ID, MdiApp                  ;MDI application.
-  VirtualMethod     ChangeBtnLanguage,  DWORD           ;IDLANG_XXX
-  VirtualMethod     ChangeMnuLanguage,  DWORD           ;IDLANG_XXX
-  VirtualMethod     ChangeLanguage,     DWORD           ;IDLANG_XXX
+Object Application, OAT_APP_ID, MdiApp                  ; MDI application.
+  VirtualMethod     ChangeBtnLanguage,  DWORD           ; IDLANG_XXX
+  VirtualMethod     ChangeMnuLanguage,  DWORD           ; IDLANG_XXX
+  VirtualMethod     ChangeLanguage,     DWORD           ; IDLANG_XXX
 
-  VirtualMethod     CheckDroppedFiles,  DWORD                             ;Flags
-  VirtualMethod     CheckSelectedFiles, DWORD                             ;Flags
+  VirtualMethod     CheckDroppedFiles,  DWORD                             ; Flags
+  VirtualMethod     CheckSelectedFiles, DWORD                             ; Flags
   RedefineMethod    Done
-  VirtualMethod     EnableActions,      DWORD                             ;TRUE/FALSE
-  VirtualMethod     ExecuteCommand,     PSTRING, $ObjPtr(OAT_Child)       ;-> Command, -> Child
-  VirtualMethod     ExecuteChecks,      PSTRING, DWORD                    ;-> FileName, Flags
+  VirtualMethod     EnableActions,      DWORD                             ; TRUE/FALSE
+  VirtualMethod     ExecuteCommand,     PSTRING, $ObjPtr(OAT_Child)       ; -> Command, -> Child
+  VirtualMethod     ExecuteChecks,      PSTRING, DWORD                    ; -> FileName, Flags
   RedefineMethod    Init
   RedefineMethod    OnSize,             WPARAM, LPARAM
   VirtualMethod     SetToolMenu
   StaticMethod      Startup
-  VirtualMethod     StatusbarHelp,      PSTRING         ;-> Help string
+  VirtualMethod     StatusbarHelp,      PSTRING         ; -> Help string
 
   VirtualEvent      OnClose,            WM_CLOSE
   VirtualEvent      OnCommand,          WM_COMMAND
@@ -214,7 +215,7 @@ Object Application, OAT_APP_ID, MdiApp                  ;MDI application.
   DefineVariable    hMenuDropContext,   HMENU,      0
   DefineVariable    hDrop,              HDROP,      0
 
-  DefineVariable    pWorkDirectoryW,    PSTRINGW,         NULL  ;-> Work directory (WIDE string) 
+  DefineVariable    pWorkDirectoryW,    PSTRINGW,         NULL  ; -> Work directory (WIDE string) 
 
   DefineVariable    Setup,              OAT_SETUP,  {}
 
@@ -612,29 +613,29 @@ Method Application.Init, uses xbx xdi xsi
   ;Load application & menu icons
   lea xbx, [xsi].IconImageList
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 1
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")             ;00
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHILD")           ;01
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APPL_SETUP")      ;02
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APPL_EXIT")       ;03
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_CUT")        ;04
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COPY")       ;05
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_PASTE")      ;06
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_DELETE")     ;07
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHECK")           ;08
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHECK_ALL")       ;09
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CASCADE")    ;10
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_TILE_HOR")   ;11
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_TILE_VER")   ;12
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_ARRANGE")    ;13
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_NEXT")       ;14
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_PREV")       ;15
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CLOSE")      ;16
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CLOSE_ALL")   ;17
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")       ;18
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")      ;19
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDITOR")          ;20
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ZOOM_IN")         ;21
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ZOOM_OUT")        ;22
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")             ; 00
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHILD")           ; 01
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APPL_SETUP")      ; 02
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APPL_EXIT")       ; 03
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_CUT")        ; 04
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COPY")       ; 05
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_PASTE")      ; 06
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_DELETE")     ; 07
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHECK")           ; 08
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CHECK_ALL")       ; 09
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CASCADE")    ; 10
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_TILE_HOR")   ; 11
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_TILE_VER")   ; 12
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_ARRANGE")    ; 13
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_NEXT")       ; 14
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_PREV")       ; 15
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CLOSE")      ; 16
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WIND_CLOSE_ALL")  ; 17
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")       ; 18
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")      ; 19
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDITOR")          ; 20
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ZOOM_IN")         ; 21
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ZOOM_OUT")        ; 22
 
   mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("MDIACCEL"))
 

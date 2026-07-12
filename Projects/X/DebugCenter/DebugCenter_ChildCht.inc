@@ -31,7 +31,6 @@ Object DbgMdiChildCht, DBG_MDI_CHILD_CHT_ID, DbgMdiChild
 
   VirtualEvent      OnCreate,         WM_CREATE
   VirtualEvent      OnEraseBkgnd,     WM_ERASEBKGND
-  VirtualEvent      OnPaint,          WM_PAINT
   VirtualEvent      OnHScroll,        WM_HSCROLL
   VirtualEvent      OnVScroll,        WM_VSCROLL
   VirtualEvent      OnRButtonDown,    WM_RBUTTONDOWN
@@ -247,7 +246,7 @@ $CFloat macro Value
 endm
 
 Method DbgMdiChildCht.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local dDataBuff:DWORD, ChartDef:DEF_CHART
+  local ChartDef:DEF_CHART
 
   SetObject xsi
   mov ChartDef.xCtlID, 123456
@@ -299,25 +298,6 @@ MethodEnd
 Method DbgMdiChildCht.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
   inc eax
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     DbgMdiChildCht.OnPaint
-; Purpose:    Event procedure for WM_PAINT message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
-; Return:     eax = Zero if handled.
-
-Method DbgMdiChildCht.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, dWidth:DWORD, dHeight:DWORD, Rct:RECT
-  local ScrollInfo:SCROLLINFO, DstRect:RECT, hBrush:HANDLE
-
-  SetObject xsi
-  invoke BeginPaint, [xsi].hWnd, addr PS
-  invoke GetClientRect, [xsi].hWnd, addr Rct
-
-  invoke EndPaint, [xsi].hWnd, addr PS
-  xor eax, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -493,7 +473,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DbgMdiChildCht.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method DbgMdiChildCht.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   ;DbgText "DbgMdiChildCht.OnMouseWheel"
   invoke SendMessage, [xsi].Chart.hWnd, WM_MOUSEWHEEL, wParam, lParam
@@ -569,7 +549,7 @@ MethodEnd
 ; Arguments:  Arg1: -> Filename.
 ; Return:     Nothing.
 
-Method DbgMdiChildCht.Open, uses xbx xdi xsi, pFileName:PSTRING
+Method DbgMdiChildCht.Open, uses xsi, pFileName:PSTRING
   SetObject xsi
   OCall xsi.ClpBrdSetBtns
 ;  ACall xsi.Open, pFileName                             ;Remenber this file name
@@ -581,7 +561,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DbgMdiChildCht.Print, uses xbx xdi xsi
+Method DbgMdiChildCht.Print;, uses xbx xdi xsi
 ;  local PrtDlg:PRINTDLG, DocInfo:DOCINFO, cMsg[1024]:CHR
 ;  local LogPix:POINT, Pagrsize:POINT, PageOffset:POINT, PrintSize:POINT
 ;
@@ -691,7 +671,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method DbgMdiChildCht.SaveTo, uses xsi, pFileName:PSTRING
-  local pStream:$ObjPtr(Stream), dSize:DWORD
+;  local pStream:$ObjPtr(Stream), dSize:DWORD
 
   SetObject xsi
 ;  mov pStream, $New(DiskStream)
@@ -734,7 +714,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method DbgMdiChildCht.UpdateStatusbar, uses xbx xdi xsi
-  local cTextBuffer[1024]:CHR, wResText[1024]:CHR, dWidth:DWORD, dHeight:DWORD
+  local cTextBuffer[1024]:CHR, wResText[1024]:CHR
 
 ;  DbgText "DbgMdiChildCht.UpdateStatusbar"
   SetObject xsi
@@ -763,7 +743,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DbgMdiChildCht.ZoomIn, uses xsi
+Method DbgMdiChildCht.ZoomIn
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -772,5 +752,5 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DbgMdiChildCht.ZoomOut, uses xsi
+Method DbgMdiChildCht.ZoomOut
 MethodEnd

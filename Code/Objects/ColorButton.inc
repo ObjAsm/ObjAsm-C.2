@@ -100,8 +100,19 @@ Method ColorButton.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hPrevBmp)
   invoke DeleteDC, [xsi].hMemDC
-  invoke SetWindowLong, [xsi].hWnd, GWL_USERDATA, NULL
   xor eax, eax
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ColorButton.OnGetColor
+; Purpose:    Event procedure for BM_GETCOLOR message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Requested color.
+
+Method ColorButton.OnGetColor,, wParam:WPARAM, lParam:LPARAM
+  SetObject xcx
+  mov eax, [xcx].Color
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -233,18 +244,6 @@ Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
-; Method:     ColorButton.OnGetColor
-; Purpose:    Event procedure for BM_GETCOLOR message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
-; Return:     eax = Requested color.
-
-Method ColorButton.OnGetColor,, wParam:WPARAM, lParam:LPARAM
-  SetObject xcx
-  mov eax, [xcx].Color
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnSetColor
 ; Purpose:    Event procedure for BM_SETCOLOR message.
 ; Arguments:  Arg1: First message parameter.
@@ -295,7 +294,7 @@ MethodEnd
 ; Note:       Window HANDLE is passed in pSelf (hidden argument).
 
 Method ColorButton.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  ;DbgMessage uMsg,, "ColorButton"
+;  DbgMessage uMsg,, "ColorButton"
   .if uMsg == WM_NCCREATE
     mov xax, lParam
     .if [xax].CREATESTRUCT.lpCreateParams == NULL

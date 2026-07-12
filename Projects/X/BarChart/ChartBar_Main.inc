@@ -602,8 +602,8 @@ $CFloat macro Value
   endif
 endm
 
-Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local dDataBuff:DWORD, ChartDef:DEF_CHART
+Method ChildWnd.OnCreate, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
+  local ChartDef:DEF_CHART
 
   SetObject xsi
 
@@ -800,7 +800,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method ChildWnd.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method ChildWnd.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   ;DbgText "ChildWnd.OnMouseWheel"
   invoke SendMessage, [xsi].Chart.hWnd, WM_MOUSEWHEEL, wParam, lParam

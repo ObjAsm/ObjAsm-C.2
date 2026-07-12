@@ -465,7 +465,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method DbgMdiChildTxt.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method DbgMdiChildTxt.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local CRect:RECT
 
   SetObject xsi

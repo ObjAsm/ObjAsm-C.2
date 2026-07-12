@@ -69,11 +69,11 @@ Object Button, ButtonID, WinPrimer
   VirtualEvent      OnSetFocus,     WM_SETFOCUS
   VirtualEvent      OnKillFocus,    WM_KILLFOCUS
 
+  ;Events for abstract methods
   Event             OnCreate,       WM_CREATE
   Event             OnDestroy,      WM_DESTROY
   Event             OnPaint,        WM_PAINT
 
-;  DefineVariable    hBgBrush,       HBRUSH,     0           ;Background brush HANDLE
   DefineVariable    hMemDC,         HDC,        0           ;Memory DC
   DefineVariable    hMemBmp,        HBITMAP,    0           ;Memory DC bitmap
   DefineVariable    hPrevBmp,       HBITMAP,    0           ;Previous hMemDC bitmap
@@ -325,6 +325,23 @@ Method Button.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     Button.OnNcDestroy
+; Purpose:    Event procedure for WM_NCDESTROY message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method Button.OnNcDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Button.OnNcDestroy"
+  SetObject xsi
+  invoke SetWindowLongPtr, [xsi].hWnd, GWLP_USERDATA, NULL
+  .ifBitSet [xsi].dFlags, BTF_SELF_INST
+    Destroy xsi
+  .endif
+  xor eax, eax
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnUpdateUIState
 ; Purpose:    Event procedure for WM_UPDATEUISTATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -340,23 +357,6 @@ Method Button.OnUpdateUIState, uses xsi, wParam:WPARAM, lParam:LPARAM
     BitClr [xsi].dFlags, BTF_SHOW_SHORTCUT
   .endif
   invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
-  xor eax, eax
-MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     Button.OnNcDestroy
-; Purpose:    Event procedure for WM_NCDESTROY message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
-; Return:     eax = Zero.
-
-Method Button.OnNcDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
-  ;DbgText "Button.OnNcDestroy"
-  SetObject xsi
-  invoke SetWindowLongPtr, [xsi].hWnd, GWLP_USERDATA, NULL
-  .ifBitSet [xsi].dFlags, BTF_SELF_INST
-    Destroy xsi
-  .endif
   xor eax, eax
 MethodEnd
 
@@ -387,7 +387,7 @@ MethodEnd
 Method Button.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   ;DbgText "Button.OnSetText"
   SetObject xsi
-  mov [xsi].pTextBuffer, $invoke(StrNew, lParam)
+  invoke StrReplace, addr [xsi].pTextBuffer, lParam
   invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
   mov eax, TRUE
 MethodEnd

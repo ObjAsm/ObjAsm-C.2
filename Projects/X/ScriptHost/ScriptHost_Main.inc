@@ -218,8 +218,7 @@ MethodEnd
 
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local AbtDlg:$Obj(DialogAbout), hIcon:HICON
-  local OpenFileName:OPENFILENAME, cFileName[MAX_PATH*sizeof CHR]:CHR, cBuffer[1024*sizeof CHR]:CHR
-  local pContent:PSTRINGW, pScript:PSTRINGW
+  local OpenFileName:OPENFILENAME, cFileName[MAX_PATH*sizeof CHR]:CHR, pScript:PSTRINGW
 
   SetObject xsi
   mov xax, wParam
