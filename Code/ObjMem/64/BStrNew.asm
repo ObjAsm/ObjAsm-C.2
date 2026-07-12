@@ -12,13 +12,13 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrNew
-; Purpose:    Allocate an new copy of the source BStr.
+; Purpose:    Allocate an new copy of the source BSTR.
 ;             If the pointer to the source string is NULL or points to an empty string, BStrNew
 ;             returns NULL and doesn't allocate any heap space. Otherwise, BStrNew makes a duplicate
 ;             of the source string.
 ;             The allocated space is Length(String) + 1 character.
-; Arguments:  Arg1: -> Source BStr.
-; Return:     rax -> New BStr copy or NULL.
+; Arguments:  Arg1: -> Source BSTR.
+; Return:     rax -> New BSTR copy or NULL.
 
 .code
 align ALIGN_CODE

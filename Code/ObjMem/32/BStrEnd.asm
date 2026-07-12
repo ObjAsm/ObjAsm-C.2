@@ -13,7 +13,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure: BStrEnd
 ; Purpose:   Get the address of the ZTC that terminates the string.
-; Arguments: Arg1: -> Source BStr.
+; Arguments: Arg1: -> Source BSTR.
 ; Return:    eax -> ZTC.
 
 OPTION PROC:NONE
@@ -21,8 +21,8 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrEnd proc pBStr:POINTER
-  mov eax, [esp + 4]                                    ;eax -> BStr
-  add eax, DWORD ptr [eax - 4]                          ;Length of BStr
+  mov eax, [esp + 4]                                    ; eax -> BSTR
+  add eax, DWORD ptr [eax - 4]                          ; Byte length of BSTR
   ret 4
 BStrEnd endp
 

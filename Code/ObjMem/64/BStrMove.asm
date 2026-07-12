@@ -12,10 +12,10 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrMove
-; Purpose:    Move part of a BStr. The ZTC is not appended automatically.
+; Purpose:    Move part of a BSTR. The ZTC is not appended automatically.
 ;             Source and destination strings may overlap.
-; Arguments:  Arg1: -> Destination BStr.
-;             Arg2: -> Source BStr.
+; Arguments:  Arg1: -> Destination BSTR.
+;             Arg2: -> Source BSTR.
 ;             Arg3: Character count.
 ; Return:     Nothing.
 

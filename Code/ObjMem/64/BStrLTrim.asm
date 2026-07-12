@@ -12,9 +12,9 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrLTrim
-; Purpose:    Trim blank characters from the beginning of a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source BStr.
+; Purpose:    Trim blank characters from the beginning of a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ; Return:     Nothing.
 
 OPTION PROC:NONE
@@ -24,27 +24,27 @@ align ALIGN_CODE
 BStrLTrim proc pDstBStr:POINTER, pSrcBStr:POINTER
   push rdi
   push rsi
-  mov rsi, rdx                                          ;rsi -> SrcBStr
-  mov r8, rcx                                           ;r8 -> DstBStr
+  mov rsi, rdx                                          ; rsi -> SrcBStr
+  mov r8, rcx                                           ; r8 -> DstBStr
 @@:
   lodsw
-  cmp ax, 32                                            ;Loop if space
+  cmp ax, 32                                            ; Loop if space
   je @B
-  cmp ax, 9                                             ;Loop if tab
+  cmp ax, 9                                             ; Loop if tab
   je @B
 
-  lea rdi, [rsi - 2]                                    ;Get a pointer to first character
+  lea rdi, [rsi - 2]                                    ; Get a pointer to first character
   mov r9, rdi
   mov ecx, 0FFFFFFFFH
   xor eax, eax
-  repne scasw                                           ;Get string length including zero
+  repne scasw                                           ; Get string length including zero
   not rcx
   mov rsi, r9
-  mov rdi, r8                                           ;rdi -> DstBStr
+  mov rdi, r8                                           ; rdi -> DstBStr
   mov r9d, ecx
-  rep movsw                                             ;Move rest of the string
+  rep movsw                                             ; Move rest of the string
   dec r9d
-  dec r9d                                               ;Don't count ZTC
+  dec r9d                                               ; Don't count ZTC
   mov DWORD ptr [r8 - 4], r9d
   pop rsi
   pop rdi

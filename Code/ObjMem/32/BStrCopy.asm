@@ -12,9 +12,9 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCopy
-; Purpose:    Copy a BStr to a destination buffer.
-; Arguments:  Arg1: Destrination BStr buffer.
-;             Arg2: Source BStr.
+; Purpose:    Copy a BSTR to a destination buffer.
+; Arguments:  Arg1: Destrination BSTR buffer.
+;             Arg2: Source BSTR.
 ; Return:     Nothing.
 
 OPTION PROC:NONE
@@ -22,12 +22,12 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrCopy proc pDstBStr:POINTER, pSrcBStr:POINTER
-  mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
-  mov eax, [esp + 4]                                    ;eax -> DstBStr
+  mov ecx, [esp + 8]                                    ; ecx -> SrcBStr
+  mov eax, [esp + 4]                                    ; eax -> DstBStr
   sub ecx, 4
   sub eax, 4
   mov edx, DWORD ptr [ecx]
-  add edx, 6                                            ;4+2 = char count + zero terminating word
+  add edx, 6                                            ; 4+2 = char count + zero terminating word
   invoke MemShift, eax, ecx, edx
   ret 8
 BStrCopy endp

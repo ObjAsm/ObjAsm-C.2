@@ -12,10 +12,10 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrECatChar
-; Purpose:    Append a WIDE character to a BStr and return the address of the ZTC.
+; Purpose:    Append a WIDE character to a BSTR and return the address of the ZTC.
 ;             BStrECatChar does not perform any length checking. The destination buffer must have
 ;             enough room for at least BStrLength(Destination) + 1 + 1 characters.
-; Arguments:  Arg1: -> Destination BStr buffer.
+; Arguments:  Arg1: -> Destination BSTR buffer.
 ;             Arg2: -> WIDE character.
 ; Return:     rax -> ZTC.
 
@@ -23,12 +23,13 @@ OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
-BStrECatChar proc pDstBStr:POINTER, wChar:CHRW          ;rcx -> DstBStr, dx = wChar
-  mov rax, [rcx - 4]                                    ;Get the length of DstBStr
-  add rax, rcx
-  add DWORD ptr [rcx - 4], 2                            ;Correct the length
-  mov DWORD ptr [rax], edx                              ;Write character and ZTC
-  add rax, 2                                            ;rax -> ZTC
+BStrECatChar proc pDstBStr:POINTER, wChar:CHRW          ; rcx -> DstBStr, dx = wChar
+  mov eax, [rcx - 4]                                    ; Get the length of DstBStr
+  add rax, rcx                                          ; Get pointer to end of string
+  add DWORD ptr [rcx - 4], 2                            ; Increment the length
+  movzx ecx, dx                                         ; Include the ZTC in the operation
+  mov [rax], ecx                                        ; Write character and ZTC
+  add rax, 2                                            ; Return rax -> ZTC
   ret
 BStrECatChar endp
 

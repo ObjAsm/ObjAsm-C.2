@@ -13,7 +13,7 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrEnd
 ; Purpose:    Get the address of the ZTC.
-; Arguments:  Arg1: -> Source BStr.
+; Arguments:  Arg1: -> Source BSTR.
 ; Return:     rax -> ZTC.
 
 OPTION PROC:NONE
@@ -21,7 +21,7 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrEnd proc pBStr:POINTER
-  mov eax, DWORD ptr [rcx - 4]                          ;Length of BStr
+  mov eax, DWORD ptr [rcx - 4]                          ; Size of BSTR
   add rax, rcx
   ret
 BStrEnd endp

@@ -12,8 +12,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrSize
-; Purpose:    Determine the size of a BStr including the ZTC + leading DWORD.
-; Arguments:  Arg1: -> Source BStr.
+; Purpose:    Determine the size of a BSTR including the ZTC + leading DWORD.
+; Arguments:  Arg1: -> Source BSTR.
 ; Return:     rax = String size including the length field and ZTC in BYTEs.
 
 OPTION PROC:NONE
@@ -21,8 +21,8 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrSize proc pBStr:POINTER
-  mov eax, DWORD ptr [rcx - 4]                          ;Get the byte length DWORD
-  add rax, sizeof(DWORD) + sizeof(CHRW)                 ;Add leading DWORD and ZTC
+  mov eax, DWORD ptr [rcx - 4]                          ; Get the byte length DWORD
+  add rax, sizeof(DWORD) + sizeof(CHRW)                 ; Add leading DWORD and ZTC
   ret
 BStrSize endp
 

@@ -12,27 +12,24 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCCatChar
-; Purpose:    Append a WIDE character to a BStr with length limitation.
-; Arguments:  Arg1: -> Destination BStr.
+; Purpose:    Append a WIDE character to a BSTR with length limitation.
+; Arguments:  Arg1: -> Destination BSTR.
 ;             Arg2: -> WIDE character.
-; Return:     rax -> BStr or NULL if failed.
+;             Arg3: Maximal number of charachters the destination string can hold excluding the ZTC.
+; Return:     Nothing.
 
 OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
 BStrCCatChar proc pDstBStr:POINTER, wChar:CHRW, dMaxChars:DWORD   
-  ;rcx -> DstBStr, dx = wChar, r8 = dMaxChars
-  shl r8, 1                                             ;r8 = dMaxChars in BYTEs
-  mov r9d, DWORD ptr [rcx - 4]
-  xor eax, eax
-  cmp r8d, r9d
-  jb @F                                                 ;Destination is full => return NULL
-  add r9, 2
-  mov DWORD ptr [rcx - 4], r9d                          ;Increment length
-  mov DWORD ptr [rcx + r9], edx                         ;Write character and ZTC
-  mov rax, rcx                                          ;Return -> BStr
-@@:
+  shl r8d, 1                                            ; r8 = dMaxChars in BYTEs
+  mov r9d, DWORD ptr [rcx - 4]                          ; Get current BYTEs in BSTR
+  .if r9d < r8d                                         ; Check max char count
+    movzx eax, dx                                       ; Include the ZTC in the write operation
+    add DWORD ptr [rcx - 4], 2                          ; Increment size
+    mov DWORD ptr [rcx + r9], eax                       ; Write character and ZTC
+  .endif
   ret
 BStrCCatChar endp
 

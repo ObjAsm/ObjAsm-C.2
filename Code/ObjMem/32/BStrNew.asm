@@ -12,20 +12,20 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrNew
-; Purpose:    Allocate an new copy of the source BStr.
+; Purpose:    Allocate an new copy of the source BSTR.
 ;             If the pointer to the source string is NULL or points to an empty string, BStrNew
 ;             returns NULL and doesn't allocate any heap space. Otherwise, BStrNew makes a duplicate
 ;             of the source string.
 ;             The allocated space is Length(String) + 1 character.
-; Arguments:  Arg1: -> Source BStr.
-; Return:     eax -> New BStr copy.
+; Arguments:  Arg1: -> Source BSTR.
+; Return:     eax -> New BSTR copy.
 
 OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
 BStrNew proc pBStr:POINTER
-  mov eax, [esp + 4]                                    ;eax -> BStr
+  mov eax, [esp + 4]                                    ; eax -> BSTR
   test eax, eax
   jne @F
   ret 4
@@ -35,14 +35,14 @@ BStrNew proc pBStr:POINTER
   invoke BStrAlloc, edx
   pop ecx
   test eax, eax
-  je @F                                                 ;Allocation failed
-  mov edx, [esp + 4]                                    ;edx -> BStr
+  je @F                                                 ; Allocation failed
+  mov edx, [esp + 4]                                    ; edx -> BSTR
   push eax
-  add ecx, 6                                            ;Lenght DWORD + ZTC
+  add ecx, 6                                            ; Lenght DWORD + ZTC
   sub edx, 4 
   sub eax, 4
   invoke MemClone, eax, edx, ecx
-  pop eax                                               ;eax -> WIDE character array
+  pop eax                                               ; eax -> WIDE character array
 @@:
   ret 4
 BStrNew endp

@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=6
+MilestoneOnDateDate=12
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,7 +171,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,8242
+2=0,0,0,0,232
 3=0,0,0,0,121032
 1=0,0,0,0,555
 4=0,0,562,490,10157
@@ -192,7 +192,7 @@ ProductVer4Range=0
 20=0,0,0,0,7766
 19=0,0,0,0,1313
 18=
-17=0,0,0,0,5862
+17=0,0,0,0,1841
 23=0,0,0,0,4784
 24=0,0,0,0,1398
 30=
@@ -256,9 +256,9 @@ ProductVer4Range=0
 24=
 25=
 [AutoLoad]
-AutoLoad=2,20,24,25,17,19
+AutoLoad=2,17,20,19
 [PTimer]
-PTimer=1079276242
+PTimer=1083801508
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

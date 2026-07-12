@@ -11,12 +11,12 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure: BStrECopy
-; Purpose:   Copy a BStr to a buffer and return the address of the ZTC.
-;            Source and destination strings may overlap.
-; Arguments: Arg1: -> Destination BStr buffer.
-;            Arg2: -> Source BStr buffer.
-; Return:    eax -> ZTC.
+; Procedure:  BStrECopy
+; Purpose:    Copy a BSTR to a buffer and return the address of the ZTC.
+;             Source and destination strings may overlap.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR buffer.
+; Return:     eax -> ZTC.
 
 
 OPTION PROC:NONE
@@ -24,16 +24,16 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrECopy proc pDstBStr:POINTER, pSrcBStr:POINTER
-  mov eax, [esp + 4]                                    ;eax -> DstBStr
-  mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
+  mov eax, [esp + 4]                                    ; eax -> DstBStr
+  mov ecx, [esp + 8]                                    ; ecx -> SrcBStr
   sub ecx, 4
   sub eax, 4
   mov edx, DWORD ptr [ecx]
   push edx
   add edx, 6
-  invoke MemShift, eax, ecx, edx
+  invoke MemClone, eax, ecx, edx
   pop eax
-  add eax, [esp + 4]                                    ;pDstBStr
+  add eax, [esp + 4]                                    ; pDstBStr
   ret 8
 BStrECopy endp
 

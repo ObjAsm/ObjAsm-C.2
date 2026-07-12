@@ -39,42 +39,42 @@ QueryCpuStruct proc uses xbx xdi xsi, dStructIndex:DWORD, pReturnedStruct:POINTE
   local pStruct:POINTER                 ; Running output pointer into the caller-supplied struct
                                         ; kept as a local so CPUID re-issues cannot clobber it
 
-  ; ------ Step 1: Verify CPUID is available (only in 32-bit mode) ------
+  ; Verify CPUID is available (only in 32-bit mode)
 if TARGET_BITNESS eq 32
   invoke QueryCpuidSupported
   test eax, eax
   jz @@Failure
 endif
 
-  ; ------ Step 2: Bounds check ------
+  ; Bounds check
   mov eax, dStructIndex
   cmp eax, QCS_COUNT
   jae @@Failure
 
-  ; ------ Step 3: Load QCS_ENTRY pointer ------
-  ;   xsi = &QCS_TABLE[dStructIndex]
+  ; Load QCS_ENTRY pointer
+  ; xsi = &QCS_TABLE[dStructIndex]
   lea xsi, QCS_TABLE
   imul eax, sizeof(QCS_ENTRY)
-  add xsi, xax                          ; xsi -> QCS_ENTRY for this index
+  add xsi, xax                                          ; xsi -> QCS_ENTRY for this index
 
-  ; ------ Step 4: CPUID(0) - max basic leaf and vendor string ------
+  ; CPUID(0) - max basic leaf and vendor string
   xor eax, eax
-  cpuid ; eax = max basic leaf
-                                        ; ebx = vendor chars  0..3  ("Genu"/"Auth")
-                                        ; edx = vendor chars  4..7  ("ineI"/"enti")
-                                        ; ecx = vendor chars  8..11 ("ntel"/"cAMD")
+  cpuid                                                 ; eax = max basic leaf
+                                                        ; ebx = vendor chars  0..3  ("Genu"/"Auth")
+                                                        ; edx = vendor chars  4..7  ("ineI"/"enti")
+                                                        ; ecx = vendor chars  8..11 ("ntel"/"cAMD")
   mov dMaxLeaf,   eax
-  mov dVendorEBX, ebx                   ; "Genu" / "Auth"
-  mov dVendorEDX, edx                   ; "ineI" / "enti"
-  mov dVendorECX, ecx                   ; "ntel" / "cAMD"
+  mov dVendorEBX, ebx                                   ; "Genu" / "Auth"
+  mov dVendorEDX, edx                                   ; "ineI" / "enti"
+  mov dVendorECX, ecx                                   ; "ntel" / "cAMD"
 
-  ; ------ Step 5: CPUID(80000000h) - max extended leaf ------
-  ; ECX is ignored by this leaf; no need to zero it.
+  ; CPUID(80000000h) - max extended leaf
+  ; ecx is ignored by this leaf; no need to zero it.
   mov eax, 80000000h
-  cpuid ; eax = highest extended leaf supported
+  cpuid                                                 ; eax = highest extended leaf supported
   mov dMaxExtLeaf, eax
 
-  ; ------ Step 6: Vendor filter (QCS_ENTRY.bVendor) ------
+  ; Vendor filter (QCS_ENTRY.bVendor)
   ;
   ;   VF_ANY   (0) => accept any vendor, skip all checks
   ;   VF_INTEL (1) => all three vendor DWORDs must match "GenuineIntel"
@@ -83,7 +83,7 @@ endif
   ;
   ;   Full 3-DWORD comparison eliminates false positives from
   ;   hypothetical CPUs sharing only a partial vendor prefix.
-  ;
+
   movzx ecx, [xsi].QCS_ENTRY.bVendor
   .if ecx == VF_INTEL
     .if dVendorEBX != "uneG" || dVendorEDX != "Ieni" || dVendorECX != "letn"  ;"GenuineIntel"
@@ -94,10 +94,10 @@ endif
       jmp @@Failure
     .endif
   .elseif ecx != VF_ANY
-    jmp @@Failure                       ; Unknown QCS_ENTRY.bVendor value => FALSE
+    jmp @@Failure                                       ; Unknown QCS_ENTRY.bVendor value => FALSE
   .endif
 
-  ; ------ Step 7: Build actual leaf and validate ------
+  ; Build actual leaf and validate
   ;   QCS_ENTRY.bFlags bit QCS_FL_EX:
   ;     0 => basic leaf    (identity, 00000000h + QCS_ENTRY.bLeaf)
   ;     1 => extended leaf (offset,   80000000h + QCS_ENTRY.bLeaf)
@@ -123,22 +123,22 @@ endif
   movzx ecx, [xsi].QCS_ENTRY.bSubleaf
   mov dActualSubleaf, ecx
 
-  ; ------ Step 8: Initialise running output pointer ------
+  ; Initialise running output pointer
   ; pStruct is a stack local so it survives all CPUID calls in the loop.
   mov xax, pReturnedStruct
   mov pStruct, xax
 
-  ; ------ Step 9: Execute initial CPUID(dActualLeaf, dActualSubleaf) ------
+  ; Execute initial CPUID(dActualLeaf, dActualSubleaf)
   mov eax, dActualLeaf
   mov ecx, dActualSubleaf
   mov bLastSubleaf, cl
-  cpuid ; clobbers ebx - persist outputs immediately
+  cpuid                                                 ; Clobbers ebx - persist outputs immediately
   mov dCpuidEAX, eax
   mov dCpuidEBX, ebx
   mov dCpuidECX, ecx
   mov dCpuidEDX, edx
 
-  ; ------ Step 10: Set up field loop ------
+  ; Step 10: Set up field loop
   ;   xdi -> first QCS_FIELD_ENTRY  (advances by sizeof(QCS_FIELD_ENTRY) each iteration)
   ;   dFieldCount = QCS_ENTRY.bFieldCount (countdown to zero)
   movzx eax, [xsi].QCS_ENTRY.bFieldCount
@@ -149,30 +149,30 @@ endif
   movzx eax, [xsi].QCS_ENTRY.wFieldIndex
   imul eax, sizeof(QCS_FIELD_ENTRY)
   lea xdi, QCS_FIELD_TABLE
-  add xdi, xax                          ; xdi -> first QCS_FIELD_ENTRY
+  add xdi, xax                                          ; xdi -> first QCS_FIELD_ENTRY
 
-  ; ------ Step 11: Field extraction loop ------
+  ; Field extraction loop
 @@FieldLoop:
-  ; ---- Subleaf override (QCS_FIELD_ENTRY.bSlOverride) ----
+  ; Subleaf override (QCS_FIELD_ENTRY.bSlOverride)
   ; QCS_FIELD_ENTRY.bSlOverride = 0 => use default subleaf from QCS_ENTRY.bSubleaf (no re-issue)
   ; QCS_FIELD_ENTRY.bSlOverride != 0 and differs from bLastSubleaf => re-issue CPUID
   movzx ecx, [xdi].QCS_FIELD_ENTRY.bSlOverride
   .if ecx != 0
     .if cl != bLastSubleaf
-      mov bLastSubleaf, cl              ; cl already holds the new subleaf; no reload needed
+      mov bLastSubleaf, cl                              ; cl already holds the new subleaf
       mov eax, dActualLeaf
       cpuid ; re-issue CPUID with updated QCS_FIELD_ENTRY.bSlOverride
-      mov dCpuidEAX, eax                ; clobbers ebx - persist outputs immediately
+      mov dCpuidEAX, eax                                ; Clobbers ebx - persist outputs immediately
       mov dCpuidEBX, ebx
-      mov dCpuidECX, ecx                ; ecx = CPUID ecx output (subleaf input is consumed)
+      mov dCpuidECX, ecx                                ; ecx = CPUID ecx output
       mov dCpuidEDX, edx
     .endif
   .endif
 
-  ; ---- Select source register by QCS_FIELD_ENTRY.bReg ----
+  ; Select source register by QCS_FIELD_ENTRY.bReg
   movzx ecx, [xdi].QCS_FIELD_ENTRY.bReg
   cmp ecx, RG_EDX
-  ja @@Failure                          ; QCS_FIELD_ENTRY.bReg > 3 => table error, fail cleanly
+  ja @@Failure                                          ; QCS_FIELD_ENTRY.bReg > 3 => table error
 
   je @@UseEdx
   cmp ecx, RG_ECX
@@ -180,7 +180,7 @@ endif
   cmp ecx, RG_EBX
   je @@UseEbx
 
-  mov edx, dCpuidEAX                    ; RG_EAX (0)
+  mov edx, dCpuidEAX                                    ; RG_EAX (0)
   jmp @@Shift
 
 @@UseEbx:
@@ -195,31 +195,31 @@ endif
   mov edx, dCpuidEDX
 
 @@Shift:
-  ; ---- Right-shift by QCS_FIELD_ENTRY.bBitPos ----
+  ; Right-shift by QCS_FIELD_ENTRY.bBitPos
   movzx ecx, [xdi].QCS_FIELD_ENTRY.bBitPos
   shr edx, cl
 
-  ; ---- Mask to QCS_FIELD_ENTRY.bBitWidth bits ----
+  ; Mask to QCS_FIELD_ENTRY.bBitWidth bits
   movzx ecx, [xdi].QCS_FIELD_ENTRY.bBitWidth
   .if ecx < 32
     mov eax, 1
     shl eax, cl
-    dec eax                             ; Mask = (1 << QCS_FIELD_ENTRY.bBitWidth) - 1
+    dec eax                                             ; Mask = (1 << QCS_FIELD_ENTRY.bBitWidth) - 1
     and edx, eax
   .endif
 
-  ; ---- Store into output struct and advance pointer ----
+  ; Store into output struct and advance pointer
   mov xax, pStruct
   mov DWORD ptr [xax], edx
-  add xax, sizeof(DWORD)                ; Move to next structure member
-  mov pStruct, xax                      ; Keep pStruct in sync so next cpuid reload is correct
+  add xax, sizeof(DWORD)                                ; Move to next structure member
+  mov pStruct, xax                                      ; Keep pStruct in sync so next cpuid reload is correct
 
-  ; ---- Advance to next QCS_FIELD_ENTRY ----
+  ; Advance to next QCS_FIELD_ENTRY
   add xdi, sizeof(QCS_FIELD_ENTRY)
   dec dFieldCount
   jnz @@FieldLoop
 
-  ; ------ Step 12: Return field count ------
+  ; Return field count
   movzx eax, [xsi].QCS_ENTRY.bFieldCount
   ret
 

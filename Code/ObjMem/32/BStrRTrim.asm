@@ -12,34 +12,34 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrRTrim
-; Purpose:    Trim blank characters from the end of a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source BStr.
+; Purpose:    Trim blank characters from the end of a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ; Return:     Nothing.
 
 .code
 align ALIGN_CODE
 BStrRTrim proc uses edi esi pDstBStr:POINTER, pSrcBStr:POINTER
-  mov edi, pSrcBStr                                     ;edi -> SrcBStr
+  mov edi, pSrcBStr                                     ; edi -> SrcBStr
   mov ecx, 0FFFFFFFFH
   xor eax, eax
-  repne scasw                                           ;Get string length excluding zero
+  repne scasw                                           ; Get string length excluding zero
   not ecx
-  lea esi, [edi - 4]                                    ;Get pointer to last character
+  lea esi, [edi - 4]                                    ; Get pointer to last character
   std
 @@:
   lodsw
   dec ecx
-  cmp ax, 32                                            ;Loop if space
+  cmp ax, 32                                            ; Loop if space
   je @B
-  cmp ax, 9                                             ;Loop if tab
+  cmp ax, 9                                             ; Loop if tab
   je @B
   cld
-  mov esi, pSrcBStr                                     ;esi -> SrcBStr
-  mov edi, pDstBStr                                     ;edi -> DstBStr
+  mov esi, pSrcBStr                                     ; esi -> SrcBStr
+  mov edi, pDstBStr                                     ; edi -> DstBStr
   mov DWORD ptr [edi - 4], ecx
   rep movsw
-  mov WORD ptr [edi], 0                                 ;Set ZTC
+  mov WORD ptr [edi], 0                                 ; Set ZTC
   ret 8
 BStrRTrim endp
 

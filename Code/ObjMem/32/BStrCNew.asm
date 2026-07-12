@@ -12,45 +12,43 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCNew
-; Purpose:    Allocate a new copy of the source BStr with length limitation.
+; Purpose:    Allocate a new copy of the source BSTR with length limitation.
 ;             If the pointer to the source string is NULL or points to an empty string, BStrCNew
 ;             returns NULL and doesn't allocate any heap space. Otherwise, StrCNew makes a duplicate
 ;             of the source string. The maximal size of the new string is limited to the second
 ;             parameter.
-; Arguments:  Arg1: -> Source BStr.
+; Arguments:  Arg1: -> Source BSTR.
 ;             Arg2: Maximal character count.
-; Return:     eax -> New BStr copy.
+; Return:     eax -> New BSTR copy.
 
 OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
 BStrCNew proc pBStr:POINTER, dMaxChars:DWORD
-  mov edx, [esp + 4]                                    ;edx -> BStr
-  test edx, edx
-  je @@1
-  mov eax, [edx - 4]
-  test eax, eax
-  jne @@2
-@@1:
-  xor eax, eax
-  ret 8
-@@2:
-  shl DWORD ptr [esp + 8], 1                            ;dMaxChars => BYTEs
-  .if eax > [esp + 8]                                   ;dMaxChars
-    mov eax, [esp + 8]                                  ;dMaxChars
+  mov eax, [esp + 4]                                    ; eax = pBStr
+  .if eax != NULL
+    mov edx, [esp + 8]                                  ; edx = dMaxChars
+    mov ecx, DWORD ptr [eax - 4]                        ; ecx = bytes on pBStr                
+    shr ecx, 1                                          ; ecx = # chars
+    cmp ecx, edx                                        ; edx = dMaxChars
+    cmova ecx, edx
+    push ecx
+    invoke BStrAlloc, ecx
+    pop ecx
+    .if eax != NULL
+      push eax
+      add ecx, ecx
+      mov DWORD ptr [eax - 4], ecx
+      push ecx
+      push [esp + 12]                                   ; pBStr
+      push [esp + 8]                                    ; New BSTR
+      call MemClone                                     ; Copy string with limit
+      pop ecx
+      mov WORD ptr [ecx + eax], 0                       ; Set ZTC
+      mov eax, ecx
+    .endif
   .endif
-  push eax
-  invoke BStrAlloc, eax
-  pop ecx
-  test eax, eax
-  je @@Exit
-  mov DWORD ptr [eax - 4], ecx                          ;Store BStr length
-  m2z WORD ptr [eax + ecx]                              ;Set zero terminator
-  push eax
-  invoke MemClone, eax, [esp + 12], ecx                 ;Copy BStr content
-  pop eax                                               ;eax -> WIDE character array
-@@Exit:
   ret 8
 BStrCNew endp
 

@@ -12,10 +12,10 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrMove
-; Purpose:    Move part of a BStr. The ZTC is not appended automatically.
+; Purpose:    Move part of a BSTR. The ZTC is not appended automatically.
 ;             Source and destination strings may overlap.
 ; Arguments:  Arg1: -> Destination buffer.
-;             Arg2: -> Source BStr.
+;             Arg2: -> Source BSTR.
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
@@ -24,9 +24,9 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrMove proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
-  mov eax, [esp + 4]                                    ;eax -> DstBStr
-  mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
-  mov edx, [esp + 12]                                   ;edx = dCharCount
+  mov eax, [esp + 4]                                    ; eax -> DstBStr
+  mov ecx, [esp + 8]                                    ; ecx -> SrcBStr
+  mov edx, [esp + 12]                                   ; edx = dCharCount
   sub eax, 4
   sub ecx, 4
   lea edx, [2*edx + 6]

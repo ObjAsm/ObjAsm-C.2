@@ -12,8 +12,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  GUID2BStr
-; Purpose:    Convert a GUID to a BStr.
-; Arguments:  Arg1: -> Destination BStr Buffer. It must hold at least 36 WIDE characters plus a ZTC.
+; Purpose:    Convert a GUID to a BSTR.
+; Arguments:  Arg1: -> Destination BSTR Buffer. It must hold at least 36 WIDE characters plus a ZTC.
 ;             Arg2: -> GUID.
 ; Return:     Nothing.
 

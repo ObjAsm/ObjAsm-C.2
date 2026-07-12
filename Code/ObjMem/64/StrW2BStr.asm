@@ -12,8 +12,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrW2BStr
-; Purpose:    Convert a WIDE string into a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).
+; Purpose:    Convert a WIDE string into a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer = Buffer address + sizeof(DWORD).
 ;             Arg2: -> Source WIDE string.
 ; Return:     eax = Number of BYTEs in the BSTR, including the ZTC.
 

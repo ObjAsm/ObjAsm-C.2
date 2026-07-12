@@ -12,8 +12,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrSize
-; Purpose:    Determine the size of a BStr including the zero terminating character + leading DWORD.
-; Arguments:  Arg1: -> Source BStr.
+; Purpose:    Determine the size of a BSTR including the zero terminating character + leading DWORD.
+; Arguments:  Arg1: -> Source BSTR.
 ; Return:     eax = String size including the length field and zero terminator in BYTEs.
 
 OPTION PROC:NONE
@@ -21,9 +21,9 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrSize proc pBStr:POINTER
-  mov ecx, [esp + 4]                                    ;ecx -> BStr
-  mov eax, DWORD ptr [ecx - 4]                          ;Get the byte length DWORD
-  add eax, sizeof(DWORD) + sizeof(CHRW)                 ;Add zero terminating char + leading DWORD
+  mov ecx, [esp + 4]                                    ; ecx -> BSTR
+  mov eax, DWORD ptr [ecx - 4]                          ; Get the byte length DWORD
+  add eax, sizeof(DWORD) + sizeof(CHRW)                 ; Add zero terminating char + leading DWORD
   ret 4
 BStrSize endp
 

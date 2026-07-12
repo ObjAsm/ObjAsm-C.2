@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, CON32, ANSI_STRING;, DEBUG(WND)
+SysSetup OOP, CON32, ANSI_STRING;, DEBUG(WND, RESGUARD)
 
 % include &IncPath&Windows\tlhelp32.inc
 

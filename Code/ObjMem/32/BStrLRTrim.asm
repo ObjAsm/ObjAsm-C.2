@@ -12,24 +12,24 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrLRTrim
-; Purpose:    Trim blank characters from the beginning and the end of a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source BStr.
+; Purpose:    Trim blank characters from the beginning and the end of a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ; Return:     Nothing.
 
 .code
 align ALIGN_CODE
 BStrLRTrim proc uses edi esi pDstBStr:POINTER, pSrcBStr:POINTER
-  mov esi, pSrcBStr                                     ;esi -> ScrBStr
+  mov esi, pSrcBStr                                     ; esi -> ScrBStr
 @@1:
   lodsw
-  cmp ax, 32                                            ;Loop if space
+  cmp ax, 32                                            ; Loop if space
   je @@1
-  cmp ax, 9                                             ;Loop if tab
+  cmp ax, 9                                             ; Loop if tab
   je @@1
-  cmp ax, 0                                             ;Return empty string if zero
+  cmp ax, 0                                             ; Return empty string if zero
   jne @@2
-  mov edi, pDstBStr                                     ;edi -> DstBStr
+  mov edi, pDstBStr                                     ; edi -> DstBStr
   xor ecx, ecx
   jmp @@4
 @@2:

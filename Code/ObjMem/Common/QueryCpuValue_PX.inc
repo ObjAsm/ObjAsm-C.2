@@ -48,20 +48,20 @@ endif
 
   ; Load table entry pointer (base + index * sizeof(QCV_ENTRY))
   lea xsi, QCV_TABLE
-  shl eax, 3                            ; * sizeof(QCV_ENTRY) = 8
-  add xsi, xax                          ; xsi -> QCV_ENTRY for this index
-  mov pEntry, xsi                       ; Cache pointer in local
+  shl eax, 3                                            ; * sizeof(QCV_ENTRY) = 8
+  add xsi, xax                                          ; xsi -> QCV_ENTRY for this index
+  mov pEntry, xsi                                       ; Cache pointer in local
 
   ; CPUID(0) - get max basic leaf and vendor string
   xor eax, eax
   xor ecx, ecx
   mov dSavedEBX, ebx
   cpuid
-  mov dMaxLeaf,   eax                   ; Capture all CPUID outputs before restoring EBX
+  mov dMaxLeaf,   eax                                   ; Capture all CPUID outputs before restoring EBX
   mov dVendorEBX, ebx
   mov dVendorECX, ecx
   mov dVendorEDX, edx
-  mov ebx, dSavedEBX                    ; Restore caller EBX last
+  mov ebx, dSavedEBX                                    ; Restore caller ebx last
 
   ; Vendor filter  (QCF_ENTRY.bVendor)
   ;
@@ -85,7 +85,7 @@ endif
         jmp @Failure
       .endif
     .else
-      jmp @Failure                      ; Unknown vendor code
+      jmp @Failure                                      ; Unknown vendor code
     .endif
   .endif
 
@@ -94,17 +94,17 @@ endif
   movzx ecx, [xsi].QCV_ENTRY.bFlags
   test ecx, QCV_FL_EX
   jz @BasicLeaf
-  add eax, 80000000h                    ; Extended leaf
+  add eax, 80000000h                                    ; Extended leaf
 
   ; Validate extended leaf
-  mov dSavedLeaf, eax                   ; Save requested extended leaf
+  mov dSavedLeaf, eax                                   ; Save requested extended leaf
   mov eax, 80000000h
   xor ecx, ecx
   mov dSavedEBX, ebx
   cpuid
-  mov ecx, eax                          ; Max extended leaf returned in EAX
+  mov ecx, eax                                          ; Max extended leaf returned in EAX
   mov ebx, dSavedEBX
-  mov eax, dSavedLeaf                   ; Restore requested leaf
+  mov eax, dSavedLeaf                                   ; Restore requested leaf
   cmp eax, ecx
   ja @Failure
   jmp @LeafOK
@@ -119,18 +119,18 @@ endif
     mov xsi, pEntry
     movzx ecx, [xsi].QCV_ENTRY.bSubleaf
     .if ecx > 0
-      mov dSavedLeaf,    eax            ; Save leaf (7)
-      mov dSavedSubleaf, ecx            ; Save requested subleaf
-      xor ecx, ecx                      
-      mov eax, 7                        
-      mov dSavedEBX, ebx                
-      cpuid                             
-      mov ecx, eax                      ; Max subleaf for leaf 7 in EAX
-      mov ebx, dSavedEBX                
-      mov eax, dSavedSubleaf            ; Requested subleaf
-      cmp eax, ecx                      
-      ja @Failure                       
-      mov eax, dSavedLeaf               ; Restore leaf (7) for Step 8
+      mov dSavedLeaf,    eax                            ; Save leaf (7)
+      mov dSavedSubleaf, ecx                            ; Save requested subleaf
+      xor ecx, ecx
+      mov eax, 7
+      mov dSavedEBX, ebx
+      cpuid
+      mov ecx, eax                                      ; Max subleaf for leaf 7 in EAX
+      mov ebx, dSavedEBX
+      mov eax, dSavedSubleaf                            ; Requested subleaf
+      cmp eax, ecx
+      ja @Failure
+      mov eax, dSavedLeaf                               ; Restore leaf (7) for Step 8
     .endif
   .endif
 
@@ -146,7 +146,7 @@ endif
   mov dCpuEBX, ebx
   mov dCpuECX, ecx
   mov dCpuEDX, edx
-  mov ebx, dSavedEBX                    ; Restore caller ebx
+  mov ebx, dSavedEBX                                    ; Restore caller ebx
 
   ; Select result register by bReg
   movzx ecx, [xsi].QCV_ENTRY.bReg
@@ -156,25 +156,25 @@ endif
     mov edx, dCpuEBX
   .elseif ecx == RG_ECX
     mov edx, dCpuECX
-  .else                                 ; RG_EDX
+  .else                                                 ; RG_EDX
     mov edx, dCpuEDX
   .endif
 
   ; Extract field (right-shift and mask)
   movzx ecx, [xsi].QCV_ENTRY.bBitPos
-  shr edx, cl                           ; Right-shift
+  shr edx, cl                                           ; Right-shift
   movzx ecx, [xsi].QCV_ENTRY.bBitWidth
   .if ecx < 32
     mov eax, 1
     shl eax, cl
-    dec eax                             ; Mask = (1 << width) - 1
+    dec eax                                             ; Mask = (1 << width) - 1
     and edx, eax
   .endif
   ; edx = extracted value
 
   ; Store result and return 1
   mov xax, pReturnedValue
-  mov DWORD ptr [xax], edx              ; -> dVals[0]
+  mov DWORD ptr [xax], edx                              ; -> dVals[0]
   mov eax, 1
   ret
 

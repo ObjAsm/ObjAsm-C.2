@@ -12,9 +12,9 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrLeft
-; Purpose:    Extract the left n characters of the source BStr.
-; Arguments:  Arg1: -> Destination BStr.
-;             Arg2: -> Source BStr.
+; Purpose:    Extract the left n characters of the source BSTR.
+; Arguments:  Arg1: -> Destination BSTR.
+;             Arg2: -> Source BSTR.
 ; Return:     rax = Number of copied characters, not including the ZTC.
 
 .code
@@ -22,10 +22,10 @@ align ALIGN_CODE
 BStrLeft proc uses rbx pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD  
   ;rcx -> DstBStr, rdx -> SrcBStr, r8d = dCharCount
   mov ebx, DWORD ptr [rdx - 4]
-  cmp rbx, r8                                           ;dCharCount
+  cmp rbx, r8                                           ; dCharCount
   cmova rbx, r8
-  mov DWORD ptr [rcx - 4], ebx                          ;Set byte count
-  mov WORD ptr [rcx + rbx], 0                           ;Set ZTC
+  mov DWORD ptr [rcx - 4], ebx                          ; Set byte count
+  mov WORD ptr [rcx + rbx], 0                           ; Set ZTC
   .if rcx != rdx && rbx != 0
     invoke MemShift, rcx, rdx, ebx
   .endif

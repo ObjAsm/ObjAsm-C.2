@@ -9,19 +9,18 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrW2BStr
-; Purpose:    Convert a WIDE string into a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).
+; Purpose:    Convert a WIDE string into a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer = Buffer address + sizeof(DWORD).
 ;             Arg2: -> Source WIDE string.
 ; Return:     eax = Number of BYTEs in the BSTR, including the ZTC.
 
 .code
 align ALIGN_CODE
 StrW2BStr proc pDstBStr:POINTER, pSrcStrW:POINTER
-  invoke StrLengthW, pSrcStrW
-  shl eax, 1                                            ;eax = # chars * 2
+  invoke StrSizeW, pSrcStrW
   mov xcx, pDstBStr
-  mov DWORD ptr [xcx - sizeof(DWORD)], eax              ;Store it
-  add eax, sizeof(CHRW)                                 ;Include the ZTC
-  invoke MemClone, xcx, pSrcStrW, eax                   ;Copy the source string
+  lea edx, [eax - 2]                                    ; Size without the ZTC
+  mov DWORD ptr [xcx - sizeof(DWORD)], edx              ; Store it
+  invoke MemClone, xcx, pSrcStrW, eax                   ; Copy the source string
   ret
 StrW2BStr endp

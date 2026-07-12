@@ -11,27 +11,27 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure: BStrCCatChar
-; Purpose:   Append a WIDE character to a BStr with length limitation.
-; Arguments: Arg1: -> Destination BStr.
-;            Arg2: -> Wide character.
-; Return:    Nothing.
+; Procedure:  BStrCCatChar
+; Purpose:    Append a WIDE character to a BSTR with length limitation.
+; Arguments:  Arg1: -> Destination BSTR.
+;             Arg2: -> WIDE character.
+;             Arg3: Maximal number of charachters the destination string can hold excluding the ZTC.
+; Return:     Nothing.
 
 OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
 BStrCCatChar proc pDstBStr:POINTER, wChar:WORD, dMaxChars:DWORD
-  mov ecx, [esp + 4]                                    ;ecx -> DstBStr
-  shl DWORD ptr [esp + 12], 1                           ;dMaxChars => BYTEs
-  mov edx, [ecx - 4]
-  cmp edx, [esp + 12]                                   ;dMaxChars
-  jae @F                                                ;Destination is full
-  add edx, ecx
-  movzx eax, WORD ptr wChar
-  add DWORD ptr [ecx - 4], 2                            ;Correct length
-  mov DWORD ptr [edx], eax                              ;Write character and ZTC
-@@:
+  mov ecx, [esp + 4]                                    ; ecx -> DstBStr
+  mov eax, DWORD ptr [esp + 12]                         ; eax = dMaxChars
+  shl eax, 1                                            ; dMaxChars => BYTEs
+  mov edx, [ecx - 4]                                    ; edx  = current BYTEs in BSTR
+  .if edx < eax                                         ; Check max char count in BYTEs
+    movzx eax, WORD ptr [esp + 8]                       ; Include the ZTC in the write operation
+    add DWORD ptr [ecx - 4], 2                          ; Increment size
+    mov DWORD ptr [ecx + edx], eax                      ; Write character and ZTC
+  .endif
   ret 12
 BStrCCatChar endp
 

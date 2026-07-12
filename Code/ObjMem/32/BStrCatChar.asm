@@ -12,8 +12,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCatChar
-; Purpose:    Append a character to the end of a BStr.
-; Arguments:  Arg1: Destrination BStr.
+; Purpose:    Append a character to the end of a BSTR.
+; Arguments:  Arg1: Destrination BSTR.
 ;             Arg2: Wide character.
 ; Return:     Nothing.
 
@@ -22,12 +22,12 @@ OPTION PROC:NONE
 .code
 align ALIGN_CODE
 BStrCatChar proc pDstBStr:POINTER, wChar:WORD
-  mov ecx, [esp + 4]                                    ;ecx = pDstBStr
-  mov eax, [ecx - 4]                                    ;Get the length of DstBStr
+  mov ecx, [esp + 4]                                    ; ecx = pDstBStr
+  mov eax, [ecx - 4]                                    ; Get the length of DstBStr
   add eax, ecx
-  movzx edx, WORD ptr [esp + 8]                         ;wChar
-  add DWORD ptr [ecx - 4], 2                            ;Correct length
-  mov DWORD ptr [eax], edx                              ;Write character and ZTC
+  movzx edx, WORD ptr [esp + 8]                         ; wChar
+  add DWORD ptr [ecx - 4], 2                            ; Correct byte length
+  mov DWORD ptr [eax], edx                              ; Write character and ZTC
   ret 8
 BStrCatChar endp
 

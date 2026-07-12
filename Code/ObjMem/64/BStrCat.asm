@@ -12,21 +12,21 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCat
-; Purpose:    Concatenate 2 BStrs.
-; Arguments:  Arg1: Destrination BStr.
-;             Arg2: Source BStr.
+; Purpose:    Concatenate 2 BSTRs.
+; Arguments:  Arg1: Destrination BSTR.
+;             Arg2: Source BSTR.
 ; Return:     Nothing.
 
 .code
 align ALIGN_CODE
-BStrCat proc pDstBStr:POINTER, pSrcBStr:POINTER         ;rcx -> DstBStr, rdx -> SrcBStr
+BStrCat proc pDstBStr:POINTER, pSrcBStr:POINTER         ; rcx -> DstBStr, rdx -> SrcBStr
   mov r9, rdx
   mov r8d, DWORD ptr [rdx - 4]
   mov r10d, DWORD ptr [rcx - 4]
-  add DWORD ptr [rcx - 4], r8d                          ;Store new length
+  add DWORD ptr [rcx - 4], r8d                          ; Set new byte length
   add rcx, r10
-  add r8d, 2
-  invoke MemShift, rcx, rdx, r8d                        ;pSrcBStr
+  add r8d, 2                                            ; Include the ZTC
+  invoke MemClone, rcx, rdx, r8d                        ; pSrcBStr
   ret
 BStrCat endp
 

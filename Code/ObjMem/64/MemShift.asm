@@ -30,10 +30,10 @@ align ALIGN_CODE
 MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   push rdi
   push rsi
-  push r8                                               ;Save dByteCount as return value
-  mov rdi, rcx                                          ;rdi -> DstMem
-  mov rsi, rdx                                          ;rsi -> SrcMem
-  mov ecx, r8d                                          ;ecx = dByteCount
+  push r8                                               ; Save dByteCount as return value
+  mov rdi, rcx                                          ; rdi -> DstMem
+  mov rsi, rdx                                          ; rsi -> SrcMem
+  mov ecx, r8d                                          ; ecx = dByteCount
   mov r9d, r8d
   cmp rsi, rdi
   je @@0 
@@ -63,7 +63,7 @@ MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
 @@:
   cld
 @@0:
-  pop rax                                               ;Return value: rax = dByteCount 
+  pop rax                                               ; Return value: rax = dByteCount 
   pop rsi
   pop rdi
   ret
@@ -83,7 +83,7 @@ MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   jz @F
   movsb
 @@:
-  pop rax                                               ;Return value: rax = dByteCount 
+  pop rax                                               ; Return value: rax = dByteCount 
   pop rsi
   pop rdi
   ret

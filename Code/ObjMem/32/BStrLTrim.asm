@@ -12,37 +12,37 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrLTrim
-; Purpose:    Trim blank characters from the beginning of a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source BStr.
+; Purpose:    Trim blank characters from the beginning of a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ; Return:     Nothing.
 
 .code
 align ALIGN_CODE
 BStrLTrim proc uses edi esi pDstBStr:POINTER, pSrcBStr:POINTER
-  mov esi, pSrcBStr                                     ;esi -> SrcBStr
+  mov esi, pSrcBStr                                     ; esi -> SrcBStr
 @@:
   lodsw
-  cmp ax, 32                                            ;Loop if space
+  cmp ax, 32                                            ; Loop if space
   je @B
-  cmp ax, 9                                             ;Loop if tab
+  cmp ax, 9                                             ; Loop if tab
   je @B
 
-  lea edi, [esi - 2]                                    ;Get a pointer to first character
+  lea edi, [esi - 2]                                    ; Get a pointer to first character
   push edi
   mov ecx, 0FFFFFFFFH
   xor eax, eax
-  repne scasw                                           ;Get string length including zero
+  repne scasw                                           ; Get string length including zero
   not ecx
   pop esi
-  mov edi, pDstBStr                                     ;edi -> DstBStr
+  mov edi, pDstBStr                                     ; edi -> DstBStr
   push edi
   push ecx
-  rep movsw                                             ;Move rest of the string
+  rep movsw                                             ; Move rest of the string
   pop ecx
   pop edi
   dec ecx
-  dec ecx                                               ;Don't count ZTC
+  dec ecx                                               ; Don't count ZTC
   mov DWORD ptr [edi - 4], ecx
   ret
 BStrLTrim endp

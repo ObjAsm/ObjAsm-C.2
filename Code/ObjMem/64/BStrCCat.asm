@@ -1,8 +1,8 @@
 ; ==================================================================================================
-; Title:      BStrCECat.asm
+; Title:      BStrCCat.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, July 2026
 ;               - Initial release.
 ; ==================================================================================================
 
@@ -11,23 +11,31 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
-; Procedure:  BStrCECat
-; Purpose:    Concatenate 2 BSTRs with length limitation and return the the address of the ZTC.
+; Procedure:  BStrCCat
+; Purpose:    Concatenate 2 BSTRs with length limitation.
 ;             The destination string buffer should have at least enough room for the maximum number
 ;             of characters + 1.
 ; Arguments:  Arg1: -> Destination BSTR.
 ;             Arg2: -> Source BSTR.
 ;             Arg3: Maximal number of charachters the destination string can hold excluding the ZTC.
-; Return:     rax -> ZTC.
+; Return:     Nothing.
 
 .code
 align ALIGN_CODE
-BStrCECat proc pDstBStr:POINTER, pSrcBStr:POINTER, dMaxChars:DWORD
-  invoke BStrCCat, rcx, rdx, r8d
-  mov rcx, pDstBStr
-  mov eax, [rcx - 4]
-  add rax, rcx
+BStrCCat proc pDstBStr:POINTER, pSrcBStr:POINTER, dMaxChars:DWORD
+  shl r8d, 1                                            ; r8 = dMaxChars in BYTEs
+  mov r9d, DWORD ptr [rcx - 4]                          ; Get current BYTEs in BSTR
+  .if r9d < r8d                                         ; Check max char count
+    sub r8d, r9d
+    mov r10d, [rdx - 4]
+    cmp r10d, r8d
+    cmova r10d, r8d
+    add [rcx - 4], r10d 
+    add rcx, r9
+    mov WORD ptr [rcx + r10], 0
+    invoke MemClone, rcx, rdx, r10d
+  .endif
   ret
-BStrCECat endp
+BStrCCat endp
 
 end

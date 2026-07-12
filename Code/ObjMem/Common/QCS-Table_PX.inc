@@ -140,6 +140,7 @@ QCS_FIELD_ENTRY ends
 ; QCS_TABLE - main descriptor table
 ; --------------------------------------------------------------------------------------------------
 
+.const
 align sizeof(POINTER)
 QCS_TABLE label QCS_ENTRY
   ;          leaf    sl cnt   vendor   flags    pad   wFieldIdx

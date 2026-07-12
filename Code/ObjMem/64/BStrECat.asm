@@ -12,24 +12,19 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrECat
-; Purpose:    Append a BStr to another and return the address of the ZTC.
+; Purpose:    Append a BSTR to another and return the address of the ZTC.
 ;             BStrCat does not perform any length checking. The destination buffer must have room
 ;             for at least BStrLength(Destination) + BStrLength(Source) + 1 characters.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Added BStr.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Added BSTR.
 ; Return:     rax -> ZTC.
 
 .code
 align ALIGN_CODE
-BStrECat proc uses rbx pDstBStr:POINTER, pAddBStr:POINTER  ;rcx -> DstBStr, rdx -> AddBStr
-  mov r8d, DWORD ptr [rdx - 4]
-  mov r9d, DWORD ptr [rcx - 4]
-  add r8d, r9d                                          ;Calc new length
-  mov DWORD ptr [rcx - 4], r8d                          ;Store it
-  add rcx, r9
-  lea rbx, [rcx + r8]
-  add r8d, 2                                            ;Add ZTC
-  invoke MemShift, rcx, rdx, r8d                        ;pSrcBStr
+BStrECat proc uses rbx pDstBStr:POINTER, pAddBStr:POINTER  ; rcx -> DstBStr, rdx -> AddBStr
+  mov rbx, rcx
+  invoke BStrCat, rcx, rdx
+  add eax, [rbx - 4]
   mov rax, rbx
   ret
 BStrECat endp

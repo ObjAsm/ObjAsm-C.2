@@ -12,9 +12,9 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrRTrim
-; Purpose:    Trim blank characters from the end of a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source BStr.
+; Purpose:    Trim blank characters from the end of a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ; Return:     Nothing.
 
 OPTION PROC:NONE
@@ -25,26 +25,26 @@ BStrRTrim proc pDstBStr:POINTER, pSrcBStr:POINTER
   push rdi
   push rsi
   xor eax, eax
-  mov r8, rcx                                           ;r8 -> DstBStr
-  mov rdi, rdx                                          ;rdi -> SrcBStr
+  mov r8, rcx                                           ; r8 -> DstBStr
+  mov rdi, rdx                                          ; rdi -> SrcBStr
   mov ecx, 0FFFFFFFFH
-  repne scasw                                           ;Get string length excluding zero
+  repne scasw                                           ; Get string length excluding zero
   not ecx
-  lea rsi, [rdi - 4]                                    ;Get pointer to last character
+  lea rsi, [rdi - 4]                                    ; Get pointer to last character
   std
 @@:
   lodsw
   dec ecx
-  cmp ax, " "                                           ;Loop if space
+  cmp ax, " "                                           ; Loop if space
   je @B
-  cmp ax, 9                                             ;Loop if tab
+  cmp ax, 9                                             ; Loop if tab
   je @B
   cld
-  mov rsi, rdx                                          ;rsi -> SrcBStr
-  mov rdi, r8                                           ;rdi -> DstBStr
+  mov rsi, rdx                                          ; rsi -> SrcBStr
+  mov rdi, r8                                           ; rdi -> DstBStr
   mov DWORD ptr [rdi - 4], ecx
   rep movsw
-  mov CHRW ptr [rdi], 0                                 ;Set ZTC
+  mov CHRW ptr [rdi], 0                                 ; Set ZTC
   pop rsi
   pop rdi
   ret

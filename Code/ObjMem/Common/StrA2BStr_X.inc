@@ -9,8 +9,8 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrA2BStr
-; Purpose:    Convert a ANSI string into a BStr.
-; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).
+; Purpose:    Convert a ANSI string into a BSTR.
+; Arguments:  Arg1: -> Destination BSTR buffer = Buffer address + sizeof(DWORD).
 ;             Arg2: -> Source ANSI string.
 ; Return:     eax = Number of BYTEs in the BSTR, including the ZTC.
 
@@ -22,9 +22,9 @@ StrA2BStr proc pDstBStr:POINTER, pSrcStrA:POINTER
   invoke StrSizeA, pSrcStrA
   mov dSize, eax
   invoke MultiByteToWideChar, CP_ACP, 0, pSrcStrA, dSize, pDstBStr, dSize
-  add eax, eax                                          ;Get number of BYTEs
+  add eax, eax                                          ; Get number of BYTEs
   mov xdx, pDstBStr
-  lea ecx, [eax - sizeof(CHRW)]                         ;Subract ZTC space
-  mov DWORD ptr [xdx - sizeof(DWORD)], ecx              ;Store BSTR storage
+  lea ecx, [eax - sizeof(CHRW)]                         ; Subract ZTC space
+  mov DWORD ptr [xdx - sizeof(DWORD)], ecx              ; Store BSTR storage
   ret
 StrA2BStr endp

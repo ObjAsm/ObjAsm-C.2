@@ -30,9 +30,9 @@ align ALIGN_CODE
 MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   push edi
   push esi
-  mov edi, [esp + 12]                                   ;edi -> DstMem
-  mov esi, [esp + 16]                                   ;esi -> SrcMem
-  mov ecx, [esp + 20]                                   ;ecx = dByteCount
+  mov edi, [esp + 12]                                   ; edi -> DstMem
+  mov esi, [esp + 16]                                   ; esi -> SrcMem
+  mov ecx, [esp + 20]                                   ; ecx = dByteCount
   cmp esi, edi
   jae @@1
   std
@@ -40,8 +40,8 @@ MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   lea edi, [edi + ecx - 4]
   shr ecx, 2
   rep movsd
-  mov ecx, [esp + 20]                                   ;ecx = dByteCount
-  mov eax, ecx                                          ;Return value: eax = dByteCount 
+  mov ecx, [esp + 20]                                   ; ecx = dByteCount
+  mov eax, ecx                                          ; Return value: eax = dByteCount 
   and ecx, 3
   add edi, 3
   add esi, 3
@@ -55,8 +55,8 @@ align ALIGN_CODE
 @@1:
   shr ecx, 2
   rep movsd
-  mov ecx, [esp + 20]                                   ;ecx = dByteCount
-  mov eax, ecx                                          ;Return value: eax = dByteCount 
+  mov ecx, [esp + 20]                                   ; ecx = dByteCount
+  mov eax, ecx                                          ; Return value: eax = dByteCount 
   and ecx, 3
   rep movsb
   pop esi

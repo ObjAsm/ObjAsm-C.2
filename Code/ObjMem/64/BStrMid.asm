@@ -12,9 +12,9 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrMid
-; Purpose:    Extract a substring from a BStr string.
-; Arguments:  Arg1: -> Destination BStr buffer.
-;             Arg2: -> Source Bstr.
+; Purpose:    Extract a substring from a BSTR string.
+; Arguments:  Arg1: -> Destination BSTR buffer.
+;             Arg2: -> Source BSTR.
 ;             Arg3: Start character index. Index ranges [0 .. length-1].
 ;             Arg3: Character count.
 ; Return:     eax = String length.
@@ -26,14 +26,14 @@ BStrMid proc pDstBStr:POINTER, pSrcBStr:POINTER, dStartChar:DWORD, dCharCount:DW
   mov rcx, pSrcBStr
   mov eax, DWORD ptr [rcx - sizeof(DWORD)]
   .if eax <= dStartChar
-    mov rdx, pDstBStr                                   ;Source too small; rdx -> DstBStr
+    mov rdx, pDstBStr                                   ; Source too small; rdx -> DstBStr
     xor eax, eax
     xor ecx, ecx
   .else
     mov edx, dStartChar
     push rdx
     add edx, dCharCount
-    .if edx <= eax                                      ;Compare with Length
+    .if edx <= eax                                      ; Compare with Length
       sub ecx, dStartChar
       mov dCharCount, ecx
     .endif

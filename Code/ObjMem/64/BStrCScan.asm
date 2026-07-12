@@ -12,7 +12,7 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCScan
-; Purpose:    Scan from the beginning of a BStr for a character with length limitation.
+; Purpose:    Scan from the beginning of a BSTR for a character with length limitation.
 ; Arguments:  Arg1: -> Source WIDE string.
 ;             Arg2: Maximal character count.
 ;             Arg3: WIDE character to search for.
@@ -24,24 +24,25 @@ OPTION PROC:NONE
 align ALIGN_CODE
 BStrCScan proc pBStr:POINTER, dMaxChars:DWORD, wChar:WORD
   push rdi 
-  ;rcx -> BStr, edx = dMaxChars, r8w = wChar  
-  mov eax, [rcx - 4]                                    ;eax = BStr byte size
-  test eax, eax                                         ;Size = 0 ?
-  jz @F                                                 ;Return NULL
-  shr eax, 1                                            ;eax (counter) = char length
-  mov r9d, eax                                         
-  cmp eax, edx                                          ;edx = dMaxChars
-  sbb r10, r10
-  and r9, r10
-  not r10
-  and eax, r10d
-  or r9d, eax                                           ;r9 = min(edx, eax)
-  mov ax, r8w                                           ;load wChar
-  mov rdi, rcx
-  repne scasw
-  mov rax, NULL                                         ;Dont't change flags!
-  jne @F
-  lea rax, [rcx - 2]
+  ;rcx -> BSTR, edx = dMaxChars, r8w = wChar  
+  mov eax, [rcx - 4]                                    ; eax = BSTR byte size
+  .if eax != 0                                          ; Size = 0 ?
+    shr eax, 1                                          ; eax (counter) = char length
+    mov r9d, eax                                         
+    cmp eax, edx                                        ; edx = dMaxChars
+    sbb r10, r10
+    and r9, r10
+    not r10
+    and edx, r10d
+    or r9d, edx                                         ; r9 = min(edx, eax)
+    mov ax, r8w                                         ; Load wChar
+    mov rdi, rcx                                        ; rdi = BSTR pointer (save before rcx is reused)
+    mov ecx, r9d                                        ; rcx = scan count
+    repne scasw
+    mov rax, NULL                                       ; Don't change flags!
+    jne @F
+    lea rax, [rdi - 2]
+  .endif
 @@:
   pop rdi
   ret
