@@ -24,8 +24,8 @@ align ALIGN_CODE
 BStrECat proc uses rbx pDstBStr:POINTER, pAddBStr:POINTER  ; rcx -> DstBStr, rdx -> AddBStr
   mov rbx, rcx
   invoke BStrCat, rcx, rdx
-  add eax, [rbx - 4]
-  mov rax, rbx
+  mov eax, [rbx - 4]
+  add rax, rbx
   ret
 BStrECat endp
 
