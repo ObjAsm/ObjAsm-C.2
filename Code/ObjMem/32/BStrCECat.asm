@@ -26,7 +26,7 @@ OPTION PROC:NONE
 align ALIGN_CODE
 BStrCECat proc pDstBStr:POINTER, pSrcBStr:POINTER, dMaxChars:DWORD
   invoke BStrCCat, [esp + 12], [esp + 12], [esp + 12]
-  mov ecx, [esp + 8]
+  mov ecx, [esp + 4]
   mov eax, [ecx - 4]
   add eax, ecx
   ret 12

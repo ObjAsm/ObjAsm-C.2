@@ -39,72 +39,72 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
 @@:
   lodsb
   cmp al, " "
-  jz @B                                                 ;Eliminate leading spaces
-  or al, al                                             ;Is string empty?
+  jz @B                                                 ; Eliminate leading spaces
+  or al, al                                             ; Is string empty?
   jz @@Error
 
-;Check for leading sign
+; Check for leading sign
   cmp al, "+"
   jz @F
   cmp al, "-"
   jnz @@Integer
   mov ah, 80h
 @@:
-  mov [edi + 1], ah                                     ;Put sign byte in bcd string
+  mov [edi + 1], ah                                     ; Put sign byte in bcd string
   xor eax, eax
   lodsb
 
-;Convert the digits to packed decimal
+; Convert the digits to packed decimal
 @@Integer:
   cmp al, "."
   jnz @F
   test bh, 1
-  jnz @@Error                                           ;Only one decimal point allowed
-  or bh, 1                                              ;Use bh to set the decimal point flag
+  jnz @@Error                                           ; Only one decimal point allowed
+  or bh, 1                                              ; Use bh to set the decimal point flag
   lodsb
 @@:
   cmp al, "e"
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before e
+  jz @@Error                                            ; Error if no digit before e
   jmp @@Scient
 @@:
   cmp al, "E"
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before E
+  jz @@Error                                            ; Error if no digit before E
   jmp @@Scient
 @@:
   or al, al
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before terminating 0
+  jz @@Error                                            ; Error if no digit before terminating 0
   jmp @@LastStep
 @@:
   sub al, "0"
-  jc @@Error                                            ;Unacceptable character
+  jc @@Error                                            ; Unacceptable character
   cmp al, 9
-  ja @@Error                                            ;Unacceptable character
+  ja @@Error                                            ; Unacceptable character
   test bh, 1
   jnz @F
   inc bl
 @@:
   dec ecx
-  jz @@Error                                            ;Error if more than 18 digits in number
+  jz @@Error                                            ; Error if more than 18 digits in number
   mov ah, al
 
   lodsb
   cmp al, "."
   jnz @F
   test bh, 1
-  jnz @@Error                                           ;Only one decimal point allowed
-  or bh, 1                                              ;Use bh to set the decimal point flag
+  jnz @@Error                                           ; Only one decimal point allowed
+  or bh, 1                                              ; Use bh to set the decimal point flag
   lodsb
 @@:
   cmp al, "e"
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before e
+  jz @@Error                                            ; Error if no digit before e
   m2z al
   rol al, 4
   ror ax, 4
@@ -114,7 +114,7 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
   cmp al, "E"
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before E
+  jz @@Error                                            ; Error if no digit before E
   m2z al
   rol al, 4
   ror ax, 4
@@ -124,22 +124,22 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
   or al, al
   jnz @F
   cmp cl, 19
-  jz @@Error                                            ;Error if no digit before terminating 0
+  jz @@Error                                            ; Error if no digit before terminating 0
   rol al, 4
   ror ax, 4
   mov [edi], al
   jmp @@LastStep
 @@:
   sub al, "0"
-  jc @@Error                                            ;Unacceptable character
+  jc @@Error                                            ; Unacceptable character
   cmp al, 9
-  ja @@Error                                            ;Unacceptable character
+  ja @@Error                                            ; Unacceptable character
   test bh, 1
   jnz @F
   inc bl
 @@:
   dec ecx
-  jz @@Error                                            ;Error if more than 18 digits in number
+  jz @@Error                                            ; Error if more than 18 digits in number
   rol al, 4
   ror ax, 4
   mov [edi], al
@@ -155,10 +155,10 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
   sub edx,eax
   call XexpY
   fmul
-  fstsw wStatusWord                                     ;Retrieve exception flags from FPU
+  fstsw wStatusWord                                     ; Retrieve exception flags from FPU
   fwait
-  test wStatusWord, mask fInvOp                         ;Test for invalid operation
-  jnz @@Error                                           ;Clean-up and return error
+  test wStatusWord, mask fInvOp                         ; Test for invalid operation
+  jnz @@Error                                           ; Clean-up and return error
   mov eax, f_OK
   jmp @@Exit
 
@@ -170,24 +170,24 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
   cmp al,"-"
   jnz @@Scient1
   stc
-  rcr eax, 1                                            ;Keep sign of exponent in most significant bit of EAX
+  rcr eax, 1                                            ; Keep sign of exponent in most significant bit of EAX
 @@:
-  lodsb                                                 ;Get next digit after sign
+  lodsb                                                 ; Get next digit after sign
 
 @@Scient1:
   push eax
   and eax, 0ffh
-  jnz @F                                                ;Continue if 1st byte of exponent is not terminating 0
+  jnz @F                                                ; Continue if 1st byte of exponent is not terminating 0
 
 @@ScientError:
   pop eax
-  jmp @@Error                                           ;No exponent
+  jmp @@Error                                           ; No exponent
 
 @@:
   sub al, 30h
-  jc @@ScientError                                      ;Unacceptable character
+  jc @@ScientError                                      ; Unacceptable character
   cmp al, 9
-  ja @@ScientError                                      ;Unacceptable character
+  ja @@ScientError                                      ; Unacceptable character
   push eax
   mov eax, edx
   mul dTen
@@ -195,12 +195,12 @@ StrToSt0A proc uses ebx esi edi pSource:POINTER
   pop eax
   add edx, eax
   cmp edx, 4931
-  ja @@ScientError                                      ;Exponent too large
+  ja @@ScientError                                      ; Exponent too large
   lodsb
   or al, al
   jnz @B
-  pop eax                                               ;Retrieve exponent sign flag
-  rcl eax, 1                                            ;Is most significant bit set?
+  pop eax                                               ; Retrieve exponent sign flag
+  rcl eax, 1                                            ; Is most significant bit set?
   jnc @F
   neg edx
 @@:
@@ -215,35 +215,35 @@ StrToSt0A endp
 
 ; #########################################################################
 
-;Put 10 to the proper exponent (value in edx) on the FPU
+; Put 10 to the proper exponent (value in edx) on the FPU
 
 XexpY:
   push edx
-  fild DWORD ptr [esp]                                  ;Load the exponent
-  fldl2t                                                ;Load log2(10)
+  fild DWORD ptr [esp]                                  ; Load the exponent
+  fldl2t                                                ; Load log2(10)
   add esp, 4
-  fmul                                                  ;-> log2(10)*exponent
+  fmul                                                  ; -> log2(10)*exponent
 
-;At this point, only the log base 2 of the 10^exponent is on the FPU
-;the FPU can compute the antilog only with the mantissa
-;the characteristic of the logarithm must thus be removed
-  fld st(0)                                             ;Copy the logarithm
-  frndint                                               ;Keep only the characteristic
-  fsub st(1),st                                         ;Keep only the mantissa
-  fxch                                                  ;Get the mantissa on top
+; At this point, only the log base 2 of the 10^exponent is on the FPU
+; the FPU can compute the antilog only with the mantissa
+; the characteristic of the logarithm must thus be removed
+  fld st(0)                                             ; Copy the logarithm
+  frndint                                               ; Keep only the characteristic
+  fsub st(1),st                                         ; Keep only the mantissa
+  fxch                                                  ; Get the mantissa on top
 
-  f2xm1                                                 ;->2^(mantissa)-1
+  f2xm1                                                 ; ->2^(mantissa)-1
   fld1
-  fadd                                                  ;Add 1 back
+  fadd                                                  ; Add 1 back
 
-;The number must now be readjusted for the characteristic of the logarithm
-  fscale                                                ;Scale it with the characteristic
+; The number must now be readjusted for the characteristic of the logarithm
+  fscale                                                ; Scale it with the characteristic
 
-;The characteristic is still on the FPU and must be removed
-  fxch                                                  ;Bring it back on top
-  fstp st(0)                                            ;Clean-up the register
+; The characteristic is still on the FPU and must be removed
+  fxch                                                  ; Bring it back on top
+  fstp st(0)                                            ; Clean-up the register
   ret
 
-;##########################################################################
+; ##########################################################################
 
 end

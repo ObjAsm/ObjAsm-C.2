@@ -33,8 +33,10 @@ StrPosW proc uses rbx rdi rsi pString1W:POINTER, pString2W:POINTER
   sub rcx, rbx
   inc rcx
   jb @@2
+  mov rdx, rsi
 
 @@1:
+  mov rsi, rdx
   lodsw                                                 ;rsi -> pString2W
   repne scasw                                           ;Search for first character
   jne @@2                                               ;Not found => Exit

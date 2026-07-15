@@ -204,6 +204,9 @@ StrW2NewBStr, pStringW
 StrA2NewStrW, pStringA
 StrW2NewStrA, pStringW
 
+StrA2BStr, BSTR, pStringA
+StrW2BStr, BSTR, pStringW
+
 StrFilter, pString, pPattern
 StrFilterA, pStringA, pPatternA
 StrFilterW, pStringW, pPatternW

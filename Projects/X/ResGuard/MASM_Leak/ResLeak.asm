@@ -17,14 +17,21 @@ option casemap:none                 ;Case sensitive
 % include @Environ(MASM32_PATH)\\Include\\Gdi32.inc
 % include @Environ(MASM32_PATH)\\Include\\Kernel32.inc
 
-% includelib @Environ(OBJASM_PATH)\\Code\\Lib\\32\\ObjAsm\\ResGuard32.lib
+;% includelib @Environ(OBJASM_PATH)\\Code\\Lib\\32\\ObjAsm\\ResGuard32.lib
+% includelib @CatStr(<!">, @Environ(OBJASM_PATH), <\\Code\\Lib\\32\\ObjAsm\\ResGuard32.lib!">)
 % includelib @Environ(MASM32_PATH)\\Lib\\Gdi32.lib
 % includelib @Environ(MASM32_PATH)\\Lib\\Kernel32.lib
+
+.data?
+  pMem  DWORD   ?
 
 .code
 
 LeakProc4 proc
   invoke CreatePen, PS_SOLID, 5, 255
+  invoke GetProcessHeap
+  invoke HeapAlloc, eax, HEAP_ZERO_MEMORY, 1024
+  mov pMem, eax
   ret
 LeakProc4 endp
 
@@ -57,6 +64,8 @@ start proc
 ;  invoke DeleteObject, eax
   invoke LeakProc1
   invoke LeakProc3
+;  invoke GetProcessHeap
+;  invoke HeapFree, eax, 0, pMem
   invoke ResGuardShow
   invoke ResGuardStop
   invoke ExitProcess, 0
