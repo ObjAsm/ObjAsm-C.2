@@ -13,8 +13,8 @@
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrAlloc
 ; Purpose:    Allocate space for a BSTR with n characters. The length field is set to zero.
-; Arguments:  Arg1: Character count, without the ZTC.
-; Return:     eax -> New allocated BSTR (BSTR) or NULL if failed.
+; Arguments:  Arg1: Character capacity count, without the ZTC.
+; Return:     eax -> New allocated BSTR or NULL if failed.
 
 % include &ObjMemPath&Common\\BStrAlloc_X.inc
 
