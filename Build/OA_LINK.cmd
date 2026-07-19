@@ -4,6 +4,19 @@ if exist %ProjectName%.obj (
     echo Linking object modules to !TARGET_BIN_FORMAT!-file ...>> !LogFile!
   )
 
+  REM Kill stale mspdbsrv to prevent LNK1318 RPC errors
+  taskkill /f /im mspdbsrv.exe >nul 2>&1
+  set _MSPDBSRV_ENDPOINT_=disabled
+
+  REM Select linker based on target bitness (VS linker with fallback)
+  if "!TARGET_BITNESS!" == "64" (
+    set ActiveLinker=!Linker64!
+  ) else (
+    set ActiveLinker=!Linker32!
+  )
+  REM Fall back to legacy single Linker variable if Linker32/64 not set
+  if not defined ActiveLinker set ActiveLinker=!Linker!
+
   if !TARGET_BIN_FORMAT! == DLL set OptDLL=/DLL /DEF:!ProjectName!.def
   
   if !TARGET_BIN_FORMAT! == DLL (
@@ -21,15 +34,24 @@ if exist %ProjectName%.obj (
   if exist !ProjectName!.res set AuxRes=!ProjectName!.res
 
   if [!LogFile!] == [] (
-    if exist !Linker! (
-      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!
+    if exist !ActiveLinker! (
+      !ActiveLinker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!
+      if errorlevel 1 exit /b 1
     ) else (
-      echo [93;101mERROR: Linker not found[0m
+      echo [93;101mERROR: Linker not found[0m
       exit /b 1
     )
   ) else (
-    if exist !Linker! (
-      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!>> !LogFile!
+    echo !ActiveLinker! >> !LogFile!
+	echo "%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" >> !LogFile!
+	echo !OptDLL! >> !LogFile!
+	echo !ProjectName!.obj >> !LogFile!
+	echo !AuxRes! >> !LogFile!
+	echo /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension! >> !LogFile!
+	echo " " >> !LogFile!
+    if exist !ActiveLinker! (
+      !ActiveLinker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!>> !LogFile!
+      if errorlevel 1 (echo.>> !LogFile! & exit /b 1)
       echo.>> !LogFile!
     ) else (
       echo ERROR: Linker not found>> !LogFile!

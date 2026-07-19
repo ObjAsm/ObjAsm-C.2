@@ -438,7 +438,8 @@ PrintHexWORD proc number:WORD
 PrintHexWORD endp
 
 PrintHexDWORD proc number:DWORD
-  and rcx, 0xffffffff
+  mov eax, 0xffffffff
+  and rcx, rax
   invoke PrintHexNumber, rcx, 32, 8
   ret
 PrintHexDWORD endp
@@ -466,7 +467,8 @@ PrintLnHexWORD proc number:WORD
 PrintLnHexWORD endp
 
 PrintLnHexDWORD proc number:DWORD
-  and rcx, 0xffffffff
+  mov eax, 0xffffffff
+  and rcx, rax
   invoke PrintHexNumber, rcx, 32, 8
   mov xcx, pConsoleOut
   invoke [xcx].ConOut.OutputString, pConsoleOut, offset cCRLF

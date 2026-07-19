@@ -5,6 +5,6 @@
 -nomlib
 -FwNUL
 -Zd
--Zi
+-Zi8
 -Zp8
 
