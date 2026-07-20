@@ -48,17 +48,9 @@ Nur für UEFI-Entwicklung erforderlich.
 
 == Automatische Installation (empfohlen)
 
-=== WebInstaller (schnellste Option)
-
-Laden Sie den WebInstaller herunter und führen Sie ihn aus, er übernimmt die gesamte Einrichtung automatisch:
-
-https://objasm.x10host.com/DwnFiles/Ver_C.2.0/ObjAsm_C.2.0-WebInstaller.exe[ObjAsm C.2.0 WebInstaller]
-
-Dokumentation: http://objasm.x10host.com/
-
 === Installationsskript
 
-Alternativ starten Sie das interaktive Installationsskript:
+Starten Sie das interaktive Installationsskript:
 
 [source,cmd]
 ----
@@ -74,6 +66,14 @@ Das Skript führt automatisch folgende Schritte aus:
 . Rückfrage vor optionalen Kompilierungsschritten (ObjMem-Bibliothek, Objekte, Beispiele)
 
 Bei erfolgreicher Ausführung sind keine weiteren manuellen Schritte nötig.
+
+=== WebInstaller (Alternative)
+
+Der WebInstaller lädt das ObjAsm-Paket herunter und entpackt es, ruft jedoch *nicht* `OA_INST.cmd` auf. Nach Verwendung des WebInstallers sollte `OA_INST.cmd` manuell ausgeführt werden, um die vollständige Konfiguration durchzuführen:
+
+https://objasm.x10host.com/DwnFiles/Ver_C.2.0/ObjAsm_C.2.0-WebInstaller.exe[ObjAsm C.2.0 WebInstaller]
+
+Dokumentation: http://objasm.x10host.com/
 
 == Manuelle Installation
 
