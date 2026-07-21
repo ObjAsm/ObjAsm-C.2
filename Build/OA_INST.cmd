@@ -59,7 +59,16 @@ if /i "!OBJASM_PATH!"=="!DETECTED_PATH!" (
 echo   WARNING: OBJASM_PATH does not match the detected installation path.
 echo.
 choice /c YN /m "  Update OBJASM_PATH to '!DETECTED_PATH!'"
-if !errorlevel!==1 set "OBJASM_PATH=!DETECTED_PATH!"
+if !errorlevel!==2 (
+  echo.
+  echo   Cannot continue installation with mismatched paths.
+  goto :abort
+)
+echo.
+echo   OBJASM_PATH will be changed to: !DETECTED_PATH!
+choice /c YN /m "  Are you sure"
+if !errorlevel!==2 goto :abort
+set "OBJASM_PATH=!DETECTED_PATH!"
 goto :step1_done
 
 :step1_not_set
@@ -93,10 +102,71 @@ REM --- Check Visual Studio via vswhere ---
 set "VSWHERE=!ProgramFiles(x86)!\Microsoft Visual Studio\Installer\vswhere.exe"
 if not exist "!VSWHERE!" goto :step2_no_vs
 
-set "VS_PATH="
-for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -latest -property installationPath`) do set "VS_PATH=%%i"
-if not defined VS_PATH goto :step2_no_vs_instance
-echo   [OK]   Visual Studio found: !VS_PATH!
+REM Enumerate all VS installations (path, display name, version)
+set "VS_COUNT=0"
+for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -all -property installationPath`) do (
+  set /a VS_COUNT+=1
+  set "VS_INST_!VS_COUNT!=%%i"
+)
+if !VS_COUNT!==0 goto :step2_no_vs_instance
+
+set "VS_IDX=0"
+for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -all -property displayName`) do (
+  set /a VS_IDX+=1
+  set "VS_NAME_!VS_IDX!=%%i"
+)
+set "VS_IDX=0"
+for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -all -property catalog_productLineVersion`) do (
+  set /a VS_IDX+=1
+  set "VS_YEAR_!VS_IDX!=%%i"
+)
+set "VS_IDX=0"
+for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -all -property installationVersion`) do (
+  set /a VS_IDX+=1
+  set "VS_VER_!VS_IDX!=%%i"
+)
+
+REM Check if OBJASM_VS_PATH is already set and valid
+if defined OBJASM_VS_PATH (
+  if exist "!OBJASM_VS_PATH!\Common7\IDE\devenv.exe" (
+    echo   [OK]   Visual Studio ^(saved^): !OBJASM_VS_PATH!
+    set "VS_PATH=!OBJASM_VS_PATH!"
+    if !VS_COUNT! GTR 1 (
+      choice /c YN /m "  Change Visual Studio selection"
+      if !errorlevel!==1 goto :step2_vs_list
+    )
+    goto :step2_check_sdk
+  )
+  echo   [WARN] Saved OBJASM_VS_PATH is invalid: !OBJASM_VS_PATH!
+  echo.
+)
+
+REM Show available installations and let user choose
+:step2_vs_list
+if !VS_COUNT!==1 (
+  set "VS_PATH=!VS_INST_1!"
+  echo   [OK]   Visual Studio found: !VS_NAME_1! ^(!VS_VER_1!^)
+  echo          !VS_PATH!
+  goto :step2_check_sdk
+)
+
+echo   Multiple Visual Studio installations found:
+echo.
+for /l %%n in (1,1,!VS_COUNT!) do (
+  echo     [%%n] !VS_NAME_%%n! ^(!VS_VER_%%n!^)
+  echo         !VS_INST_%%n!
+)
+echo.
+:step2_vs_choose
+set "VS_CHOICE="
+set /p "VS_CHOICE=  Select Visual Studio installation [1-!VS_COUNT!]: "
+if not defined VS_CHOICE goto :step2_vs_choose
+if !VS_CHOICE! LSS 1 goto :step2_vs_choose
+if !VS_CHOICE! GTR !VS_COUNT! goto :step2_vs_choose
+set "VS_PATH=!VS_INST_%VS_CHOICE%!"
+echo.
+echo   Selected: !VS_NAME_%VS_CHOICE%! ^(!VS_VER_%VS_CHOICE%!^)
+echo             !VS_PATH!
 goto :step2_check_sdk
 
 :step2_no_vs
@@ -196,23 +266,48 @@ if not defined REG_OBJASM goto :step4_not_set
 REM Already set - check if it matches
 if /i "!REG_OBJASM!"=="!OBJASM_PATH!" (
   echo   [OK]   OBJASM_PATH already set correctly in user environment.
-  goto :step4_done
+  goto :step4_vs_path
 )
 echo   Current registry value: !REG_OBJASM!
 echo   New value:              !OBJASM_PATH!
 choice /c YN /m "  Update OBJASM_PATH in user environment"
-if !errorlevel!==2 goto :step4_done
+if !errorlevel!==2 goto :step4_vs_path
 reg add "HKCU\Environment" /v OBJASM_PATH /t REG_SZ /d "!OBJASM_PATH!" /f >nul
 echo   Updated.
-goto :step4_broadcast
+goto :step4_vs_path
 
 :step4_not_set
 echo   OBJASM_PATH is not set in user environment.
 echo   Setting to: !OBJASM_PATH!
 choice /c YN /m "  Set OBJASM_PATH permanently for current user"
-if !errorlevel!==2 goto :step4_done
+if !errorlevel!==2 goto :step4_vs_path
 reg add "HKCU\Environment" /v OBJASM_PATH /t REG_SZ /d "!OBJASM_PATH!" /f >nul
 echo   Done.
+
+:step4_vs_path
+REM --- Persist OBJASM_VS_PATH ---
+if not defined VS_PATH goto :step4_broadcast
+echo.
+set "REG_VS_PATH="
+for /f "tokens=2*" %%a in ('reg query "HKCU\Environment" /v OBJASM_VS_PATH 2^>nul') do set "REG_VS_PATH=%%b"
+
+if not defined REG_VS_PATH goto :step4_vs_not_set
+if /i "!REG_VS_PATH!"=="!VS_PATH!" (
+  echo   [OK]   OBJASM_VS_PATH already set correctly in user environment.
+  goto :step4_broadcast
+)
+echo   Current OBJASM_VS_PATH: !REG_VS_PATH!
+echo   New value:              !VS_PATH!
+choice /c YN /m "  Update OBJASM_VS_PATH in user environment"
+if !errorlevel!==2 goto :step4_broadcast
+reg add "HKCU\Environment" /v OBJASM_VS_PATH /t REG_SZ /d "!VS_PATH!" /f >nul
+echo   Updated.
+goto :step4_broadcast
+
+:step4_vs_not_set
+echo   Setting OBJASM_VS_PATH to: !VS_PATH!
+reg add "HKCU\Environment" /v OBJASM_VS_PATH /t REG_SZ /d "!VS_PATH!" /f >nul
+echo   [OK]   OBJASM_VS_PATH saved.
 
 :step4_broadcast
 REM Broadcast WM_SETTINGCHANGE so other processes pick up the new variable
@@ -220,7 +315,7 @@ REM without requiring a reboot or re-login.
 echo   Broadcasting environment change to running applications...
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "Add-Type -Namespace Win32 -Name NativeMethods -MemberDefinition '[DllImport(\"user32.dll\", SetLastError = true, CharSet = CharSet.Auto)] public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint Msg, UIntPtr wParam, string lParam, uint fuFlags, uint uTimeout, out UIntPtr lpdwResult);'; $HWND_BROADCAST = [IntPtr]0xffff; $WM_SETTINGCHANGE = 0x1a; $result = [UIntPtr]::Zero; [Win32.NativeMethods]::SendMessageTimeout($HWND_BROADCAST, $WM_SETTINGCHANGE, [UIntPtr]::Zero, 'Environment', 2, 5000, [ref]$result) | Out-Null"
-echo   [OK]   Environment variable is now available to new processes.
+echo   [OK]   Environment variables are now available to new processes.
 
 :step4_done
 echo.
@@ -236,11 +331,16 @@ call "!OBJASM_PATH!\Build\OA_SET.cmd"
 if errorlevel 1 goto :step5_failed
 
 echo   [OK]   Build environment configured successfully.
+echo.
+echo          Visual Studio:    !VS_PATH!
+echo          MSVC Toolset:     !MSVC_VER!
+echo          Linker (32-bit):  ...\VC\Tools\MSVC\!MSVC_VER!\bin\Hostx64\x86\link.exe
+echo          Linker (64-bit):  ...\VC\Tools\MSVC\!MSVC_VER!\bin\Hostx64\x64\link.exe
+echo          LibraryCompiler:  ...\VC\Tools\MSVC\!MSVC_VER!\bin\Hostx64\x64\lib.exe
+echo          Debugger:         ...\Common7\IDE\devenv.exe
+echo.
 echo          Assembler:        !Assembler!
-echo          Linker:           !Linker!
-echo          LibraryCompiler:  !LibraryCompiler!
 echo          ResourceCompiler: !ResourceCompiler!
-echo          Debugger:         !Debugger!
 goto :step6
 
 :step5_failed
@@ -403,9 +503,10 @@ echo  ==========================================================================
 echo   Installation Complete!
 echo  ============================================================================
 echo.
-echo   OBJASM_PATH = !OBJASM_PATH!
+echo   OBJASM_PATH    = !OBJASM_PATH!
+if defined VS_PATH echo   OBJASM_VS_PATH = !VS_PATH!
 echo.
-echo   The environment variable is available immediately to new processes.
+echo   The environment variables are available immediately to new processes.
 echo.
 echo   Run OA_SET.cmd before building any ObjAsm project:
 echo     call "!OBJASM_PATH!\Build\OA_SET.cmd"

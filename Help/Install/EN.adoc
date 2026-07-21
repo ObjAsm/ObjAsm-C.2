@@ -1,0 +1,211 @@
+= ObjAsm Installation Guide
+:author: ObjAsm Team
+:revdate: July 2026
+:toc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
+
+== Overview
+
+ObjAsm is an object-oriented assembly language framework for Windows (32-bit and 64-bit) using UASM as the assembler. This guide covers both the automated and manual installation process.
+
+== Prerequisites
+
+Before installing ObjAsm, ensure the following tools are available on your system:
+
+=== Visual Studio (required)
+
+Install https://www.visualstudio.com/[Visual Studio Community 2017 or later].
+
+This provides:
+
+* x64 debugger
+* Linker (`link.exe`)
+* Library manager (`lib.exe`)
+* Latest MSVC toolchain
+
+TIP: Any edition works (Community, Professional, Enterprise).
+
+=== Windows SDK (required)
+
+Install the https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/[Windows SDK].
+
+This provides:
+
+* Resource compiler (`rc.exe`)
+* MIDL compiler (`midl.exe`)
+* Other build utilities
+
+TIP: You can also install the SDK via the Visual Studio Installer under _Workloads > Desktop development with C++_.
+
+=== EFI Toolkit II (optional)
+
+Only needed for UEFI development.
+
+* Download from https://github.com/tianocore/tianocore.github.io/wiki/EDK-II[TianoCore EDK II]
+* Follow the instructions at http://www.terraspace.co.uk/UASM%20UEFI%20Guide.pdf[UASM UEFI Guide]
+
+== Automated Installation (recommended)
+
+=== Installation Script
+
+Run the interactive installation script:
+
+[source,cmd]
+----
+...\ObjAsm\Build\OA_INST.cmd
+----
+
+This script performs all steps automatically:
+
+. Verifies prerequisites
+. Selects Visual Studio installation (when multiple are found)
+. Downloads and installs UASM
+. Sets environment variables (`OBJASM_PATH`, `OBJASM_VS_PATH`)
+. Asks before optional compilation steps (ObjMem library, Objects, Examples)
+
+No further manual steps are needed if the automated installer completes successfully.
+
+=== WebInstaller (Alternative)
+
+The WebInstaller downloads and extracts the ObjAsm package but does *not* invoke `OA_INST.cmd`. After using the WebInstaller, run `OA_INST.cmd` manually to complete the full configuration:
+
+https://objasm.x10host.com/DwnFiles/Ver_C.2.0/ObjAsm_C.2.0-WebInstaller.exe[ObjAsm C.2.0 WebInstaller]
+
+Documentation: http://objasm.x10host.com/
+
+== Manual Installation
+
+If you prefer full control, follow these steps:
+
+=== Step 1: Install ObjAsm
+
+Download the ObjAsm package from http://objasm.x10host.com and extract it to your preferred location (e.g. `C:\ObjAsm`).
+
+=== Step 2: Install UASM
+
+You need both `UASM32.exe` and `UASM64.exe` in the `...\ObjAsm\Build\Tools\Assembler` directory.
+
+==== Automatic download (recommended)
+
+[source,cmd]
+----
+...\ObjAsm\Build\Tools\Assembler\Download_UASM.cmd
+----
+
+This script downloads both executables automatically from terraspace.co.uk.
+
+==== Manual download
+
+Download from http://www.terraspace.co.uk/uasm.html and place the executables in `...\ObjAsm\Build\Tools\Assembler\`.
+
+=== Step 3: Set Environment Variables
+
+Create or update the following system environment variables:
+
+[cols="1,2,3"]
+|===
+| Variable | Example Value | Description
+
+| `OBJASM_PATH` *(required)*
+| `C:\ObjAsm`
+| Root directory of your ObjAsm installation
+
+| `OBJASM_VS_PATH` _(optional)_
+| `C:\Program Files\Microsoft Visual Studio\2022\Community`
+| Pins a specific Visual Studio installation. Set automatically by `OA_INST.cmd`. Without this variable, `OA_SET.cmd` auto-detects the latest VS installation.
+
+| `EFI_TOOLKIT_PATH` _(optional)_
+| `D:\EFI_Toolkit_2.0`
+| Only needed for UEFI development
+|===
+
+NOTE: `MSVS_PATH` and `WINKIT_PATH` are no longer required. The build script `OA_SET.cmd` auto-detects Visual Studio and the Windows SDK at runtime.
+
+IMPORTANT: Reboot or log off/on for environment variables to take effect.
+
+=== Step 4: Tool Auto-Detection (OA_SET.cmd)
+
+The file `...\ObjAsm\Build\OA_SET.cmd` dynamically detects:
+
+* Visual Studio installation path (via `OBJASM_VS_PATH`, or `vswhere.exe` as fallback)
+* Latest MSVC toolset version (`lib.exe`, `devenv.exe`)
+* Windows SDK installation path and version (via registry)
+
+When `OBJASM_VS_PATH` is set, that installation is used directly without searching. If the variable is not set or the path is invalid, `OA_SET.cmd` automatically falls back to the latest VS installation found via `vswhere.exe`.
+
+No manual editing of `OA_SET.cmd` is necessary. If detection fails, a clear error message is displayed.
+
+=== Step 5: Register DebugCenter
+
+Run DebugCenter once to register it:
+
+[source,cmd]
+----
+...\ObjAsm\Projects\X\DebugCenter\DebugCenter.exe
+----
+
+=== Step 6: Compile Libraries (optional)
+
+Compile the ObjMem library:
+[source,cmd]
+----
+...\ObjAsm\Code\ObjMem\MakeObjMem3264.cmd
+----
+
+Compile the object library:
+[source,cmd]
+----
+...\ObjAsm\Code\Objects\Build\MakeObjects3264AW.cmd
+----
+
+Compile Examples and Projects:
+[source,cmd]
+----
+...\ObjAsm\Examples\MakeAll.cmd
+...\ObjAsm\Projects\MakeAll.cmd
+----
+
+== Troubleshooting
+
+[qanda]
+OA_SET.cmd reports "vswhere.exe not found"::
+  Ensure Visual Studio 2017 or later is installed. The VS Installer places `vswhere.exe` at: +
+  `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\`
+
+OA_SET.cmd reports "Windows SDK not found"::
+  Install the Windows 10/11 SDK from the link above, or via the Visual Studio Installer (_Workloads > Desktop development with C++_).
+
+OA_SET.cmd reports "OBJASM_PATH not set"::
+  Set the environment variable as described in <<Step 3: Set Environment Variables>>.
+
+== Build Variants
+
+Objects are compiled in four variants:
+
+[cols="1,3"]
+|===
+| Variant | Description
+
+| 32A | 32-bit ANSI
+| 32W | 32-bit Wide (Unicode)
+| 64A | 64-bit ANSI
+| 64W | 64-bit Wide (Unicode)
+|===
+
+== Known Issues
+
+=== LNK1102 "out of memory" with VS2022/VS2026 Linker
+
+When linking debug builds with `link.exe` from Visual Studio 2022 or later, you may encounter:
+
+----
+LINK : fatal error LNK1102: out of memory
+----
+
+**Cause:** UASM's legacy `-Zi` debug format generates CodeView records that newer MS linkers cannot process correctly. This is a known UASM issue (https://github.com/Terraspace/UASM/issues/194[GitHub #194]).
+
+**Solution:** Use `-Zi8` (CodeView 8 format) instead of `-Zi` in assembler debug options. The ObjAsm debug option files (`OPT_ASM_DBG_32.txt`, `OPT_ASM_DBG_64.txt`) already use `-Zi8` by default.
+
+**Alternative:** Use the linker bundled with ObjAsm under `Build\Tools\Linker\link.exe`, which is compatible with both `-Zi` and `-Zi8` output.

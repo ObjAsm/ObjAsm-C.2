@@ -8,8 +8,9 @@ REM directories.
 REM
 REM How it works:
 REM   1. Detects system bitness (32/64) via the processor registry key.
-REM   2. Uses vswhere.exe (shipped with VS 2017 15.2+) to locate the latest
-REM      Visual Studio installation. From that path it derives:
+REM   2. If OBJASM_VS_PATH is set (persisted by OA_INST.cmd), uses that directly.
+REM      Otherwise uses vswhere.exe (shipped with VS 2017 15.2+) to locate the
+REM      latest Visual Studio installation. From that path it derives:
 REM        - devenv.exe (Debugger)
 REM        - lib.exe    (Library Compiler)
 REM      It picks the newest MSVC toolset found under VC\Tools\MSVC.
@@ -23,6 +24,7 @@ REM Requirements:
 REM   - OBJASM_PATH environment variable must be set (e.g. C:\ObjAsm)
 REM   - Visual Studio 2017 or later must be installed
 REM   - Windows SDK 10+ must be installed
+REM   - (Optional) OBJASM_VS_PATH to pin a specific VS installation
 REM   - (Optional) EFI_TOOLKIT_PATH for UEFI development
 REM
 REM ============================================================================
@@ -39,10 +41,21 @@ if not defined OBJASM_PATH (
 
 REM ============================================================================
 REM Visual Studio Detection via vswhere.exe
-REM vswhere.exe is guaranteed to exist at this location since VS 2017 15.2+.
-REM It returns the installation path of the most recent VS instance regardless
-REM of edition (Community, Professional, Enterprise) or version (2019, 2022...).
+REM If OBJASM_VS_PATH is set and valid, use it directly (set by OA_INST.cmd).
+REM Otherwise, fall back to vswhere.exe auto-detection (latest installation).
 REM ============================================================================
+
+REM --- Try persisted OBJASM_VS_PATH first ---
+if not defined OBJASM_VS_PATH goto :vs_auto_detect
+if not exist "%OBJASM_VS_PATH%\Common7\IDE\devenv.exe" (
+  echo WARNING: OBJASM_VS_PATH is set but invalid: "%OBJASM_VS_PATH%"
+  echo          Falling back to auto-detection...
+  goto :vs_auto_detect
+)
+set "VS_PATH=%OBJASM_VS_PATH%"
+goto :vs_detected
+
+:vs_auto_detect
 set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 
 if not exist "%VSWHERE%" (
@@ -58,6 +71,8 @@ if not defined VS_PATH (
   echo ERROR: vswhere could not find a Visual Studio installation.
   exit /b 1
 )
+
+:vs_detected
 
 REM --- Derive the Debugger path ---
 set Debugger="%VS_PATH%\Common7\IDE\devenv.exe"
@@ -102,9 +117,11 @@ REM --- Tools from Windows SDK ---
 if defined WINKIT_PATH (
   set MidlCompiler="%WINKIT_PATH%\x64\midl.exe"
   set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
+  set ResourceCompiler="%WINKIT_PATH%\x64\rc.exe"
 ) else (
   set MidlCompiler=
   set UICCompiler=
+  set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
 )
 
 REM ============================================================================
@@ -139,7 +156,6 @@ REM ObjAsm Tools (resolved relative to OBJASM_PATH)
 REM ============================================================================
 set BldInf="%OBJASM_PATH%\Build\Tools\BuildInfo.cmd"
 set Inc2RC="%OBJASM_PATH%\Build\Tools\Inc2RC.cmd"
-set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
 
 REM ============================================================================
 REM EFI Toolkit (optional, only if EFI_TOOLKIT_PATH is set)
