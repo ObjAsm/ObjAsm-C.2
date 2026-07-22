@@ -52,7 +52,7 @@ if not exist "%VSWHERE%" (
 )
 
 REM Get the latest VS installation path
-for /f "usebackq tokens=*" %%i in (`"%VSWHERE%" -latest -property installationPath`) do set "VS_PATH=%%i"
+for /f "usebackq tokens=*" %%i in (`"%VSWHERE%" -latest -prerelease -property installationPath`) do set "VS_PATH=%%i"
 
 if not defined VS_PATH (
   echo ERROR: vswhere could not find a Visual Studio installation.
@@ -79,6 +79,7 @@ if not defined MSVC_VER (
 
 set LibraryCompiler="%VS_PATH%\VC\Tools\MSVC\%MSVC_VER%\bin\Hostx64\x64\lib.exe"
 
+
 REM ============================================================================
 REM Windows SDK Detection via Registry
 REM The Windows 10/11 SDK stores its installation path and version in:
@@ -102,9 +103,11 @@ REM --- Tools from Windows SDK ---
 if defined WINKIT_PATH (
   set MidlCompiler="%WINKIT_PATH%\x64\midl.exe"
   set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
+  set "RC_SDK=%WINKIT_PATH%\x64\rc.exe"
 ) else (
   set MidlCompiler=
   set UICCompiler=
+  set RC_SDK=
 )
 
 REM ============================================================================
@@ -131,15 +134,29 @@ if not exist %Linker32% (
   set Linker64="%OBJASM_PATH%\Build\Tools\Linker\link.exe"
 )
 
-REM Legacy single variable (defaults to bundled linker for backward compatibility)
+REM Compatible legacy linker v14.00 (VS 2015)
 set Linker="%OBJASM_PATH%\Build\Tools\Linker\link.exe"
+
+REM ============================================================================
+REM Resource Compiler Selection (Windows SDK rc.exe with bundled fallback)
+REM ============================================================================
+REM Prefer the Microsoft Resource Compiler shipped with the Windows
+REM SDK: it is kept current with the OS and supports the newest resource
+REM types (manifests, DPI awareness, etc.). Fall back to the bundled copy
+REM under Build\Tools\ResourceCompiler\ if the SDK isn't installed or its
+REM rc.exe can't be found, mirroring the Linker fallback logic above.
+REM ============================================================================
+if defined RC_SDK if exist "%RC_SDK%" (
+  set ResourceCompiler="%RC_SDK%"
+) else (
+  set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
+)
 
 REM ============================================================================
 REM ObjAsm Tools (resolved relative to OBJASM_PATH)
 REM ============================================================================
 set BldInf="%OBJASM_PATH%\Build\Tools\BuildInfo.cmd"
 set Inc2RC="%OBJASM_PATH%\Build\Tools\Inc2RC.cmd"
-set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
 
 REM ============================================================================
 REM EFI Toolkit (optional, only if EFI_TOOLKIT_PATH is set)

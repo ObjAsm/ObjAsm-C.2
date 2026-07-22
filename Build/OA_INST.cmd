@@ -94,7 +94,7 @@ set "VSWHERE=!ProgramFiles(x86)!\Microsoft Visual Studio\Installer\vswhere.exe"
 if not exist "!VSWHERE!" goto :step2_no_vs
 
 set "VS_PATH="
-for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -latest -property installationPath`) do set "VS_PATH=%%i"
+for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -latest -prerelease -property installationPath`) do set "VS_PATH=%%i"
 if not defined VS_PATH goto :step2_no_vs_instance
 echo   [OK]   Visual Studio found: !VS_PATH!
 goto :step2_check_sdk
@@ -241,6 +241,14 @@ echo          Linker:           !Linker!
 echo          LibraryCompiler:  !LibraryCompiler!
 echo          ResourceCompiler: !ResourceCompiler!
 echo          Debugger:         !Debugger!
+
+if not exist !ResourceCompiler! (
+  echo.
+  echo   [WARN] ResourceCompiler points to a file that does not exist:
+  echo          !ResourceCompiler!
+  echo          Install the Windows SDK, or place rc.exe in:
+  echo          !OBJASM_PATH!\Build\Tools\ResourceCompiler\
+)
 goto :step6
 
 :step5_failed

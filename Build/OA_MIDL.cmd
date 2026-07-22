@@ -5,6 +5,7 @@ if exist !ProjectName!.idl (
   if [!LogFile!] == [] (
     if exist !MidlCompiler! (
       call !MidlCompiler! /I %OBJASM_PATH%\Code\Inc\COM\IDL @"%OBJASM_PATH%\Build\Options\OPT_MIDL_!TARGET_BITNESS!.txt" !ProjectName!.idl
+      if errorlevel 1 exit /b 1
     ) else (
       echo [93;101mERROR: MidlCompiler not found[0m
       exit /b 1
@@ -13,6 +14,7 @@ if exist !ProjectName!.idl (
     if exist !MidlCompiler! (
       echo Compiling Type Library ...>> !LogFile!
       call !MidlCompiler! /I %OBJASM_PATH%\Code\Inc\COM\IDL @"%OBJASM_PATH%\Build\Options\OPT_MIDL_!TARGET_BITNESS!.txt" !ProjectName!.idl>> !LogFile!
+      if errorlevel 1 (echo.>> !LogFile! & exit /b 1)
       echo.>> !LogFile!
     ) else (
       echo ERROR: MidlCompiler not found>> !LogFile!

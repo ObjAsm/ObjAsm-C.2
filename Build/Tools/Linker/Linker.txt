@@ -1,0 +1,22 @@
+Use the linker link.exe version 14.00 from the MSVC v140 toolset (Visual Studio 2015).
+This is the sweet spot for UASM 2.56, as it generates correct PDB information that can be 
+interpreted properly by current debuggers.
+
+The MSVC v140 toolset can be obtained from the Visual Studio Installer by installing 
+the MSVC v140 - VS 2015 C++ build tools component. 
+It is also available through older Visual Studio downloads.
+
+Download page: Visual Studio Older Downloads: https://visualstudio.microsoft.com/de/vs/older-downloads/
+
+After installation, link.exe can typically be found under:
+
+<Visual Studio installation>\VC\bin\
+
+The linker version should report:
+
+Microsoft (R) Incremental Linker Version 14.00.xxxxx.x
+
+Do not use newer linkers (for example the v14.44 toolset from Visual Studio 2022), 
+as they may produce PDB files with differences that are not handled as reliably by 
+older UASM-generated debug information.
+

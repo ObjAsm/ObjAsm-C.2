@@ -1,4 +1,3 @@
 For updates and information about UASM, please visit http://www.terraspace.co.uk/uasm.html
 or see the GitHub repository at https://github.com/Terraspace/UASM
 
-Thanks, Biterider
