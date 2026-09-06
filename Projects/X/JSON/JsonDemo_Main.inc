@@ -55,7 +55,7 @@ Method Application.Init, uses xbx xsi
 
   New DskStream::DiskStream
   OCall DskStream::DiskStream.Init, xsi, $OfsCStr("Data.json"), GENERIC_READ or GENERIC_WRITE, \
-                                    0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+                                    -1, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 
   DbgLine ;--------------------------------------------------------------------------------
   mov xbx, $New(Json)
@@ -107,7 +107,7 @@ Method Application.Init, uses xbx xsi
   DbgLine ;--------------------------------------------------------------------------------
   New DskStream::DiskStream
   OCall DskStream::DiskStream.Init, xsi, $OfsCStr("Data.json"), GENERIC_READ or GENERIC_WRITE, \
-                                    0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+                                    -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
   mov xbx, $New(Json)
   OCall xbx::Json.Init, xsi
   OCall xbx::Json.Read, addr DskStream

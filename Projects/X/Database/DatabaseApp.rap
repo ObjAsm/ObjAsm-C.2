@@ -232,7 +232,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=27
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -267,9 +267,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1914,602,362
+2=0,0,1914,602,19331
 3=0,0,0,0,1122
-1=453,0,453,706,1829
+1=453,0,453,706,1834
 4=0,0,0,0,1054
 1001=0,0,0,0,460
 5=0,0,0,0,4506
@@ -360,16 +360,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="New m"
-2="Attr"
-3="MakeObjects"
-4="MemSize"
-5="$$DynamicTemplateSize"
-6="hUdcFieldParam"
-7="DB_StructEditor"
-8="LocReg"
-9="$LocReg m"
-10="DL_HEADER.MaxSize"
+1="SW_Start"
+2="StopWatch"
+3="New m"
+4="Attr"
+5="MakeObjects"
+6="MemSize"
+7="$$DynamicTemplateSize"
+8="hUdcFieldParam"
+9="DB_StructEditor"
+10="LocReg"
 [Collapse]
 2=6750208,128
 1=
@@ -449,7 +449,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,2
 [RADebugBP]
 2=
 50=
@@ -516,7 +516,7 @@ AutoLoad=1
 74=
 77=
 [PTimer]
-PTimer=653992426
+PTimer=654038536
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0
 [TLink]

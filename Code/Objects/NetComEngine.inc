@@ -45,7 +45,7 @@ WsaErrBox proc uses xbx hParent:HWND, pMessage:PSTRING, pCaption:PSTRING, \
   if sizeof(CHR) eq 2
     shr eax, 1
   endif
-  invoke NetErr2Str, dError, xdx, eax                 ;Returns the number of CHRs written
+  invoke NetErr2Str, dError, xdx, eax                 ; Returns the number of CHRs written
   if sizeof(CHR) eq 2
     shl eax, 1
   endif
@@ -73,7 +73,7 @@ Method ListenerCollection.DestroyItem, uses xbx, pListener:PLISTENER
   mov xbx, pListener
   .if xbx != NULL
     .if [xbx].LISTENER.hSocket != INVALID_SOCKET
-      ;Perform an "abortive close" of the socket, just in case.
+      ; Perform an "abortive close" of the socket, just in case.
       mov Linger.l_onoff, 1
       mov Linger.l_linger, 0
       invoke setsockopt, [xbx].LISTENER.hSocket, SOL_SOCKET, SO_LINGER, \
@@ -81,7 +81,7 @@ Method ListenerCollection.DestroyItem, uses xbx, pListener:PLISTENER
       DbgOnSockError "ListenerCollection.DestroyItem - ERROR on SetSockOpt SO_LINGER"
       invoke closesocket, [xbx].LISTENER.hSocket
     .endif
-    MemFree xbx                                         ;Frees data from heap
+    MemFree xbx                                         ; Frees data from heap
   .endif
 MethodEnd
 
@@ -101,11 +101,11 @@ MethodEnd
 Method NetComEngine.ConnectionsClose, uses xbx xdi xsi
   SetObject xsi
   invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
-  lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
-  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first item
-  .while xbx != xdi                                     ;Empty?
+  lea xdi, [xsi].ConnectionChain                        ; xdi -> SENTINEL
+  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ; Get first item
+  .while xbx != xdi                                     ; Empty?
     lea xcx, [xbx - offset($Obj(NetComConnection).ChainItem)]
-    mov xbx, [xbx].SDLL_ITEM.pNextItem                  ;Move to next item
+    mov xbx, [xbx].SDLL_ITEM.pNextItem                  ; Move to next item
     OCall xcx::NetComConnection.Close, FALSE
   .endw
   invoke LeaveCriticalSection, addr [xsi].ConnectionPool.CritSect
@@ -123,12 +123,12 @@ Method NetComEngine.ConnectionsDestroy, uses xbx xdi xsi
 
   SetObject xsi
   invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
-  lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
-  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first item
-  .while xbx != xdi                                     ;Empty?
+  lea xdi, [xsi].ConnectionChain                        ; xdi -> SENTINEL
+  mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ; Get first item
+  .while xbx != xdi                                     ; Empty?
     lea xcx, [xbx - offset($Obj(NetComConnection).ChainItem)]
     mov pConnection, xcx
-    mov xbx, [xbx].SDLL_ITEM.pNextItem                  ;Move to next item
+    mov xbx, [xbx].SDLL_ITEM.pNextItem                  ; Move to next item
     OCall pConnection::NetComConnection.QueueDestroy
   .endw
   invoke LeaveCriticalSection, addr [xsi].ConnectionPool.CritSect
@@ -144,8 +144,8 @@ MethodEnd
 Method NetComEngine.ConnectionsDisconnect, uses xbx xdi xsi
   SetObject xsi
   invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
-  lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
-  mov xdx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first Item
+  lea xdi, [xsi].ConnectionChain                        ; xdi -> SENTINEL
+  mov xdx, [xdi].SDLL_SENTINEL.pFirstItem               ; Get first Item
   .while xdx != xdi
     mov xbx, [xdx].SDLL_ITEM.pNextItem
     lea xcx, [xdx - offset($Obj(NetComConnection).ChainItem)]
@@ -166,20 +166,21 @@ MethodEnd
 Method NetComEngine.ConnectTo, uses xbx xsi, pProtocol:$ObjPtr(NetComProtocol), \
                                              pRemoteAddr:PNETCOMADDR, pLocalAddr:PNETCOMADDR
   SetObject xsi
-  ;Get a new NetComConnection and (re)initialize it.
+  ; Get a new NetComConnection and (re)initialize it.
   ?mov xdx, pProtocol
   OCall xsi.NewConnection, xdx
   .if xax != NULL
     mov xbx, xax
     OCall xbx::NetComConnection.QueueConnect, pRemoteAddr, pLocalAddr
     .if eax != NO_ERROR
-      ;If we have an error here, nothing was queued, so we can dispose our connection safely
-      OCall xbx::NetComConnection.FreeRessources          ;Socket is closed here
+      ; If we have an error here, nothing was queued, so we can dispose our connection safely
+      DbgText "ConnectTo failed"
+      OCall xbx::NetComConnection.FreeRessources          ; Socket is closed here
       OCall xbx::NetComConnection.Done
       OCall [xsi].ConnectionPool::NetComConnectionPool.FreeItem, xbx
       xor eax, eax
     .else
-      mov xax, xbx                                        ;Return xax -> NetComConnection
+      mov xax, xbx                                        ; Return xax -> NetComConnection
     .endif
   .endif
 MethodEnd
@@ -208,7 +209,7 @@ Method NetComEngine.Done, uses xbx xdi xsi
     invoke SetEvent, [xax].$Obj(NetComSupervisor).WaitHandles[NCS_EVENT_INDEX_RUN*sizeof(HANDLE)]
   .endif
 
-  ;Tell NetComEngine worker to die, and wait for the death. Then shutdown the supervisor thread.
+  ; Tell NetComEngine worker to die, and wait for the death. Then shutdown the supervisor thread.
   DbgText "NetComEngine.Done - Closing Workers"
   .ColForEach [xsi].Workers, edi
     invoke PostQueuedCompletionStatus, [xsi].hIOCP, 0, COMPLETION_KEY_KILL_WORKER, NULL
@@ -223,9 +224,9 @@ Method NetComEngine.Done, uses xbx xdi xsi
       invoke GetExitCodeThread, xdi, addr dThreadExitCode
       .if eax != 0 && dThreadExitCode == STILL_ACTIVE
         invoke TerminateThread, xdi, -1
-        ;IMPORTANT: calling TerminateThread can left synchronization objects in an
-        ;           undefined state. Don't call an Debug macro after this point,
-        ;           since you can hang the server application!
+        ; IMPORTANT: calling TerminateThread can left synchronization objects in an
+        ;            undefined state. Don't call an Debug macro after this point,
+        ;            since you can hang the server application!
       .endif
     .ColNext
   .endif
@@ -233,9 +234,9 @@ Method NetComEngine.Done, uses xbx xdi xsi
   if DEBUGGING
     mov xbx, [xsi].pOwner
     invoke EnterCriticalSection, addr [xsi].ConnectionPool.CritSect
-    lea xdi, [xsi].ConnectionChain                        ;xdi -> SENTINEL
-    mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ;Get first Item
-    .while xbx != xdi                                     ;Empty?
+    lea xdi, [xsi].ConnectionChain                        ; xdi -> SENTINEL
+    mov xbx, [xdi].SDLL_SENTINEL.pFirstItem               ; Get first Item
+    .while xbx != xdi                                     ; Empty?
       lea xcx, [xbx - offset($Obj(NetComConnection).ChainItem)]
       mov xbx, [xbx].SDLL_ITEM.pNextItem
       DbgConnection xcx
@@ -250,14 +251,14 @@ Method NetComEngine.Done, uses xbx xdi xsi
     OCall [xsi].pSupervisor::NetComSupervisor.Done
   .endif
 
-  ;Destroy IOCP
+  ; Destroy IOCP
   invoke CloseHandle, [xsi].hIOCP
 
-  ;Clean up resource pools
+  ; Clean up resource pools
   OCall [xsi].IOJobPool::NetComIOJobPool.Done
   OCall [xsi].ConnectionPool::NetComConnectionPool.Done
 
-  ;Housekeeping
+  ; Housekeeping
   Invoke StrDispose, [xsi].pLocalHostName
   DbgText "NetComEngine.Done"
 MethodEnd
@@ -275,7 +276,7 @@ MethodEnd
 Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, pSupervisor:POINTER, \
                                         dAllocConnections:DWORD, dAllocIOJobs:DWORD, \
                                         dIOJobBufferSize:DWORD
-  local dRetValue:DWORD, SysInfo:SYSTEM_INFO, cLocalHostName[256]:CHR    ;Max. 256 characters
+  local dRetValue:DWORD, SysInfo:SYSTEM_INFO, cLocalHostName[256]:CHR    ; Max. 256 characters
 
   SetObject xsi
 
@@ -286,24 +287,24 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, pSupervisor:POINTER, \
   lea xax, [xsi].ConnectionChain
   SDLL_Init xax
 
-  ;Override Listeners methods
+  ; Override Listeners methods
   Override [xsi].Listeners::DataCollection.DestroyItem, ListenerCollection.DestroyItem
 
-  ;Get the local host name
+  ; Get the local host name
   invoke GetHostName, addr cLocalHostName, lengthof cLocalHostName
   mov [xsi].pLocalHostName, $invoke(StrNew, addr cLocalHostName)
 
-  ;Initialize the collections
-  lea xbx, [xsi].IOJobPool                             ;xbx -> NetComIOJobPool
+  ; Initialize the collections
+  lea xbx, [xsi].IOJobPool                             ; xbx -> NetComIOJobPool
   OCall xbx::NetComIOJobPool.Init, xsi, dAllocIOJobs, dIOJobBufferSize
   OCall [xsi].ConnectionPool::NetComConnectionPool.Init, xsi, dAllocConnections, xbx
   OCall [xsi].Listeners::DataCollection.Init, xsi, 5, 5, COL_MAX_CAPACITY
   invoke GetSystemInfo, addr SysInfo
-  mrm [xsi].dWorkerCount, SysInfo.dwNumberOfProcessors, eax   ;Number of logical processors
+  mrm [xsi].dWorkerCount, SysInfo.dwNumberOfProcessors, eax   ; Number of logical processors
 ;  mrm [xsi].dWorkerCount, 1, eax
   OCall [xsi].Workers::XWCollection.Init, xsi, eax, 0, eax
 
-  ;Create the IOCP
+  ; Create the IOCP
   mov [xsi].hIOCP, $invoke(CreateIoCompletionPort, INVALID_HANDLE_VALUE, 0, 0, [xsi].dWorkerCount)
   .if xax == 0
     OCall xsi.ErrorReport, NULL, NCE_IOCP_INIT_ERROR
@@ -312,12 +313,12 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, pSupervisor:POINTER, \
     jmp @@Exit
   .endif
 
-  ;Initialize supervisor and worker thread
+  ; Initialize supervisor and worker thread
   .if pSupervisor != NULL
     OCall pSupervisor::NetComSupervisor.Init, xsi
   .endif
 
-  ;Create a Worker Thread per available "logical" cpu
+  ; Create a Worker Thread per available "logical" cpu
   mov ebx, [xsi].dWorkerCount
   test ebx, ebx
   .while !ZERO?
@@ -328,7 +329,7 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, pSupervisor:POINTER, \
       DbgSockError "NetComEngine.Init - Failed to create worker thread", dRetValue
       jmp @@Exit
     .endif
-    DbgHex xax, "NetComEngine.Init - New Worker"
+;    DbgHex xax, "NetComEngine.Init - New Worker"
     OCall [xsi].Workers::XWCollection.Insert, xax
     dec ebx
   .endw
@@ -352,7 +353,7 @@ Method NetComEngine.NewAcceptor, uses xbx xsi, pListener:PLISTENER, pProtocol:$O
   .else
     mov xbx, xax
     OCall xbx::NetComConnection.Init, addr [xsi].ConnectionPool, pProtocol
-    OCall xbx::NetComConnection.QueueAccept, pListener  ;Queue the accept job
+    OCall xbx::NetComConnection.QueueAccept, pListener  ; Queue the accept job
   .endif
 MethodEnd
 
@@ -370,12 +371,12 @@ Method NetComEngine.NewConnection, uses xbx xsi, pProtocol:$ObjPtr(NetComProtoco
   .if xax != NULL
     mov xbx, xax
     OCall xbx::NetComConnection.Init, addr [xsi].ConnectionPool, pProtocol
-    .if eax == 0                                        ;Zero means success
-      ;Register the socket with IOCP, because we want socket event notifications
+    .if eax == 0                                        ; Zero means success
+      ; Register the socket with IOCP, because we want socket event notifications
       invoke CreateIoCompletionPort, [xbx].$Obj(NetComConnection).hSocket, [xsi].hIOCP, xbx, 0
       mov xax, xbx
     .else
-      ;Failed to initialize new connection
+      ; Failed to initialize new connection
       OCall [xsi].ConnectionPool::NetComConnectionPool.FreeItem, xbx
       xor eax, eax
     .endif
@@ -407,7 +408,7 @@ Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, \
   SetObject xsi
   mov dRetValue, NO_ERROR
 
-  ;Create a socket with WSA_FLAG_OVERLAPPED flag!
+  ; Create a socket with WSA_FLAG_OVERLAPPED flag!
   MemAlloc sizeof(LISTENER)
   .if xax == NULL
     mov dRetValue, WSA_NOT_ENOUGH_MEMORY
@@ -428,7 +429,7 @@ Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, \
   mov [xbx].LISTENER.hSocket, xax
   DbgText "NetComEngine.StartListening - Listener socket created"
 
-;  ;Set socket options: disable nagle's algorithm for fast reaction time
+;  ; Set socket options: disable nagle's algorithm for fast reaction time
 ;  mov dOption, 1                                        ;1 means algo disabled
 ;  invoke setsockopt, [xbx].LISTENER.hSocket, IPPROTO_TCP, TCP_NODELAY, \
 ;                     addr dOption, sizeof dOption
@@ -456,10 +457,10 @@ Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, \
   .endif
 
   DbgText "NetComEngine.StartListening - Socket is listening..."
-  ;Bind the listening socket to the IOCP => necessary for acceptor
+  ; Bind the listening socket to the IOCP => necessary for acceptor
   invoke CreateIoCompletionPort, [xbx].LISTENER.hSocket, [xsi].hIOCP, \
                                  COMPLETION_KEY_SOCK_ACCEPTED, 0
-  .if xax == 0                                          ;0 means failure
+  .if xax == 0                                          ; 0 means failure
     mov dRetValue, $32($invoke(GetLastError))
     DbgSockError "NetComEngine.StartListening - Listener can not de bound to the IOCP", dRetValue
     OCall pProtocol::NetComProtocol.OnError, NULL, NULL, eax
@@ -468,11 +469,11 @@ Method NetComEngine.StartListening, uses xbx xdi xsi, dAcceptorCount:DWORD, \
   .endif
 
   DbgText "NetComEngine.StartListening - Socket has been bound to IOCP"
-  ;Queue some accept NetComConnections
+  ; Queue some accept NetComConnections
   mov edi, dAcceptorCount
   test edi, edi
   .while !ZERO?
-    OCall xsi.NewAcceptor, xbx, pProtocol               ;Returns eax = error code
+    OCall xsi.NewAcceptor, xbx, pProtocol               ; Returns eax = error code
     .break .if eax != NO_ERROR && eax != ERROR_IO_PENDING
     dec xdi
   .endw
@@ -494,8 +495,8 @@ Method NetComEngine.Startup
 
   invoke WSAStartup, 0202h, addr WsaData
   .if eax != 0
-    ;Write the error code into the NetComEngine template.
-    ;New instances inherit this error code and must check it.
+    ; Write the error code into the NetComEngine template.
+    ; New instances inherit this error code and must check it.
     OCall $ObjTmpl(NetComEngine)::NetComEngine.ErrorSet, NCE_WINSOCK_INIT_FAILED
   .endif
 
@@ -503,7 +504,7 @@ Method NetComEngine.Startup
   .if xax != INVALID_SOCKET
     mov hSocket, xax
 
-    ;Try to obtain a POINTER to the ConnectEx procedure, which does not change for the same provider
+    ; Try to obtain a POINTER to the ConnectEx procedure, which does not change for the same provider
     invoke WSAIoctl, hSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
                      offset WSAID_CONNECTEX, sizeof WSAID_CONNECTEX,
                      addr pConnectEx, sizeof POINTER, addr dBytesTransf, NULL, NULL
@@ -525,11 +526,11 @@ Method NetComEngine.StopListening, uses xsi
   DbgText "NetComEngine.StopListening"
   SetObject xsi
 
-  ;Close all listerners
+  ; Close all listerners
   DbgText "NetComEngine.StopListening - Closing listeners"
 
-  ;Closes all listening sockets. Pending IOs are cancelled through the IOCP,
-  ;which frees the associated acceptor connections.
+  ; Closes all listening sockets. Pending IOs are cancelled through the IOCP,
+  ; which frees the associated acceptor connections.
   OCall [xsi].Listeners::DataCollection.DisposeAll
 MethodEnd
 
@@ -548,20 +549,20 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
 
   SetObject xsi
   .while TRUE
-    ;The GetQueuedCompletionStatus API call will return two useful pieces of information.
-    ;One is the "completion key" of the completed IO, the other is a POINTER to the IOJob
-    ;which represents the IO operation which was completed.
-    ;Note: never abort if GetQueuedCompletionStatus returns FALSE!
+    ; The GetQueuedCompletionStatus API call will return two useful pieces of information.
+    ; One is the "completion key" of the completed IO, the other is a POINTER to the IOJob
+    ; which represents the IO operation which was completed.
+    ; Note: never abort if GetQueuedCompletionStatus returns FALSE!
     invoke GetQueuedCompletionStatus, [xsi].hIOCP, addr dBytesTransfered, addr xCompletionKey, \
                                       addr pIOJob, INFINITE
 
-    ;Exit thread loop immediately if the call fails or COMPLETION_KEY_KILL_WORKER received
+    ; Exit thread loop immediately if the call fails or COMPLETION_KEY_KILL_WORKER received
     .break .if xCompletionKey == COMPLETION_KEY_KILL_WORKER
 
     mov xbx, pIOJob
     .if xbx != NULL
       .if xCompletionKey == COMPLETION_KEY_VOID
-        mov xdi, xbx                                    ;pConnection passed using pIOJob
+        mov xdi, xbx                                    ; pConnection passed using pIOJob
         DbgHex xdi, "NetComEngine.WorkerJob - VOID posted"
         invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
 
@@ -570,26 +571,26 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
           mov xdi, [xbx].IOJOB.DataBuffer.ACCEPT_DATA.pConnection
 
         .else
-          mov xdi, xCompletionKey                       ;xdi -> NetComConnection
+          mov xdi, xCompletionKey                       ; xdi -> NetComConnection
         .endif
 
         invoke EnterCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
         
         invoke GetSystemTimeAsFileTime, addr [xdi].$Obj(NetComConnection).LastTime
 
-        ;Determine whether the operation completed successfully or not
+        ; Determine whether the operation completed successfully or not
         invoke WSAGetOverlappedResult, [xdi].$Obj(NetComConnection).hSocket, xbx, \
                                        addr dBytesConsumed, \
                                        FALSE, addr dFlags
         mov dOvrResult, eax
-        ;Serialize on a per-connection basis
-        BitSet [xbx].IOJOB.wFlags, IOF_JOB_COMPLETED   ;Set marker
+        ; Serialize on a per-connection basis
+        BitSet [xbx].IOJOB.wFlags, IOF_JOB_COMPLETED   ; Set marker
         dec [xdi].$Obj(NetComConnection).dPendingIOJobs
         inc [xdi].$Obj(NetComConnection).dCompletedIOJobs
 
         .if dOvrResult != FALSE
-          ;Operation succeeded *****************************************************************
-          ;Each of the following connection handlers must manage the IOJob themselves
+          ; Operation succeeded *****************************************************************
+          ; Each of the following connection handlers must manage the IOJob themselves
           movzx eax, [xbx].IOJOB.wOperation
           .if eax == IOJOB_RECV
             mrm [xbx].IOJOB.dBytesConsumed, dBytesConsumed, edx
@@ -608,25 +609,25 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
             OCall xdi::NetComConnection.OnAccepted, xbx
 
           .else
-            invoke WSAGetLastError                      ;This error is thread specific
+            invoke WSAGetLastError                      ; This error is thread specific
             OCall xdi::NetComConnection.OnError, xbx, eax
           .endif
 
         .else
-          ;Operation failed! *******************************************************************
-          invoke WSAGetLastError                        ;This error is thread specific
+          ; Operation failed! *******************************************************************
+          invoke WSAGetLastError                        ; This error is thread specific
           OCall xdi::NetComConnection.OnError, xbx, eax
         .endif
 
       .endif
 
-      ;NOTE: this code was moved to the supervisor thread, but if not presend, do the disposal here
+      ; NOTE: this code was moved to the supervisor thread, but if not presend, do the disposal here
       .if [xsi].pSupervisor == NULL
-        ;If the connection is flagged for destruction, proceed ONLY if the
-        ;connection has no pending IOJobs
+        ; If the connection is flagged for destruction, proceed ONLY if the
+        ; connection has no pending IOJobs
         .ifBitSet [xdi].$Obj(NetComConnection).dFlags, NCC_QUEUE_DESTROY
           .if [xdi].$Obj(NetComConnection).dPendingIOJobs == 0
-            OCall xdi::NetComConnection.FreeRessources    ;Socket is closed here
+            OCall xdi::NetComConnection.FreeRessources    ; Socket is closed here
             invoke LeaveCriticalSection, addr [xdi].$Obj(NetComConnection).CritSect
             OCall xdi::NetComConnection.Done
             OCall [xsi].ConnectionPool::NetComConnectionPool.FreeItem, xdi
@@ -640,8 +641,8 @@ Method NetComEngine.WorkerJob, uses xbx xdi xsi
 
   .endw
 
-  DbgText "NetComEngine.WorkerJob - Worker death"
-  DbgDec [xsi].IOJobPool.dCount, "NetComEngine.WorkerJob"
+;  DbgText "NetComEngine.WorkerJob - Worker death"
+;  DbgDec [xsi].IOJobPool.dCount, "NetComEngine.WorkerJob"
 MethodEnd
 
 endif

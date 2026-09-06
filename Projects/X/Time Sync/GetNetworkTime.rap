@@ -108,7 +108,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -143,9 +143,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,6067
+2=0,0,0,0,476
 3=0,0,0,0,73213
-1=0,0,0,0,125
+1=0,0,0,0,115
 4=0,0,562,490,28667
 5=0,0,694,587,12924
 6=0,0,0,0,885
@@ -177,16 +177,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="CRLF"
-2="dTimeout"
-3="Delay"
-4="WriteF"
-5="DbgWriteF"
-6="_WIN"
-7="DBG_COLOR_COMMENT_WIN"
-8="szDbgSrc"
-9=".dbg"
-10="DbgShowSrcInfo"
+1="GetNetworkTime.dbg"
+2="GetNetworkTime."
+3="CRLF"
+4="dTimeout"
+5="Delay"
+6="WriteF"
+7="DbgWriteF"
+8="_WIN"
+9="DBG_COLOR_COMMENT_WIN"
+10="szDbgSrc"
 [Collapse]
 1=
 4=
@@ -205,9 +205,9 @@ ProductVer4Range=0
 13=,
 8=
 [AutoLoad]
-AutoLoad=2,3,9,7
+AutoLoad=2
 [PTimer]
-PTimer=871806138
+PTimer=903095732
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0
 [RADebugBP]

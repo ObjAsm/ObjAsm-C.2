@@ -346,7 +346,7 @@ Method Application.Init, uses xbx xdi xsi
 
     New DskStream::DiskStream
     OCall DskStream::DiskStream.Init, xsi, offset szFileName, GENERIC_READ or GENERIC_WRITE, \
-                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+                                      -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
     OCall [xsi].Data::Json.Read, addr DskStream
     OCall DskStream::DiskStream.Done
   .endif

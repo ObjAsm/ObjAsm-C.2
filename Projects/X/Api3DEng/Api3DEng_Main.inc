@@ -344,60 +344,61 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_FILE_OPEN
-      invoke FileExist, offset szScene
-      .if eax != FALSE
-        lea xdi, DskStm
-        lea xbx, DLUT
-        mov DeserInfo.pDesLUT, xbx
-        New xbx::DesLUT
-        OCall xbx::DesLUT.Init, xsi, DLT_MEM_PAGE, DLT_MEM_PAGE, DLT_MAX_CAPACITY
-        New xdi::DiskStream
-        OCall xdi::DiskStream.Init, xsi, offset szScene, 0, 0, NULL, 0, 0, 0
-        OCall xdi::DiskStream.BinRead8                  ;Stored object bitness
-        .if al == @WordSize
-          OCall xdi::DiskStream.BinReadX               ;Read prev. appl instance
-          OCall xbx::DesLUT.Insert, xax, xsi            ;Feed with new appl. instance
-          Destroy [xsi].pScene
-          OCall xdi::DiskStream.Get, addr DeserInfo
-          .if xax != NULL
-            mov [xsi].pScene, xax
-            OCall [xsi].pScene::D3Scene.Deserialize, addr DeserInfo
-            OCall xdi::DiskStream.BinRead, addr [xsi].RotVector1,   sizeof(D3Vector)
-            OCall xdi::DiskStream.BinRead, addr [xsi].RotVector2,   sizeof(D3Vector)
-            mov [xsi].r4OrbitAngle, $32($OCall(xdi::DiskStream.BinRead32))
-            OCall xdi::DiskStream.BinRead, addr [xsi].OrbitVector,  sizeof(D3Vector)
-            OCall xdi::DiskStream.BinRead, addr [xsi].CamDplVector, sizeof(D3Vector)
-            OCall xdi::DiskStream.BinRead, addr [xsi].CamRotVector, sizeof(D3Vector)
-            OCall xbx::DesLUT.Done
-            OCall xdi::DiskStream.Done
+    invoke FileExist, offset szScene
+    .if eax != FALSE
+      OCall xsi.Animate, FALSE
+      lea xdi, DskStm
+      lea xbx, DLUT
+      mov DeserInfo.pDesLUT, xbx
+      New xbx::DesLUT
+      OCall xbx::DesLUT.Init, xsi, DLT_MEM_PAGE, DLT_MEM_PAGE, DLT_MAX_CAPACITY
+      New xdi::DiskStream
+      OCall xdi::DiskStream.Init, xsi, offset szScene, -1, -1, NULL, -1, -1, 0
+      OCall xdi::DiskStream.BinRead8                  ;Stored object bitness
+      .if al == @WordSize
+        OCall xdi::DiskStream.BinReadX                ;Read prev. appl instance
+        OCall xbx::DesLUT.Insert, xax, xsi            ;Feed with new appl. instance
+        Destroy [xsi].pScene
+        OCall xdi::DiskStream.Get, addr DeserInfo
+        .if xax != NULL
+          mov [xsi].pScene, xax
+          OCall [xsi].pScene::D3Scene.Deserialize, addr DeserInfo
+          OCall xdi::DiskStream.BinRead, addr [xsi].RotVector1,   sizeof(D3Vector)
+          OCall xdi::DiskStream.BinRead, addr [xsi].RotVector2,   sizeof(D3Vector)
+          mov [xsi].r4OrbitAngle, $32($OCall(xdi::DiskStream.BinRead32))
+          OCall xdi::DiskStream.BinRead, addr [xsi].OrbitVector,  sizeof(D3Vector)
+          OCall xdi::DiskStream.BinRead, addr [xsi].CamDplVector, sizeof(D3Vector)
+          OCall xdi::DiskStream.BinRead, addr [xsi].CamRotVector, sizeof(D3Vector)
+          OCall xbx::DesLUT.Done
+          OCall xdi::DiskStream.Done
 
-            mov xbx, [xsi].pScene
-            mov [xsi].pObject1, $OCall([xbx].$Obj(D3Scene).pObjects::Collection.ItemAt, 0)
-            mov [xsi].pObject2, $OCall([xbx].$Obj(D3Scene).pObjects::Collection.ItemAt, 1)
-            mov [xsi].pCamera1, $OCall([xbx].$Obj(D3Scene).pCameras::Collection.ItemAt, 0)
-            mov [xsi].pLight1, $OCall([xbx].$Obj(D3Scene).pLights::Collection.ItemAt, 0)
+          mov xbx, [xsi].pScene
+          mov [xsi].pObject1, $OCall([xbx].$Obj(D3Scene).pObjects::Collection.ItemAt, 0)
+          mov [xsi].pObject2, $OCall([xbx].$Obj(D3Scene).pObjects::Collection.ItemAt, 1)
+          mov [xsi].pCamera1, $OCall([xbx].$Obj(D3Scene).pCameras::Collection.ItemAt, 0)
+          mov [xsi].pLight1, $OCall([xbx].$Obj(D3Scene).pLights::Collection.ItemAt, 0)
 
-            invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
-          .else
-            invoke MessageBox, [xsi].hWnd, \
-                               $OfsCStr("Failed to load scene from stream", 33, 10, 13, \
-                                        "Application will be closed."), \
-                               $OfsCStr("Error"), MB_OK or  MB_ICONEXCLAMATION
-          .endif
+          invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
         .else
           invoke MessageBox, [xsi].hWnd, \
-                             $OfsCStr("Wrong stream wordsize", 33), \
+                             $OfsCStr("Failed to load scene from stream", 33, 10, 13, \
+                                      "Application will be closed."), \
                              $OfsCStr("Error"), MB_OK or  MB_ICONEXCLAMATION
         .endif
+      .else
+        invoke MessageBox, [xsi].hWnd, \
+                           $OfsCStr("Wrong stream wordsize", 33), \
+                           $OfsCStr("Error"), MB_OK or  MB_ICONEXCLAMATION
       .endif
-      xor eax, eax
+    .endif
+    xor eax, eax
 
   .elseif ax == IDM_FILE_SAVE
     lea xdi, DskStm
     New xdi::DiskStream
-    OCall xdi::DiskStream.Init, xsi, offset szScene, 0, 0, NULL, 0, 0, 0
-    OCall xdi::DiskStream.BinWrite8, @WordSize
-    OCall xdi::DiskStream.BinWriteX, xsi                ;Save application instance
+    OCall xdi::DiskStream.Init, xsi, offset szScene, -1, -1, NULL, -1, -1, 0
+    OCall xdi::DiskStream.BinWrite8, @WordSize          ; Save application bitness
+    OCall xdi::DiskStream.BinWriteX, xsi                ; Save application instance
     OCall [xsi].pScene::D3Scene.Serialize
     OCall xdi::DiskStream.Put, [xsi].pScene
     OCall xdi::DiskStream.BinWrite, addr [xsi].RotVector1,   sizeof(D3Vector)

@@ -674,7 +674,7 @@ Method DbgMdiChildBmp.Open, uses xbx xdi xsi, pFileName:PSTRING
   SetObject xsi
   mov pBmp, NULL
   mov xdi, $New(DiskStream)
-  OCall xdi::DiskStream.Init, xsi, pFileName, 0, 0, NULL, 0, 0, 0
+  OCall xdi::DiskStream.Init, xsi, pFileName, -1, -1, NULL, -1, -1, 0
   OCall xdi::DiskStream.BinRead, addr BMFH, sizeof(BMFH)
   .if [xdi].$Obj(DiskStream).dErrorCode == OBJ_OK
     .if BMFH.bfType == "MB"                             ;Check Bitmap file signature
@@ -850,7 +850,7 @@ Method DbgMdiChildBmp.SaveTo, uses xsi, pFileName:PSTRING
   mov BMFH.bfOffBits, size BITMAPINFOHEADER + sizeof(BITMAPFILEHEADER)
 
   mov pStream, $New(DiskStream)
-  OCall pStream::DiskStream.Init, xsi, pFileName, 0, 0, NULL, 0, 0, 0
+  OCall pStream::DiskStream.Init, xsi, pFileName, -1, -1, NULL, -1, -1, 0
   OCall pStream::DiskStream.BinWrite, addr BMFH, sizeof(BMFH)
   OCall pStream::DiskStream.BinWrite, [xsi].pBmp, dSize
   Destroy pStream

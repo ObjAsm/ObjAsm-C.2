@@ -188,13 +188,13 @@ start proc uses xbx xdi xsi
 
   invoke RedBlackTree_Show, xbx, $ObjTmpl(DataHost).dKey - $ObjTmpl(DataHost)
 
-  OCall DskStm::DiskStream.Init, NULL, $OfsCStr("RBTree.data"), 0, 0, NULL, 0, 0, 0
+  OCall DskStm::DiskStream.Init, NULL, $OfsCStr("RBTree.data"), -1, -1, NULL, -1, -1, 0
   OCall DskStm::DiskStream.Put, xbx
   OCall DskStm::DiskStream.Done
   OCall xbx::RedBlackTree.DisposeAll
   OCall xbx::RedBlackTree.Done
 
-  OCall DskStm::DiskStream.Init, NULL, $OfsCStr("RBTree.data"), 0, 0, NULL, 0, 0, 0
+  OCall DskStm::DiskStream.Init, NULL, $OfsCStr("RBTree.data"), -1, -1, NULL, -1, -1, 0
   OCall $ObjTmpl(DesLUT)::DesLUT.Init, NULL, 100, 100, -1
   mov xbx, $OCall(DskStm::DiskStream.Get, NULL)
 ;  OCall $ObjTmpl(DesLUT)::DesLUT.ForEach, offset Deserialize, NULL, NULL

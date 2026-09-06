@@ -44,8 +44,8 @@ Method NetComConnectionPool.FreeItem, uses xsi, pConnection:$ObjPtr(NetComConnec
   dec [xsi].dCount
   mov xax, pConnection
   lea xdx, [xax].$Obj(NetComConnection).ChainItem
-  SDLL_Remove xdx, xax, xcx                             ;Remove connection from the chain
-  ACall xsi.FreeItem, pConnection                       ;Toss it into the DataPool
+  SDLL_Remove xdx, xax, xcx                             ; Remove connection from the chain
+  ACall xsi.FreeItem, pConnection                       ; Toss it into the DataPool
   invoke LeaveCriticalSection, addr [xsi].CritSect
 MethodEnd
 
@@ -73,15 +73,15 @@ MethodEnd
 Method NetComConnectionPool.NewItem, uses xbx xsi
   SetObject xsi
   invoke EnterCriticalSection, addr [xsi].CritSect
-  ACall xsi.NewItem                                     ;Get a new connection from the pool
+  ACall xsi.NewItem                                     ; Get a new connection from the pool
   .if xax != NULL
     inc [xsi].dCount
     mov xbx, xax
     New xbx::NetComConnection
     lea xax, [xbx].$Obj(NetComConnection).ChainItem
     mov xdx, [xsi].pOwner
-    lea xcx, [xdx].$Obj(NetComEngine).ConnectionChain   ;Get the address of the connection chain
-    SDLL_InsertFirst xcx, xax, xdx                      ;Insert this connection in the chain
+    lea xcx, [xdx].$Obj(NetComEngine).ConnectionChain   ; Get the address of the connection chain
+    SDLL_InsertFirst xcx, xax, xdx                      ; Insert this connection in the chain
     invoke LeaveCriticalSection, addr [xsi].CritSect
     mov xax, xbx
   .else

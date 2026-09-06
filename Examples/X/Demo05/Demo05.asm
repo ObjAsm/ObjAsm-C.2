@@ -199,7 +199,7 @@ start proc uses xbx xdi xsi                             ; Program entry point
   mov xdi, offset $ObjTmpl(DiskStream)
 
   ; Store vector contents, clear the vector, then reload them
-  OCall xdi::DiskStream.Init, NULL, $OfsCStr(".\Vector1.stm"), 0,0,0,0,0,0
+  OCall xdi::DiskStream.Init, NULL, $OfsCStr(".\Vector1.stm"), -1, -1, NULL, -1, -1, 0
   OCall xbx::ByteVector.Store, xdi
   OCall xbx::ByteVector.DeleteAll
   OCall xbx::ByteVector.ForEach, offset ShowItemB, NULL, NULL
@@ -210,7 +210,7 @@ start proc uses xbx xdi xsi                             ; Program entry point
   OCall xdi::DiskStream.Done
 
   ; Store full vector object, reload as a NEW instance
-  OCall xdi::DiskStream.Init, NULL, $OfsCStr(".\Vector2.stm"),0,0,0,0,0,0
+  OCall xdi::DiskStream.Init, NULL, $OfsCStr(".\Vector2.stm"), -1, -1, NULL, -1, -1, 0
   OCall xdi::DiskStream.Put, xbx
   OCall xbx::ByteVector.DeleteAll
   OCall xbx::ByteVector.ForEach, offset ShowItemB, NULL, NULL

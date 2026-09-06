@@ -1531,7 +1531,7 @@ Method Pixelmap.InitGammaTables, uses xsi, r4Gamma:REAL4
   fUnload 2
   m2m [xsi].pGam2LinTable, offset Gam2LinTable, xax
 
-;  New Stm::DiskStream.Init, NULL, "GammaTable.stm"
+;  New Stm::DiskStream.Init, NULL, $OfsCStr("GammaTable.stm"), -1, -1, NULL, -1, -1, 0
 ;  OCall Stm::DiskStream.BinWrite, offset Lin2GamTable, 256
 ;  OCall Stm::DiskStream.BinWrite, offset Gam2LinTable, 256
 ;  OCall Stm::DiskStream.Done

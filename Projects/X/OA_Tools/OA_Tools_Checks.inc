@@ -36,14 +36,17 @@ RegInfoTable_2 label RegInfo                            ;Register name length = 
   DefRegInfo ah,   08, 32, al
   DefRegInfo al,   08, 32
   DefRegInfo ax,   16, 32, ah
+  DefRegInfo bh,   08, 32, bl
   DefRegInfo bl,   08, 32
   DefRegInfo bp,   16, 32, bpl
-  DefRegInfo bx,   16, 32, bl
+  DefRegInfo bx,   16, 32, bh
+  DefRegInfo ch,   08, 32, cl
   DefRegInfo cl,   08, 32
-  DefRegInfo cx,   16, 32, cl
+  DefRegInfo cx,   16, 32, ch
   DefRegInfo di,   16, 32, dil
+  DefRegInfo dh,   08, 32, dl
   DefRegInfo dl,   08, 32
-  DefRegInfo dx,   16, 32, dl
+  DefRegInfo dx,   16, 32, dh
   DefRegInfo r8,   64, 64, r8d
   DefRegInfo r9,   64, 64, r9d
   DefRegInfo si,   16, 32, sil
@@ -185,9 +188,14 @@ GetRegisters macro
     .break .if xax == NULL                              ;It is not a register!
 
     ;"uses" only accept registers where size = bitness
-    .if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \
-        !(([xax].RegInfo.bSize == 64) && ([xsi].dFlags & OATF_TEST_64)) || \
-        !(([xax].RegInfo.bSize == 32) && ([xsi].dFlags & OATF_TEST_32))
+;    .if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \
+;        !(([xax].RegInfo.bSize == 64) && ([xsi].dFlags & OATF_TEST_64)) || \
+;        !(([xax].RegInfo.bSize == 32) && ([xsi].dFlags & OATF_TEST_32))
+;      .break
+;    .endif
+    .if !((([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \
+          (([xax].RegInfo.bSize == 64) && ([xsi].dFlags & OATF_TEST_64)) || \
+          (([xax].RegInfo.bSize == 32) && ([xsi].dFlags & OATF_TEST_32)))
       .break
     .endif
     invoke StrCNewA, pWordStart, dWordSize
@@ -1020,6 +1028,8 @@ Method OAT_Child.CheckPrcArg, uses xbx xdi xsi
   .repeat
     ReadSentence edi
 
+    HandleComment
+
     ;Search for the word "proc" at the second word of a sentence
     invoke GetNextWord, addr bSentence, FALSE
     test ecx, ecx
@@ -1081,7 +1091,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
-Method OAT_Child.CheckPrcLoc, uses xbx xdi xsi
+Method OAT_Child.CheckPrcLoc, uses xdi xsi
   local VarNames:$Obj(SortedStrCollectionA)
   local bSentence[SENTENCE_SIZE]:CHRA, bChar:CHRA, dFindings:DWORD, bCommentChar:CHRA
   local pCodeBlockName:PSTRINGA, dCodeBlockLineNumber:DWORD, dInCodeBlock:DWORD
@@ -1180,7 +1190,7 @@ Method OAT_Child.CheckPrcReg, uses xbx xdi xsi
   local pPrvWordStart:PSTRINGA, dPrvWordSize:DWORD
   local bChar:CHRA, pChar:PSTRINGA
 
-  ANNOTATION use:xbx bChar bOutput pChar pWord xbx
+  ANNOTATION use: bChar bOutput pChar pWord
 
   SetObject xsi
 

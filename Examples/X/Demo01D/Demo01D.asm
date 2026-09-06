@@ -60,7 +60,7 @@ start proc                                              ; Program entry point
   ;---------------- Serialize both objects to disk ---------------
   mov pDskStm, $New(OA:DiskStream)                      ; Create new DiskStream instance
   OCall pDskStm::OA:DiskStream.Init, \
-        NULL, $OfsCStr("Data.stm"), 0, 0, NULL, 0, 0, 0 ; Open file for writing
+        NULL, $OfsCStr("Data.stm"), -1, -1, NULL, -1, -1, 0 ; Open file for writing
 
   OCall pDskStm::OA:DiskStream.Put, pShape_1            ; Stream Triangle
   OCall pDskStm::OA:DiskStream.Put, pShape_2            ; Stream Rectangle
@@ -78,7 +78,7 @@ start proc                                              ; Program entry point
 
   mov pDskStm, $New(OA:DiskStream)                      ; Recreate DiskStream
   OCall pDskStm::OA:DiskStream.Init, \
-        NULL, $OfsCStr("Data.stm"), 0, 0, NULL, 0, 0, 0 ; Reopen file for reading
+        NULL, $OfsCStr("Data.stm"), -1, -1, NULL, -1, -1, 0 ; Reopen file for reading
 
   mov pShape_1, $OCall(pDskStm::OA:DiskStream.Get, NULL); Restore Triangle
   mov pShape_2, $OCall(pDskStm::OA:DiskStream.Get, NULL); Restore Rectangle

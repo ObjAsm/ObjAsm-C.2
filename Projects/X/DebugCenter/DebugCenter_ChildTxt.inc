@@ -495,7 +495,7 @@ Method DbgMdiChildTxt.Open, uses xsi, pFileName:PSTRING
 
   SetObject xsi
   mov pStream, $New(DiskStream)
-  OCall pStream::DiskStream.Init, xsi, pFileName, 0, 0, NULL, 0, 0, 0
+  OCall pStream::DiskStream.Init, xsi, pFileName, -1, -1, NULL, -1, -1, 0
   m2m EdtStrm.dwCookie, pStream, xax
   m2z EdtStrm.dwError
   c2m EdtStrm.pfnCallback, offset REOpenText, xax
@@ -683,7 +683,7 @@ Method DbgMdiChildTxt.SaveTo, uses xsi, pFileName:PSTRING
 
   SetObject xsi
   mov pStream, $New(DiskStream)
-  OCall pStream::DiskStream.Init, xsi, pFileName, 0, 0, NULL, 0, 0, 0
+  OCall pStream::DiskStream.Init, xsi, pFileName, -1, -1, NULL, -1, -1, 0
   m2m EdtStrm.dwCookie, pStream, xax
   m2z EdtStrm.dwError
   m2m EdtStrm.pfnCallback, offset RESaveText, xax

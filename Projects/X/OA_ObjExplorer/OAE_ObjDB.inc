@@ -365,7 +365,7 @@ Method OA_ObjDB.Open, uses xbx xdi xsi, pFileName:PSTRING
 
   SetObject xsi
   mov xbx, $New(DskStm::DiskStream)
-  OCall xbx::DiskStream.Init, xsi, pFileName, 0, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
+  OCall xbx::DiskStream.Init, xsi, pFileName, -1,-1, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
   OCall xbx::DiskStream.BinRead32                     ;Read file version
   .if eax == DATABASE_VERSION
     New DLUT::DesLUT
@@ -407,7 +407,7 @@ Method OA_ObjDB.Save, uses xbx xsi, pFileName:PSTRING
   SetObject xsi
 ;  DbgText "Saving Database..."
   mov xbx, $New(DskStm::DiskStream)
-  OCall xbx::DiskStream.Init, xsi, pFileName, 0, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+  OCall xbx::DiskStream.Init, xsi, pFileName, -1, -1, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
   OCall xbx::DiskStream.BinWrite32, DATABASE_VERSION
   OCall xbx::DiskStream.BinWriteX, xsi                  ;Store -> OA_ObjDB for later use
   OCall xbx::DiskStream.Put, addr [xsi].FilesColl

@@ -207,8 +207,8 @@ start proc
   GetTimeInfo "time.google.com"
   GetTimeInfo "time.windows.com"
   GetTimeInfo "time.euro.apple.com"
-  
-  invoke MessageBox, 0, $OfsCStr("NTP-Server requests ready.", CRLF, "Check the GetNetworkTime.dbg file to see the results."), $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION   
+
+  invoke MessageBox, 0, $OfsCStr("NTP-Server requests ready.", CRLF, "Check the GetNetworkTime.dbg file to see the results."), $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION
   SysDone
 
   invoke ExitProcess, 0

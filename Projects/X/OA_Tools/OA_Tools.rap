@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=12
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -241,7 +241,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,1177,636,7004
 3=0,0,0,0,3697
-1=0,0,694,487,750
+1=0,0,694,487,769
 4=0,0,1202,621,10010
 1001=0,0,0,0,460
 8=0,0,0,0,6676
@@ -253,7 +253,7 @@ ProductVer4Range=0
 10=0,0,0,0,6248
 12=0,0,0,0,468
 13=0,0,0,0,12921
-14=0,0,1862,628,30209
+14=0,0,1862,628,45098
 15=0,0,1838,628,934
 16=0,0,0,0,2974
 17=
@@ -320,22 +320,24 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="[xsi].pTextBuffer"
-2="Button.OnNcDestroy"
-3="pTextBuffer"
-4="OnNcDestroy"
-5="InitRes"
-6="OnDestroy"
-7="IconButton"
-8="pBuffer"
-9="Init"
-10="LineLengths"
+1="OAT_Child.CheckPrcLoc"
+2=".if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \"
+3="".if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \"
+4="HandleComment"
+5="ReadSentence"
+6="CheckPrcArg"
+7="DefRegInfo ah,   08, 32, al"
+8="[xsi].pTextBuffer"
+9="Button.OnNcDestroy"
+10="pTextBuffer"
+  .break
+.endif"
 [Collapse]
 4=
 2=2128137,1346449664,1019218091,513
 6=,
 7=,
-14=,,1342242816,2147353965,1832107730,957
+14=,,1342242816,214106251,1697890002,57
 9=
 8=
 5=
@@ -391,9 +393,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,14
 [PTimer]
-PTimer=2089628939
+PTimer=2100386393
 [GroupExpand]
 GroupExpand=1,1,1,1,1,1,1,0
 [RADebugBP]

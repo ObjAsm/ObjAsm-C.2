@@ -58,7 +58,7 @@ lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
   ?mov edx, plua_Debug
   DbgDec [xdx].lua_Debug.currentline
 
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pScriptHost")  ;Retrieve -> LuaHost
+  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
   invoke lua_tointegerx, pLuaState, -1, NULL
   .ifBitSet [xax].$Obj(LuaHost).dFlags, LHF_SCRIPT_STOP
     invoke lua_pushstring, pLuaState, $OfsCStrA("STOP")
@@ -107,7 +107,7 @@ Method LuaHost.Execute, uses xbx xsi
 
   ;Store a pointer to the LuaHost as a global variable
   invoke lua_pushinteger, xbx, xsi                      ;Push LuaHost instance on the stack
-  invoke lua_setglobal, xbx, $OfsCStrA("pScriptHost")   ;Give it a name (Value on top of the stack)
+  invoke lua_setglobal, xbx, $OfsCStrA("pLuaHost")   ;Give it a name (Value on top of the stack)
 
   ;Set the call hook
   invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0  ;Call lua_HookProc on each line

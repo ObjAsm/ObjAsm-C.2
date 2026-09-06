@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND, RESGUARD)
+SysSetup OOP, WIN32, WIDE_STRING, DEBUG(WND);, RESGUARD)
 
 DEFINE LUA_DLL_IMPORT
 

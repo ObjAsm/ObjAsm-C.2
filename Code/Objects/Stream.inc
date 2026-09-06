@@ -22,7 +22,7 @@
 ;
 ;   ; Storage
 ;   New MyDiskStream::DiskStream
-;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), -1, -1, \
 ;                                       NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 ;   OCall MyVec::Vector.Store, addr MyDiskStream
 ;   OCall MyDiskStream::DiskStream.Done
@@ -36,7 +36,7 @@
 ;   OCall xcx::DesLUT.Init, NULL, 10, 10, 0FFFFFFFFh/sizeof(POINTER)
 ;
 ;   New MyDiskStream::DiskStream
-;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;   OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), -1, -1, \
 ;                                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
 ;   OCall MyVec::Vector.Load, addr MyDiskStream, addr DeserInfo
 ;   OCall MyDiskStream::DiskStream.Done

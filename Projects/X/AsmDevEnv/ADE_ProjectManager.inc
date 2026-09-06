@@ -866,7 +866,7 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   .endif
   New DskStream::DiskStream
   OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_READ, \
-                                    0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+                                    -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
   mov xbx, $New(Json)
   OCall xbx::Json.Init, xsi
   OCall xbx::Json.Read, addr DskStream
@@ -1100,7 +1100,7 @@ Method ProjectManager.ProjectSaveTo, uses xbx xsi, pConfigFileName:PSTRING
 
     New DskStream::DiskStream
     OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_WRITE, \
-                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+                                      -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
     mov xbx, $New(Json)
     OCall xbx::Json.Init, xsi
     mov [xbx].$Obj(Json).RootProperty.dType, JSON_TYPE_OBJECT

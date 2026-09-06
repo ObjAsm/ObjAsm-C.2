@@ -80,7 +80,7 @@ endif
 ;Load or build the following objects
 MakeObjects Primer, Stream, DiskStream, Collection, DataPool, StopWatch
 MakeObjects DataCollection, XWCollection, SortedCollection, SortedDataCollection
-MakeObjects WinPrimer, Window, Button, Hyperlink, TextView, Image
+MakeObjects WinPrimer, Window, TextView, Image
 MakeObjects Dialog, DialogModal
 MakeObjects WinApp, DlgApp
 MakeObjects NetCom

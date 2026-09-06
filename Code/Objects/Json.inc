@@ -83,7 +83,7 @@ JSON_FLAG_USE_CRLF  equ   BIT00
 ;
 ;    New DskStream::DiskStream
 ;    OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_WRITE, \
-;                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+;                                      -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 ;    mov xbx, $New(Json)
 ;    OCall xbx::Json.Init, xsi
 ;    mov [xbx].$Obj(Json).RootProperty.dType, JSON_TYPE_OBJECT
@@ -103,7 +103,7 @@ JSON_FLAG_USE_CRLF  equ   BIT00
 ;
 ;    New DskStream::DiskStream
 ;    OCall DskStream::DiskStream.Init, xsi, addr cConfigFileName, GENERIC_READ, \
-;                                      0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+;                                      -1, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
 ;    mov xbx, $New(Json)
 ;    OCall xbx::Json.Init, xsi
 ;    OCall xbx::Json.Read, addr DskStream
@@ -1216,13 +1216,13 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
         shl eax, 2
         lea eax, [2*eax + eax]                          ; ANSI => WIDE + each char can have max 6 escape chars
       endif
-      mov pEncBuffer, $MemAlloc(eax)                    ; We use the same Buffer to encode the string
+      mov pEncBuffer, $MemAlloc(eax)
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
         shr edi, 1                                      ; Chars, incl ZTC
       endif
       invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
       invoke WideToUTF8Size, pEncBuffer
-      mov xsi, $MemAlloc(eax)                           ; We use the same Buffer to encode the string
+      mov xsi, $MemAlloc(eax)
       invoke WideToUTF8, xsi, pEncBuffer, -1
       dec eax                                           ; Discard ZTC
       OCall pStream::Stream.BinWrite, xsi, eax

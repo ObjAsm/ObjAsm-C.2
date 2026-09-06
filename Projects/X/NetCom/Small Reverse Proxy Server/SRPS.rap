@@ -184,7 +184,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=16
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -219,7 +219,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1469,901,22551
+2=0,0,1469,901,10394
 1=0,0,0,0,3961
 6=0,0,1456,414,60743
 4=0,0,0,0,720
@@ -229,8 +229,8 @@ ProductVer4Range=0
 9=0,0,0,0,124214
 10=0,0,0,0,18872
 5=0,0,0,0,11246
-3=0,0,0,0,343
-11=0,0,1783,588,685
+3=0,0,0,0,842
+11=0,0,1783,588,1206
 15=0,0,0,0,0
 14=0,0,0,0
 13=0,0,0,0,1916
@@ -246,7 +246,7 @@ ProductVer4Range=0
 21=0,0,0,0,1571
 22=0,0,0,0,0
 26=0,0,0,0,3478
-27=0,0,1669,631,331
+27=0,0,1669,631,836
 30=0,0,1613,631,22819
 36=0,0,1577,631,8142
 32=0,0,1613,631,22429
@@ -256,7 +256,7 @@ ProductVer4Range=0
 40=0,0,0,0,10762
 29=0,0,0,0,3281
 35=0,0,0,0,2503
-41=0,0,0,0,2464
+41=0,0,0,0,2528
 33=0,0,0,0,5425
 42=0,0,0,0,5266
 43=0,0,0,0,12227
@@ -286,19 +286,19 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="ACCEPT_DATA"
-2="ACCEPT_DATA.LocalAddr"
-3="RemoteAddr"
-4="  invoke MemZero, addr[xdi].IOJOB.DataBuffer.ACCEPT_DATA.LocalAddr, sizeof(ACCEPT_DATA.LocalAddr)"
-5="LF_RIT_StabBack"
-6="LF_RIT_Start"
-7="LF_PR_FixPred"
-8="LF_IA_UpdateTail"
-9="LF_IA_FixBack"
-10="LF_IA_RetryLink"
+1="cServerLocalAddr"
+2="Auto"
+3="IDC_CHK_SERVER_USE_EPHEM_PORT"
+4="IDC_UDN_INACTIVITY_TIMEOUT"
+5="cAuto"
+6="DiskStream"
+7="ACCEPT_DATA"
+8="ACCEPT_DATA.LocalAddr"
+9="RemoteAddr"
+10="  invoke MemZero, addr[xdi].IOJOB.DataBuffer.ACCEPT_DATA.LocalAddr, sizeof(ACCEPT_DATA.LocalAddr)"
 [Collapse]
 1=
-2=2080362105,293631
+2=675270265,293500
 4=
 6=,,
 7=
@@ -412,9 +412,9 @@ ProductVer4Range=0
 44=
 38=,
 [AutoLoad]
-AutoLoad=19,32,20,30,41
+AutoLoad=41,2,3,11,27,14
 [PTimer]
-PTimer=3816277116
+PTimer=3896204647
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

@@ -435,7 +435,7 @@ endm
 ; --------------------------------------------------------------------------------------------------
 ; Macro:      BitUpdate
 ; Purpose:    Set or clear a bit if a condition is met.
-; Arguments:  Arg1: Condition 
+; Arguments:  Arg1: Condition
 ;             Arg2: Bit holding variable.
 ;             Arg3: Bit to be tested for (ie: BIT12)
 ; Return:     Nothing.

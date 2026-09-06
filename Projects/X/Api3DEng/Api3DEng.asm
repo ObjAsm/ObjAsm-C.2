@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, RESGUARD)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND);, RESGUARD)
 
 % include &MacPath&fMath.inc
 % include &MacPath&DlgTmpl.inc

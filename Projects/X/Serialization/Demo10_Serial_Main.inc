@@ -409,7 +409,7 @@ Method Application.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
   invoke EnumChildWindows, [xcx].$Obj(MyClientWnd).hWnd, offset CloseEnumProc, 0
 
   mov xdi, $New(DskStm::DiskStream)
-  OCall xdi::DiskStream.Init, xsi, pStreamName, 0, 0, NULL, 0, 0, 0
+  OCall xdi::DiskStream.Init, xsi, pStreamName, -1, -1, NULL, -1, -1, 0
   mov xbx, $New(DLTbl::DesLUT)
   OCall xbx::DesLUT.Init, xsi, DLT_MEM_PAGE, DLT_MEM_PAGE, DLT_MAX_CAPACITY
 
@@ -771,7 +771,7 @@ Method Application.SaveContext, uses xdi xsi, pStreamName:PSTRING
   SetObject xsi
   lea xdi, DskStm
   New xdi::DiskStream
-  OCall xdi::DiskStream.Init, xsi, pStreamName, 0, 0, NULL, 0, 0, 0
+  OCall xdi::DiskStream.Init, xsi, pStreamName, -1, -1, NULL, -1, -1, 0
   OCall xsi.Serialize
   OCall xdi::Stream.Put, xsi
   OCall xdi::Stream.Done

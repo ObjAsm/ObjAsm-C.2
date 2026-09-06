@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      StopWatch.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.1.3
 ; Purpose:    ObjAsm support of performance monitoring objects.
 ; Link:       http://www.agner.org/assem/
 ; Notes:      Version C.1.0, October 2017
@@ -10,6 +10,8 @@
 ;               - Arithmetic bug in StopWatch.Stop 32-bit corrected.
 ;             Version C.1.2, June 2024
 ;               - Arithmetic bug in StopWatch.Stop 64-bit corrected.
+;             Version C.1.3, August 2026
+;               - Peek method added. No need to stop and start to get the time.
 ; ==================================================================================================
 
 
@@ -28,8 +30,11 @@ SWS_RUNNING    equ    1
 ;
 ;  New SW::StopWatch
 ;  OCall SW::StopWatch.Init, NULL
-;  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx   ;miliseconds
+;  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx   ; miliseconds
 ;  OCall SW::StopWatch.Start
+;  ...
+;  OCall SW::StopWatch.Peek                         ; Get time at this moment
+;  OCall SW::StopWatch.GetTime
 ;  ...
 ;  OCall SW::StopWatch.Stop
 ;  OCall SW::StopWatch.GetTime
@@ -41,16 +46,17 @@ Object StopWatch, StopWatchID, Primer
   VirtualMethod     GetTime
   VirtualMethod     GetTimeStrA,    PSTRINGA
   VirtualMethod     GetTimeStrW,    PSTRINGW
-  RedefineMethod    Init,           POINTER               ;-> Owner
+  RedefineMethod    Init,           POINTER               ; -> Owner
+  VirtualMethod     Peek
   VirtualMethod     Reset
   VirtualMethod     Start
   VirtualMethod     Stop
 
-  DefineVariable    r8Period,       REAL8,      0.0       ;Perf. timer period = 1/frequency
-  DefineVariable    r8Resolution,   REAL8,      1000000.0 ;1.0 => Seconds, 1000000.0 => µS
-  DefineVariable    qStartCount,    QWORD,      0         ;Starting count
-  DefineVariable    qAccCount,      QWORD,      0         ;Accumulated count
-  DefineVariable    qLagCount,      QWORD,      0         ;Start/Stop lag count
+  DefineVariable    r8Period,       REAL8,      0.0       ; Perf. timer period = 1/frequency
+  DefineVariable    r8Resolution,   REAL8,      1000000.0 ; 1.0 => Seconds, 1000000.0 => µS
+  DefineVariable    qStartCount,    QWORD,      0         ; Starting count
+  DefineVariable    qAccCount,      QWORD,      0         ; Accumulated count
+  DefineVariable    qLagCount,      QWORD,      0         ; Start/Stop lag count
   DefineVariable    dStatus,        DWORD,      SWS_STOPPED
 ObjectEnd
 
@@ -66,7 +72,7 @@ if IMPLEMENT
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTime
-; Purpose:    Return the elapsed time in the specified resolution as a QWORD.
+; Purpose:    Returns the elapsed time in the specified resolution as a QWORD.
 ; Arguments:  None.
 ; Return:     edx::eax or rax = Accumulated time.
 
@@ -88,7 +94,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTimeStrA
-; Purpose:    Return the elapsed time (see r8Resolution member).
+; Purpose:    Returns the elapsed time (see r8Resolution member).
 ; Arguments:  Arg1: -> Buffer where the ANSI string will be written (at least 20 bytes!).
 ; Return:     Nothing.
 
@@ -97,13 +103,13 @@ Method StopWatch.GetTimeStrA,, pResult:PSTRINGA
   fild [xcx].qAccCount
   fmul [xcx].r8Period
   fmul [xcx].r8Resolution
-  invoke St0ToStrA, pResult, 0, 6, f_NOR                ;pResult
+  invoke St0ToStrA, pResult, 0, 6, f_NOR                ; pResult
   fUnload
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTimeStrW
-; Purpose:    Return the elapsed time (see r8Resolution member).
+; Purpose:    Returns the elapsed time (see r8Resolution member).
 ; Arguments:  Arg1: -> Buffer where the WIDE string will be written (at least 20 words!).
 ; Return:     Nothing.
 
@@ -112,13 +118,13 @@ Method StopWatch.GetTimeStrW,, pResult:PSTRINGW
   fild [xcx].qAccCount
   fmul [xcx].r8Period
   fmul [xcx].r8Resolution
-  invoke St0ToStrW, pResult, 0, 6, f_NOR                ;pResult
+  invoke St0ToStrW, pResult, 0, 6, f_NOR                ; pResult
   fUnload
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Init
-; Purpose:    Initialize and calibrates the object.
+; Purpose:    Initializes and calibrates the object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
 
@@ -127,14 +133,14 @@ Method StopWatch.Init, uses xbx xsi, pOwner:POINTER
 
   SetObject xsi
   ACall xsi.Init, pOwner
-  invoke QueryPerformanceFrequency, addr qFreq          ;Get the Performance Frequency
-  fild qFreq                                            ;Load the FPU
-  fld1
-  fdivrp st(1), st(0)                                   ;Compute reciprocal value
+  invoke QueryPerformanceFrequency, addr qFreq          ; Get the Performance Frequency
+  fld1                                                  ; Load 1
+  fild qFreq                                            ; Load Performance Frequency
+  fdivp                                                 ; Compute st(1) = st(1)[1]/st(0)[Freq]
   xor eax, eax
   mov DWORD ptr [xsi].qLagCount, eax
   mov DWORD ptr [xsi + sizeof(DWORD)].qLagCount, eax
-  fstp [xsi].r8Period                                   ;Store it
+  fstp [xsi].r8Period                                   ; Store it
   mov ebx, 256
   OCall xsi::StopWatch.Reset
   .repeat
@@ -144,20 +150,51 @@ Method StopWatch.Init, uses xbx xsi, pOwner:POINTER
   .until ZERO?
   if TARGET_BITNESS eq 32
     mov eax, DWORD ptr [esi].qAccCount
-    shr eax, 8                                          ;Div 256
+    shr eax, 8                                          ; Div 256
     mov DWORD ptr [esi].qLagCount, eax
     m2z DWORD ptr [esi + sizeof(DWORD)].qLagCount
   else
     mov rax, [rsi].qAccCount
-    shr rax, 8                                          ;Div 256
+    shr rax, 8                                          ; Div 256
     mov [rsi].qLagCount, rax
   endif
   OCall xsi.Reset
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     StopWatch.Peek
+; Purpose:    Gets the instant time value.
+; Arguments:  None.
+; Return:     edx::eax or rax = Accumulated time count (qAccCount).
+
+Method StopWatch.Peek
+  local qCount:QWORD
+
+  invoke QueryPerformanceCounter, addr qCount
+  SetObject xcx
+  if TARGET_BITNESS eq 32
+    mov eax, DWORD ptr [qCount]
+    mov edx, DWORD ptr [qCount + sizeof(DWORD)]
+    sub eax, DWORD ptr [ecx].qStartCount
+    sbb edx, DWORD ptr [ecx + sizeof(DWORD)].qStartCount
+    add DWORD ptr [ecx].qAccCount, eax
+    adc DWORD ptr [ecx + sizeof(DWORD)].qAccCount, edx
+    push eax
+    mrm DWORD ptr [ecx].qStartCount, DWORD ptr [qCount], eax
+    mrm DWORD ptr [ecx + sizeof(DWORD)].qStartCount, DWORD ptr [qCount + sizeof(DWORD)], eax
+    pop eax
+  else
+    mov rax, qCount
+    mov rdx, rax
+    sub rax, [rcx].qStartCount
+    add [rcx].qAccCount, rax
+    mrm [rcx].qStartCount, qCount, rdx
+  endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Reset
-; Purpose:    Reset the time count.
+; Purpose:    Resets the time count.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -176,7 +213,7 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Start
-; Purpose:    Start the time measuring.
+; Purpose:    Starts the time measuring.
 ; Arguments:  None.
 ; Return:     Nothing.
 

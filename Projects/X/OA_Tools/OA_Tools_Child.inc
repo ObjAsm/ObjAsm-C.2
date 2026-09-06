@@ -81,7 +81,7 @@ Method OAT_Child.AnalyseFile, uses xdi xsi
   New [xsi].LineLengths::DataCollection
   OCall [xsi].LineLengths::DataCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY
   New [xsi].DskStream::DiskStream
-  OCall [xsi].DskStream::DiskStream.Init, xsi, [xsi].pFileName, GENERIC_READ, -1, NULL, OPEN_EXISTING, 0, 0
+  OCall [xsi].DskStream::DiskStream.Init, xsi, [xsi].pFileName, GENERIC_READ, -1, NULL, OPEN_EXISTING, -1, 0
 
   .if [xsi].DskStream.dErrorCode == 0
     OCall [xsi].DskStream::DiskStream.GetSize

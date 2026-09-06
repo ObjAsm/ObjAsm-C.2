@@ -675,7 +675,7 @@ Method DbgMdiChildCht.SaveTo, uses xsi, pFileName:PSTRING
 
   SetObject xsi
 ;  mov pStream, $New(DiskStream)
-;  OCall pStream::DiskStream.Init, xsi, pFileName, 0, 0, NULL, 0, 0, 0
+;  OCall pStream::DiskStream.Init, xsi, pFileName, -1, -1, NULL, -1, -1, 0
 ;  OCall pStream::DiskStream.BinWrite, addr BMFH, sizeof()
 ;  OCall pStream::DiskStream.BinWrite, [xsi].pBmp, dSize
 ;  Destroy pStream

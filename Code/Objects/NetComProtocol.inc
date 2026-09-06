@@ -106,7 +106,7 @@ Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), p
   ANNOTATION use:pConnection pIOJob
   DbgSetWindowName
 
-;  DbgText "NetComProtocol.IsDataComplete?", pDbgWndNameW
+  DbgText "NetComProtocol.IsDataComplete?", pDbgWndNameW
   xor eax, eax
 MethodEnd
 
@@ -198,7 +198,7 @@ Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOJob:PI
 ;  DbgDec dError, "NetComProtocol.OnError", pDbgWndNameW
   mov xcx, pIOJob
   .if xcx == NULL
-    xor eax, eax
+    mov eax, PROT_CMD_NONE
     ExitMethod
   .endif
 
