@@ -496,7 +496,9 @@ MethodEnd
 ; Return:     xax -> New loaded object.
 
 Method Collection.GetItem,, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
-  OCall pStream::Stream.Get, pDeserInfo
+  ArgReg pStream:rdx, pDeserInfo:r8
+
+  OCall $ArgReg(pStream)::Stream.Get, $ArgReg(pDeserInfo)
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

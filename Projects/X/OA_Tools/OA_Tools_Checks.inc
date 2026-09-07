@@ -420,11 +420,9 @@ HandleRegAnnotation macro
       mov pChar, xax
       m2m bChar, [xax], cl                              ;Remember character
       m2z CHRA ptr [xax]                                ;Set ZTC
-      OCall PrsvRegNames::SortedStrCollectionA.Search, pWordStart
-      .if eax != FALSE
-        mov edx, ecx
-        OCall PrsvRegNames::SortedStrCollectionA.DisposeAt, edx
-      .endif
+      invoke StrCNewA, pWordStart, dWordSize
+      mov pWord, xax
+      OCall UsedRegNames::SortedStrCollectionA.Insert, xax
       mov xdx, pChar
       m2m [xdx], bChar, cl                              ;Restore character
     .until FALSE
@@ -840,7 +838,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
-Method OAT_Child.CheckMtdLoc, uses xbx xdi xsi
+Method OAT_Child.CheckMtdLoc, uses xdi xsi
   local VarNames:$Obj(SortedStrCollectionA)
   local bSentence[SENTENCE_SIZE]:CHRA, bChar:CHRA, dFindings:DWORD, bCommentChar:CHRA
   local pCodeBlockName:PSTRINGA, dCodeBlockLineNumber:DWORD, dInCodeBlock:DWORD
@@ -1181,7 +1179,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.
 
-Method OAT_Child.CheckPrcReg, uses xbx xdi xsi
+Method OAT_Child.CheckPrcReg, uses xdi xsi
   local PrsvRegNames:$Obj(SortedStrCollectionA), UsedRegNames:$Obj(SortedStrCollectionA)
   local bOutput[OUTPUT_SIZE]:CHRA, dFindings:DWORD
   local bSentence[SENTENCE_SIZE]:CHRA, bCommentChar:CHRA
