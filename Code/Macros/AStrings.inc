@@ -29,15 +29,21 @@
 ; --------------------------------------------------------------------------------------------------
 
 StringA macro StrName, QuotedText:vararg
-  $$StrStart = $
-  $$StrLabel textequ <StrName>
-  for $$StrSubText:=<>, <QuotedText>
-    $$StrLabel db $$StrSubText
-    $$StrLabel textequ <>                               ;; Set to blank for the next loop
-  endm
-  CHRA 0                                                ;; Append ZTC
-  ??StrSize = $ - $$StrStart                            ;; ??StrSize includes the ZTC
-  ??StrLength = ??StrSize - 1                           ;; ??StrLength = character length without ZTC
+  if @SizeStr(<QuotedText>) eq 2
+    StrName CHRA 0
+    ??StrSize = 1
+    ??StrLength = 0
+  else
+    $$StrStart = $
+    $$StrLabel textequ <StrName>
+    for $$StrSubText:=<>, <QuotedText>
+      $$StrLabel db $$StrSubText
+      $$StrLabel textequ <>                             ;; Set to blank for the next loop
+    endm
+    CHRA 0                                              ;; Append ZTC
+    ??StrSize = $ - $$StrStart                          ;; ??StrSize includes the ZTC
+    ??StrLength = ??StrSize - 1                         ;; ??StrLength = character length without ZTC
+  endif
 endm
 
 

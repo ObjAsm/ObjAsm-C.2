@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=6
+MilestoneOnDateDate=27
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -239,14 +239,14 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1177,636,7004
-3=0,0,0,0,3697
-1=0,0,694,487,769
-4=0,0,1202,621,10010
+2=0,0,1177,636,39705
+3=0,0,0,0,3101
+1=0,0,694,487,3785
+4=0,0,1202,621,9993
 1001=0,0,0,0,460
-8=0,0,0,0,6676
+8=0,0,0,0,6687
 7=0,0,0,0
-5=0,0,1862,628,8115
+5=0,0,1862,628,4676
 6=0,0,0,0,8786
 9=0,0,0,0,2689
 11=0,0,0,0,422
@@ -254,7 +254,7 @@ ProductVer4Range=0
 12=0,0,0,0,468
 13=0,0,0,0,12921
 14=0,0,1862,628,41124
-15=0,0,1838,628,934
+15=0,0,1838,628,7541
 16=0,0,0,0,2974
 17=
 23=0,0,0,0,34438
@@ -301,7 +301,7 @@ ProductVer4Range=0
 62=0,0,0,0,3012
 33=
 63=0,0,0,0,15281
-64=0,0,0,0,668
+64=0,0,0,0,692
 
 [BookMark]
 0=
@@ -320,21 +320,21 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="UsedRegNames"
-2="PrsvRegNames"
-3="ANNOTATION"
-4="bx"
-5="OAT_Child.CheckPrcLoc"
-6=".if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \"
-7="".if !(([xax].RegInfo.bSize == 00) && ([xsi].dFlags & OATF_TEST_MX)) || \"
-8="HandleComment"
-9="ReadSentence"
-10="CheckPrcArg"
+1="ExpandEnvironmentStrings"
+2="szOpen"
+3="OnCommand"
+4="Edit"
+5="NotePad"
+6="Note"
+7="Setup"
+8="IDM_OPEN_EDITOR"
+9="IDS_OPEN_EDITOR"
+10="AGAIN"
   .break
 .endif"
 [Collapse]
 4=
-2=2128137,1346449664,1019218091,513
+2=2128137,1346449408,482345003,513
 6=,
 7=,
 14=,,1342242816,12779529,1922679848,30
@@ -393,9 +393,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=1,14
+AutoLoad=1,14,4,2,5,15,8,3
 [PTimer]
-PTimer=2101221893
+PTimer=2105038128
 [GroupExpand]
 GroupExpand=1,1,1,1,1,1,1,0
 [RADebugBP]

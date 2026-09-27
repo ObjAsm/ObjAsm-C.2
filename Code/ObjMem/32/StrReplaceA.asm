@@ -15,10 +15,10 @@ ProcName textequ <StrReplaceA>
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrReplaceA
-; Purpose:    Dispose an existing ANSI string and replace it with a new one.
-; Arguments:  Arg1: -> String to be replaced.
-;             Arg2: -> New string.
-; Return:     rax -> New allocated string or NULL if failed.
+; Purpose:    Dispose an ANSI string and replace it with another ANSI string.
+; Arguments:  Arg1: -> -> ANSI String to be replaced.
+;             Arg2: -> Replacing ANSI string.
+; Return:     eax -> Replacing ANSI string or NULL if failed.
 
 % include &ObjMemPath&Common\StrReplace_TX.inc
 

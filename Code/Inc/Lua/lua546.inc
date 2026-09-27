@@ -13,6 +13,7 @@ LUA_COPYRIGHT equ <LUA_RELEASE "  Copyright (C) 1994-2020 Lua.org, PUC-Rio">
 LUA_AUTHORS equ <"R. Ierusalimschy, L. H. de Figueiredo, W. Celes">
 LUA_SIGNATURE equ <,1bh,"Lua">
 LUA_MULTRET equ -1
+LUAI_MAXSTACK equ 1000000
 LUA_REGISTRYINDEX equ (- LUAI_MAXSTACK - 1000)
 lua_upvalueindex macro i
   exitm <(LUA_REGISTRYINDEX - (i))>

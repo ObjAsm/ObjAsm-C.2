@@ -12,18 +12,18 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrReplace
-; Purpose:    Dispose an existing BSTR and replace it with a new one.
-; Arguments:  Arg1: -> BSTR to be replaced.
-;             Arg2: -> new BSTR.
-; Return:     rax -> New allocated BSTR or NULL if failed.
+; Purpose:    Dispose a BSTR and replace it with another BSTR.
+; Arguments:  Arg1: -> -> BSTR to be replaced.
+;             Arg2: -> Replacing BSTR.
+; Return:     xax -> Replacing BSTR or NULL if failed.
 
 .code
 align ALIGN_CODE
-BStrReplace proc ppOldBStr:POINTER, pNewBStr:POINTER
-  mov xax, ppOldBStr
-  invoke BStrDispose, POINTER ptr [xax]
-  invoke BStrNew, pNewBStr
-  mov xcx, ppOldBStr
+BStrReplace proc ppPrevBStr:POINTER, pReplBStr:POINTER
+  ?mov xcx, ppPrevBStr
+  invoke BStrDispose, POINTER ptr [xcx]
+  invoke BStrNew, pReplBStr
+  mov xcx, ppPrevBStr
   mov [xcx], xax
   ret
 BStrReplace endp

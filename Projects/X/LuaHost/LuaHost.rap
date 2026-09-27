@@ -165,7 +165,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -200,8 +200,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,13619
-1=0,0,1403,897,652
+2=0,0,0,0,12929
+1=0,0,1403,897,842
 6=0,0,0,0,71457
 4=0,0,0,0,1448
 31=
@@ -377,16 +377,16 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="pScript"
-2="FileLoad"
+1="DEFAULT_FONT_HEIGHT"
+2="hEditFont"
 3="ScriptInit"
-4="pScriptHost"
-5="pLuaHost"
-6="lua_setglobal"
-7="OutputClear proc uses xbx pLuaState:ptr lua_State"
-8="OutputWriteLn"
-9="WriteLn"
-10="Write"
+4="OnFinished"
+5="LHM_SCRIPT_FINISHED"
+6="pScript"
+7="FileLoad"
+8="pScriptHost"
+9="pLuaHost"
+10="lua_setglobal"
 [AutoLoad]
 AutoLoad=1,2,3,32,16
 [RADebugBP]
@@ -415,6 +415,6 @@ AutoLoad=1,2,3,32,16
 14=
 32=
 [PTimer]
-PTimer=911088137
+PTimer=913839730
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,1,0,0

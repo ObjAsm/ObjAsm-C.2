@@ -12,18 +12,18 @@
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrReplaceA / StrReplaceW
-; Purpose:    Dispose an existing string and replace it with a new one.
+; Purpose:    Dispose a string and replace it with another string.
 ; Arguments:  Arg1: -> -> String to be replaced.
-;             Arg2: -> New string.
-; Return:     rax -> New allocated string or NULL if failed.
+;             Arg2: -> Replacing string.
+; Return:     xax -> Replacing string or NULL if failed.
 
 .code
 align ALIGN_CODE
-ProcName proc ppOldString:POINTER, pNewString:POINTER
-  mov xax, ppOldString
-  invoke StrDispose, POINTER ptr [xax]
-  invoke StrNew, pNewString
-  mov xcx, ppOldString
+ProcName proc ppPrevString:POINTER, pReplString:POINTER
+  ?mov xcx, ppPrevString
+  invoke StrDispose, POINTER ptr [xcx]
+  mov xcx, ppPrevString
+  mov xax, pReplString
   mov [xcx], xax
   ret
 ProcName endp

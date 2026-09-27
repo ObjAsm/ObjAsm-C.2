@@ -570,6 +570,17 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+BStrReplaceWithCopy proto :POINTER, :POINTER
+StrReplaceWithCopyA proto :POINTER, :POINTER
+StrReplaceWithCopyW proto :POINTER, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  StrReplaceWithCopy textequ <StrReplaceWithCopyA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  StrReplaceWithCopy textequ <StrReplaceWithCopyW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 BStrTitle textequ <StrTitleW>
 StrTitleA proto :POINTER
 StrTitleW proto :POINTER

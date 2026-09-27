@@ -871,7 +871,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke StrRScan, addr cFileName, "\"
         .if xax != NULL
           m2z CHR ptr [xax]
-          invoke StrReplace, addr [xsi].pDirectory, addr cFileName
+          invoke StrReplaceWithCopy, addr [xsi].pDirectory, addr cFileName
         .endif
       .endif
     .endif
@@ -1516,7 +1516,7 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_TITLE
           mov xbx, xcx
-          invoke StrReplace, addr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription, xbx
+          invoke StrReplaceWithCopy, addr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription, xbx
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_MIN
@@ -1539,7 +1539,7 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_TITLE
           mov xbx, xcx
-          invoke StrReplace, addr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription, xbx
+          invoke StrReplaceWithCopy, addr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription, xbx
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_COLOR

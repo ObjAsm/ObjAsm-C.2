@@ -39,13 +39,13 @@ Method ProjPropsDialog.CtlsGet, uses xbx xsi
   mov xax, [xsi].pOwner
   lea xbx, [xax].$Obj(Application).PrjMgr
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_NAME, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjName, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xbx].$Obj(ProjectManager).pProjName, addr cBuffer
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_FILENAME, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjFileName, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xbx].$Obj(ProjectManager).pProjFileName, addr cBuffer
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DIRPATH, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjDirPath, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xbx].$Obj(ProjectManager).pProjDirPath, addr cBuffer
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DESC, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xbx].$Obj(ProjectManager).pProjDescription, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xbx].$Obj(ProjectManager).pProjDescription, addr cBuffer
   BitSet [xbx].$Obj(ProjectManager).dFlags, PMF_DIRTY
   mov xbx, [xsi].pOwner
   mov xcx, [xbx].$Obj(Application).pClientWnd

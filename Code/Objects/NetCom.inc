@@ -375,8 +375,6 @@ $htonl macro Port
 endm
 
 
-DEFAULT_LISTENING_PORT  equ $htons(25773)
-
 ; Defaults (can be changed at runtime via your UI/init paths)
 TX_HIGH_WM_DEFAULT      equ 1024
 TX_LOW_WM_DEFAULT       equ 512
@@ -516,7 +514,7 @@ Object NetComProtocol, NetComProtocolID, Primer
 
   ; If ListeningAddr is set to INADDR_ANY, the server listens on all available network interfaces
   ; Supported service strings are listed here: %WINDIR%\system32\drivers\etc\services
-  DefineVariable  ListeningAddr,      NETCOMADDR, {AF_INETX, DEFAULT_LISTENING_PORT}
+  DefineVariable  ListeningAddr,      NETCOMADDR, {AF_INETX, %$htons(80)}
 
   ; Timeout in msecs, 0 means no timeout
   DefineVariable  dTimeoutAcp,        DWORD,      0     ; Accept - not implementd yet

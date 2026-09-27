@@ -199,6 +199,7 @@ Method NetComStressServer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   XPOS = 20
   YPOS = -10
 
+  ;Output server statistics line by line
   YPOS = YPOS + 30
   invoke wsprintf, xdi, $OfsCStr("#Workers = %lu         "), [xsi].Server.dWorkerCount
   invoke StrLength, xdi

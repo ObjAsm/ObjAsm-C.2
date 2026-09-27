@@ -40,10 +40,10 @@ Method FilePropsDialog.CtlsGet, uses xbx xdi xsi
   mov xdi, Item.lParam
 
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DISPNAME, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xdi].PROJECTITEM.pDispName, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xdi].PROJECTITEM.pDispName, addr cBuffer
 
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_FILENAME, addr cBuffer, lengthof cBuffer
-  invoke StrReplace, addr [xdi].PROJECTITEM.pFileName, addr cBuffer
+  invoke StrReplaceWithCopy, addr [xdi].PROJECTITEM.pFileName, addr cBuffer
 
   mov Item.mask_, TVIF_HANDLE or TVIF_TEXT or TVIF_IMAGE or TVIF_SELECTEDIMAGE or TVIF_PARAM
   invoke StrLength, [xdi].PROJECTITEM.pDispName

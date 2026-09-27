@@ -1411,7 +1411,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         mov Item.mask_, TVIF_HANDLE or TVIF_PARAM
         invoke SendMessage, [xbx].$Obj(ProjectManager).TView.hWnd, TVM_GETITEM, 0, addr Item
         mov xcx, Item.lParam
-        invoke StrReplace, addr [xcx].PROJECTITEM.pDispName, [xbx].$Obj(ProjectManager).pProjName
+        invoke StrReplaceWithCopy, addr [xcx].PROJECTITEM.pDispName, [xbx].$Obj(ProjectManager).pProjName
         mov Item.mask_, TVIF_HANDLE or TVIF_TEXT
         invoke StrLength, [xbx].$Obj(ProjectManager).pProjName
         mov Item.cchTextMax, eax

@@ -50,6 +50,12 @@
 ;             Resulting WIDE string:  Note: "Director's cut" + CRLF
 
 StringW macro StrName, QuotedText:vararg
+  if @SizeStr(<QuotedText>) eq 2
+    StrName CHRW 0
+    ??StrSize = 2
+    ??StrLength = 0
+    goto Exit
+  endif
   ;; Because the forc handles the backslash as an escape character, we add an
   ;; backslash charater to mimic the behaviour of the StringA macro.
   ;; JWASM 2.07B don't need this workaround.
@@ -157,7 +163,9 @@ StringW macro StrName, QuotedText:vararg
   CHRW 0
   ??StrSize = $ - $$StrStart                            ;; ??StrSize includes the ZTC
   ??StrLength = ??StrSize/2 - 1                         ;; ??StrLength = character count without ZTC
+:Exit
 endm
+
 
 ExtendStringW macro QuotedText:vararg                   ;; Extends a Str definition overcomming the line length limit
   org $ - sizeof(CHR)                                   ;; Overwrite last ZTC

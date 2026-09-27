@@ -8,15 +8,15 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
-TARGET_STR_TYPE = STR_TYPE_ANSI
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
 ; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrReplace
-; Purpose:    Dispose an existing BSTR and replace it with a new one.
+; Purpose:    Dispose a BSTR and replace it with a another BSTR.
 ; Arguments:  Arg1: -> BSTR to be replaced.
-;             Arg2: -> new BSTR.
-; Return:     rax -> New allocated BSTR or NULL if failed.
+;             Arg2: -> Replacing BSTR.
+; Return:     eax -> Replacing BSTR or NULL if failed.
 
 % include &ObjMemPath&Common\BStrReplace_X.inc
 

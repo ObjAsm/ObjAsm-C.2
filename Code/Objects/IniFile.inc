@@ -131,11 +131,11 @@ MethodEnd
 ; Purpose:    Set the specified section/key DWORD.
 ; Arguments:  Arg1: -> Section name.
 ;             Arg2: -> Key name.
-;             Arg3: dWord.
+;             Arg3: DWORD.
 ; Return:     eax = Error code.
 
 Method IniFile.SetDWord, uses xsi, pSection:PSTRING, pKey:PSTRING, dValue:DWORD
-  local cBuffer[11]:CHR
+  local cBuffer[DWORD2DEC_MAX_CHARS]:CHR
 
   SetObject xsi
   invoke dword2dec, addr cBuffer, dValue

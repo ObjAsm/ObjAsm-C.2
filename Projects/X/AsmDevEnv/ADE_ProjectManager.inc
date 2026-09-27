@@ -719,7 +719,7 @@ Method ProjectManager.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov Item.TVITEM.cchTextMax, eax
     mov Item.mask_, TVIF_HANDLE or TVIF_TEXT
     mov xcx, Item.lParam
-    invoke StrReplace, addr [xcx].PROJECTITEM.pDispName, addr cBuffer
+    invoke StrReplaceWithCopy, addr [xcx].PROJECTITEM.pDispName, addr cBuffer
     lea xdx, cBuffer
     mov Item.pszText, xdx
     invoke SendMessage, [xsi].TView.hWnd, TVM_SETITEM, 0, addr Item
@@ -857,7 +857,7 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   invoke SendMessage, [xsi].TView.hWnd, TVM_DELETEITEM, 0, TVI_ROOT
 
   invoke GetFullPathName, pConfigFileName, lengthof cConfigFileName - 1, addr cConfigFileName, NULL
-  invoke StrReplace, addr [xsi].pProjFileName, addr cConfigFileName
+  invoke StrReplaceWithCopy, addr [xsi].pProjFileName, addr cConfigFileName
   invoke FileExist, addr cConfigFileName
   mov dConfigFilePresent, eax
   .if eax == FALSE
@@ -902,7 +902,7 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   .else
     mov xdx, [xax].JSON_PROPERTY.pValue
   .endif
-  invoke StrReplace, addr [xsi].pProjName, xdx
+  invoke StrReplaceWithCopy, addr [xsi].pProjName, xdx
   OCall xsi.ProjItemInsert, 0, TVI_ROOT, [xsi].pProjName, NULL, PIT_PROJECT, ICON_INDEX_GROUP_CLOSE, 0
   mov hRootItem, xax
 
@@ -912,14 +912,14 @@ Method ProjectManager.ProjectLoadFrom, uses xbx xdi xsi, pConfigFileName:PSTRING
   .else
     mov xdx, [xax].JSON_PROPERTY.pValue
   .endif
-  invoke StrReplace, addr [xsi].pProjDirPath, xdx
+  invoke StrReplaceWithCopy, addr [xsi].pProjDirPath, xdx
   OCall xbx::Json.GetProperty, pParent, addr szDescription
   .if xax == NULL
     mov xdx, NULL
   .else
     mov xdx, [xax].JSON_PROPERTY.pValue
   .endif
-  invoke StrReplace, addr [xsi].pProjDescription, xdx
+  invoke StrReplaceWithCopy, addr [xsi].pProjDescription, xdx
 
 
   OCall xbx::Json.GetProperty, addr [xbx].$Obj(Json).RootProperty, addr szGroups

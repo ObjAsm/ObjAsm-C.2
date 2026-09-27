@@ -56,7 +56,7 @@ LHF_SCRIPT_STOP     equ BIT00
 
 lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
   ?mov edx, plua_Debug
-  DbgDec [xdx].lua_Debug.currentline
+;  DbgDec [xdx].lua_Debug.currentline
 
   invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
   invoke lua_tointegerx, pLuaState, -1, NULL
@@ -107,7 +107,7 @@ Method LuaHost.Execute, uses xbx xsi
 
   ;Store a pointer to the LuaHost as a global variable
   invoke lua_pushinteger, xbx, xsi                      ;Push LuaHost instance on the stack
-  invoke lua_setglobal, xbx, $OfsCStrA("pLuaHost")   ;Give it a name (Value on top of the stack)
+  invoke lua_setglobal, xbx, $OfsCStrA("pLuaHost")      ;Give it a name (Value on top of the stack)
 
   ;Set the call hook
   invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0  ;Call lua_HookProc on each line
@@ -151,12 +151,12 @@ MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.ScriptInit
-; Purpose:    Script custom initialization.
+; Purpose:    Script custom initialization. Must be overwritten for customisation.
 ; Arguments:  Arg1: -> lua_State.
 ; Return:     eax = LUA_OK if succeeded, otherwise an error code.
 
 Method LuaHost.ScriptInit,, plua_State:Plua_State
-  DbgText "LuaHost.ScriptInit"
+;  DbgText "LuaHost.ScriptInit"
   mov eax, LUA_OK
 MethodEnd
 
