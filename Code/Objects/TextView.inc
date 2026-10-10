@@ -401,7 +401,7 @@ PTVNM_DRAW typedef ptr TVNM_DRAW
 
 if IMPLEMENT
 
-%CStr cTextViewClass&TARGET_STR_AFFIX, "TextView"
+%CStr cTextViewClass&TARGET_STR_AFFIX, "TextView" 
 
 ;Zoom parameter
 TVZOOM_MIN          equ   TVZOOM_BASE/2
@@ -1532,6 +1532,11 @@ Method TextView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   %invoke CreateWindowEx, [xbx].dExStyle, offset cTextViewClass&TARGET_STR_AFFIX, [xbx].pText, \
                          eax, [xbx].sdPosX, [xbx].sdPosY, [xbx].dWidth, [xbx].dHeight, \
                          hParent, [xbx].xCtlID, hInstance, pSelf
+  if DEBUGGING
+    .if xax == 0
+      DbgApiError
+    .endif
+  endif
   assume xbx:NOTHING
   ACall xsi.Init, pOwner, xax
 MethodEnd

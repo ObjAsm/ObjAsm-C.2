@@ -90,7 +90,7 @@ MethodEnd
 Method DlgApp.Run, uses xbx xdi xsi
   local Msg:MSG
 
-;  DbgText "DlgApp.Run"
+  DbgText "DlgApp.Run"
   SetObject xsi
   lea xbx, Msg
   xor edi, edi

@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=27
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -239,7 +239,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1177,636,39705
+2=0,0,1177,636,7555
 3=0,0,0,0,3101
 1=0,0,694,487,3785
 4=0,0,1202,621,9993
@@ -247,7 +247,7 @@ ProductVer4Range=0
 8=0,0,0,0,6687
 7=0,0,0,0
 5=0,0,1862,628,4676
-6=0,0,0,0,8786
+6=0,0,0,0,30379
 9=0,0,0,0,2689
 11=0,0,0,0,422
 10=0,0,0,0,6248
@@ -272,8 +272,8 @@ ProductVer4Range=0
 35=
 36=
 40=0,0,1167,599,3593
-39=0,0,0,0,2237
-38=0,0,0,0,2592
+39=0,0,0,0,1447
+38=0,0,0,0,5026
 42=0,0,0,0,1968
 41=0,0,0,0
 43=0,0,0,0,2495
@@ -292,7 +292,7 @@ ProductVer4Range=0
 37=
 55=
 21=0,0,0,0,9717
-56=0,0,1850,628,4745
+56=0,0,1850,628,6628
 58=0,0,0,0,4753
 57=0,0,1850,628,4628
 60=0,0,0,0,3191
@@ -320,16 +320,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="ExpandEnvironmentStrings"
-2="szOpen"
-3="OnCommand"
-4="Edit"
-5="NotePad"
-6="Note"
-7="Setup"
-8="IDM_OPEN_EDITOR"
-9="IDS_OPEN_EDITOR"
-10="AGAIN"
+1="hDrop"
+2="OnDropFiles"
+3="pExternalEditor"
+4="OAT_SETUP"
+5="ExpandEnvironmentStrings"
+6="szOpen"
+7="OnCommand"
+8="Edit"
+9="NotePad"
+10="Note"
   .break
 .endif"
 [Collapse]
@@ -365,7 +365,7 @@ ProductVer4Range=0
 36=
 40=,,
 39=
-38=30722
+38=26626
 42=
 41=
 43=
@@ -393,9 +393,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=1,14,4,2,5,15,8,3
+AutoLoad=2,39
 [PTimer]
-PTimer=2105038128
+PTimer=2108766598
 [GroupExpand]
 GroupExpand=1,1,1,1,1,1,1,0
 [RADebugBP]
